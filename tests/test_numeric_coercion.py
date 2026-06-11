@@ -9,6 +9,7 @@ Covers:
 
 from __future__ import annotations
 
+import importlib.util
 import math
 from typing import Any
 
@@ -116,9 +117,6 @@ class TestFlattenInputListPath:
 # ---------------------------------------------------------------------------
 # Pandas/numpy paths (conditional on library presence)
 # ---------------------------------------------------------------------------
-
-
-import importlib.util
 
 _HAS_NUMPY = importlib.util.find_spec("numpy") is not None
 _HAS_PANDAS = importlib.util.find_spec("pandas") is not None
