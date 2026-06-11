@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.1.1 (2026-06-11)
+
+**Fixed.** Partial remote caches no longer error: after downloading a single
+remote tier (e.g. `download("geo.admin1")`), `Resolver.auto()` raised
+`MissingModuleDependencyError` demanding sibling tiers, and explicitly
+requesting one tier via `module_ids` transitively queued every declared
+sibling (a ~796 MB download). Declared dependencies on remote packs that are
+not in the local cache are now skipped during loading and validation; bundled
+and cached dependencies are still enforced.
+
+**Docs.** Corrected the OECD DAC entry in NOTICE.md: OECD distributes its
+content under CC BY 4.0 (attribution, commercial use permitted) since July
+2024 — the previous wording incorrectly claimed a non-commercial restriction.
+Also documented the DAC contribution to the org entity store and updated the
+upstream URL.
+
 ## 0.1.0 (2026-06-11)
 
 First public beta release.

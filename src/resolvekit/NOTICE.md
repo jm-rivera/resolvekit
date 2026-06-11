@@ -43,12 +43,25 @@ license requires attribution, that attribution is given below.
 
 ## OECD DAC (Development Assistance Committee)
 
-- **Contributes:** DAC country codes and recipient classifications used in the
-  geo entity store.
-- **Upstream:** https://www.oecd.org/dac/financing-sustainable-development/development-finance-standards/dacandcrscodelists.htm
-- **License:** OECD terms of use — data is freely available for non-commercial
-  and research use with attribution.
-  https://www.oecd.org/termsandconditions/
+- **Contributes:** DAC recipient, provider, channel, and agency codes with
+  their English/French names and an ISO3 crosswalk. These populate DAC codes
+  on countries and regions in the geo entity store and provider and
+  government-agency entities in the org entity store.
+- **Upstream:** https://development-finance-codelists.oecd.org/ (DAC and CRS
+  code lists)
+- **License:** OECD Terms and Conditions. Since 1 July 2024 most OECD data and
+  content is published under Creative Commons Attribution 4.0 International
+  (CC BY 4.0), which permits reuse — including commercial use — with
+  attribution; earlier content is available on terms similar to CC BY 4.0.
+  https://www.oecd.org/en/about/terms-conditions.html
+  https://creativecommons.org/licenses/by/4.0/
+- **Modifications:** only the codelists (codes, names, and the ISO3 crosswalk)
+  were extracted and repackaged; no OECD statistical, financial, or aid-flow
+  data is redistributed.
+- **Attribution required:** OECD DAC codelists are used under the OECD Terms
+  and Conditions (CC BY 4.0). Source: OECD Development Assistance Committee
+  (DAC). The OECD logo and branding are not covered by this license and are
+  not used.
 
 ## HDX Python Country / UN M49
 
