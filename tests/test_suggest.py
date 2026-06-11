@@ -109,6 +109,7 @@ def test_suggest_cote_finds_cote_divoire(resolver: Resolver) -> None:
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.requires_remote_data
 def test_suggest_york_returns_new_york_admin1(resolver: Resolver) -> None:
     """'york' is a non-leading token in 'New York'; should surface via token-infix.
 
@@ -144,6 +145,7 @@ def test_suggest_default_display_is_canonical_name(resolver: Resolver) -> None:
     assert usa.display is not None
 
 
+@pytest.mark.requires_remote_data
 def test_suggest_default_to_with_on_missing_raise_does_not_raise() -> None:
     """A resolver configured ``default_to=..., on_missing='raise'`` must not
     raise from suggest() when a result lacks that code — the suggest contract
