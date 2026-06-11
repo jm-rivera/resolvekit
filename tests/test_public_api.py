@@ -53,6 +53,7 @@ _EXPECTED: dict[str, tuple[str, ...]] = {
         "resolve_id",
         "snap",
         "to",
+        "warm",
     ),
     "resolvekit.types": (
         "BulkResult",
@@ -248,7 +249,7 @@ def test_resolvekit_all() -> None:
 
 
 def test_resolvekit_all_count() -> None:
-    assert len(resolvekit.__all__) == 36
+    assert len(resolvekit.__all__) == 37
 
 
 def test_resolvekit_all_excludes_removed_names() -> None:

@@ -497,6 +497,46 @@ Close and discard the singleton resolver. The next call to any resolution functi
 
 ---
 
+### `warm` { #warm }
+
+```python
+rk.warm() -> None
+```
+
+Build all lazily-constructed indexes in the singleton resolver now and block until they are ready. Idempotent — calling it again when indexes are already built returns immediately. Thread-safe.
+
+By default, `Resolver` construction starts a background daemon thread that pre-builds the SymSpell typo index so the cost does not land on the first query. `warm()` is for servers and batch jobs that need the resolver to be fully ready before processing begins, rather than relying on background preparation.
+
+`Resolver.warm()` is the same operation on an explicit resolver instance:
+
+```python
+from resolvekit import Resolver
+
+r = Resolver.auto()
+r.warm()          # block here until all indexes are ready
+r.resolve("France")   # no index-build latency
+```
+
+The module-level call warms the singleton resolver, constructing it first if it hasn't been created yet:
+
+```python
+import resolvekit as rk
+
+rk.warm()           # build the singleton resolver and all its indexes
+rk.resolve("France")  # ready immediately
+```
+
+To skip background warm-up entirely and keep construction fully lazy, pass `warm=False` to any constructor:
+
+```python
+r = Resolver.auto(warm=False)
+r = Resolver.from_modules(module_ids=["geo.countries", "geo.admin1"], warm=False)
+```
+
+The compiled index cache reduces the SymSpell build cost from ~6 s to ~1.4 s on installs with remote data tiers (admin2–admin5, cities). The cache file is stored under `<cache-dir>/compiled/` (the same directory as the remote data tiers; see [`configure(cache_dir=...)`](#configure)), keyed by the dictionary files and symspellpy version. It is generated locally and never downloaded. If the cache directory is read-only, the library silently skips writing it.
+
+---
+
 ### `default` { #default }
 
 ```python

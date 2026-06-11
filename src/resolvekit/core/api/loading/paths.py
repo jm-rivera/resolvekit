@@ -113,6 +113,7 @@ def _build_resolver_from_paths(
     sentinel_blocklist: SentinelBlocklist | None = None,
     default_to: str | list[str] | None = None,
     on_missing: Literal["raise", "null", "auto"] = "auto",
+    warm: bool = True,
 ) -> Resolver:
     from resolvekit.core.api.loading.module_catalog import (
         _ensure_remote_data_available,
@@ -210,4 +211,5 @@ def _build_resolver_from_paths(
         sentinel_blocklist=sentinel_blocklist,
         default_to=default_to,
         on_missing=on_missing,
+        warm=warm,
     )

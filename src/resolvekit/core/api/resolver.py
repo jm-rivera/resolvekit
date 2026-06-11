@@ -1,6 +1,7 @@
 """Public API facade for resolution."""
 
 import logging
+import threading
 import weakref
 from collections.abc import Sequence
 from datetime import date, datetime
@@ -210,6 +211,7 @@ class Resolver:
         sentinel_blocklist: SentinelBlocklist | None = DEFAULT_BLOCKLIST,
         default_to: str | list[str] | None = None,
         on_missing: "Literal['raise','null','auto']" = "auto",
+        warm: bool = True,
     ) -> None:
         """Initialize Resolver.
 
@@ -277,6 +279,14 @@ class Resolver:
                 null + ``UserWarning`` for ``bulk()``.
                 ``"raise"`` = always raise ``OutputMissingError`` on miss.
                 ``"null"`` = always return ``None`` on miss.
+            warm: When ``True`` (default), start a background daemon thread
+                immediately after construction that calls the runner's
+                ``warm()`` to pre-build any lazily-constructed indexes (e.g.
+                the geo large-tier SymSpell index on remote-data installs,
+                which can take ~6 s).  Queries that arrive mid-build simply
+                block on the per-source build lock for the remainder of the
+                build.  Pass ``False`` to restore the previous fully-lazy
+                behaviour.
         """
         self._runner = runner
         self._normalizer = normalizer or TextNormalizer()
@@ -351,6 +361,29 @@ class Resolver:
             default_output_spec=self._output_spec,
         )
 
+        # Background warm-up: pre-build lazily-constructed source indexes so
+        # the first fuzzy/symspell query does not pay the build cost inline.
+        if warm:
+            runner_warm = getattr(self._runner, "warm", None)
+            if callable(runner_warm):
+
+                def _warm_runner() -> None:
+                    try:
+                        runner_warm()
+                    except Exception:
+                        logger.debug(
+                            "Background warm-up raised an exception; "
+                            "sources will build lazily on first use.",
+                            exc_info=True,
+                        )
+
+                t = threading.Thread(
+                    target=_warm_runner,
+                    name="resolvekit-warm",
+                    daemon=True,
+                )
+                t.start()
+
     def _apply_confidence_threshold_override(self, value: float) -> None:
         """Set confidence_threshold on every pack's decision policy.
 
@@ -393,6 +426,24 @@ class Resolver:
             with contextlib.suppress(ValueError, AttributeError):
                 _invalidate_automaton(self._runner.store_for_domain(pack_id))
         self._runner.close()
+
+    def warm(self) -> None:
+        """Build all lazily-constructed indexes now, synchronously.
+
+        Blocks until every source's internal index (e.g. the SymSpell
+        dictionary) has been built.  Safe to call concurrently with the
+        background warm-up thread started by ``__init__`` — per-source build
+        locks make the operation idempotent.  Useful for servers and batch
+        jobs that want to ensure full performance before handling the first
+        real request.
+
+        Note: constructing a Resolver with the default ``warm=True`` already
+        starts a background warm-up; call this method when you need to block
+        until that warm-up is complete.
+        """
+        runner_warm = getattr(self._runner, "warm", None)
+        if callable(runner_warm):
+            runner_warm()
 
     def __enter__(self) -> "Resolver":
         return self
@@ -757,6 +808,7 @@ class Resolver:
         sentinel_blocklist: SentinelBlocklist | None = DEFAULT_BLOCKLIST,
         default_to: str | list[str] | None = None,
         on_missing: "Literal['raise','null','auto']" = "auto",
+        warm: bool = True,
     ) -> "Resolver":
         """Create resolver from one or more explicit datapack filesystem paths.
 
@@ -782,6 +834,8 @@ class Resolver:
                 ``Resolver.__init__`` for full docs).
             on_missing: Miss policy for the default output chain (see
                 ``Resolver.__init__`` for full docs).
+            warm: Start a background index warm-up on construction (see
+                ``Resolver.__init__`` for full docs).
 
         Returns:
             Configured Resolver instance
@@ -801,6 +855,7 @@ class Resolver:
             sentinel_blocklist=sentinel_blocklist,
             default_to=default_to,
             on_missing=on_missing,
+            warm=warm,
         )
 
     @classmethod
@@ -820,6 +875,7 @@ class Resolver:
         sentinel_blocklist: SentinelBlocklist | None = DEFAULT_BLOCKLIST,
         default_to: str | list[str] | None = None,
         on_missing: "Literal['raise','null','auto']" = "auto",
+        warm: bool = True,
     ) -> "Resolver":
         """Create resolver from installed or explicitly registered modules.
 
@@ -845,6 +901,8 @@ class Resolver:
                 ``Resolver.__init__`` for full docs).
             on_missing: Miss policy for the default output chain (see
                 ``Resolver.__init__`` for full docs).
+            warm: Start a background index warm-up on construction (see
+                ``Resolver.__init__`` for full docs).
 
         Returns:
             Configured Resolver instance
@@ -865,6 +923,7 @@ class Resolver:
             sentinel_blocklist=sentinel_blocklist,
             default_to=default_to,
             on_missing=on_missing,
+            warm=warm,
         )
 
     @classmethod
@@ -883,6 +942,7 @@ class Resolver:
         sentinel_blocklist: SentinelBlocklist | None = DEFAULT_BLOCKLIST,
         default_to: str | list[str] | None = None,
         on_missing: "Literal['raise','null','auto']" = "auto",
+        warm: bool = True,
     ) -> "Resolver":
         """Create resolver from all installed modules.
 
@@ -910,6 +970,8 @@ class Resolver:
             default_to: Default output code system or name variant (see
                 ``Resolver.__init__`` for full docs).
             on_missing: Miss policy for the default output chain (see
+                ``Resolver.__init__`` for full docs).
+            warm: Start a background index warm-up on construction (see
                 ``Resolver.__init__`` for full docs).
 
         Returns:
@@ -951,6 +1013,7 @@ class Resolver:
                 sentinel_blocklist=sentinel_blocklist,
                 default_to=default_to,
                 on_missing=on_missing,
+                warm=warm,
             )
         return cls.from_modules(
             routing_mode=routing_mode,
@@ -964,6 +1027,7 @@ class Resolver:
             sentinel_blocklist=sentinel_blocklist,
             default_to=default_to,
             on_missing=on_missing,
+            warm=warm,
         )
 
     # -- Country-level geo module IDs for the lite preset --
@@ -993,6 +1057,7 @@ class Resolver:
         sentinel_blocklist: SentinelBlocklist | None = DEFAULT_BLOCKLIST,
         default_to: str | list[str] | None = None,
         on_missing: "Literal['raise','null','auto']" = "auto",
+        warm: bool = True,
     ) -> "Resolver":
         """Create a footprint-optimised resolver from a curated small module set.
 
@@ -1039,6 +1104,8 @@ class Resolver:
                 ``Resolver.__init__`` for full docs).
             on_missing: Miss policy for the default output chain (see
                 ``Resolver.__init__`` for full docs).
+            warm: Start a background index warm-up on construction (see
+                ``Resolver.__init__`` for full docs).
 
         Returns:
             Configured Resolver instance
@@ -1061,6 +1128,7 @@ class Resolver:
             sentinel_blocklist=sentinel_blocklist,
             default_to=default_to,
             on_missing=on_missing,
+            warm=warm,
         )
 
     def entity(
@@ -2628,6 +2696,7 @@ class Resolver:
         attrs: "list[str] | Literal['rest'] | None" = None,
         entity_type: str | None = None,
         cache: bool = True,
+        warm: bool = True,
         **resolver_kwargs: Any,
     ) -> "Resolver":
         """Stand up a standalone resolver from user-supplied records.
@@ -2667,6 +2736,8 @@ class Resolver:
             cache: Cache the built pack on disk under the configured cache
                 directory.  ``True`` (default) reuses an identical-input build on
                 subsequent calls; ``False`` always rebuilds to a fresh temp dir.
+            warm: Start a background index warm-up on construction (see
+                ``Resolver.__init__`` for full docs).
             **resolver_kwargs: Forwarded verbatim to
                 :meth:`from_datapacks` (e.g. ``routing_mode``,
                 ``confidence_threshold``).
@@ -2704,6 +2775,7 @@ class Resolver:
         return cls.from_datapacks(
             datapack_paths=[outcome.pack_dir],
             domains=[domain],
+            warm=warm,
             **resolver_kwargs,
         )
 

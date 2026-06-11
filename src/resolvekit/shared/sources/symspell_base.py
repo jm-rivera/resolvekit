@@ -5,13 +5,20 @@ The index is built lazily on first use so resolver construction stays fast;
 most queries hit exact-code/exact-name/FTS tiers and never need SymSpell.
 """
 
+import contextlib
+import hashlib
 import logging
+import os
 import threading
 import time
+import uuid
+import weakref
 from importlib import import_module
+from importlib.metadata import version as _pkg_version
 from pathlib import Path
 from typing import Any
 
+from resolvekit.core.config import get_cache_dir
 from resolvekit.core.engine import CandidateSource
 from resolvekit.core.explain import emit_candidates_generated
 from resolvekit.core.model import (
@@ -26,6 +33,34 @@ logger = logging.getLogger(__name__)
 SYMSPELL_BASE_SCORE = 0.9
 SYMSPELL_DISTANCE_PENALTY = 0.15
 SYMSPELL_MIN_SCORE = 0.5
+
+# Temp cache files older than this are presumed leaked by a crashed writer and
+# safe to reap; live builds finish in seconds.
+_STALE_TMP_AGE_SECONDS = 3600.0
+
+# Live sources needing their build lock re-initialized in a forked child.
+_LIVE_SOURCES: "weakref.WeakSet[SymSpellSource]" = weakref.WeakSet()
+
+
+def _reset_sources_after_fork() -> None:
+    """Re-initialize build locks (and in-flight build state) in a forked child.
+
+    A fork can happen while another thread — typically the resolver's
+    background warm-up — holds a source's build lock.  The child would inherit
+    a permanently-held lock and deadlock on its first query that reaches the
+    source.  Fresh locks fix that.  Sources whose build was in flight at fork
+    time are reset to unbuilt so the child rebuilds from scratch instead of
+    reading a half-built index; fully built indexes are immutable and kept.
+    """
+    for source in list(_LIVE_SOURCES):
+        source._build_lock = threading.Lock()
+        if not source._built:
+            source._build_attempted = False
+            source._sym_spell = None
+
+
+if hasattr(os, "register_at_fork"):
+    os.register_at_fork(after_in_child=_reset_sources_after_fork)
 
 
 def _load_symspell_class() -> Any | None:
@@ -65,6 +100,10 @@ class SymSpellSource(CandidateSource):
     - min_query_length: Minimum query length to process (default: 3)
     - matched_field: Field name for evidence (default: "symspell")
     - name_kinds: Set of name kinds to search (default: None = all)
+    - use_compiled_cache: Cache the built index as a locally-generated pickle
+      under the resolvekit cache dir; intended for large dictionaries where the
+      text build is expensive.  Keyed on symspellpy version, build params, and
+      source-file fingerprints so stale entries are evicted automatically.
 
     Subclasses can override:
     - _generate_fallback: Called when SymSpell is unavailable
@@ -80,6 +119,8 @@ class SymSpellSource(CandidateSource):
         min_query_length: int = 3,
         matched_field: str = "symspell",
         name_kinds: set[str] | None = None,
+        *,
+        use_compiled_cache: bool = False,
     ) -> None:
         """Create a SymSpell source.
 
@@ -94,18 +135,23 @@ class SymSpellSource(CandidateSource):
             min_query_length: Minimum query length to process
             matched_field: Field name for evidence
             name_kinds: Set of name kinds to search when looking up corrected terms
+            use_compiled_cache: Cache the built index as a locally-generated
+                pickle under the resolvekit cache dir.  Intended for large
+                dictionaries where the text build is expensive.
         """
         self._name = name
         self._domain = domain
         self._dict_path = dictionary_path
         # Additional dictionary paths queued via load_additional_dictionary()
-        # before the index has been built.  Drained on first build.
+        # before the index has been built.  Kept after the build so a rebuild
+        # (load_dictionary() reset, after-fork reset) covers the full set.
         self._extra_dict_paths: list[str] = []
         self._max_edit = max_edit_distance
         self._prefix_len = prefix_length
         self._min_query_length = min_query_length
         self._matched_field = matched_field
         self._name_kinds = name_kinds
+        self._use_compiled_cache = use_compiled_cache
         # _sym_spell is None until the first query that needs it.
         self._sym_spell: Any | None = None
         # Guards the one-time lazy build.
@@ -119,10 +165,20 @@ class SymSpellSource(CandidateSource):
         # guarding the lock-free fast-path so no thread ever observes a half-built
         # index.
         self._built = False
+        # Registered for the after-fork lock reset (see _reset_sources_after_fork).
+        _LIVE_SOURCES.add(self)
 
     # ------------------------------------------------------------------
     # Lazy build
     # ------------------------------------------------------------------
+
+    def warm(self) -> None:
+        """Build the SymSpell index now instead of on first query.
+
+        Idempotent and thread-safe.  Overrides a no-op ``warm()`` on
+        ``CandidateSource`` so callers can pre-warm expensive indexes.
+        """
+        self._ensure_built()
 
     def share_symspell_from(self, provider: "SymSpellSource") -> None:
         """Share the SymSpell instance from *provider* instead of building one.
@@ -180,8 +236,9 @@ class SymSpellSource(CandidateSource):
         all_paths: list[str] = []
         if self._dict_path:
             all_paths.append(self._dict_path)
+        # Keep _extra_dict_paths intact (not drained): an after-fork reset or a
+        # load_dictionary() reset must rebuild with the full path set.
         all_paths.extend(self._extra_dict_paths)
-        self._extra_dict_paths = []  # consumed
 
         if not all_paths:
             return
@@ -189,6 +246,19 @@ class SymSpellSource(CandidateSource):
         symspell_class = _load_symspell_class()
         if symspell_class is None:
             return
+
+        # Attempt to load from the compiled-index cache when requested.
+        if self._use_compiled_cache:
+            cache_path = self._compiled_cache_path(all_paths)
+            if cache_path is not None and self._try_load_from_cache(
+                symspell_class, cache_path
+            ):
+                logger.debug(
+                    "SymSpell index for '%s' loaded from cache: %s",
+                    self._name,
+                    cache_path,
+                )
+                return
 
         t0 = time.perf_counter()
         self._sym_spell = symspell_class(
@@ -201,11 +271,132 @@ class SymSpellSource(CandidateSource):
                 self._load_dictionary_from_path(p)
         elapsed = time.perf_counter() - t0
         logger.debug(
-            "SymSpell index built for '%s': %d paths, %.2fs",
+            "SymSpell index built for '%s' (text build): %d paths, %.2fs",
             self._name,
             len(all_paths),
             elapsed,
         )
+
+        # Persist the newly built index to the compiled-index cache.
+        if self._use_compiled_cache and self._sym_spell is not None:
+            cache_path = self._compiled_cache_path(all_paths)
+            if cache_path is not None:
+                self._save_to_cache(cache_path)
+
+    def _compiled_cache_key(self, all_paths: list[str]) -> str | None:
+        """Compute a deterministic hex digest for the current build parameters.
+
+        The key covers: symspellpy distribution version, max_edit, prefix_len,
+        and for each path that exists: its resolved absolute path, byte size,
+        and mtime in nanoseconds.  Returns None when symspellpy is not installed.
+        """
+        try:
+            symspellpy_ver = _pkg_version("symspellpy")
+        except Exception:
+            return None
+
+        h = hashlib.sha256()
+        h.update(symspellpy_ver.encode())
+        h.update(f"|{self._max_edit}|{self._prefix_len}".encode())
+        for raw in all_paths:
+            p = Path(raw).resolve()
+            try:
+                st = p.stat()
+                h.update(f"|{p}|{st.st_size}|{st.st_mtime_ns}".encode())
+            except OSError:
+                # Path doesn't exist — include a stable marker so the key
+                # changes if the file appears later.
+                h.update(f"|{p}|missing".encode())
+        return h.hexdigest()
+
+    def _compiled_cache_path(self, all_paths: list[str]) -> Path | None:
+        """Return the Path where the compiled pickle for this build should live."""
+        digest = self._compiled_cache_key(all_paths)
+        if digest is None:
+            return None
+        return get_cache_dir() / "compiled" / f"symspell-{self._name}-{digest[:16]}.pkl"
+
+    def _try_load_from_cache(self, symspell_class: Any, cache_path: Path) -> bool:
+        """Try loading the SymSpell index from *cache_path*.
+
+        Returns True on success, False on any failure (file absent, corrupt,
+        or incompatible format).  On failure the bad file is removed so the
+        next build will regenerate and re-cache cleanly.
+
+        Security note: we only ever load pickles that this library itself wrote
+        into the local cache dir — never shipped or downloaded artifacts.
+        """
+        if not cache_path.exists():
+            return False
+        try:
+            instance = symspell_class(
+                max_dictionary_edit_distance=self._max_edit,
+                prefix_length=self._prefix_len,
+            )
+            instance.load_pickle(str(cache_path), compressed=False)
+            self._sym_spell = instance
+            return True
+        except Exception as exc:
+            logger.debug(
+                "SymSpell cache load failed for '%s' (will rebuild): %s",
+                self._name,
+                exc,
+            )
+            with contextlib.suppress(OSError):
+                cache_path.unlink(missing_ok=True)
+            return False
+
+    def _save_to_cache(self, cache_path: Path) -> None:
+        """Persist the current SymSpell index to *cache_path* atomically.
+
+        Uses a uniquely-named sibling temp file + os.replace so concurrent
+        writers and readers never see a partial write.  After a successful
+        save, any OTHER stale ``symspell-<name>-*.pkl`` files in the same
+        directory are removed (old keys from previous data versions), and
+        temp files past a generous age threshold are reaped.
+
+        All save errors are caught and logged at DEBUG; a read-only or full
+        cache dir must never break resolution — and never discard the
+        successfully built in-memory index by propagating out of _do_build().
+        """
+        sym_spell = self._sym_spell
+        if sym_spell is None:
+            return
+        try:
+            cache_path.parent.mkdir(parents=True, exist_ok=True)
+            # Unique per writer: two sources with the same name and key in one
+            # process (each on its own warm thread) must never interleave
+            # writes into a shared temp file.
+            tmp_path = cache_path.with_suffix(
+                f".tmp.{os.getpid()}.{uuid.uuid4().hex[:8]}"
+            )
+            sym_spell.save_pickle(str(tmp_path), compressed=False)
+            os.replace(tmp_path, cache_path)
+            logger.debug(
+                "SymSpell index for '%s' saved to cache: %s",
+                self._name,
+                cache_path,
+            )
+            # Evict stale keys for this source name.  Temp files are reaped
+            # only past a generous age threshold so a concurrent writer's
+            # in-flight temp file is never deleted under it.
+            prefix = f"symspell-{self._name}-"
+            now = time.time()
+            for sibling in cache_path.parent.glob(f"{prefix}*"):
+                if sibling == cache_path:
+                    continue
+                with contextlib.suppress(OSError):
+                    if sibling.name.endswith(".pkl") or (
+                        ".tmp." in sibling.name
+                        and now - sibling.stat().st_mtime > _STALE_TMP_AGE_SECONDS
+                    ):
+                        sibling.unlink(missing_ok=True)
+        except Exception as exc:
+            logger.debug(
+                "SymSpell cache save failed for '%s' (non-fatal): %s",
+                self._name,
+                exc,
+            )
 
     def _init_symspell(self) -> None:
         """No-op: kept for any subclasses that call super()._init_symspell()."""

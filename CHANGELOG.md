@@ -66,6 +66,20 @@ stale confidence figures in the tutorials; documented that code
 auto-detection is case-sensitive by design while `from_system` is
 case-insensitive.
 
+**Performance.** The SymSpell typo index is now built in a background daemon
+thread during `Resolver` construction (default on), so the build cost no longer
+lands on the first query that passes the exact-match tiers. Opt out with
+`warm=False` on any constructor (`Resolver.auto(warm=False)`,
+`Resolver.from_modules(warm=False)`, etc.) to keep construction fully lazy.
+`resolvekit.warm()` and `Resolver.warm()` are new synchronous, idempotent,
+thread-safe functions that build all lazy indexes and return when they're ready
+— for servers or batch jobs that want deterministic readiness. The large-tier
+SymSpell index (706k terms, ~6 s to build on remote-data installs) is now
+cached as a locally-generated pickle under `<cache-dir>/compiled/` after its
+first build (~150 MB, loads in ~1.4 s on subsequent processes), keyed by the
+dictionary files and symspellpy version; existing bundled-only installs are
+unaffected.
+
 ## 0.1.2 (2026-06-11)
 
 **Fixed.** `download()` crashed on a clean install with "Missing package

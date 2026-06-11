@@ -581,6 +581,19 @@ def parse(
     )
 
 
+def warm() -> None:
+    """Pre-build all lazily-constructed indexes, blocking until complete.
+
+    Useful for servers and batch jobs that want to ensure full query
+    performance before handling the first real request.
+
+    Note: constructing the default resolver already starts a background
+    warm-up (``warm=True`` is the default); call this function when you
+    need to block until that warm-up is complete.
+    """
+    _get_default().warm()
+
+
 def parse_bulk(
     *,
     values: Any,

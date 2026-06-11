@@ -98,6 +98,7 @@ Every constructor accepts these keyword arguments:
 | `sentinel_blocklist` | `SentinelBlocklist | None` | `DEFAULT_BLOCKLIST` | Junk-input blocklist. `None` disables it. |
 | `default_to` | `str | list[str] | None` | `None` | Default output code system or name variant applied to every `resolve()`, `bulk()`, and `snap()` call. A string (`"iso3"`) or a list for a fallback chain (`["iso3", "name"]`). `None` = return raw `ResolutionResult` (default behavior). |
 | `on_missing` | `Literal["raise", "null", "auto"]` | `"auto"` | Miss policy when the default output chain has no value for a resolved entity. `"auto"` = raise for scalar `resolve()`/`snap()`, null + `UserWarning` for `bulk()`; `"raise"` = always raise `OutputMissingError`; `"null"` = always return `None`. |
+| `warm` | `bool` | `True` | Start a background daemon thread during construction that pre-builds all lazily-constructed indexes (the SymSpell typo index). `False` keeps construction fully lazy; the index builds on the first query that reaches the fuzzy tier. See [`Resolver.warm()`](#resolverwarm). |
 
 !!! warning "Heads up"
     The LRU cache is not thread-safe. For concurrent workloads, either build one `Resolver` per worker thread or pass `cache_size=0`.
@@ -326,6 +327,28 @@ r.snap(
 
 !!! warning "Heads up"
     `snap` matches the query against each candidate by resolving both sides, so candidate strings must be resolvable. Entity IDs (`"country/DEU"`) work reliably. Free-text labels work when they resolve without ambiguity.
+
+---
+
+### `warm()` { #resolverwarm }
+
+```python
+r.warm() -> None
+```
+
+Build all lazily-constructed indexes now and block until they are ready. Idempotent — calling it again when indexes are already built returns immediately. Thread-safe.
+
+By default, `Resolver` construction starts a background daemon thread that pre-builds the SymSpell typo index (see the `warm=` [shared option](#shared-options)). Call `warm()` when you need the resolver to be fully ready before processing begins — for example, in server startup or before a batch pipeline runs.
+
+```python
+from resolvekit import Resolver
+
+r = Resolver.auto()
+r.warm()            # block here until all indexes are ready
+r.resolve("France")   # no index-build latency
+```
+
+To warm the module-level singleton, use [`rk.warm()`](api.md#warm).
 
 ---
 

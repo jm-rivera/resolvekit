@@ -66,6 +66,8 @@ The pipeline runs several sources in order and merges the results before scoring
 
 **SymSpell typo correction** — generates spelling corrections for the input before re-running exact and name lookups. `"Germny"` → corrected to `"germany"` → hits exact_name for `country/DEU`. The corrected form still shows `exact_name` as the match tier because the corrected string matched the canonical name exactly; the SymSpell step is the source, not the tier.
 
+The SymSpell index is built lazily: it is constructed the first time a query reaches the fuzzy tier, not during `Resolver` construction. On installs with the remote data tiers (admin2–admin5, cities), the 706k-term dictionary takes ~6 seconds to build. By default, `Resolver` construction starts a background thread that pre-builds the index so this cost does not land on a query. Call [`rk.warm()`](../reference/api.md#warm) or [`Resolver.warm()`](../reference/resolver.md#resolverwarm) to build all indexes synchronously before processing begins. Pass `warm=False` to any constructor to keep the original fully-lazy behavior.
+
 When an exact-code or exact-name hit is found, the pipeline stops generating candidates — there's no point running fuzzy after a certain match.
 
 ## Point-in-time filter (as_of)

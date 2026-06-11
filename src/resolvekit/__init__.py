@@ -56,6 +56,7 @@ from resolvekit._convenience import (
     resolve_id,
     snap,
     to,
+    warm,
 )
 
 # Re-exports excluded from __all__ — importable but not surfaced via star-import.
@@ -132,4 +133,5 @@ __all__ = [
     "resolve_id",
     "snap",
     "to",
+    "warm",
 ]

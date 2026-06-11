@@ -941,6 +941,72 @@ class TestSymSpellRaceAndFailure:
             Path(dict_path).unlink(missing_ok=True)
 
 
+class TestAfterForkReset:
+    """The after-fork hook must free inherited build locks in the child.
+
+    A fork while another thread (e.g. the background warm-up) holds a source's
+    build lock would otherwise leave the child's lock permanently held.  The
+    hook is exercised directly — a real mid-build fork cannot be orchestrated
+    deterministically.
+    """
+
+    def test_inflight_build_state_reset(self):
+        """A source forked mid-build gets a fresh lock and rebuilds from scratch."""
+        from resolvekit.shared.sources.symspell_base import (
+            SymSpellSource,
+            _reset_sources_after_fork,
+        )
+
+        source = SymSpellSource(name="fork_test", domain="x")
+        # Simulate the state a child inherits from a parent forked mid-build:
+        # lock held by a (now nonexistent) thread, build attempted, not built.
+        source._build_lock.acquire()
+        source._build_attempted = True
+        source._sym_spell = object()  # half-built sentinel
+
+        _reset_sources_after_fork()
+
+        assert source._build_lock.acquire(blocking=False), (
+            "Child must get a fresh, unheld build lock"
+        )
+        source._build_lock.release()
+        assert source._build_attempted is False
+        assert source._sym_spell is None, "Half-built index must be discarded"
+
+    def test_built_index_kept(self):
+        """A fully built index is immutable and survives the fork reset."""
+        pytest = __import__("pytest")
+        pytest.importorskip("symspellpy")
+
+        from resolvekit.shared.sources.symspell_base import (
+            SymSpellSource,
+            _reset_sources_after_fork,
+        )
+
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False) as f:
+            f.write("france\t100\n")
+            dict_path = f.name
+
+        try:
+            source = SymSpellSource(
+                name="fork_test_built", domain="x", dictionary_path=dict_path
+            )
+            source.warm()
+            assert source._built is True
+            built_instance = source._sym_spell
+
+            _reset_sources_after_fork()
+
+            assert source._built is True
+            assert source._sym_spell is built_instance, (
+                "A complete index must not be discarded by the fork reset"
+            )
+            assert source._build_lock.acquire(blocking=False)
+            source._build_lock.release()
+        finally:
+            Path(dict_path).unlink(missing_ok=True)
+
+
 class TestLitePreset:
     """Tests for Resolver.lite() convenience constructor."""
 
@@ -977,10 +1043,14 @@ class TestLitePreset:
             r.close()
 
     def test_lite_no_symspell_at_construction(self):
-        """Resolver.lite() must not build the SymSpell index at construction time."""
+        """Resolver.lite() must not build the SymSpell index at construction time.
+
+        warm=False opts out of the background warm-up thread, which would
+        otherwise build the index shortly after construction by design.
+        """
         from resolvekit.core.api.resolver import Resolver
 
-        r = Resolver.lite()
+        r = Resolver.lite(warm=False)
         try:
             runner = r._runner
             # Look for the geo_symspell source and verify index not built yet.

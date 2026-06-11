@@ -340,6 +340,14 @@ class CandidateSource(ABC):
         """Whether this source needs existing candidates (e.g., fuzzy rerankers)."""
         return False
 
+    def warm(self) -> None:  # noqa: B027 — intentional no-op default; subclasses override to build indexes
+        """Eagerly build any lazily-constructed internal index.
+
+        Default is a no-op. Sources with expensive lazy initialization
+        (e.g. SymSpell dictionary indexes) override this to build now,
+        idempotently and thread-safely.
+        """
+
     @abstractmethod
     def generate(self, ctx: GenerationContext) -> list[CandidateEvidence]:
         """Generate candidate evidence.

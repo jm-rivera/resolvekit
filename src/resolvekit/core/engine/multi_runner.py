@@ -152,6 +152,11 @@ class MultiPackRunner:
         )
         self._view = StoreView(list(self._stores.items()))
 
+    def warm(self) -> None:
+        """Eagerly build all lazily-constructed source indexes across every pack runner."""
+        for runner in self._runners.values():
+            runner.warm()
+
     def close(self) -> None:
         """Close all stores owned by this runner."""
         for store in self._stores.values():
