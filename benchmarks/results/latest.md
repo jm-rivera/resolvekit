@@ -1,4 +1,4 @@
-# resolvekit benchmark — 2026-06-10
+# resolvekit benchmark — 2026-06-11
 
 Hardware: arm, 18 cores, 49,152 MB RAM, Python 3.12.13.
 Warmup: 100 queries discarded. Seed: 42.
@@ -24,15 +24,15 @@ _resolvekit_typed passes entity_type + language hints from the dataset; scores r
 
 | tool | version | accuracy | acc CI | coverage | wrong-match | abst P | p50 ms | p95 ms | qps | mem MB | wheel MB | data MB |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| country_converter | 1.3.2 | 0.913 | [0.73, 0.98] | 48.3% | 0.000 | 0.000 | 0.1 | 0.1 | 9410.5 | 115.5 | 0.1 | — |
-| countryguess | 0.4.9 | 0.957 | [0.79, 0.99] | 48.3% | 0.000 | 0.000 | 0.0 | 0.1 | 33550.1 | 113.7 | 0.3 | — |
-| data_commons_resolve | 2.1.6 | 0.909 | [0.79, 0.96] | 93.1% | 0.023 | 0.000 | 0.2 | 0.4 | 4438.1 | 125.8 | 0.3 | — |
-| geonamescache | 3.0.1 | 0.536 | [0.36, 0.70] | 60.3% | 0.214 | 0.000 | 0.0 | 73.9 | 63.0 | 190.8 | 164.7 | — |
-| hdx_python_country | 4.1.1 | 1.000 | [0.86, 1.00] | 48.3% | 0.000 | 0.000 | 0.0 | 4.9 | 2024.8 | 177.2 | 0.2 | — |
-| pycountry | 26.2.16 | 0.652 | [0.45, 0.81] | 48.3% | 0.000 | 0.000 | 0.0 | 0.0 | 422988.7 | 112.7 | 20.1 | — |
-| rapidfuzz_dict | 3.14.5 | 0.783 | [0.58, 0.90] | 48.3% | 0.217 | 0.000 | 0.2 | 0.3 | 5206.3 | 113.0 | 4.1 | — |
-| resolvekit | 0.1.0 | 0.872 | [0.75, 0.94] | 100.0% | 0.000 | 0.000 | 2.1 | 3.4 | 509.6 | 1140.2 | 9.5 | 807.3 |
-| resolvekit_typed | 0.1.0 | 0.915 | [0.80, 0.97] | 100.0% | 0.000 | 0.000 | 1.9 | 3.0 | 562.9 | 174.2 | 9.5 | 807.3 |
+| country_converter | 1.3.2 | 0.913 | [0.73, 0.98] | 48.3% | 0.000 | 0.000 | 0.1 | 0.1 | 9342.8 | 115.6 | 0.1 | — |
+| countryguess | 0.4.9 | 0.957 | [0.79, 0.99] | 48.3% | 0.000 | 0.000 | 0.0 | 0.1 | 32641.5 | 113.3 | 0.3 | — |
+| data_commons_resolve | 2.1.6 | 0.909 | [0.79, 0.96] | 93.1% | 0.023 | 0.000 | 0.0 | 0.2 | 12578.3 | 125.9 | 0.3 | — |
+| geonamescache | 3.0.1 | 0.536 | [0.36, 0.70] | 60.3% | 0.214 | 0.000 | 0.0 | 68.4 | 68.3 | 190.8 | 164.7 | — |
+| hdx_python_country | 4.1.1 | 1.000 | [0.86, 1.00] | 48.3% | 0.000 | 0.000 | 0.0 | 4.9 | 2057.5 | 177.3 | 0.2 | — |
+| pycountry | 26.2.16 | 0.652 | [0.45, 0.81] | 48.3% | 0.000 | 0.000 | 0.0 | 0.0 | 342216.0 | 112.6 | 20.1 | — |
+| rapidfuzz_dict | 3.14.5 | 0.783 | [0.58, 0.90] | 48.3% | 0.217 | 0.000 | 0.2 | 0.4 | 4747.6 | 112.9 | 4.1 | — |
+| resolvekit | 0.1.2 | 0.872 | [0.75, 0.94] | 100.0% | 0.000 | 0.000 | 2.3 | 3.3 | 463.4 | 1139.5 | 9.6 | 807.3 |
+| resolvekit_typed | 0.1.2 | 0.915 | [0.80, 0.97] | 100.0% | 0.000 | 0.000 | 2.2 | 3.6 | 477.7 | 174.0 | 9.6 | 807.3 |
 
 #### recall metrics
 
@@ -82,15 +82,15 @@ _resolvekit_typed passes entity_type + language hints from the dataset; scores r
 
 | tool | version | accuracy | acc CI | coverage | wrong-match | abst P | p50 ms | p95 ms | qps | mem MB | wheel MB | data MB |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| country_converter | 1.3.2 | 0.700 | [0.40, 0.89] | 23.6% | 0.000 | 0.250 | 0.1 | n/a | 12365.4 | 115.5 | 0.1 | — |
-| countryguess | 0.4.9 | 0.800 | [0.49, 0.94] | 23.6% | 0.100 | 0.500 | 0.0 | n/a | 11227.0 | 113.7 | 0.3 | — |
-| data_commons_resolve | 2.1.6 | 0.763 | [0.70, 0.82] | 65.7% | 0.092 | 0.281 | 0.1 | 0.2 | 7214.1 | 125.8 | 0.3 | — |
-| geonamescache | 3.0.1 | 0.280 | [0.20, 0.37] | 42.8% | 0.330 | 0.188 | 0.0 | 73.2 | 31.7 | 190.8 | 164.7 | — |
-| hdx_python_country | 4.1.1 | 0.800 | [0.49, 0.94] | 23.6% | 0.000 | 0.333 | 0.1 | n/a | 421.9 | 177.2 | 0.2 | — |
-| pycountry | 26.2.16 | 0.500 | [0.24, 0.76] | 23.6% | 0.000 | 0.167 | 0.0 | n/a | 423279.8 | 112.7 | 20.1 | — |
-| rapidfuzz_dict | 3.14.5 | 0.600 | [0.31, 0.83] | 23.6% | 0.400 | 0.000 | 0.2 | n/a | 4347.7 | 113.0 | 4.1 | — |
-| resolvekit | 0.1.0 | 0.888 | [0.85, 0.92] | 100.0% | 0.049 | 0.538 | 0.5 | 2.6 | 1142.8 | 1140.2 | 9.5 | 807.3 |
-| resolvekit_typed | 0.1.0 | 0.913 | [0.88, 0.94] | 100.0% | 0.025 | 0.423 | 0.3 | 2.3 | 602.0 | 174.2 | 9.5 | 807.3 |
+| country_converter | 1.3.2 | 0.700 | [0.40, 0.89] | 23.6% | 0.000 | 0.250 | 0.1 | n/a | 11116.8 | 115.6 | 0.1 | — |
+| countryguess | 0.4.9 | 0.800 | [0.49, 0.94] | 23.6% | 0.100 | 0.500 | 0.0 | n/a | 11155.0 | 113.3 | 0.3 | — |
+| data_commons_resolve | 2.1.6 | 0.763 | [0.70, 0.82] | 65.7% | 0.092 | 0.281 | 0.1 | 0.2 | 8552.3 | 125.9 | 0.3 | — |
+| geonamescache | 3.0.1 | 0.280 | [0.20, 0.37] | 42.8% | 0.330 | 0.188 | 0.0 | 70.0 | 33.2 | 190.8 | 164.7 | — |
+| hdx_python_country | 4.1.1 | 0.800 | [0.49, 0.94] | 23.6% | 0.000 | 0.333 | 0.1 | n/a | 451.6 | 177.3 | 0.2 | — |
+| pycountry | 26.2.16 | 0.500 | [0.24, 0.76] | 23.6% | 0.000 | 0.167 | 0.0 | n/a | 305343.4 | 112.6 | 20.1 | — |
+| rapidfuzz_dict | 3.14.5 | 0.600 | [0.31, 0.83] | 23.6% | 0.400 | 0.000 | 0.2 | n/a | 4457.3 | 112.9 | 4.1 | — |
+| resolvekit | 0.1.2 | 0.886 | [0.85, 0.91] | 100.0% | 0.052 | 0.538 | 0.5 | 2.5 | 1190.4 | 1139.5 | 9.6 | 807.3 |
+| resolvekit_typed | 0.1.2 | 0.913 | [0.88, 0.94] | 100.0% | 0.025 | 0.423 | 0.3 | 2.4 | 1422.4 | 174.0 | 9.6 | 807.3 |
 
 #### recall metrics
 
@@ -103,7 +103,7 @@ _resolvekit_typed passes entity_type + language hints from the dataset; scores r
 | hdx_python_country | 1.000 | 1.000 |
 | pycountry | 1.000 | 0.750 |
 | rapidfuzz_dict | 0.000 | 0.750 |
-| resolvekit | 0.824 | 0.906 |
+| resolvekit | 0.824 | 0.894 |
 | resolvekit_typed | 0.647 | 0.929 |
 
 #### per-capability accuracy
@@ -131,7 +131,7 @@ _resolvekit_typed passes entity_type + language hints from the dataset; scores r
 | hdx_python_country | — | — | — | — | — | — | — | — | 0.800 (n=10) | — |
 | pycountry | — | — | — | — | — | — | — | — | 0.500 (n=10) | — |
 | rapidfuzz_dict | — | — | — | — | — | — | — | — | 0.600 (n=10) | — |
-| resolvekit | 0.782 (n=55) | 0.969 (n=32) | 0.818 (n=33) | 0.906 (n=32) | 0.886 (n=35) | 0.889 (n=72) | 1.000 (n=7) | 1.000 (n=9) | 0.964 (n=83) | 0.556 (n=9) |
+| resolvekit | 0.782 (n=55) | 0.969 (n=32) | 0.818 (n=33) | 0.875 (n=32) | 0.886 (n=35) | 0.889 (n=72) | 1.000 (n=7) | 1.000 (n=9) | 0.964 (n=83) | 0.556 (n=9) |
 | resolvekit_typed | 0.818 (n=55) | 0.938 (n=32) | 0.848 (n=33) | 0.938 (n=32) | 0.971 (n=35) | 0.889 (n=72) | 1.000 (n=7) | 1.000 (n=9) | 0.952 (n=83) | 1.000 (n=9) |
 
 ### eval_org
@@ -140,8 +140,8 @@ _resolvekit_typed passes entity_type + language hints from the dataset; scores r
 
 | tool | version | accuracy | acc CI | coverage | wrong-match | abst P | p50 ms | p95 ms | qps | mem MB | wheel MB | data MB |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| resolvekit | 0.1.0 | 0.750 | [0.53, 0.89] | 100.0% | 0.100 | 1.000 | 0.8 | 3.7 | 675.0 | 1140.2 | 9.5 | 807.3 |
-| resolvekit_typed | 0.1.0 | 0.750 | [0.53, 0.89] | 100.0% | 0.100 | 1.000 | 0.8 | 2.7 | 859.8 | 174.2 | 9.5 | 807.3 |
+| resolvekit | 0.1.2 | 0.750 | [0.53, 0.89] | 100.0% | 0.100 | 1.000 | 0.9 | 3.4 | 694.8 | 1139.5 | 9.6 | 807.3 |
+| resolvekit_typed | 0.1.2 | 0.750 | [0.53, 0.89] | 100.0% | 0.100 | 1.000 | 0.9 | 3.2 | 735.4 | 174.0 | 9.6 | 807.3 |
 | country_converter | *skipped (scope: supports ['country'], dataset has ['org'])* | — | — | — | — | — | — | — | — | — | — | — |
 | countryguess | *skipped (scope: supports ['country'], dataset has ['org'])* | — | — | — | — | — | — | — | — | — | — | — |
 | geonamescache | *skipped (scope: supports ['city', 'country'], dataset has ['org'])* | — | — | — | — | — | — | — | — | — | — | — |
@@ -176,9 +176,9 @@ _resolvekit_typed passes entity_type + language hints from the dataset; scores r
 
 | tool | version | accuracy | acc CI | coverage | wrong-match | abst P | p50 ms | p95 ms | qps | mem MB | wheel MB | data MB |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| data_commons_resolve | 2.1.6 | 0.598 | [0.58, 0.62] | 80.7% | 0.146 | 0.000 | 522.9 | 882.0 | 1.9 | 125.8 | 0.3 | — |
-| resolvekit | 0.1.0 | 0.935 | [0.92, 0.94] | 100.0% | 0.043 | 0.000 | 0.6 | 3.3 | 874.0 | 1140.2 | 9.5 | 807.3 |
-| resolvekit_typed | 0.1.0 | 0.977 | [0.97, 0.98] | 100.0% | 0.001 | 0.000 | 0.2 | 1.4 | 1683.5 | 174.2 | 9.5 | 807.3 |
+| data_commons_resolve | 2.1.6 | 0.598 | [0.58, 0.62] | 80.7% | 0.146 | 0.000 | 0.1 | 0.2 | 8970.8 | 125.9 | 0.3 | — |
+| resolvekit | 0.1.2 | 0.934 | [0.92, 0.94] | 100.0% | 0.043 | 0.000 | 0.5 | 2.7 | 937.6 | 1139.5 | 9.6 | 807.3 |
+| resolvekit_typed | 0.1.2 | 0.977 | [0.97, 0.98] | 100.0% | 0.001 | 0.000 | 0.2 | 1.5 | 2141.5 | 174.0 | 9.6 | 807.3 |
 | country_converter | *skipped (scope: supports ['country'], dataset has ['admin1', 'admin2', 'admin3'])* | — | — | — | — | — | — | — | — | — | — | — |
 | countryguess | *skipped (scope: supports ['country'], dataset has ['admin1', 'admin2', 'admin3'])* | — | — | — | — | — | — | — | — | — | — | — |
 | geonamescache | *skipped (scope: supports ['city', 'country'], dataset has ['admin1', 'admin2', 'admin3'])* | — | — | — | — | — | — | — | — | — | — | — |
@@ -199,7 +199,7 @@ _resolvekit_typed passes entity_type + language hints from the dataset; scores r
 | tool | alias | typo |
 |---|---|---|
 | data_commons_resolve | 0.725 | 0.419 |
-| resolvekit | 0.934 | 0.927 |
+| resolvekit | 0.934 | 0.926 |
 | resolvekit_typed | 0.934 | 0.972 |
 
 #### per-entity-type accuracy
@@ -207,7 +207,7 @@ _resolvekit_typed passes entity_type + language hints from the dataset; scores r
 | tool | admin1 | admin2 | admin3 |
 |---|---|---|---|
 | data_commons_resolve | 0.652 (n=781) | 0.564 (n=1,264) | — |
-| resolvekit | 0.960 (n=791) | 0.921 (n=1,278) | 0.930 (n=488) |
+| resolvekit | 0.957 (n=791) | 0.921 (n=1,278) | 0.930 (n=488) |
 | resolvekit_typed | 0.980 (n=791) | 0.973 (n=1,278) | 0.986 (n=488) |
 
 ### geo_cities
@@ -216,10 +216,10 @@ _resolvekit_typed passes entity_type + language hints from the dataset; scores r
 
 | tool | version | accuracy | acc CI | coverage | wrong-match | abst P | p50 ms | p95 ms | qps | mem MB | wheel MB | data MB |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| data_commons_resolve | 2.1.6 | 0.502 | [0.48, 0.52] | 100.0% | 0.198 | 0.000 | 493.2 | 998.1 | 2.0 | 125.8 | 0.3 | — |
-| geonamescache | 3.0.1 | 0.000 | [0.00, 0.00] | 100.0% | 0.154 | 0.000 | 69.7 | 73.2 | 14.2 | 190.8 | 164.7 | — |
-| resolvekit | 0.1.0 | 0.858 | [0.84, 0.87] | 100.0% | 0.010 | 0.000 | 0.6 | 2.8 | 1063.4 | 1140.2 | 9.5 | 807.3 |
-| resolvekit_typed | 0.1.0 | 0.862 | [0.85, 0.88] | 100.0% | 0.005 | 0.000 | 0.5 | 2.5 | 1021.7 | 174.2 | 9.5 | 807.3 |
+| data_commons_resolve | 2.1.6 | 0.502 | [0.48, 0.52] | 100.0% | 0.198 | 0.000 | 0.1 | 0.2 | 9588.7 | 125.9 | 0.3 | — |
+| geonamescache | 3.0.1 | 0.000 | [0.00, 0.00] | 100.0% | 0.154 | 0.000 | 68.8 | 73.2 | 14.3 | 190.8 | 164.7 | — |
+| resolvekit | 0.1.2 | 0.858 | [0.84, 0.87] | 100.0% | 0.011 | 0.000 | 0.6 | 2.4 | 1129.8 | 1139.5 | 9.6 | 807.3 |
+| resolvekit_typed | 0.1.2 | 0.862 | [0.85, 0.88] | 100.0% | 0.005 | 0.000 | 0.5 | 2.6 | 1213.6 | 174.0 | 9.6 | 807.3 |
 | country_converter | *skipped (scope: supports ['country'], dataset has ['city'])* | — | — | — | — | — | — | — | — | — | — | — |
 | countryguess | *skipped (scope: supports ['country'], dataset has ['city'])* | — | — | — | — | — | — | — | — | — | — | — |
 | hdx_python_country | *skipped (scope: supports ['country'], dataset has ['city'])* | — | — | — | — | — | — | — | — | — | — | — |
@@ -241,7 +241,7 @@ _resolvekit_typed passes entity_type + language hints from the dataset; scores r
 |---|---|---|
 | data_commons_resolve | 0.787 | 0.201 |
 | geonamescache | 0.000 | 0.000 |
-| resolvekit | 0.985 | 0.832 |
+| resolvekit | 0.985 | 0.833 |
 | resolvekit_typed | 0.985 | 0.837 |
 
 #### per-entity-type accuracy
@@ -259,15 +259,15 @@ _resolvekit_typed passes entity_type + language hints from the dataset; scores r
 
 | tool | version | accuracy | acc CI | coverage | wrong-match | abst P | p50 ms | p95 ms | qps | mem MB | wheel MB | data MB |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| country_converter | 1.3.2 | 0.566 | [0.55, 0.58] | 100.0% | 0.025 | 0.000 | 0.1 | 0.2 | 8239.8 | 115.5 | 0.1 | — |
-| countryguess | 0.4.9 | 0.675 | [0.66, 0.69] | 100.0% | 0.038 | 0.000 | 0.1 | 0.3 | 9165.3 | 113.7 | 0.3 | — |
-| data_commons_resolve | 2.1.6 | 0.625 | [0.61, 0.64] | 100.0% | 0.047 | 0.000 | 0.5 | 855.5 | 4.4 | 125.8 | 0.3 | — |
-| geonamescache | 3.0.1 | 0.057 | [0.05, 0.07] | 100.0% | 0.000 | 0.000 | 0.0 | 0.0 | 1320596.1 | 190.8 | 164.7 | — |
-| hdx_python_country | 4.1.1 | 0.642 | [0.63, 0.66] | 100.0% | 0.042 | 0.000 | 0.1 | 5.7 | 502.6 | 177.2 | 0.2 | — |
-| pycountry | 26.2.16 | 0.099 | [0.09, 0.11] | 100.0% | 0.001 | 0.000 | 0.0 | 0.0 | 347380.3 | 112.7 | 20.1 | — |
-| rapidfuzz_dict | 3.14.5 | 0.469 | [0.45, 0.48] | 100.0% | 0.507 | 0.000 | 0.3 | 0.5 | 3212.3 | 113.0 | 4.1 | — |
-| resolvekit | 0.1.0 | 0.793 | [0.78, 0.81] | 100.0% | 0.039 | 0.000 | 0.8 | 5.1 | 698.3 | 1140.2 | 9.5 | 807.3 |
-| resolvekit_typed | 0.1.0 | 0.794 | [0.78, 0.81] | 100.0% | 0.010 | 0.000 | 0.4 | 1.3 | 2048.1 | 174.2 | 9.5 | 807.3 |
+| country_converter | 1.3.2 | 0.566 | [0.55, 0.58] | 100.0% | 0.025 | 0.000 | 0.1 | 0.2 | 7522.0 | 115.6 | 0.1 | — |
+| countryguess | 0.4.9 | 0.675 | [0.66, 0.69] | 100.0% | 0.038 | 0.000 | 0.1 | 0.3 | 9143.1 | 113.3 | 0.3 | — |
+| data_commons_resolve | 2.1.6 | 0.625 | [0.61, 0.64] | 100.0% | 0.047 | 0.000 | 0.1 | 0.2 | 8118.0 | 125.9 | 0.3 | — |
+| geonamescache | 3.0.1 | 0.057 | [0.05, 0.07] | 100.0% | 0.000 | 0.000 | 0.0 | 0.0 | 1290117.3 | 190.8 | 164.7 | — |
+| hdx_python_country | 4.1.1 | 0.642 | [0.63, 0.66] | 100.0% | 0.042 | 0.000 | 0.1 | 5.8 | 493.3 | 177.3 | 0.2 | — |
+| pycountry | 26.2.16 | 0.099 | [0.09, 0.11] | 100.0% | 0.001 | 0.000 | 0.0 | 0.0 | 296705.5 | 112.6 | 20.1 | — |
+| rapidfuzz_dict | 3.14.5 | 0.469 | [0.45, 0.48] | 100.0% | 0.507 | 0.000 | 0.3 | 0.6 | 2989.6 | 112.9 | 4.1 | — |
+| resolvekit | 0.1.2 | 0.803 | [0.79, 0.82] | 100.0% | 0.038 | 0.000 | 0.8 | 2.9 | 942.2 | 1139.5 | 9.6 | 807.3 |
+| resolvekit_typed | 0.1.2 | 0.801 | [0.79, 0.81] | 100.0% | 0.012 | 0.000 | 0.4 | 1.4 | 1893.9 | 174.0 | 9.6 | 807.3 |
 
 #### recall metrics
 
@@ -294,8 +294,8 @@ _resolvekit_typed passes entity_type + language hints from the dataset; scores r
 | hdx_python_country | 0.644 | 0.665 | 0.389 | 0.599 | 0.791 |
 | pycountry | 0.195 | 0.012 | 0.000 | 0.009 | 0.000 |
 | rapidfuzz_dict | 0.442 | 0.449 | 0.188 | 0.443 | 0.573 |
-| resolvekit | 0.911 | 0.639 | 0.401 | 0.727 | 0.996 |
-| resolvekit_typed | 0.901 | 0.656 | 0.435 | 0.736 | 0.987 |
+| resolvekit | 0.918 | 0.660 | 0.426 | 0.741 | 0.996 |
+| resolvekit_typed | 0.901 | 0.671 | 0.466 | 0.746 | 0.985 |
 
 #### per-entity-type accuracy
 
@@ -308,8 +308,8 @@ _resolvekit_typed passes entity_type + language hints from the dataset; scores r
 | hdx_python_country | 0.642 (n=4,055) |
 | pycountry | 0.099 (n=4,055) |
 | rapidfuzz_dict | 0.469 (n=4,055) |
-| resolvekit | 0.793 (n=4,055) |
-| resolvekit_typed | 0.794 (n=4,055) |
+| resolvekit | 0.803 (n=4,055) |
+| resolvekit_typed | 0.801 (n=4,055) |
 
 ### geo_countries_multilingual
 
@@ -317,15 +317,15 @@ _resolvekit_typed passes entity_type + language hints from the dataset; scores r
 
 | tool | version | accuracy | acc CI | coverage | wrong-match | abst P | p50 ms | p95 ms | qps | mem MB | wheel MB | data MB |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| country_converter | 1.3.2 | 0.419 | [0.40, 0.44] | 100.0% | 0.025 | 0.000 | 0.1 | 0.2 | 10052.7 | 115.5 | 0.1 | — |
-| countryguess | 0.4.9 | 0.512 | [0.49, 0.53] | 100.0% | 0.029 | 0.000 | 0.1 | 0.4 | 6769.6 | 113.7 | 0.3 | — |
-| data_commons_resolve | 2.1.6 | 0.827 | [0.81, 0.84] | 100.0% | 0.029 | 0.000 | 0.1 | 0.2 | 8095.9 | 125.8 | 0.3 | — |
-| geonamescache | 3.0.1 | 0.148 | [0.13, 0.16] | 100.0% | 0.002 | 0.000 | 0.0 | 0.0 | 1294420.1 | 190.8 | 164.7 | — |
-| hdx_python_country | 4.1.1 | 0.565 | [0.54, 0.59] | 100.0% | 0.084 | 0.000 | 0.1 | 5.9 | 411.7 | 177.2 | 0.2 | — |
-| pycountry | 26.2.16 | 0.143 | [0.13, 0.16] | 100.0% | 0.002 | 0.000 | 0.0 | 0.0 | 406483.5 | 112.7 | 20.1 | — |
-| rapidfuzz_dict | 3.14.5 | 0.370 | [0.35, 0.39] | 100.0% | 0.495 | 0.000 | 0.3 | 0.6 | 3024.5 | 113.0 | 4.1 | — |
-| resolvekit | 0.1.0 | 0.632 | [0.61, 0.65] | 100.0% | 0.027 | 0.000 | 0.4 | 2.2 | 1276.2 | 1140.2 | 9.5 | 807.3 |
-| resolvekit_typed | 0.1.0 | 0.614 | [0.59, 0.63] | 100.0% | 0.006 | 0.000 | 0.3 | 1.3 | 1559.1 | 174.2 | 9.5 | 807.3 |
+| country_converter | 1.3.2 | 0.419 | [0.40, 0.44] | 100.0% | 0.025 | 0.000 | 0.1 | 0.2 | 9307.5 | 115.6 | 0.1 | — |
+| countryguess | 0.4.9 | 0.512 | [0.49, 0.53] | 100.0% | 0.029 | 0.000 | 0.1 | 0.3 | 6813.4 | 113.3 | 0.3 | — |
+| data_commons_resolve | 2.1.6 | 0.827 | [0.81, 0.84] | 100.0% | 0.029 | 0.000 | 0.1 | 0.2 | 8684.1 | 125.9 | 0.3 | — |
+| geonamescache | 3.0.1 | 0.148 | [0.13, 0.16] | 100.0% | 0.002 | 0.000 | 0.0 | 0.0 | 1296806.2 | 190.8 | 164.7 | — |
+| hdx_python_country | 4.1.1 | 0.565 | [0.54, 0.59] | 100.0% | 0.084 | 0.000 | 0.1 | 5.9 | 404.0 | 177.3 | 0.2 | — |
+| pycountry | 26.2.16 | 0.143 | [0.13, 0.16] | 100.0% | 0.002 | 0.000 | 0.0 | 0.0 | 353970.1 | 112.6 | 20.1 | — |
+| rapidfuzz_dict | 3.14.5 | 0.370 | [0.35, 0.39] | 100.0% | 0.495 | 0.000 | 0.3 | 0.7 | 2786.3 | 112.9 | 4.1 | — |
+| resolvekit | 0.1.2 | 0.635 | [0.61, 0.65] | 100.0% | 0.025 | 0.000 | 0.5 | 2.2 | 1337.4 | 1139.5 | 9.6 | 807.3 |
+| resolvekit_typed | 0.1.2 | 0.614 | [0.59, 0.63] | 100.0% | 0.007 | 0.000 | 0.3 | 1.3 | 2079.3 | 174.0 | 9.6 | 807.3 |
 
 #### recall metrics
 
@@ -352,8 +352,8 @@ _resolvekit_typed passes entity_type + language hints from the dataset; scores r
 | hdx_python_country | 0.451 | 0.800 | 0.565 |
 | pycountry | 0.036 | 0.400 | 0.142 |
 | rapidfuzz_dict | 0.311 | 0.600 | 0.370 |
-| resolvekit | 0.449 | 0.800 | 0.631 |
-| resolvekit_typed | 0.446 | 0.800 | 0.614 |
+| resolvekit | 0.454 | 0.800 | 0.634 |
+| resolvekit_typed | 0.446 | 0.800 | 0.613 |
 
 #### per-entity-type accuracy
 
@@ -366,7 +366,7 @@ _resolvekit_typed passes entity_type + language hints from the dataset; scores r
 | hdx_python_country | 0.565 (n=2,140) |
 | pycountry | 0.143 (n=2,140) |
 | rapidfuzz_dict | 0.370 (n=2,140) |
-| resolvekit | 0.632 (n=2,140) |
+| resolvekit | 0.635 (n=2,140) |
 | resolvekit_typed | 0.614 (n=2,140) |
 
 ### no_match
@@ -375,15 +375,15 @@ _resolvekit_typed passes entity_type + language hints from the dataset; scores r
 
 | tool | version | accuracy | acc CI | coverage | wrong-match | abst P | p50 ms | p95 ms | qps | mem MB | wheel MB | data MB |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| country_converter | 1.3.2 | 1.000 | [0.90, 1.00] | 100.0% | 0.000 | 1.000 | 0.0 | 0.3 | 6119.4 | 115.5 | 0.1 | — |
-| countryguess | 0.4.9 | 0.943 | [0.81, 0.98] | 100.0% | 0.057 | 1.000 | 0.2 | 0.3 | 6186.7 | 113.7 | 0.3 | — |
-| data_commons_resolve | 2.1.6 | 0.971 | [0.85, 0.99] | 100.0% | 0.029 | 1.000 | 0.2 | 0.4 | 4153.1 | 125.8 | 0.3 | — |
-| geonamescache | 3.0.1 | 1.000 | [0.90, 1.00] | 100.0% | 0.000 | 1.000 | 0.0 | 0.0 | 1448255.5 | 190.8 | 164.7 | — |
-| hdx_python_country | 4.1.1 | 1.000 | [0.90, 1.00] | 100.0% | 0.000 | 1.000 | 5.6 | 5.9 | 257.3 | 177.2 | 0.2 | — |
-| pycountry | 26.2.16 | 1.000 | [0.90, 1.00] | 100.0% | 0.000 | 1.000 | 0.0 | 0.0 | 432986.0 | 112.7 | 20.1 | — |
-| rapidfuzz_dict | 3.14.5 | 0.200 | [0.10, 0.36] | 100.0% | 0.800 | 1.000 | 0.3 | 0.6 | 2712.3 | 113.0 | 4.1 | — |
-| resolvekit | 0.1.0 | 0.771 | [0.61, 0.88] | 100.0% | 0.086 | 1.000 | 0.0 | 2.9 | 1655.1 | 1140.2 | 9.5 | 807.3 |
-| resolvekit_typed | 0.1.0 | 0.914 | [0.78, 0.97] | 100.0% | 0.086 | 1.000 | 0.0 | 1.7 | 3359.3 | 174.2 | 9.5 | 807.3 |
+| country_converter | 1.3.2 | 1.000 | [0.90, 1.00] | 100.0% | 0.000 | 1.000 | 0.1 | 0.3 | 9410.0 | 115.6 | 0.1 | — |
+| countryguess | 0.4.9 | 0.943 | [0.81, 0.98] | 100.0% | 0.057 | 1.000 | 0.2 | 0.2 | 6178.1 | 113.3 | 0.3 | — |
+| data_commons_resolve | 2.1.6 | 0.971 | [0.85, 0.99] | 100.0% | 0.029 | 1.000 | 0.2 | 0.3 | 4424.4 | 125.9 | 0.3 | — |
+| geonamescache | 3.0.1 | 1.000 | [0.90, 1.00] | 100.0% | 0.000 | 1.000 | 0.0 | 0.0 | 1383891.7 | 190.8 | 164.7 | — |
+| hdx_python_country | 4.1.1 | 1.000 | [0.90, 1.00] | 100.0% | 0.000 | 1.000 | 5.2 | 5.4 | 273.6 | 177.3 | 0.2 | — |
+| pycountry | 26.2.16 | 1.000 | [0.90, 1.00] | 100.0% | 0.000 | 1.000 | 0.0 | 0.0 | 381820.9 | 112.6 | 20.1 | — |
+| rapidfuzz_dict | 3.14.5 | 0.200 | [0.10, 0.36] | 100.0% | 0.800 | 1.000 | 0.3 | 0.6 | 2574.4 | 112.9 | 4.1 | — |
+| resolvekit | 0.1.2 | 0.771 | [0.61, 0.88] | 100.0% | 0.086 | 1.000 | 0.0 | 2.4 | 1910.6 | 1139.5 | 9.6 | 807.3 |
+| resolvekit_typed | 0.1.2 | 0.914 | [0.78, 0.97] | 100.0% | 0.086 | 1.000 | 0.0 | 1.8 | 3084.4 | 174.0 | 9.6 | 807.3 |
 
 #### recall metrics
 
@@ -454,7 +454,7 @@ Each sub-table is scoped to a single dataset so comparisons are like-for-like. C
 | tool | accuracy | n | wrong-match |
 |---|---|---|---|
 | data_commons_resolve | 0.652 | 781 | 0.119 |
-| resolvekit | 0.960 | 791 | 0.030 |
+| resolvekit | 0.957 | 791 | 0.030 |
 | resolvekit_typed | 0.980 | 791 | 0.000 |
 
 ### admin2
@@ -519,7 +519,7 @@ Each sub-table is scoped to a single dataset so comparisons are like-for-like. C
 
 | tool | accuracy | n | wrong-match |
 |---|---|---|---|
-| resolvekit | 0.906 | 32 | 0.031 |
+| resolvekit | 0.875 | 32 | 0.062 |
 | resolvekit_typed | 0.938 | 32 | 0.000 |
 
 ### admin5
@@ -557,7 +557,7 @@ Each sub-table is scoped to a single dataset so comparisons are like-for-like. C
 |---|---|---|---|
 | data_commons_resolve | 0.502 | 2,048 | 0.198 |
 | geonamescache | 0.000 | 2,048 | 0.154 |
-| resolvekit | 0.858 | 2,048 | 0.010 |
+| resolvekit | 0.858 | 2,048 | 0.011 |
 | resolvekit_typed | 0.862 | 2,048 | 0.005 |
 
 ### continent
@@ -619,8 +619,8 @@ Each sub-table is scoped to a single dataset so comparisons are like-for-like. C
 | hdx_python_country | 0.642 | 4,055 | 0.042 |
 | pycountry | 0.099 | 4,055 | 0.001 |
 | rapidfuzz_dict | 0.469 | 4,055 | 0.507 |
-| resolvekit | 0.793 | 4,055 | 0.039 |
-| resolvekit_typed | 0.794 | 4,055 | 0.010 |
+| resolvekit | 0.803 | 4,055 | 0.038 |
+| resolvekit_typed | 0.801 | 4,055 | 0.012 |
 
 **geo_countries_multilingual**
 
@@ -633,8 +633,8 @@ Each sub-table is scoped to a single dataset so comparisons are like-for-like. C
 | hdx_python_country | 0.565 | 2,140 | 0.084 |
 | pycountry | 0.143 | 2,140 | 0.002 |
 | rapidfuzz_dict | 0.370 | 2,140 | 0.495 |
-| resolvekit | 0.632 | 2,140 | 0.027 |
-| resolvekit_typed | 0.614 | 2,140 | 0.006 |
+| resolvekit | 0.635 | 2,140 | 0.025 |
+| resolvekit_typed | 0.614 | 2,140 | 0.007 |
 
 **no_match**
 
@@ -672,7 +672,7 @@ Each sub-table is scoped to a single dataset so comparisons are like-for-like. C
 
 ### resolvekit on eval_geo
 
-ECE: 0.043. Brier: 0.068. Reliability diagram data:
+ECE: 0.030. Brier: 0.071. Reliability diagram data:
 
 | bin | count | mean conf | observed acc |
 |---|---|---|---|
@@ -683,9 +683,9 @@ ECE: 0.043. Brier: 0.068. Reliability diagram data:
 | [0.4, 0.5) | 0 | 0.000 | 0.000 |
 | [0.5, 0.6) | 0 | 0.000 | 0.000 |
 | [0.6, 0.7) | 0 | 0.000 | 0.000 |
-| [0.7, 0.8) | 4 | 0.778 | 0.500 |
-| [0.8, 0.9) | 110 | 0.873 | 0.945 |
-| [0.9, 1.0) | 130 | 0.912 | 0.923 |
+| [0.7, 0.8) | 3 | 0.780 | 0.667 |
+| [0.8, 0.9) | 118 | 0.873 | 0.915 |
+| [0.9, 1.0) | 126 | 0.920 | 0.937 |
 
 ### resolvekit on geo_admin
 
@@ -702,11 +702,11 @@ ECE: 0.098. Brier: 0.056. Reliability diagram data:
 | [0.6, 0.7) | 0 | 0.000 | 0.000 |
 | [0.7, 0.8) | 0 | 0.000 | 0.000 |
 | [0.8, 0.9) | 1,981 | 0.877 | 0.964 |
-| [0.9, 1.0) | 95 | 0.912 | 0.600 |
+| [0.9, 1.0) | 95 | 0.914 | 0.600 |
 
 ### resolvekit on geo_cities
 
-ECE: 0.102. Brier: 0.030. Reliability diagram data:
+ECE: 0.100. Brier: 0.031. Reliability diagram data:
 
 | bin | count | mean conf | observed acc |
 |---|---|---|---|
@@ -719,11 +719,11 @@ ECE: 0.102. Brier: 0.030. Reliability diagram data:
 | [0.6, 0.7) | 0 | 0.000 | 0.000 |
 | [0.7, 0.8) | 1 | 0.700 | 0.000 |
 | [0.8, 0.9) | 944 | 0.877 | 0.987 |
-| [0.9, 1.0) | 97 | 0.906 | 0.918 |
+| [0.9, 1.0) | 98 | 0.906 | 0.908 |
 
 ### resolvekit on geo_countries_en
 
-ECE: 0.075. Brier: 0.050. Reliability diagram data:
+ECE: 0.063. Brier: 0.047. Reliability diagram data:
 
 | bin | count | mean conf | observed acc |
 |---|---|---|---|
@@ -734,13 +734,13 @@ ECE: 0.075. Brier: 0.050. Reliability diagram data:
 | [0.4, 0.5) | 0 | 0.000 | 0.000 |
 | [0.5, 0.6) | 0 | 0.000 | 0.000 |
 | [0.6, 0.7) | 0 | 0.000 | 0.000 |
-| [0.7, 0.8) | 295 | 0.766 | 0.929 |
-| [0.8, 0.9) | 819 | 0.865 | 0.850 |
-| [0.9, 1.0) | 2,133 | 0.908 | 0.994 |
+| [0.7, 0.8) | 245 | 0.762 | 0.935 |
+| [0.8, 0.9) | 803 | 0.863 | 0.857 |
+| [0.9, 1.0) | 2,235 | 0.919 | 0.990 |
 
 ### resolvekit on geo_countries_multilingual
 
-ECE: 0.097. Brier: 0.039. Reliability diagram data:
+ECE: 0.072. Brier: 0.036. Reliability diagram data:
 
 | bin | count | mean conf | observed acc |
 |---|---|---|---|
@@ -751,13 +751,13 @@ ECE: 0.097. Brier: 0.039. Reliability diagram data:
 | [0.4, 0.5) | 0 | 0.000 | 0.000 |
 | [0.5, 0.6) | 0 | 0.000 | 0.000 |
 | [0.6, 0.7) | 0 | 0.000 | 0.000 |
-| [0.7, 0.8) | 38 | 0.758 | 0.658 |
-| [0.8, 0.9) | 87 | 0.861 | 0.598 |
-| [0.9, 1.0) | 1,248 | 0.908 | 0.993 |
+| [0.7, 0.8) | 32 | 0.752 | 0.719 |
+| [0.8, 0.9) | 168 | 0.877 | 0.798 |
+| [0.9, 1.0) | 1,182 | 0.920 | 0.992 |
 
 ### resolvekit_typed on ambiguous
 
-ECE: 0.095. Brier: 0.009. Reliability diagram data:
+ECE: 0.088. Brier: 0.008. Reliability diagram data:
 
 | bin | count | mean conf | observed acc |
 |---|---|---|---|
@@ -769,12 +769,12 @@ ECE: 0.095. Brier: 0.009. Reliability diagram data:
 | [0.5, 0.6) | 0 | 0.000 | 0.000 |
 | [0.6, 0.7) | 0 | 0.000 | 0.000 |
 | [0.7, 0.8) | 0 | 0.000 | 0.000 |
-| [0.8, 0.9) | 7 | 0.882 | 1.000 |
-| [0.9, 1.0) | 24 | 0.912 | 1.000 |
+| [0.8, 0.9) | 8 | 0.883 | 1.000 |
+| [0.9, 1.0) | 23 | 0.922 | 1.000 |
 
 ### resolvekit_typed on eval_geo
 
-ECE: 0.073. Brier: 0.038. Reliability diagram data:
+ECE: 0.070. Brier: 0.038. Reliability diagram data:
 
 | bin | count | mean conf | observed acc |
 |---|---|---|---|
@@ -785,9 +785,9 @@ ECE: 0.073. Brier: 0.038. Reliability diagram data:
 | [0.4, 0.5) | 0 | 0.000 | 0.000 |
 | [0.5, 0.6) | 0 | 0.000 | 0.000 |
 | [0.6, 0.7) | 0 | 0.000 | 0.000 |
-| [0.7, 0.8) | 5 | 0.776 | 0.800 |
-| [0.8, 0.9) | 116 | 0.873 | 0.974 |
-| [0.9, 1.0) | 155 | 0.914 | 0.968 |
+| [0.7, 0.8) | 5 | 0.781 | 0.800 |
+| [0.8, 0.9) | 125 | 0.874 | 0.976 |
+| [0.9, 1.0) | 147 | 0.921 | 0.966 |
 
 ### resolvekit_typed on geo_admin
 
@@ -825,7 +825,7 @@ ECE: 0.110. Brier: 0.023. Reliability diagram data:
 
 ### resolvekit_typed on geo_countries_en
 
-ECE: 0.103. Brier: 0.025. Reliability diagram data:
+ECE: 0.092. Brier: 0.025. Reliability diagram data:
 
 | bin | count | mean conf | observed acc |
 |---|---|---|---|
@@ -836,13 +836,13 @@ ECE: 0.103. Brier: 0.025. Reliability diagram data:
 | [0.4, 0.5) | 0 | 0.000 | 0.000 |
 | [0.5, 0.6) | 0 | 0.000 | 0.000 |
 | [0.6, 0.7) | 0 | 0.000 | 0.000 |
-| [0.7, 0.8) | 324 | 0.763 | 0.960 |
-| [0.8, 0.9) | 721 | 0.865 | 0.983 |
-| [0.9, 1.0) | 2,157 | 0.909 | 0.993 |
+| [0.7, 0.8) | 276 | 0.759 | 0.953 |
+| [0.8, 0.9) | 722 | 0.862 | 0.985 |
+| [0.9, 1.0) | 2,245 | 0.920 | 0.989 |
 
 ### resolvekit_typed on geo_countries_multilingual
 
-ECE: 0.089. Brier: 0.016. Reliability diagram data:
+ECE: 0.077. Brier: 0.016. Reliability diagram data:
 
 | bin | count | mean conf | observed acc |
 |---|---|---|---|
@@ -853,9 +853,9 @@ ECE: 0.089. Brier: 0.016. Reliability diagram data:
 | [0.4, 0.5) | 0 | 0.000 | 0.000 |
 | [0.5, 0.6) | 0 | 0.000 | 0.000 |
 | [0.6, 0.7) | 0 | 0.000 | 0.000 |
-| [0.7, 0.8) | 32 | 0.754 | 0.812 |
-| [0.8, 0.9) | 49 | 0.859 | 0.918 |
-| [0.9, 1.0) | 1,231 | 0.908 | 0.998 |
+| [0.7, 0.8) | 26 | 0.752 | 0.885 |
+| [0.8, 0.9) | 136 | 0.881 | 0.949 |
+| [0.9, 1.0) | 1,151 | 0.920 | 0.997 |
 
 ## Caveats
 

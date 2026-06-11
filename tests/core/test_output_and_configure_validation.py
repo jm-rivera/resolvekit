@@ -10,6 +10,8 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 
 import resolvekit
@@ -257,7 +259,7 @@ class TestConfigureIncremental:
         resolvekit.configure(cache_dir="/tmp/test-rk-cache")
         assert get_default_to() == "iso3"
         assert get_on_missing() == "null"
-        assert str(get_cache_dir()) == "/tmp/test-rk-cache"
+        assert get_cache_dir() == Path("/tmp/test-rk-cache")
 
     def test_explicit_none_clears_default_to(self) -> None:
         """configure(default_to=None) explicitly clears the default output."""
@@ -319,7 +321,7 @@ class TestConfigureCacheDirReset:
         from resolvekit.core.config import _default_cache_dir, get_cache_dir
 
         resolvekit.configure(cache_dir="/tmp/rk-test-custom")
-        assert str(get_cache_dir()) == "/tmp/rk-test-custom"
+        assert get_cache_dir() == Path("/tmp/rk-test-custom")
 
         resolvekit.configure(cache_dir=None)
         assert get_cache_dir() == _default_cache_dir()
@@ -328,7 +330,7 @@ class TestConfigureCacheDirReset:
         from resolvekit.core.config import get_cache_dir
 
         resolvekit.configure(cache_dir="/tmp/rk-test-preserve")
-        assert str(get_cache_dir()) == "/tmp/rk-test-preserve"
+        assert get_cache_dir() == Path("/tmp/rk-test-preserve")
 
         resolvekit.configure(on_missing="null")  # omit cache_dir
-        assert str(get_cache_dir()) == "/tmp/rk-test-preserve"
+        assert get_cache_dir() == Path("/tmp/rk-test-preserve")

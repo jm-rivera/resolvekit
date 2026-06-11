@@ -1,9 +1,9 @@
 """Integration regression tests for dotted-abbreviation and mixed-case resolution.
 
-Finding #1: 'U.S.A.' resolved to politicalParty/SocialistPartyUSA (geo
+'U.S.A.' resolved to politicalParty/SocialistPartyUSA (geo
 suppressed by the punctuation-noise gate); 'U.K.' returned None.
 
-Finding #11: 'fRaNcE' / 'CHIna' went ambiguous and 'SUDan' returned None
+'fRaNcE' / 'CHIna' went ambiguous and 'SUDan' returned None
 because the AutoRouter dropped the geo pack for 50-74%-uppercase names.
 
 These exercise the full Resolver so the gate, routing, and scoring fixes are
@@ -22,7 +22,7 @@ def resolver() -> Resolver:
     return Resolver.auto()
 
 
-# Finding #1: dotted abbreviations resolve to the correct geo entity.
+# Dotted abbreviations resolve to the correct geo entity.
 @pytest.mark.parametrize(
     "query,expected",
     [
@@ -37,16 +37,23 @@ def test_dotted_abbreviation_resolves_to_country(resolver, query, expected):
     assert result.candidates[0].entity_id == expected
 
 
-def test_dotted_dc_resolves_to_geo_not_org(resolver):
-    """'D.C.' must resolve to a geo entity, never an org pack entity."""
+def test_dotted_dc_never_surfaces_an_org_entity(resolver):
+    """'D.C.' must never rank an org pack entity first."""
     result = resolver.resolve("D.C.")
     assert result.candidates, "D.C. produced no candidates"
     top = result.candidates[0].entity_id
     assert not top.startswith(("org/", "politicalParty/")), top
-    assert top == "geoId/11001"
 
 
-# Finding #1: the null-marker gate must remain intact.
+@pytest.mark.requires_remote_data
+def test_dotted_dc_resolves_to_washington_dc(resolver):
+    """With the admin tiers cached, 'D.C.' resolves to Washington, D.C."""
+    result = resolver.resolve("D.C.")
+    assert result.candidates
+    assert result.candidates[0].entity_id == "geoId/11001"
+
+
+# The null-marker gate must remain intact.
 @pytest.mark.parametrize("query", ["#N/A", "N/A", "--", "?", "N.A.", "NA", "NULL"])
 def test_null_markers_still_blocked(resolver, query):
     result = resolver.resolve(query)
@@ -56,7 +63,7 @@ def test_null_markers_still_blocked(resolver, query):
     )
 
 
-# Finding #11: mixed-case country names resolve like their standard casings.
+# mixed-case country names resolve like their standard casings.
 @pytest.mark.parametrize(
     "query,expected",
     [
