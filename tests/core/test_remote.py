@@ -468,3 +468,61 @@ class TestReleaseBaseUrlOverride:
         )
         fetcher = _make_fetcher(remote_metadata, _sqlite_spec(remote_metadata))
         assert fetcher.base_url.endswith("/")
+
+
+class TestProgressbarFallback:
+    """Pooch's progress bar requires tqdm, which resolvekit does not depend
+    on — downloads must work silently when tqdm is not installed."""
+
+    def test_progressbar_available_reflects_tqdm_presence(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        import importlib.util
+
+        from resolvekit.core.remote import _progressbar_available
+
+        real_find_spec = importlib.util.find_spec
+
+        def fake_find_spec(name: str, *args: object, **kwargs: object) -> object:
+            if name == "tqdm":
+                return None
+            return real_find_spec(name, *args, **kwargs)
+
+        monkeypatch.setattr(importlib.util, "find_spec", fake_find_spec)
+        assert _progressbar_available() is False
+
+    def test_fetch_runs_without_progressbar_when_tqdm_missing(
+        self,
+        remote_metadata: DataPackMetadata,
+        package_dir: Path,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        from resolvekit.core import remote
+
+        monkeypatch.setattr(remote, "_progressbar_available", lambda: False)
+        sqlite_content = b"fake sqlite content for testing"
+
+        def fake_fetch(
+            fname: str, progressbar: bool = False, processor: object = None
+        ) -> str:
+            assert progressbar is False
+            cache_dir = _module_cache_dir(remote_metadata.module_id)
+            cache_dir.mkdir(parents=True, exist_ok=True)
+            decompressed_name = (
+                fname.removesuffix(".gz") if fname.endswith(".gz") else fname
+            )
+            sqlite_path = cache_dir / decompressed_name
+            sqlite_path.write_bytes(sqlite_content)
+            return str(sqlite_path)
+
+        with patch("resolvekit.core.remote._make_fetcher") as mock_fetcher:
+            fetcher = MagicMock()
+            fetcher.fetch.side_effect = fake_fetch
+            mock_fetcher.return_value = fetcher
+
+            result = download_module_data(remote_metadata, package_dir)
+
+            assert fetcher.fetch.call_count >= 1
+            for call in fetcher.fetch.call_args_list:
+                assert call.kwargs["progressbar"] is False
+            assert (result / "entities.sqlite").exists()

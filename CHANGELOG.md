@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.2 (2026-06-11)
+
+**Fixed.** `download()` crashed on a clean install with "Missing package
+'tqdm' required for progress bars": pooch's progress bar needs tqdm, which is
+not a resolvekit dependency. Downloads now show a progress bar when tqdm is
+installed and run silently when it isn't.
+
 ## 0.1.1 (2026-06-11)
 
 **Fixed.** Partial remote caches no longer error: after downloading a single
