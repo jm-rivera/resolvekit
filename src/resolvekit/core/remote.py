@@ -221,6 +221,14 @@ def download_module_data(
     return cache_dir
 
 
+def _progressbar_available() -> bool:
+    """Pooch's progress bar requires tqdm, which is not a resolvekit
+    dependency; downloads degrade to silent when it isn't installed."""
+    import importlib.util
+
+    return importlib.util.find_spec("tqdm") is not None
+
+
 def _download_one_artifact(
     metadata: DataPackMetadata,
     artifact_type: str,
@@ -234,7 +242,9 @@ def _download_one_artifact(
     processor = pooch.Decompress() if fname.endswith(".gz") else None
 
     try:
-        downloaded_path = fetcher.fetch(fname, progressbar=True, processor=processor)
+        downloaded_path = fetcher.fetch(
+            fname, progressbar=_progressbar_available(), processor=processor
+        )
     except Exception as exc:
         logger.error(
             "Download failed for %s/%s: %s", metadata.module_id, artifact_type, exc

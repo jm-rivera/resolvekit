@@ -29,7 +29,6 @@ jobs:
     timeout-minutes: 30
     permissions:
       contents: read
-      pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -70,16 +69,9 @@ jobs:
             benchmarks/results/latest.md
           retention-days: 30
 
-      - name: Post PR comment
-        if: github.event_name == 'pull_request'
-        uses: actions/github-script@v8
-        with:
-          script: |
-            const fs = require('fs');
-            const body = fs.readFileSync('benchmarks/results/latest.md', 'utf8');
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body: `<details><summary>Benchmark results</summary>\n\n${body}\n</details>`,
-            });
+      # The full report goes to the run's job summary (and the artifact above),
+      # not a PR comment: clean CI lacks the remote data tiers, so the absolute
+      # numbers are misleading for resolvekit and add noise rather than review
+      # signal in the PR thread.
+      - name: Publish job summary
+        run: cat benchmarks/results/latest.md >> "$GITHUB_STEP_SUMMARY"

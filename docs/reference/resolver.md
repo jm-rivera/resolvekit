@@ -660,7 +660,7 @@ Resolver.lite().domains   # ['geo']
 
 ```python
 r.info.data_version         # "2026.06"
-r.info.resolvekit_version   # "0.1.1"
+r.info.resolvekit_version   # "0.1.2"
 r.info.domains              # ("geo", "org")
 r.info.routing_mode         # "auto"
 r.info.closed               # False
