@@ -124,7 +124,9 @@ def test_resolve_bad_domain_raises_unknown_domain():
     df = pl.DataFrame({"country": ["France"]})
     with pytest.raises(UnknownDomainError):
         df.with_columns(
-            pl.col("country").resolvekit.resolve(to="iso3", domain="bad_xyz").alias("out")
+            pl.col("country")
+            .resolvekit.resolve(to="iso3", domain="bad_xyz")
+            .alias("out")
         )
 
 
@@ -135,7 +137,9 @@ def test_resolve_bad_on_ambiguous_raises_value_error():
     df = pl.DataFrame({"country": ["France"]})
     with pytest.raises(ValueError, match="on_ambiguous="):
         df.with_columns(
-            pl.col("country").resolvekit.resolve(to="iso3", on_ambiguous="typo").alias("out")
+            pl.col("country")
+            .resolvekit.resolve(to="iso3", on_ambiguous="typo")
+            .alias("out")
         )
 
 
@@ -159,6 +163,4 @@ def test_resolve_on_error_default_is_raise():
 
     df = pl.DataFrame({"country": ["France"]})
     with pytest.raises(UnknownCodeSystemError):
-        df.with_columns(
-            pl.col("country").resolvekit.resolve(to="iso33").alias("out")
-        )
+        df.with_columns(pl.col("country").resolvekit.resolve(to="iso33").alias("out"))
