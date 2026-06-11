@@ -250,8 +250,8 @@ Return the closest matching candidate from a caller-supplied list, or `None` whe
 None
 ```
 
-!!! warning "Heads up"
-    `snap` works reliably when `candidates` contains entity IDs (e.g. `"country/TZA"`). Passing plain name strings (e.g. `"Tanzania"`) will likely return `None` at the default threshold — the resolver resolves each candidate name first, and near-miss names don't always clear 0.5 confidence. Use entity IDs for predictable results.
+!!! note "Candidate forms"
+    `candidates` accepts entity IDs (e.g. `"country/TZA"`), plain labels (e.g. `"Tanzania"`), or a mix. Labels are resolved to entities first; a label that cannot be resolved unambiguously is skipped from the candidate set.
 
 ---
 
@@ -1255,7 +1255,7 @@ except EntityNotFoundError as e:
 
 ### `UnknownOutputError(ValueError, ResolverError)` { #unknownoutputerror }
 
-Raised at configuration or compile time when `default_to` (or a per-call `to=`) contains a malformed token or names a code system that no loaded pack carries.
+Raised at configuration or compile time when `default_to` contains a malformed token (including a malformed `name:` grammar segment in a per-call `to=`) or names a code system that no loaded pack carries. A per-call `to=` naming an unknown code system raises [`UnknownCodeSystemError`](#unknowncodesystemerror) instead.
 
 ```python
 from resolvekit.errors import UnknownOutputError
@@ -1265,6 +1265,21 @@ from resolvekit.errors import UnknownOutputError
 |---|---|---|
 | `.token` | `str` | The unrecognised token. |
 | `.available` | `list[str]` | Code and pivot names available in the relevant scope. |
+
+Carries `.hint` with difflib did-you-mean suggestions.
+
+### `UnknownCodeSystemError(ValueError, ResolverError)` { #unknowncodesystemerror }
+
+Raised when a per-call `to=` (or `EntityRecord.to(system)`) names a code system that no loaded pack carries, and by `Resolver.members_of` when the requested `as_codes` is not loaded.
+
+```python
+from resolvekit.errors import UnknownCodeSystemError
+```
+
+| Attribute | Type | Meaning |
+|---|---|---|
+| `.system` | `str` | The requested code system name. |
+| `.available` | `list[str]` | Code system names available in the relevant scope. |
 
 Carries `.hint` with difflib did-you-mean suggestions.
 

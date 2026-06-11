@@ -19,6 +19,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from resolvekit.core.api.code_lookup import _iso_numeric_lookup_value
 from resolvekit.core.errors import AmbiguousResolutionError
 from resolvekit.core.model import CandidateSummary
 
@@ -65,7 +66,7 @@ def _entity_dispatch(
     if alpha_3 is not None:
         named_codes["iso3"] = alpha_3
     if numeric is not None:
-        named_codes["numeric"] = numeric
+        named_codes["iso_numeric"] = numeric
     if iso2 is not None:
         named_codes["iso2"] = iso2
     if iso3 is not None:
@@ -90,6 +91,8 @@ def _entity_dispatch(
         value_norm = resolver._runner.normalize_code_value(
             system, value, pack_filter=pack_filter
         )
+        if system == "iso_numeric":
+            value_norm = _iso_numeric_lookup_value(value_norm)
         entity_ids = resolver._runner.lookup_code(
             system, value_norm, pack_filter=pack_filter
         )

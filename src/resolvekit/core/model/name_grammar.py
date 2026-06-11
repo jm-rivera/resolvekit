@@ -15,6 +15,7 @@ _raise_bad_name_grammar — raise UnknownOutputError for malformed tokens
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Literal
 
@@ -33,6 +34,10 @@ KNOWN_KINDS: frozenset[str] = frozenset(
 
 # ``abbr`` is a data-side synonym for ``acronym``; fold before the kind test.
 _KIND_ALIASES: dict[str, str] = {"abbr": "acronym"}
+
+# ISO 639-1 two-letter or ISO 639-2 three-letter lowercase codes only.
+# Whitespace, locale tags (en-US), and other non-alpha segments are rejected.
+_LANG_RE = re.compile(r"^[a-z]{2,3}$")
 
 # ---------------------------------------------------------------------------
 # OutputTarget dataclass
@@ -69,9 +74,9 @@ def parse_name_grammar(token: str) -> OutputTarget:
 
     Middle-token disambiguation (kind wins): if the middle segment is in
     ``KNOWN_KINDS`` (after folding ``abbr``→``acronym``), it is treated as a
-    kind selector; otherwise it is treated as a language code.  The kind-set
-    is closed (5 names) and collision-free with the 10 ISO-639-1 langs present
-    in the data (en/fr/es/de/ru/ja/it/pt/zh/ar).
+    kind selector; otherwise it is validated as a language code (must match
+    ``^[a-z]{2,3}$``).  The kind-set is closed (5 names) and collision-free
+    with the ISO-639-1 langs present in the data (en/fr/es/de/ru/ja/it/pt/zh/ar).
 
     Args:
         token: A raw token starting with ``"name"`` (e.g. ``"name"``,
@@ -83,7 +88,8 @@ def parse_name_grammar(token: str) -> OutputTarget:
 
     Raises:
         UnknownOutputError: When the token starts with ``"name:"`` but the
-            grammar is malformed (e.g. empty segment, too many parts).
+            grammar is malformed (e.g. empty segment, too many parts, invalid
+            language code shape).
     """
     if token == "name":
         # Bare ``name`` — computed terminal, never misses.
@@ -111,6 +117,21 @@ def parse_name_grammar(token: str) -> OutputTarget:
     if folded in KNOWN_KINDS:
         return OutputTarget(
             raw=token, kind="name", name_kind=folded, name_script=script
+        )
+
+    # Validate language shape: must be 2-3 lowercase ASCII letters (ISO 639-1/2).
+    # Reject whitespace ('name: en'), locale tags ('name:en-US'), and other
+    # invalid shapes that can never match stored language codes.
+    if not _LANG_RE.match(middle):
+        raise UnknownOutputError(
+            token,
+            sorted(KNOWN_KINDS),
+            hint=(
+                f"invalid language code {middle!r} in {token!r}; "
+                f"language must be a 2-3 letter ISO 639-1/2 code"
+                f" (e.g. 'en', 'fr', 'zho'),"
+                f" or use a kind selector: {sorted(KNOWN_KINDS)}"
+            ),
         )
 
     # Treat as language selector.

@@ -115,6 +115,32 @@ def single_letter_code_allowed(raw_text: str) -> bool:
     return not (len(raw) == 1 and raw.isascii() and raw.isalpha())
 
 
+def is_dotted_initialism(normalized_text: str) -> bool:
+    """Return True for period-delimited letter initialisms (``U.S.A.``, ``U.K.``).
+
+    Shape: one or more single letters, each separated and/or trailed by
+    periods, with no other punctuation (``u.s.a.``, ``u.s.a``, ``u.k.``,
+    ``d.c.``). These are conventional abbreviations that alias real geo
+    entities, so they must not be treated as missing-value noise.
+
+    Null markers are excluded because they either carry non-period
+    punctuation (``#n/a``, ``n/a`` use ``#``/``/``) or have no letters at
+    all (``.``, ``--``, ``?``).
+    """
+    raw = normalized_text.strip()
+    if "." not in raw:
+        return False
+    segments = raw.split(".")
+    has_letter = False
+    for segment in segments:
+        if not segment:
+            continue  # interior/trailing separator
+        if len(segment) != 1 or not segment.isascii() or not segment.isalpha():
+            return False
+        has_letter = True
+    return has_letter
+
+
 def is_punctuation_noise(normalized_text: str) -> bool:
     """Return True for short tokens dominated by punctuation/symbols.
 
@@ -126,9 +152,14 @@ def is_punctuation_noise(normalized_text: str) -> bool:
     (``# / \\ - _ . , ; : ! ? * | ( ) [ ] { } ' " `` whitespace), the
     remaining alphanumeric content must be either empty or a short alpha
     fragment that ``short_alpha_code_allowed`` would already block.
+
+    Period-delimited initialisms (``U.S.A.``, ``U.K.``) are exempt: they are
+    real abbreviations aliasing geo entities, not missing-value markers.
     """
     if not normalized_text:
         return True
+    if is_dotted_initialism(normalized_text):
+        return False
     stripped = normalized_text
     for ch in "#/\\-_.,;:!?*|()[]{}'\"`":
         stripped = stripped.replace(ch, "")

@@ -142,16 +142,14 @@ def disambiguate_hint(result: ResolutionResult) -> str | None:
     only suggest it if filtering by a single type would actually reduce
     the candidate set to one.
     """
+    from resolvekit.core.errors import _single_candidate_type
+
     if result.query_text is None:
         return None
     lines = did_you_mean_lines(result)
     if lines is not None:
         return lines
-    type_buckets: dict[str, int] = {}
-    for c in result.candidates:
-        if c.entity_type:
-            type_buckets[c.entity_type] = type_buckets.get(c.entity_type, 0) + 1
-    disambiguating_type = next((t for t, n in type_buckets.items() if n == 1), None)
+    disambiguating_type = _single_candidate_type(result.candidates)
     if disambiguating_type is not None:
         return (
             f"resolvekit.resolve(text={result.query_text!r}, "

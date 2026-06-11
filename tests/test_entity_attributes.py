@@ -33,7 +33,7 @@ def _make_entity(
 ) -> EntityRecord:
     """Build a minimal ``EntityRecord`` for testing."""
     codes: list[CodeRecord] = []
-    for system, value in (("iso2", iso2), ("iso3", iso3), ("numeric", numeric)):
+    for system, value in (("iso2", iso2), ("iso3", iso3), ("iso_numeric", numeric)):
         if value is not None:
             codes.append(
                 CodeRecord(system=system, value=value, value_norm=value.lower())

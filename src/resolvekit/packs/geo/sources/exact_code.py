@@ -62,7 +62,9 @@ CODE_SYSTEMS: list[CodeSystemSpec] = [
     CodeSystemSpec(
         name="iso_numeric",
         matches=lambda raw, norm: bool(re.match(r"^\d{3}$", norm)),
-        lookup_values=lambda raw, norm: (norm,),
+        # Stored values are unpadded ('4'), so zero-padded canonical input
+        # ('004') must also try the stripped form.
+        lookup_values=lambda raw, norm: (norm, norm.lstrip("0") or "0"),
         display_value=lambda raw, norm: norm,
     ),
     CodeSystemSpec(

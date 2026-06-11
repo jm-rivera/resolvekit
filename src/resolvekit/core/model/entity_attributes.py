@@ -80,7 +80,8 @@ def dispatch_pivot(
        (``_resolve_target`` in ``output_spec.py``) uses ``codes_dict.get``
        directly and never raises; that asymmetry is intentional and deferred.
     5. ``target`` in ``entity.attributes`` → that attribute value.
-    6. Raise ``UnknownCodeSystemError`` with a hint listing available options.
+    6. Raise ``UnknownCodeSystemError`` with did-you-mean suggestion built by
+       the error class itself from the available list.
 
     Args:
         entity: The resolved ``EntityRecord``.
@@ -119,14 +120,10 @@ def dispatch_pivot(
         attrs = entity.attributes
         if (val := attrs.get(target)) is not None:
             return val
-        hint = (
-            f"available: codes={sorted(codes)} "
-            f"| attrs={sorted(str(k) for k in attrs)} "
-            f"| computed={sorted(KNOWN_PIVOTS)}"
-        )
-        raise UnknownCodeSystemError(
-            target, list(codes) + list(KNOWN_PIVOTS), hint=hint
-        )
+        # Let UnknownCodeSystemError build its own did-you-mean suggestion
+        # from the available list — no explicit hint override.
+        available = sorted(set(list(codes) + list(KNOWN_PIVOTS)))
+        raise UnknownCodeSystemError(target, available)
 
     if isinstance(target, list):
         err = TypeError(

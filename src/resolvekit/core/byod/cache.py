@@ -41,7 +41,7 @@ from resolvekit.core.datapack import NORMALIZER_VERSION
 
 # Bump when the build logic or metadata schema changes in a way that
 # invalidates all existing cached BYOD packs.
-BYOD_CACHE_VERSION = "2"
+BYOD_CACHE_VERSION = "3"
 
 # Sub-directory inside the resolvekit cache dir for BYOD packs.
 _BYOD_SUBDIR = "byod"

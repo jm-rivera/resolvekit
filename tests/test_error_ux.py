@@ -82,10 +82,16 @@ def test_existing_errors_inherit_resolver_error() -> None:
 
 
 def test_ambiguous_resolution_error_inherits_and_has_hint() -> None:
-    """AmbiguousResolutionError has a useful default hint."""
+    """AmbiguousResolutionError has a useful default hint.
+
+    With no candidate type signal, the hint must not steer callers to an
+    entity_types filter (which provably cannot help); it points at the
+    candidate set and on_ambiguous='best' instead.
+    """
     err = AmbiguousResolutionError(candidates=None)
     assert err.hint is not None
-    assert "disambiguate" in err.hint
+    assert ".candidates" in err.hint
+    assert "entity_types=" not in err.hint
 
 
 def test_explain_not_available_error_default_hint() -> None:

@@ -469,7 +469,7 @@ class TestResolverFromDatapacks:
             routing_mode=RoutingMode.AUTO,
         )
 
-        with pytest.raises(ValueError, match="Cannot specify domains with AUTO"):
+        with pytest.raises(ValueError, match="not supported under the default AUTO"):
             resolver.resolve("US", domain="geo")
 
     def test_auto_routing_with_domains_raises_with_explanation(self, geo_test_datapack):
@@ -484,7 +484,7 @@ class TestResolverFromDatapacks:
             routing_mode=RoutingMode.AUTO,
         )
 
-        with pytest.raises(ValueError, match="Cannot specify domains with AUTO"):
+        with pytest.raises(ValueError, match="not supported under the default AUTO"):
             resolver.resolve_explained("US", domain="geo")
 
     def test_query_length_guardrail_applied_to_raw_text(self, geo_test_datapack):

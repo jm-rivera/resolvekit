@@ -15,7 +15,7 @@ import threading
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Literal
 
-from resolvekit.core.config import _UNSET as _ON_MISSING_UNSET
+from resolvekit.core.config import _UNSET as _CONFIG_UNSET
 
 if TYPE_CHECKING:
     from resolvekit.core.api.modules import ModuleInfo
@@ -94,9 +94,9 @@ def default() -> Resolver:
 def configure(
     *,
     auto_download: bool | None = None,
-    cache_dir: str | Path | None = None,
-    default_to: str | list[str] | None = None,
-    on_missing: Literal["raise", "null", "auto"] = _ON_MISSING_UNSET,  # type: ignore[assignment]  # ty: ignore[invalid-parameter-default]
+    cache_dir: str | Path | None | object = _CONFIG_UNSET,
+    default_to: str | list[str] | None | object = _CONFIG_UNSET,
+    on_missing: Literal["raise", "null", "auto"] | object = _CONFIG_UNSET,
 ) -> None:
     """Configure resolvekit runtime behavior and invalidate the singleton.
 
@@ -104,13 +104,19 @@ def configure(
     call to :func:`resolve` (or any module-level function) rebuilds it
     with the updated configuration.
 
+    Omitting a parameter leaves any previously configured value unchanged.
+
     Args:
         auto_download: If True, remote packs are downloaded automatically
-            when needed. Default is False.
+            when needed. ``None`` leaves the current setting unchanged.
         cache_dir: Custom cache directory for remote data packs.
+            ``None`` resets to the platform default (removes any custom path).
+            Omitting leaves the current setting unchanged.
         default_to: Default output code system or name variant for
             module-level resolve/bulk/snap (e.g. ``"iso3"``,
-            ``["iso3", "name"]``, ``"name:fr"``). ``None`` clears the default.
+            ``["iso3", "name"]``, ``"name:fr"``). ``None`` clears the default
+            so resolve() returns a raw ResolutionResult. Omitting leaves
+            the current setting unchanged.
         on_missing: Miss policy for the default output chain.
             ``"auto"`` = raise for scalar resolve/snap, null +
             ``UserWarning`` for bulk; ``"raise"`` always raises
@@ -119,6 +125,8 @@ def configure(
             unchanged.
 
     Raises:
+        ValueError: When ``default_to`` is not a ``str``, ``list[str]``, or
+            ``None``.
         UnknownOutputError: Immediately when ``default_to`` contains a
             malformed ``name:`` grammar token, or — when a default resolver
             singleton already exists — when ``default_to`` names an unknown
@@ -128,25 +136,45 @@ def configure(
     from resolvekit.core.api.output_spec import _validate_grammar_only
     from resolvekit.core.config import configure as _configure_core
 
-    # Grammar-only validation is always eager to catch malformed name: tokens.
-    _validate_grammar_only(default_to)
+    if default_to is not _CONFIG_UNSET:
+        # Type validation: only str, list[str], or None are accepted at configure time.
+        if default_to is not None and not isinstance(default_to, (str, list)):
+            raise ValueError(
+                f"default_to must be a str, list of str, or None;"
+                f" got {type(default_to).__name__!r}"
+            )
+        if isinstance(default_to, list):
+            bad = [x for x in default_to if not isinstance(x, str)]
+            if bad:
+                raise ValueError(
+                    f"default_to list must contain only strings;"
+                    f" got {[type(x).__name__ for x in bad]}"
+                )
+        # Grammar-only validation is always eager to catch malformed name: tokens.
+        if default_to is not None:
+            _validate_grammar_only(default_to)  # type: ignore[arg-type]  # ty: ignore[invalid-argument-type]
 
-    # If a singleton exists, compile fully against its code_systems to surface
-    # typo'd code systems immediately rather than deferring. Fall back to "auto"
-    # for compile when on_missing was not explicitly passed.
-    compile_on_missing = "auto" if on_missing is _ON_MISSING_UNSET else on_missing
-    if _default is not None and default_to is not None:
+    # If a singleton exists and default_to is a non-None value, compile fully
+    # against its code_systems to surface typo'd code systems immediately.
+    compile_on_missing = "auto" if on_missing is _CONFIG_UNSET else on_missing
+    if (
+        _default is not None
+        and default_to is not _CONFIG_UNSET
+        and default_to is not None
+    ):
         from resolvekit.core.api.output_spec import compile_output_spec
 
         compile_output_spec(
-            default_to, compile_on_missing, known_systems=_default.code_systems()
+            default_to,  # type: ignore[arg-type]  # ty: ignore[invalid-argument-type]
+            compile_on_missing,  # type: ignore[arg-type]  # ty: ignore[invalid-argument-type]
+            known_systems=_default.code_systems(),
         )
 
     _configure_core(
         auto_download=auto_download,
-        cache_dir=cache_dir,
-        default_to=default_to,
-        on_missing=on_missing,  # passes through _ON_MISSING_UNSET when not provided
+        cache_dir=cache_dir,  # type: ignore[arg-type]  # ty: ignore[invalid-argument-type]
+        default_to=default_to,  # type: ignore[arg-type]  # ty: ignore[invalid-argument-type]
+        on_missing=on_missing,
     )
     # Invalidate the singleton so the next call rebuilds with new config.
     reset()

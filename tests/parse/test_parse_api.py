@@ -192,3 +192,42 @@ def test_parse_closed_resolver_raises(parse_geo_datapack: Any) -> None:
     r.close()
     with pytest.raises(RuntimeError, match="closed"):
         r.parse("Kenya")
+
+
+# ---------------------------------------------------------------------------
+# Casefold-expansion offset correctness (regression for ß/Weiß edge case)
+# ---------------------------------------------------------------------------
+
+
+def test_parse_offsets_correct_after_casefold_expansion_token(
+    parse_geo_resolver: Resolver,
+) -> None:
+    """Entities after a ß-containing token carry correct raw offsets.
+
+    When 'Weiß' precedes a recognised entity, casefold expands ß→ss (changing
+    the normalized length relative to raw).  The automaton must map spans back
+    to raw correctly so that text[start:end] == surface for every detected entity.
+
+    Regression: normalize_aligned round-trip invariant
+    can break for mid-casefold-expansion spans, but raw surface recovery and all
+    public offsets must still be exact.
+    """
+    text = "Weiß lives in Kenya"
+    result = parse_geo_resolver.parse(text)
+
+    kenya_entities = [e for e in result if e.surface == "Kenya"]
+    assert kenya_entities, (
+        f"Expected 'Kenya' in parse result; got {[e.surface for e in result]}"
+    )
+
+    for e in kenya_entities:
+        recovered = text[e.start : e.end]
+        assert recovered == e.surface, (
+            f"Offset mismatch after Weiß: text[{e.start}:{e.end}]={recovered!r} "
+            f"!= surface={e.surface!r}"
+        )
+    # Confirm 'Kenya' starts after the ß token, not before it.
+    kenya_hit = kenya_entities[0]
+    assert kenya_hit.start > text.index("Weiß"), (
+        "Kenya entity must start after the Weiß token"
+    )

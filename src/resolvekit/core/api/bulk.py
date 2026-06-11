@@ -10,6 +10,7 @@ The public surface lives at :func:`resolvekit.bulk` (convenience layer) and
 
 from __future__ import annotations
 
+import difflib
 import warnings
 import weakref
 from typing import Any, Literal
@@ -36,6 +37,17 @@ from resolvekit.core.model.bulk_result import BulkResult
 from resolvekit.core.model.crosswalk import _MISSING, Crosswalk
 from resolvekit.core.model.entity_attributes import dispatch_pivot
 from resolvekit.core.model.result import ReasonCode
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+
+def _closest_match(value: str, choices: tuple[str, ...]) -> str | None:
+    """Return the closest match to *value* from *choices*, or None."""
+    matches = difflib.get_close_matches(value, choices, n=1, cutoff=0.6)
+    return matches[0] if matches else None
+
 
 # ---------------------------------------------------------------------------
 # Module-level sentinels for the crosswalk short-circuit
@@ -103,10 +115,32 @@ def _detect_input_kind(values: Any) -> tuple[_InputKind, Any]:
         setattr(err, "hint", "materialize first: list(values)")  # noqa: B010
         raise err
 
-    raise TypeError(
-        f"bulk() values must be a list, tuple, numpy ndarray, pd.Series, or "
-        f"pl.Series; got {type(values).__name__!r}"
+    # Check if a DataFrame was passed — give a column-extraction hint.
+    _df_hint: str | None = None
+    try:
+        import pandas as pd
+
+        if isinstance(values, pd.DataFrame):
+            _df_hint = "extract one column first: values['col_name']"
+    except ImportError:
+        pass
+    if _df_hint is None:
+        try:
+            import polars as pl
+
+            if isinstance(values, pl.DataFrame):
+                _df_hint = (
+                    "extract one column first: "
+                    "values['col_name'] or values.get_column('col_name')"
+                )
+        except ImportError:
+            pass
+
+    _base_msg = (
+        f"bulk() values must be a list, tuple, dict, numpy ndarray, "
+        f"pd.Series, or pl.Series; got {type(values).__name__!r}"
     )
+    raise TypeError(_base_msg + (f"; {_df_hint}" if _df_hint else ""))
 
 
 # ---------------------------------------------------------------------------
@@ -549,6 +583,27 @@ def _bulk_dispatch(
             f"output={output!r} is not valid; "
             "expected one of 'series', 'record', 'frame'"
         )
+    if on_error not in {"raise", "null", "keep"}:
+        _did_you_mean = _closest_match(on_error, ("raise", "null", "keep"))
+        raise ValueError(
+            f"on_error={on_error!r} is not valid; "
+            f"expected one of 'raise', 'null', 'keep'"
+            + (f"; did you mean {_did_you_mean!r}?" if _did_you_mean else "")
+        )
+    if on_ambiguous not in {"raise", "null", "best"}:
+        _did_you_mean = _closest_match(on_ambiguous, ("raise", "null", "best"))
+        raise ValueError(
+            f"on_ambiguous={on_ambiguous!r} is not valid; "
+            f"expected one of 'raise', 'null', 'best'"
+            + (f"; did you mean {_did_you_mean!r}?" if _did_you_mean else "")
+        )
+    if on_missing not in {"raise", "null", "auto"}:
+        _did_you_mean = _closest_match(on_missing, ("raise", "null", "auto"))
+        raise ValueError(
+            f"on_missing={on_missing!r} is not valid; "
+            f"expected one of 'raise', 'null', 'auto'"
+            + (f"; did you mean {_did_you_mean!r}?" if _did_you_mean else "")
+        )
 
     kind, raw = _detect_input_kind(values)
     items, orig_index, orig_name, orig_polars_name, orig_keys = _flatten_input(
@@ -683,9 +738,19 @@ def _bulk_dispatch(
 
 
 def _record_from_result(result: ResolutionResult, pivot_value: Any) -> dict[str, Any]:
-    """Build the per-row record dict used by output='record' / 'frame'."""
+    """Build the per-row record dict used by output='record' / 'frame'.
+
+    When no pivot is active, ``pivot_value`` is the raw ``ResolutionResult``
+    object.  We extract ``entity_id`` as a primitive rather than embedding the
+    model — polars cannot store nested pydantic objects in a Struct Series.
+    """
+    if isinstance(pivot_value, ResolutionResult):
+        # No pivot was applied; use entity_id as the scalar "value".
+        value: Any = pivot_value.entity_id
+    else:
+        value = pivot_value
     return {
-        "value": pivot_value,
+        "value": value,
         "status": result.status.value,
         "entity_id": result.entity_id,
         "confidence": result.confidence,
@@ -769,11 +834,11 @@ def _build_native(
     if kind == "pandas":
         import pandas as pd
 
-        return pd.Series(values, index=orig_index, name=orig_name)
+        return pd.Series(values, index=orig_index, name=orig_name, dtype=object)
     if kind == "polars":
         import polars as pl
 
-        return pl.Series(name=orig_polars_name or "", values=values)
+        return pl.Series(name=orig_polars_name or "", values=values, dtype=pl.Object)
     if kind == "numpy":
         import numpy as np
 

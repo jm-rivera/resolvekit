@@ -25,6 +25,26 @@ if TYPE_CHECKING:
     from resolvekit.core.engine.interfaces import ResolverBackend
 
 
+def _auto_routing_domain_error() -> str:
+    """Actionable message for ``domain=`` under the default AUTO routing mode.
+
+    The module-level ``resolvekit.resolve()`` / ``resolvekit.snap()`` singleton
+    runs in AUTO mode and exposes no way to switch routing, so the remedy is to
+    build a resolver with explicit routing. The message names the public string
+    spelling (``routing_mode="explicit"``) rather than the internal
+    ``RoutingMode`` enum, which is not importable from the public namespace.
+    """
+    return (
+        "domain= is not supported under the default AUTO routing mode "
+        "(AUTO selects packs from the query itself). To filter by domain, "
+        "build a resolver with explicit routing, e.g. "
+        'resolvekit.Resolver.auto(routing_mode="explicit") or '
+        'resolvekit.Resolver.from_modules(module_ids=[...], routing_mode="explicit"), '
+        "then call .resolve(text, domain=...). Otherwise drop domain= and let "
+        "AUTO decide."
+    )
+
+
 class QueryPreparer:
     """Owns normalization and query-preparation logic; no Resolver dependency.
 
@@ -73,11 +93,7 @@ class QueryPreparer:
             UnknownDomainError: When a domain name is not registered.
         """
         if self._routing_mode == RoutingMode.AUTO and domains:
-            raise ValueError(
-                "Cannot specify domains with AUTO routing mode. "
-                "Use RoutingMode.EXPLICIT for caller-controlled pack selection, "
-                "or remove domains to let AUTO mode decide."
-            )
+            raise ValueError(_auto_routing_domain_error())
         if domains:
             available_packs = self._runner.available_packs
             if available_packs:

@@ -17,6 +17,7 @@ from collections.abc import Callable, Sequence
 from typing import TYPE_CHECKING
 
 from resolvekit.core.api.loading import _normalize_domain
+from resolvekit.core.api.query_prep import _auto_routing_domain_error
 from resolvekit.core.engine import RoutingMode
 from resolvekit.core.model import (
     ReasonCode,
@@ -137,11 +138,7 @@ class BatchResolver:
         import pandas as pd
 
         if domain is not None and self._routing_mode == RoutingMode.AUTO:
-            raise ValueError(
-                "Cannot specify domains with AUTO routing mode. "
-                "Use RoutingMode.EXPLICIT for caller-controlled pack selection, "
-                "or remove domain to let AUTO mode decide."
-            )
+            raise ValueError(_auto_routing_domain_error())
 
         mask_na_arr = series.isna().to_numpy()
         # Cast to object before filling: typed (e.g. Int64, categorical) Series

@@ -157,7 +157,7 @@ class BulkResult:
             )
         if self.kind == "polars":
             return self.values  # type: ignore[return-value]
-        return pl.Series(self.to_list())
+        return pl.Series(self.to_list(), dtype=pl.Object)
 
     # ------------------------------------------------------------------
     # Diagnostics
@@ -482,9 +482,9 @@ class BulkResult:
     def __repr__(self) -> str:
         s = self.summary()
         return (
-            f"BulkResult(total={s.total}, resolved={s.resolved}, "
-            f"no_match={s.no_match}, ambiguous={s.ambiguous}, "
-            f"error={s.error}, kind={self.kind!r})"
+            f"<BulkResult total={s.total} resolved={s.resolved} "
+            f"no_match={s.no_match} ambiguous={s.ambiguous} "
+            f"error={s.error} kind={self.kind!r}>"
         )
 
     def _repr_html_(self) -> str:

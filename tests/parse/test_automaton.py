@@ -831,3 +831,75 @@ def test_resolver_close_evicts_via_resolver(tmp_path: Path) -> None:
     assert not any(k[0] == id(store) for k in _AUTOMATON_CACHE), (
         "No cache entries should remain for the closed resolver's store"
     )
+
+
+# ---------------------------------------------------------------------------
+# Casefold-expansion: ß → ss splits
+# ---------------------------------------------------------------------------
+
+
+class _WeisStore:
+    """Minimal fake store yielding one name: 'Weis' (value_norm='weis').
+
+    Simulates a city gazetteer whose entry normalizes to 'weis', which is
+    a prefix of 'weiss' (the casefold of 'Weiß').
+    """
+
+    def iter_names(
+        self,
+        entity_type_prefixes=None,
+        with_name_meta: bool = False,
+    ):
+        if with_name_meta:
+            yield ("weis", "city/WEIS1", "name", "Weis")
+        else:
+            yield ("weis", "city/WEIS1")
+
+
+def test_casefold_split_raw_surface_is_clean() -> None:
+    """Automaton hit on 'weis' pattern fired via 'Weiß' carries the full raw token.
+
+    'Weiß' casefolds to 'weiss'; the pattern 'weis' matches normalized span [ns,
+    ns+4) which ends between the two 's' chars both mapped to raw ß.  The raw
+    surface recovery raw[start:end] must equal 'Weiß' — never a split fragment.
+
+    The round-trip invariant is documented to break for such mid-expansion spans
+    (normalize_aligned('Weiß')[0]='weiss' ≠ matched pattern 'weis'), but offset
+    corruption must NOT occur in the public output.
+    """
+    automaton = PackAutomaton(
+        store=_WeisStore(),
+        profile=GEO_NORMALIZATION_PROFILE,
+        pack_id="geo",
+        small_prefixes=None,
+    )
+    raw = "I visited Weiß yesterday"
+    hits = automaton.find(raw)
+
+    assert len(hits) == 1, f"Expected exactly 1 hit, got {hits}"
+    hit = hits[0]
+
+    # The surface recovered from raw offsets must be the full raw token.
+    recovered = raw[hit.start : hit.end]
+    assert recovered == "Weiß", (
+        f"Hit surface sliced from raw must be 'Weiß', got {recovered!r}; "
+        f"start={hit.start}, end={hit.end}"
+    )
+    assert hit.surface == "Weiß", f"_RawHit.surface must be 'Weiß', got {hit.surface!r}"
+    assert hit.start == raw.index("Weiß"), "start offset must point to W"
+    assert hit.end == hit.start + len("Weiß"), "end offset must be one-past ß"
+
+
+def test_casefold_split_no_spurious_hit_mid_word() -> None:
+    """'weis' pattern does NOT fire inside 'Weißwurst' (word boundary blocks it)."""
+    automaton = PackAutomaton(
+        store=_WeisStore(),
+        profile=GEO_NORMALIZATION_PROFILE,
+        pack_id="geo",
+        small_prefixes=None,
+    )
+    # 'Weißwurst': the raw span for 'weis' expansion ends inside the word.
+    hits = automaton.find("Weißwurst is a sausage")
+    assert not hits, (
+        f"Pattern 'weis' must not fire inside 'Weißwurst' (word-boundary), got {hits}"
+    )

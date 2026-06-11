@@ -75,7 +75,7 @@ rk.download("geo.admin1")   # ~12 MB; verifies checksum, then marks is_available
 ```python
 >>> import resolvekit as rk
 >>> rk.__version__
-'0.1.2'
+'0.1.3'
 >>> rk.resolve_id("United States")
 'country/USA'
 ```

@@ -259,6 +259,21 @@ class ResolutionResult(BaseModel):
     _resolve_context: ResolutionContext | None = PrivateAttr(default=None)
 
     # ------------------------------------------------------------------
+    # Pickle support — drop the unpicklable weakref on serialization
+    # ------------------------------------------------------------------
+
+    def __getstate__(self) -> dict[str, Any]:
+        state = super().__getstate__()
+        # Null out the _explainer weakref; weakrefs are never valid cross-process.
+        # The unpickled result will use the existing graceful path in explain()
+        # (raises ExplainNotAvailableError when ref is None).
+        priv = state.get("__pydantic_private__")
+        if priv is not None and priv.get("_explainer") is not None:
+            state = dict(state)
+            state["__pydantic_private__"] = {**priv, "_explainer": None}
+        return state
+
+    # ------------------------------------------------------------------
     # Proxy properties — delegate to self.entity when present
     # ------------------------------------------------------------------
 

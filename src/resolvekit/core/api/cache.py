@@ -48,6 +48,29 @@ class CacheInfo(NamedTuple):
     currsize: int
 
 
+# ResolutionResult fields that are mutable containers and therefore must not
+# be shared between a cached entry and the result handed back to a caller.
+# In-place mutation (e.g. ``result.reasons.append(...)``) would otherwise
+# poison every subsequent cache hit for the same query.
+_MUTABLE_LIST_FIELDS = ("candidates", "reasons", "refinement_hints")
+
+
+def _detach_mutables(result: ResolutionResult) -> ResolutionResult:
+    """Return a shallow copy of *result* with fresh mutable list fields.
+
+    The query cache returns the same instance on every hit, and pydantic's
+    ``model_copy`` is shallow, so list fields would otherwise be shared with
+    the cached entry. We rebuild those lists (the elements are frozen models /
+    enums, so copying the containers alone is sufficient) and preserve the
+    ``_explainer`` back-reference that ``model_copy`` may drop.
+    """
+    copy = result.model_copy(
+        update={field: list(getattr(result, field)) for field in _MUTABLE_LIST_FIELDS}
+    )
+    copy._explainer = result._explainer
+    return copy
+
+
 class _QueryCache:
     """Per-instance LRU wrapping ``functools.lru_cache``.
 
@@ -90,7 +113,7 @@ class _QueryCache:
         domain_key = frozenset(domains) if domains else frozenset()
         key = (raw_text, 0 if context is None else id(context), domain_key)
         try:
-            return self._lookup(key)
+            return _detach_mutables(self._lookup(key))
         finally:
             self._pending = None
 

@@ -100,8 +100,8 @@ The confidence is meaningful in absolute terms — it's calibrated against real 
 
 | Match tier | Typical confidence |
 |---|---|
-| `exact_code` | ~0.95 |
-| `exact_name` | ~0.91 |
+| `exact_code` | ~0.96 |
+| `exact_name` | ~0.93 |
 | `fts` (accent-stripped or partial) | ~0.84 |
 | `fuzzy` | varies; often 0.70–0.88 |
 
@@ -130,7 +130,7 @@ import resolvekit as rk
 # Resolved: single clear winner
 rk.resolve("Germany").status       # resolved
 rk.resolve("Germany").match_tier   # exact_name  ("Germany" is a name, not a code)
-rk.resolve("Germany").confidence   # ≈ 0.91
+rk.resolve("Germany").confidence   # ≈ 0.93
 
 # Ambiguous: two Congos, similar confidence
 rk.resolve("Congo").status         # ambiguous
@@ -159,7 +159,7 @@ Query: "United States"
 Normalized: "united states"
 Status: RESOLVED
 Entity: country/USA
-Confidence: 90.8%
+Confidence: 93.3%
 Reasons: exact_name_match
 Pack: geo
 Match Tier: exact_name
@@ -182,7 +182,7 @@ Match Details:
     - very close edit-distance match
 ```
 
-`"United States"` resolves at 90.8% via `exact_name` rather than ~95% via `exact_code` because the input was matched against the canonical name index, not a code. The score is high but not as high as submitting `"USA"` directly.
+`"United States"` resolves at 93.3% via `exact_name` rather than ~96% via `exact_code` because the input was matched against the canonical name index, not a code. The score is high but not as high as submitting `"USA"` directly.
 
 Verbosity levels are `"minimal"` (status + entity_id + confidence), `"standard"` (adds sources, features, and alternatives), and `"full"` (adds trace events and timing).
 

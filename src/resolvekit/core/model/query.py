@@ -55,7 +55,7 @@ class ResolutionContext(BaseModel):
         as_of: Point-in-time for temporal validity checks
         entity_types: Entity type hints (e.g., {"geo.country", "geo.state"})
         parent_ids: Parent/container entity hints
-        country: ISO country code hint (useful for geo + org)
+        country: ISO 3166-1 alpha-2 country code hint (useful for geo + org)
         languages: Preferred languages for name matching
         attributes: Escape hatch for domain-specific attributes (use sparingly)
     """
@@ -70,7 +70,8 @@ class ResolutionContext(BaseModel):
         default=None, description="Parent/container entity hints"
     )
     country: str | None = Field(
-        default=None, max_length=2, description="ISO country code hint"
+        default=None,
+        description="ISO 3166-1 alpha-2 country code hint (e.g. 'US')",
     )
     languages: list[str] | None = Field(default=None, description="Preferred languages")
     attributes: dict[str, str | int | float | bool] = Field(
@@ -87,6 +88,31 @@ class ResolutionContext(BaseModel):
                 "entity_types must be a collection of strings, not a single string"
             )
         return value
+
+    @field_validator("country", mode="before")
+    @classmethod
+    def _validate_country(cls, value: Any) -> Any:
+        if value is None:
+            return value
+        if not isinstance(value, str):
+            raise ValueError("country must be a string")
+        if not value.isalpha():
+            raise ValueError(
+                f"country must be an ISO 3166-1 alpha-2 code"
+                f" (two uppercase letters), got {value!r}"
+            )
+        if len(value) == 2:
+            return value.upper()
+        if len(value) == 3:
+            raise ValueError(
+                f"country must be an ISO 3166-1 alpha-2 code (two letters),"
+                f" got {value!r} — pass the alpha-2 code instead"
+                f" (e.g. 'US' not 'USA')"
+            )
+        raise ValueError(
+            f"country must be an ISO 3166-1 alpha-2 code"
+            f" (two uppercase letters), got {value!r}"
+        )
 
     def replace(self, **updates: Any) -> "ResolutionContext":
         """Return a new ResolutionContext with the specified fields replaced.

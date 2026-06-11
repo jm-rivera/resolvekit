@@ -38,7 +38,7 @@ from resolvekit.core.model import (
 from resolvekit.core.registry import DomainPack
 from resolvekit.core.store import EntityStore
 from resolvekit.core.store.store_view import StoreView
-from resolvekit.core.util.normalization import TextNormalizer
+from resolvekit.core.util.normalization import NormalizationError, TextNormalizer
 
 # Cross-pack ambiguity threshold - when top results from different packs
 # are within this gap, we return AMBIGUOUS
@@ -352,9 +352,15 @@ class MultiPackRunner:
                 # Re-normalize query for this pack if pack-specific normalizer exists
                 pack_query = query
                 if pack_id in self._pack_normalizers:
-                    normalized = self._pack_normalizers[
-                        pack_id
-                    ].normalize_with_original(query.raw_text)
+                    try:
+                        normalized = self._pack_normalizers[
+                            pack_id
+                        ].normalize_with_original(query.raw_text)
+                    except NormalizationError:
+                        # The pack's normalizer emptied the input (e.g. a
+                        # punctuation-only query like '.'): unmatchable in
+                        # this pack, not a pipeline error.
+                        continue
                     pack_query = Query(
                         raw_text=query.raw_text,
                         normalized=normalized,

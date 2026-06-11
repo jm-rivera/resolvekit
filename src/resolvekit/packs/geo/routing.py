@@ -26,6 +26,18 @@ _GEO_ACRONYM_PATTERN: Final = re.compile(r"^[A-Za-z]{4,10}$")
 # the geo pack but contain digits that exclude them from _GEO_ACRONYM_PATTERN.
 _GEO_SNAPSHOT_ALIAS_PATTERN: Final = re.compile(r"^[A-Z]{1,5}[0-9]{1,2}$")
 
+# Period-delimited letter initialism (U.S.A., U.K., D.C.).  These alias real
+# geo entities but contain only single letters and periods, so they miss every
+# alphabetic-token pattern above.  Matched case-insensitively.
+_DOTTED_INITIALISM_PATTERN: Final = re.compile(r"^(?:[A-Za-z]\.){1,5}[A-Za-z]?$")
+
+# Uppercase ratio at/above which an alphabetic token reads as an acronym-shaped
+# token.  Mirrors the org pack's ``ACRONYM_UPPERCASE_RATIO`` so that whenever
+# org boosts a mixed/upper-case token as an acronym, geo boosts it too and stays
+# in multi-pack routing — otherwise mixed-case names ("fRaNcE", "CHIna") drop
+# geo entirely and never reach the country pack.
+_ACRONYM_UPPERCASE_RATIO: Final = 0.5
+
 # Geographic name suffixes (e.g., Finland, Pakistan, California)
 _GEO_SUFFIXES: Final = frozenset(
     {"land", "stan", "ia", "ica", "nia", "ria", "ey", "ay"}
@@ -57,14 +69,20 @@ def geo_scoring_fn(text: str, text_lower: str) -> float:
         # These are geo entities; the same +0.15 as long alphabetic acronyms is
         # enough to include geo in multi-pack routing alongside org.
         score += 0.15
+    elif _DOTTED_INITIALISM_PATTERN.match(text):
+        # Period-delimited initialisms (U.S.A., U.K., D.C.) alias real geo
+        # entities and read as acronyms to the org pack; match its boost so geo
+        # stays in routing instead of conceding to org.
+        score += 0.15
     elif _GEO_ACRONYM_PATTERN.match(text) and (
-        sum(c.isupper() for c in text) / len(text) >= 0.75
+        sum(c.isupper() for c in text) / len(text) >= _ACRONYM_UPPERCASE_RATIO
     ):
-        # Boost longer mostly-uppercase acronyms: many geo group entities (DPRK,
-        # NATO, ASEAN, BRICS, OPEC, MENA, SIDS, LDCs…) use this pattern.  The
-        # moderate +0.15 ensures geo is included in multi-pack routing alongside
-        # org, so the higher-confidence geo resolution can win when the entity
-        # exists there.
+        # Boost alphabetic acronym-shaped tokens: many geo group entities (DPRK,
+        # NATO, ASEAN, BRICS, OPEC, MENA, SIDS, LDCs…) use this pattern, and
+        # mixed-case country names ("fRaNcE", "CHIna") land here too.  The org
+        # pack treats any token with >= 0.5 uppercase as an acronym; matching
+        # that threshold keeps geo in multi-pack routing for those casings so
+        # the higher-confidence geo resolution can win when the entity exists.
         score += 0.15
 
     if any(text_lower.endswith(suffix) for suffix in _GEO_SUFFIXES):

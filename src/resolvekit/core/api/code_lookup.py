@@ -35,7 +35,7 @@ if TYPE_CHECKING:
 _CODE_SYSTEM_PRIORITY: list[str] = [
     "iso3",
     "iso2",
-    "numeric",
+    "iso_numeric",
     "dcid",
     "wikidata",
 ]
@@ -49,6 +49,22 @@ _CODE_PATTERNS: list[re.Pattern[str]] = [
     re.compile(r"^[0-9]{3}$"),  # numeric
     re.compile(r"^[a-z]+/[A-Za-z0-9_-]+$"),  # dcid-style
 ]
+
+
+def _iso_numeric_lookup_value(value_norm: str) -> str:
+    """Return the store-side lookup key for an iso_numeric value.
+
+    Bundled data stores iso_numeric values unpadded (e.g. ``'4'`` for
+    Afghanistan).  Strip leading zeros so zero-padded canonical inputs
+    like ``'004'`` still hit the correct row.
+
+    Args:
+        value_norm: Normalised (casefolded) iso_numeric value.
+
+    Returns:
+        Value with leading zeros stripped, or ``'0'`` for the all-zero input.
+    """
+    return value_norm.lstrip("0") or "0"
 
 
 def looks_like_code(value: str) -> bool:
@@ -77,7 +93,7 @@ class CodeLookup:
     def sorted_code_systems(self) -> list[str]:
         """Return code systems in stable priority order for auto-detect.
 
-        Priority: iso3 > iso2 > numeric > dcid > wikidata > <other standards
+        Priority: iso3 > iso2 > iso_numeric > dcid > wikidata > <other standards
         from builder ordering> > <custom alphabetical>.  The first five slots
         are hard-wired; remaining systems are sorted alphabetically.
         """
@@ -160,8 +176,13 @@ class CodeLookup:
             value_norm = self._runner.normalize_code_value(
                 from_system, value, pack_filter=pack_filter
             )
+            lookup_norm = (
+                _iso_numeric_lookup_value(value_norm)
+                if from_system == "iso_numeric"
+                else value_norm
+            )
             entity_ids = self._runner.lookup_code(
-                from_system, value_norm, pack_filter=pack_filter
+                from_system, lookup_norm, pack_filter=pack_filter
             )
             if not entity_ids:
                 return ResolutionResult(
@@ -188,8 +209,13 @@ class CodeLookup:
                 value_norm = self._runner.normalize_code_value(
                     system, value, pack_filter=pack_filter
                 )
+                lookup_norm = (
+                    _iso_numeric_lookup_value(value_norm)
+                    if system == "iso_numeric"
+                    else value_norm
+                )
                 ids = self._runner.lookup_code(
-                    system, value_norm, pack_filter=pack_filter
+                    system, lookup_norm, pack_filter=pack_filter
                 )
                 if ids:
                     hits[system] = ids[0]

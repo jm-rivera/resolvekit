@@ -1,5 +1,52 @@
 # Changelog
 
+## 0.1.3 (2026-06-11)
+
+Bug-fix release from a systematic stress-test of the public API surface. ~30
+verified fixes, no new features.
+
+**Resolution correctness.** Dotted abbreviations are no longer misclassified
+as missing-value markers: `"U.S.A."` resolves to `country/USA` (it previously
+resolved to an unrelated org entity) and `"U.K."` to `country/GBR`, while
+genuine null markers (`#N/A`, `--`, `.`) still return no match. Mixed-case
+inputs (`"fRaNcE"`, `"SUDan"`) resolve like their standard casings.
+Zero-padded ISO numeric codes (`"004"`) now resolve, `to="iso_numeric"` emits
+the canonical zero-padded form, and the pycountry-style `numeric` alias works
+(`entity("France").numeric` → `"250"`). `snap()` accepts free-text candidate
+labels as documented, alongside entity IDs. Punctuation-only inputs (`"."`,
+`"?"`) return no match instead of an internal error. `EntityRecord.aliases`
+no longer leaks the canonical name or duplicates.
+
+**Crashes.** `bulk()` no longer crashes on polars Series input without a
+pivot; `output="record"` builds primitive records that `to_polars()` accepts.
+`ResolutionResult` pickles cleanly.
+
+**Validation and errors.** Enum-like parameters are validated eagerly with
+did-you-mean suggestions instead of silently accepting typos: `on_ambiguous`
+(`resolve_id`), `on_missing`/`on_error`/`on_ambiguous` (`bulk`), `default_to`
+types (`configure`), `confidence_threshold` and `domain` (`parse`),
+`name:` language segments, and `ResolutionContext.country`.
+`AmbiguousResolutionError` hints are candidate-aware (no longer suggesting
+`entity_types=` when the tied candidates share one type) and `str()` previews
+the top candidates. `to=<typo>` errors suggest the closest code system
+instead of dumping all of them, and the `domain=`-with-auto-routing error no
+longer references internals. `from_records()` reports the offending row and
+column for empty name cells.
+
+**Behavior consistency.** `configure()` no longer clears settings that are
+omitted from the call; passing `None` explicitly resets a setting to its
+default (`cache_dir`, `default_to`). Mutating a returned result's lists no
+longer corrupts the query cache. `as_of=` accepts ISO date strings on
+`members_of`/`is_member`/`related`/`within`. `bulk()` pandas output preserves
+`None` under pandas 3. `available_entity_types()` returns the fine-grained
+types that `entity_types=` accepts. BYOD labels containing
+NFKC-compatibility characters (`™`, `№`) now round-trip; existing BYOD disk
+caches are rebuilt automatically.
+
+**Docs.** Corrected the `snap()` candidate guidance and the
+`UnknownOutputError`/`UnknownCodeSystemError` reference entries; refreshed
+stale confidence figures in the tutorials.
+
 ## 0.1.2 (2026-06-11)
 
 **Fixed.** `download()` crashed on a clean install with "Missing package

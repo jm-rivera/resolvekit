@@ -85,10 +85,10 @@ print(round(r.confidence, 2))
 ```
 
 ```
-0.91
+0.93
 ```
 
-That's about 91%. The score reflects how the match was found: exact code matches score near 1.0; alias hits like "Brasil" score a bit lower. A score below ~0.70 is abstained by default — you won't see it come back as a resolved result.
+That's about 93%. The score reflects how the match was found: exact code matches score near 1.0; alias hits like "Brasil" score a bit lower. A score below ~0.70 is abstained by default — you won't see it come back as a resolved result.
 
 For a full breakdown, call `.explain()`:
 
@@ -106,7 +106,7 @@ Query: "Brasil"
 Normalized: "brasil"
 Status: RESOLVED
 Entity: country/BRA
-Confidence: 90.8%
+Confidence: 92.8%
 Reasons: exact_name_match
 Pack: geo
 Match Tier: exact_name
