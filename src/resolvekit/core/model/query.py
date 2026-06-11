@@ -55,7 +55,7 @@ class ResolutionContext(BaseModel):
         as_of: Point-in-time for temporal validity checks
         entity_types: Entity type hints (e.g., {"geo.country", "geo.state"})
         parent_ids: Parent/container entity hints
-        country: ISO 3166-1 alpha-2 country code hint (useful for geo + org)
+        country: ISO 3166-1 country code hint — alpha-2 or alpha-3 (useful for geo + org)
         languages: Preferred languages for name matching
         attributes: Escape hatch for domain-specific attributes (use sparingly)
     """
@@ -71,7 +71,10 @@ class ResolutionContext(BaseModel):
     )
     country: str | None = Field(
         default=None,
-        description="ISO 3166-1 alpha-2 country code hint (e.g. 'US')",
+        description=(
+            "ISO 3166-1 country code hint — alpha-2 (e.g. 'US') or"
+            " alpha-3 (e.g. 'USA'). Stored uppercased; length disambiguates the form."
+        ),
     )
     languages: list[str] | None = Field(default=None, description="Preferred languages")
     attributes: dict[str, str | int | float | bool] = Field(
@@ -98,20 +101,14 @@ class ResolutionContext(BaseModel):
             raise ValueError("country must be a string")
         if not value.isalpha():
             raise ValueError(
-                f"country must be an ISO 3166-1 alpha-2 code"
-                f" (two uppercase letters), got {value!r}"
+                f"country must be an ISO 3166-1 alpha-2 or alpha-3 code"
+                f" (two or three letters), got {value!r}"
             )
-        if len(value) == 2:
+        if len(value) in (2, 3):
             return value.upper()
-        if len(value) == 3:
-            raise ValueError(
-                f"country must be an ISO 3166-1 alpha-2 code (two letters),"
-                f" got {value!r} — pass the alpha-2 code instead"
-                f" (e.g. 'US' not 'USA')"
-            )
         raise ValueError(
-            f"country must be an ISO 3166-1 alpha-2 code"
-            f" (two uppercase letters), got {value!r}"
+            f"country must be an ISO 3166-1 alpha-2 or alpha-3 code"
+            f" (two or three letters), got {value!r}"
         )
 
     def replace(self, **updates: Any) -> "ResolutionContext":

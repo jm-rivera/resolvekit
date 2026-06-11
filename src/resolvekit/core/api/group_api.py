@@ -210,7 +210,7 @@ class GroupAPI:
                 # match_tier omitted: GROUP_PREFERENCE_TIEBREAK is a decision-level
                 # signal, not a match-level signal (e.g. FUZZY).
                 "match_tier": None,
-                "reasons": [ReasonCode.GROUP_PREFERENCE_TIEBREAK],
+                "reasons": (ReasonCode.GROUP_PREFERENCE_TIEBREAK,),
             }
         )
 

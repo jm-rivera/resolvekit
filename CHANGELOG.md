@@ -43,9 +43,28 @@ types that `entity_types=` accepts. BYOD labels containing
 NFKC-compatibility characters (`™`, `№`) now round-trip; existing BYOD disk
 caches are rebuilt automatically.
 
+**API consistency.** Scalar `resolve()`/`resolve_id()` now coerce numeric
+input the same way `bulk()` does (`resolve_id(840)` → `country/USA`; integral
+floats like `840.0` from numeric dataframe columns coerce cleanly in both
+paths), and non-string types raise the `TypeError` the docstring always
+promised — `bool` included. `ResolutionContext(country=...)` accepts ISO
+alpha-3 alongside alpha-2 (`"USA"` and `"US"` behave identically). The pandas
+and polars accessors no longer convert caller mistakes into all-`None`
+columns: parameter-validation errors propagate (polars previously garbled
+them through `map_batches`), and `on_error` is exposed with the same
+`"raise"` default as `bulk()`. `ResolutionResult.reasons`, `.candidates`,
+and `.refinement_hints` are tuples now — the documented frozen contract is
+real, not advisory. Commonly raised errors (`UnknownCodeSystemError`,
+`UnknownOutputError`, `UnknownDomainError`, `OutputMissingError`,
+`DataPackNotAvailableError`, `CrosswalkError`, `ExplainNotAvailableError`,
+`NoModulesInstalledError`) are importable from top-level `resolvekit`;
+`resolvekit.errors` remains the canonical home.
+
 **Docs.** Corrected the `snap()` candidate guidance and the
 `UnknownOutputError`/`UnknownCodeSystemError` reference entries; refreshed
-stale confidence figures in the tutorials.
+stale confidence figures in the tutorials; documented that code
+auto-detection is case-sensitive by design while `from_system` is
+case-insensitive.
 
 ## 0.1.2 (2026-06-11)
 

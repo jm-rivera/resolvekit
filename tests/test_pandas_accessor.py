@@ -104,3 +104,67 @@ def test_accessor_bulk_method_exists():
     s = pd.Series(["US"])
     acc = s.resolvekit
     assert hasattr(acc, "bulk")
+
+
+# ---------------------------------------------------------------------------
+# on_error propagation: caller mistakes must raise, not silently produce Nones
+# ---------------------------------------------------------------------------
+
+
+def test_resolve_bad_to_raises_unknown_code_system():
+    """resolve(to='iso33') must raise UnknownCodeSystemError, not all-None."""
+    import resolvekit.pandas  # noqa: F401
+    from resolvekit.core.errors import UnknownCodeSystemError
+
+    s = pd.Series(["France"])
+    with pytest.raises(UnknownCodeSystemError):
+        s.resolvekit.resolve(to="iso33")
+
+
+def test_resolve_bad_domain_raises_unknown_domain():
+    """resolve(domain='bad_xyz') must raise UnknownDomainError, not all-None."""
+    import resolvekit.pandas  # noqa: F401
+    from resolvekit.core.errors import UnknownDomainError
+
+    s = pd.Series(["France"])
+    with pytest.raises(UnknownDomainError):
+        s.resolvekit.resolve(to="iso3", domain="bad_xyz")
+
+
+def test_resolve_bad_on_ambiguous_raises_value_error():
+    """resolve(on_ambiguous='typo') must raise ValueError for invalid param."""
+    import resolvekit.pandas  # noqa: F401
+
+    s = pd.Series(["France"])
+    with pytest.raises(ValueError, match="on_ambiguous="):
+        s.resolvekit.resolve(to="iso3", on_ambiguous="typo")
+
+
+def test_resolve_valid_call_still_works():
+    """resolve(to='iso3') with valid args must return correct codes."""
+    import resolvekit.pandas  # noqa: F401
+
+    s = pd.Series(["France", "Germany"])
+    result = s.resolvekit.resolve(to="iso3")
+    assert isinstance(result, pd.Series)
+    assert result.tolist() == ["FRA", "DEU"]
+
+
+def test_resolve_on_error_null_returns_none_rows():
+    """resolve(on_error='null') must suppress per-row errors and return None."""
+    import resolvekit.pandas  # noqa: F401
+
+    s = pd.Series(["France"])
+    result = s.resolvekit.resolve(to="iso3", from_system="bad_sys", on_error="null")
+    assert isinstance(result, pd.Series)
+    assert result.tolist() == [None]
+
+
+def test_bulk_on_error_default_is_raise():
+    """bulk() must default on_error='raise', not 'null'."""
+    import resolvekit.pandas  # noqa: F401
+    from resolvekit.core.errors import UnknownCodeSystemError
+
+    s = pd.Series(["France"])
+    with pytest.raises(UnknownCodeSystemError):
+        s.resolvekit.bulk(to="iso33")

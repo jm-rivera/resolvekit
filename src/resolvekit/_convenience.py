@@ -93,7 +93,7 @@ def default() -> Resolver:
 
 def configure(
     *,
-    auto_download: bool | None = None,
+    auto_download: bool | None | object = _CONFIG_UNSET,
     cache_dir: str | Path | None | object = _CONFIG_UNSET,
     default_to: str | list[str] | None | object = _CONFIG_UNSET,
     on_missing: Literal["raise", "null", "auto"] | object = _CONFIG_UNSET,
@@ -108,7 +108,8 @@ def configure(
 
     Args:
         auto_download: If True, remote packs are downloaded automatically
-            when needed. ``None`` leaves the current setting unchanged.
+            when needed. ``None`` resets to the default (disabled).
+            Omitting leaves the current setting unchanged.
         cache_dir: Custom cache directory for remote data packs.
             ``None`` resets to the platform default (removes any custom path).
             Omitting leaves the current setting unchanged.
@@ -171,7 +172,7 @@ def configure(
         )
 
     _configure_core(
-        auto_download=auto_download,
+        auto_download=auto_download,  # type: ignore[arg-type]  # ty: ignore[invalid-argument-type]
         cache_dir=cache_dir,  # type: ignore[arg-type]  # ty: ignore[invalid-argument-type]
         default_to=default_to,  # type: ignore[arg-type]  # ty: ignore[invalid-argument-type]
         on_missing=on_missing,
@@ -237,7 +238,11 @@ def resolve(
     ``Resolver.resolve()`` (``include_entity=False`` default) for pipeline use.
 
     Args:
-        text: The text or code to resolve.
+        text: The text or code to resolve.  ``str`` is used as-is.
+            ``int`` and ``float`` are coerced to string (``840`` → ``"840"``;
+            ``840.0`` → ``"840"``), matching the behaviour of :func:`bulk`
+            on numeric columns.  ``None`` returns a NO_MATCH result silently.
+            ``bool`` and all other types raise ``TypeError``.
         to: Target representation pivot (e.g. ``"iso3"``, ``"name"``).
             Omit (default) to use the configured ``default_to`` spec, or
             returns a raw :class:`ResolutionResult` when no default is set.
@@ -283,7 +288,11 @@ def resolve_id(
     """Resolve text and return entity_id or None.
 
     Args:
-        text: Text to resolve.
+        text: Text to resolve.  ``str`` is used as-is.  ``int`` and
+            ``float`` are coerced to string (``840`` → ``"840"``;
+            ``840.0`` → ``"840"``), matching the behaviour of :func:`bulk`
+            on numeric columns.  ``None`` returns ``None`` silently.
+            ``bool`` and all other types raise ``TypeError``.
         on_ambiguous: Behavior when multiple entities match.
             - ``"raise"`` (default): raises :class:`AmbiguousResolutionError`.
             - ``"null"``: returns ``None`` on ambiguity.
@@ -298,6 +307,8 @@ def resolve_id(
         Entity ID string, or None if no match.
 
     Raises:
+        TypeError: If *text* is a ``bool``, ``bytes``, ``list``, or any
+            other unsupported type.
         AmbiguousResolutionError: If ``on_ambiguous="raise"`` and the
             resolution is ambiguous.
     """

@@ -31,7 +31,7 @@ _config = _Config()
 
 def configure(
     *,
-    auto_download: bool | None = None,
+    auto_download: bool | None | _Unset = _UNSET,
     cache_dir: str | Path | None | _Unset = _UNSET,
     default_to: str | list[str] | None | _Unset = _UNSET,
     on_missing: Literal["raise", "null", "auto"] | object = _UNSET,
@@ -42,7 +42,8 @@ def configure(
 
     Args:
         auto_download: If True, remote packs are downloaded automatically
-            when needed. ``None`` leaves the current setting unchanged.
+            when needed. ``None`` resets to the default (disabled).
+            Omitting leaves the current setting unchanged.
         cache_dir: Custom cache directory for remote data packs.
             ``None`` resets to the platform default (removes any custom path).
             Omitting leaves the current setting unchanged.
@@ -58,8 +59,11 @@ def configure(
             Omitting this argument leaves any previously configured policy
             unchanged.
     """
-    if auto_download is not None:
-        _config.auto_download = auto_download
+    if auto_download is not _UNSET:
+        # None resets to the dataclass default (disabled).
+        _config.auto_download = (
+            bool(auto_download) if auto_download is not None else False
+        )
     if cache_dir is not _UNSET:
         # None resets to platform default (removes any custom path).
         _config.cache_dir = (

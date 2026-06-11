@@ -183,3 +183,47 @@ class TestContext:
         assert ctx.parent_ids == ["country/USA"]
         assert ctx.languages == ["en"]
         assert ctx.attributes == {"source": "crm"}
+
+    def test_country_alpha2_accepted(self):
+        from resolvekit.core.model.query import ResolutionContext
+
+        ctx = ResolutionContext(country="US")
+        assert ctx.country == "US"
+
+    def test_country_alpha3_accepted(self):
+        from resolvekit.core.model.query import ResolutionContext
+
+        ctx = ResolutionContext(country="USA")
+        assert ctx.country == "USA"
+
+    def test_country_lowercase_normalised_to_upper(self):
+        from resolvekit.core.model.query import ResolutionContext
+
+        ctx2 = ResolutionContext(country="us")
+        assert ctx2.country == "US"
+        ctx3 = ResolutionContext(country="usa")
+        assert ctx3.country == "USA"
+
+    def test_country_single_char_rejected(self):
+        from resolvekit.core.model.query import ResolutionContext
+
+        with pytest.raises(ValidationError):
+            ResolutionContext(country="U")
+
+    def test_country_empty_string_rejected(self):
+        from resolvekit.core.model.query import ResolutionContext
+
+        with pytest.raises(ValidationError):
+            ResolutionContext(country="")
+
+    def test_country_nonalpha_rejected(self):
+        from resolvekit.core.model.query import ResolutionContext
+
+        with pytest.raises(ValidationError):
+            ResolutionContext(country="1!")
+
+    def test_country_four_char_rejected(self):
+        from resolvekit.core.model.query import ResolutionContext
+
+        with pytest.raises(ValidationError):
+            ResolutionContext(country="USAA")

@@ -227,7 +227,7 @@ def link_span(  # noqa: PLR0911 (per-gate precision dispatch is naturally multi-
             status=ResolutionStatus.NO_MATCH,
             confidence=result.confidence,
             candidates=result.candidates,
-            reasons=[ReasonCode.BELOW_CONFIDENCE_THRESHOLD],
+            reasons=(ReasonCode.BELOW_CONFIDENCE_THRESHOLD,),
             query_text=result.query_text,
         )
         # Constructor drops PrivateAttr; re-attach None to signal demoted result.

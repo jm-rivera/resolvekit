@@ -99,7 +99,7 @@ class ThresholdDecisionPolicy(DecisionPolicy):
         if not candidates:
             return ResolutionResult(
                 status=ResolutionStatus.NO_MATCH,
-                reasons=[ReasonCode.NO_CANDIDATES],
+                reasons=(ReasonCode.NO_CANDIDATES,),
             )
 
         candidates = sorted(
@@ -108,7 +108,6 @@ class ThresholdDecisionPolicy(DecisionPolicy):
         top = candidates[0]
         top_score = top.scores.calibrated_score
 
-        # Step 3: early-accept hook
         early_reason = self._early_accept(top, candidates)
         if early_reason is not None:
             result = self._make_resolved(top, candidates, early_reason)
@@ -120,15 +119,15 @@ class ThresholdDecisionPolicy(DecisionPolicy):
             )
             return result
 
-        # Step 4: threshold check — attach calibrated score so callers can
-        # distinguish a near-miss ("NO_MATCH, confidence=0.66") from a true
-        # no-candidate ("NO_MATCH, confidence=None").
+        # Attach calibrated score on near-miss so callers can distinguish
+        # a near-miss ("NO_MATCH, confidence=0.66") from a true no-candidate
+        # ("NO_MATCH, confidence=None").
         if top_score < self._confidence_threshold:
             result = ResolutionResult(
                 status=ResolutionStatus.NO_MATCH,
                 confidence=top_score,
                 candidates=self._make_summaries(candidates),
-                reasons=[ReasonCode.BELOW_CONFIDENCE_THRESHOLD],
+                reasons=(ReasonCode.BELOW_CONFIDENCE_THRESHOLD,),
             )
             trace.emit(
                 TraceEvent(
@@ -138,7 +137,6 @@ class ThresholdDecisionPolicy(DecisionPolicy):
             )
             return result
 
-        # Step 5: gap check — single candidate ≥ threshold is always a clear winner
         effective_gap = self._effective_gap(query)
         if len(candidates) == 1:
             has_clear_winner = True
@@ -150,7 +148,6 @@ class ThresholdDecisionPolicy(DecisionPolicy):
                 has_clear_winner = gap > effective_gap
 
         if not has_clear_winner:
-            # Step 6: tiebreak hook
             winner = self._tiebreak(candidates, context, effective_gap)
             if winner is not None:
                 result = self._make_resolved(
@@ -168,7 +165,7 @@ class ThresholdDecisionPolicy(DecisionPolicy):
             result = ResolutionResult(
                 status=ResolutionStatus.AMBIGUOUS,
                 candidates=self._make_summaries(candidates),
-                reasons=[ReasonCode.AMBIGUOUS_LOW_GAP],
+                reasons=(ReasonCode.AMBIGUOUS_LOW_GAP,),
             )
             trace.emit(
                 TraceEvent(
@@ -178,7 +175,6 @@ class ThresholdDecisionPolicy(DecisionPolicy):
             )
             return result
 
-        # Step 7: resolved
         result = self._make_resolved(top, candidates, self._resolved_reason(top))
         trace.emit(
             TraceEvent(
@@ -286,8 +282,12 @@ class ThresholdDecisionPolicy(DecisionPolicy):
             entity_id=top.entity_id,
             confidence=top.scores.calibrated_score,
             candidates=self._make_summaries(all_candidates),
-            reasons=[reason],
+            reasons=(reason,),
         )
 
-    def _make_summaries(self, candidates: list[Candidate]) -> list[CandidateSummary]:
-        return [build_candidate_summary(c) for c in candidates[: self._max_candidates]]
+    def _make_summaries(
+        self, candidates: list[Candidate]
+    ) -> tuple[CandidateSummary, ...]:
+        return tuple(
+            build_candidate_summary(c) for c in candidates[: self._max_candidates]
+        )

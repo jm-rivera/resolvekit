@@ -48,25 +48,15 @@ class CacheInfo(NamedTuple):
     currsize: int
 
 
-# ResolutionResult fields that are mutable containers and therefore must not
-# be shared between a cached entry and the result handed back to a caller.
-# In-place mutation (e.g. ``result.reasons.append(...)``) would otherwise
-# poison every subsequent cache hit for the same query.
-_MUTABLE_LIST_FIELDS = ("candidates", "reasons", "refinement_hints")
-
-
 def _detach_mutables(result: ResolutionResult) -> ResolutionResult:
-    """Return a shallow copy of *result* with fresh mutable list fields.
+    """Return a shallow copy of *result*, preserving the ``_explainer`` back-reference.
 
-    The query cache returns the same instance on every hit, and pydantic's
-    ``model_copy`` is shallow, so list fields would otherwise be shared with
-    the cached entry. We rebuild those lists (the elements are frozen models /
-    enums, so copying the containers alone is sufficient) and preserve the
-    ``_explainer`` back-reference that ``model_copy`` may drop.
+    ``candidates``, ``reasons``, and ``refinement_hints`` are now tuple-typed
+    (immutable), so no container copying is required.  ``model_copy`` is still
+    called to give each caller a distinct identity, and the ``_explainer``
+    weakref is re-attached because ``model_copy`` does not carry private attrs.
     """
-    copy = result.model_copy(
-        update={field: list(getattr(result, field)) for field in _MUTABLE_LIST_FIELDS}
-    )
+    copy = result.model_copy()
     copy._explainer = result._explainer
     return copy
 

@@ -1,8 +1,9 @@
-"""Regression tests for query-cache mutation leakage .
+"""Regression tests for query-cache mutation leakage.
 
-In-place mutation of a returned result's list fields must not poison the
-query cache: a cache hit must return a result whose mutable containers are not
-shared with the cached entry.
+``ResolutionResult.reasons``, ``.candidates``, and ``.refinement_hints`` are
+now tuple-typed (immutable), so in-place mutation raises ``AttributeError``.
+The cache-integrity invariant is preserved as a structural property rather than
+a defensive-copy concern.
 """
 
 from __future__ import annotations
@@ -32,41 +33,63 @@ def _make_result() -> ResolutionResult:
 
 
 class TestDetachMutables:
-    def test_lists_are_fresh_objects(self) -> None:
+    def test_copy_has_equal_values(self) -> None:
         original = _make_result()
         detached = _detach_mutables(original)
         assert detached.reasons == original.reasons
-        assert detached.reasons is not original.reasons
-        assert detached.candidates is not original.candidates
-        assert detached.refinement_hints is not original.refinement_hints
+        assert detached.candidates == original.candidates
+        assert detached.refinement_hints == original.refinement_hints
 
-    def test_mutating_detached_does_not_touch_original(self) -> None:
-        original = _make_result()
-        detached = _detach_mutables(original)
-        detached.reasons.append(ReasonCode.INTERNAL_ERROR)
-        assert ReasonCode.INTERNAL_ERROR not in original.reasons
+    def test_fields_are_tuples(self) -> None:
+        result = _make_result()
+        assert isinstance(result.reasons, tuple)
+        assert isinstance(result.candidates, tuple)
+        assert isinstance(result.refinement_hints, tuple)
+
+    def test_mutation_raises(self) -> None:
+        result = _make_result()
+        with pytest.raises(AttributeError):
+            result.reasons.append(ReasonCode.INTERNAL_ERROR)  # type: ignore[attr-defined]
+        with pytest.raises(AttributeError):
+            result.candidates.clear()  # type: ignore[attr-defined]
 
 
 class TestQueryCacheNoLeak:
-    def test_cache_hit_returns_detached_lists(self) -> None:
+    def test_cache_hit_returns_detached_copy(self) -> None:
         cache = _QueryCache(maxsize=8)
         result = _make_result()
 
         first = cache.get_or_call(
             raw_text="France", context=None, domains=None, inner=lambda: result
         )
-        # Poison the FIRST returned result's reasons in place.
-        first.reasons.append(ReasonCode.INTERNAL_ERROR)
+        assert first.reasons == (ReasonCode.EXACT_NAME_MATCH,)
 
-        # A subsequent hit must not see the poison.
         second = cache.get_or_call(
             raw_text="France",
             context=None,
             domains=None,
             inner=lambda: pytest.fail("inner should not run on a cache hit"),
         )
-        assert ReasonCode.INTERNAL_ERROR not in second.reasons
-        assert second.reasons == [ReasonCode.EXACT_NAME_MATCH]
+        assert second.reasons == first.reasons
+
+    def test_tuple_fields_prevent_cache_poisoning(self) -> None:
+        cache = _QueryCache(maxsize=8)
+        result = _make_result()
+
+        first = cache.get_or_call(
+            raw_text="France", context=None, domains=None, inner=lambda: result
+        )
+        # Tuple fields are immutable — mutation is impossible, cache is safe by type.
+        with pytest.raises(AttributeError):
+            first.reasons.append(ReasonCode.INTERNAL_ERROR)  # type: ignore[attr-defined]
+
+        second = cache.get_or_call(
+            raw_text="France",
+            context=None,
+            domains=None,
+            inner=lambda: pytest.fail("inner should not run on a cache hit"),
+        )
+        assert second.reasons == (ReasonCode.EXACT_NAME_MATCH,)
 
 
 class TestResolverEndToEnd:
@@ -78,17 +101,25 @@ class TestResolverEndToEnd:
         yield r
         r.close()
 
-    def test_reasons_mutation_does_not_poison_cache(self, resolver: Any) -> None:
+    def test_reasons_is_tuple(self, resolver: Any) -> None:
         first = resolver.resolve("United States")
-        if not first.reasons:
-            pytest.skip("fixture resolution carries no reasons to mutate")
-        first.reasons.append("CORRUPTED")
-        second = resolver.resolve("United States")
-        assert "CORRUPTED" not in second.reasons
+        assert isinstance(first.reasons, tuple)
 
-    def test_candidates_mutation_does_not_poison_cache(self, resolver: Any) -> None:
+    def test_candidates_is_tuple(self, resolver: Any) -> None:
         first = resolver.resolve("United States")
-        before = len(first.candidates)
-        first.candidates.clear()
+        assert isinstance(first.candidates, tuple)
+
+    def test_reasons_mutation_raises(self, resolver: Any) -> None:
+        first = resolver.resolve("United States")
+        with pytest.raises(AttributeError):
+            first.reasons.append("CORRUPTED")  # type: ignore[attr-defined]
+
+    def test_candidates_mutation_raises(self, resolver: Any) -> None:
+        first = resolver.resolve("United States")
+        with pytest.raises(AttributeError):
+            first.candidates.clear()  # type: ignore[attr-defined]
+
+    def test_cache_returns_consistent_reasons(self, resolver: Any) -> None:
+        first = resolver.resolve("United States")
         second = resolver.resolve("United States")
-        assert len(second.candidates) == before
+        assert first.reasons == second.reasons

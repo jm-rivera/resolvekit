@@ -107,7 +107,7 @@ class ReasonCode(StrEnum):
     They're invaluable for debugging and monitoring resolution quality.
 
     Note: ``ResolutionResult.reasons`` is currently always a single-element
-    list. Callers should treat the field as ``[reason]`` and avoid logic that
+    tuple. Callers should treat the field as ``(reason,)`` and avoid logic that
     assumes multiple codes per result; this invariant may relax in a future
     minor version, with notice.
     """
@@ -192,9 +192,7 @@ class CandidateSummary(BaseModel):
     entity_type: str | None = Field(default=None)
     pack_id: str | None = Field(default=None)
     match_tier: MatchTier | None = Field(default=None)
-    top_evidence: list[CandidateEvidenceSummary] = Field(
-        default_factory=list, max_length=3
-    )
+    top_evidence: tuple[CandidateEvidenceSummary, ...] = Field(default=(), max_length=3)
     key_features: dict[str, float | bool | None] = Field(default_factory=dict)
 
     def __repr__(self) -> str:  # explicit by design
@@ -241,9 +239,9 @@ class ResolutionResult(BaseModel):
     confidence: float | None = Field(default=None, ge=0.0, le=1.0)
     pack_id: str | None = Field(default=None)
     match_tier: MatchTier | None = Field(default=None)
-    candidates: list[CandidateSummary] = Field(default_factory=list, max_length=10)
-    reasons: list[ReasonCode] = Field(default_factory=list)
-    refinement_hints: list[RefinementHint] = Field(default_factory=list, max_length=4)
+    candidates: tuple[CandidateSummary, ...] = Field(default=(), max_length=10)
+    reasons: tuple[ReasonCode, ...] = Field(default=())
+    refinement_hints: tuple[RefinementHint, ...] = Field(default=(), max_length=4)
     query_text: str | None = Field(default=None)
     trace: Trace | None = Field(default=None)
 
@@ -406,7 +404,7 @@ class ResolutionResult(BaseModel):
         """Return the highest-confidence candidate, or None."""
         return self.candidates[0] if self.candidates else None
 
-    def top_candidates(self, n: int = 3) -> list[CandidateSummary]:
+    def top_candidates(self, n: int = 3) -> tuple[CandidateSummary, ...]:
         """Return the top *n* candidates by confidence."""
         return self.candidates[:n]
 

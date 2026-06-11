@@ -1545,7 +1545,7 @@ class Resolver:
         ):
             return ResolutionResult(
                 status=ResolutionStatus.NO_MATCH,
-                reasons=[ReasonCode.SENTINEL_BLOCKED],
+                reasons=(ReasonCode.SENTINEL_BLOCKED,),
                 query_text=text,
             )
         ref: weakref.ref[Explainer] = (
@@ -1641,7 +1641,12 @@ class Resolver:
         """Resolve a single text string, optionally pivoting to a code or attribute.
 
         Args:
-            text: The text or code to resolve.
+            text: The text or code to resolve.  ``str`` is used as-is.
+                ``int`` and ``float`` are coerced to string (``840`` →
+                ``"840"``; ``840.0`` → ``"840"``), matching the behaviour of
+                :meth:`bulk` on numeric columns.  ``None`` returns a
+                NO_MATCH result silently.  ``bool`` and all other types raise
+                ``TypeError``.
             to: Target representation.  ``UNSET`` (default) uses the resolver's
                 configured ``default_to`` spec when set, or returns a raw
                 :class:`ResolutionResult` when no spec is configured.
@@ -1679,7 +1684,9 @@ class Resolver:
         Raises:
             ValueError: If ``as_result=True`` combined with an explicit ``to=``
                 (other than ``UNSET``/``None``), or if ``timeout <= 0``.
-            TypeError: If *text* is not a ``str`` (with ``.hint`` to ``bulk()``).
+            TypeError: If *text* is a ``bool``, ``bytes``, ``list``, ``tuple``,
+                or any other unsupported type.  ``int`` and ``float`` are
+                accepted (coerced); ``None`` is accepted (soft NO_MATCH).
             AmbiguousResolutionError: When pivoting and the result is ambiguous.
             OutputMissingError: When a spec is active and the entity lacks the
                 requested output and ``on_missing="raise"`` (or ``"auto"`` scalar).
@@ -1702,9 +1709,26 @@ class Resolver:
                 )
                 setattr(err, "hint", "rk.bulk(values=[...])")  # noqa: B010
                 raise err
-            # All other non-strings (None, bytes, int, float, empty collections)
-            # soft-return NO_MATCH — resolve_id() and bulk() depend on this.
-            return self._invalid_query_result(ReasonCode.INVALID_INPUT_TYPE)
+            # None → silent NO_MATCH (unchanged).
+            if text is None:
+                return self._invalid_query_result(ReasonCode.INVALID_INPUT_TYPE)
+            # bool is an int subclass — reject before the int check to avoid
+            # True→"1" / False→"0" mapping to real entities.
+            if isinstance(text, bool):
+                raise TypeError(
+                    f"resolve() text must be a str, int, or float; got {type(text).__name__!r}"
+                )
+            # int / float → coerce to canonical string via the shared helper so
+            # scalar and bulk can never diverge.
+            if isinstance(text, (int, float)):
+                from resolvekit.core.api.bulk import _numeric_to_str
+
+                text = _numeric_to_str(text)  # type: ignore[assignment]
+            else:
+                # bytes, empty list/tuple, arbitrary objects → TypeError.
+                raise TypeError(
+                    f"resolve() text must be a str, int, or float; got {type(text).__name__!r}"
+                )
         effective_timeout = timeout if timeout is not None else self._default_timeout
         if effective_timeout is not None and effective_timeout <= 0:
             raise ValueError("timeout must be positive")
@@ -1792,7 +1816,11 @@ class Resolver:
         and handles AMBIGUOUS per ``on_ambiguous``.
 
         Args:
-            text: Text to resolve.
+            text: Text to resolve.  ``str`` is used as-is.  ``int`` and
+                ``float`` are coerced to string (``840`` → ``"840"``;
+                ``840.0`` → ``"840"``), matching the behaviour of
+                :meth:`bulk` on numeric columns.  ``None`` returns ``None``
+                silently.  ``bool`` and all other types raise ``TypeError``.
             on_ambiguous: Behavior when multiple entities match.
                 - ``"raise"`` (default): preserves the existing contract;
                   raises :class:`AmbiguousResolutionError` with candidates.
@@ -1810,6 +1838,8 @@ class Resolver:
             Entity ID string, or None if no match.
 
         Raises:
+            TypeError: If *text* is a ``bool``, ``bytes``, ``list``, or any
+                other unsupported type.
             AmbiguousResolutionError: If ``on_ambiguous="raise"`` and the
                 resolution is ambiguous.
             ResolutionError: If the resolution pipeline errored.

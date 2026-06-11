@@ -119,7 +119,7 @@ class CodeLookup:
             status=ResolutionStatus.RESOLVED,
             entity_id=entity_id,
             entity=entity,
-            reasons=[ReasonCode.EXACT_CODE_MATCH],
+            reasons=(ReasonCode.EXACT_CODE_MATCH,),
             query_text=value,
         )
         result._explainer = explainer_ref
@@ -187,7 +187,7 @@ class CodeLookup:
             if not entity_ids:
                 return ResolutionResult(
                     status=ResolutionStatus.NO_MATCH,
-                    reasons=[ReasonCode.NO_CANDIDATES],
+                    reasons=(ReasonCode.NO_CANDIDATES,),
                     query_text=value,
                 )
             if len(entity_ids) > 1:

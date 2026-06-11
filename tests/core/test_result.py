@@ -133,7 +133,7 @@ class TestResolutionResult:
         assert result.pack_id == "geo"
         assert result.match_tier == MatchTier.EXACT_CODE
         assert ReasonCode.EXACT_CODE_MATCH in result.reasons
-        assert result.refinement_hints == [RefinementHint.COUNTRY]
+        assert result.refinement_hints == (RefinementHint.COUNTRY,)
 
     def test_create_no_match_result(self):
         from resolvekit.core.model.result import (

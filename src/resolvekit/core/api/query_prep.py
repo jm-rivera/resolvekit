@@ -119,5 +119,5 @@ class QueryPreparer:
         """Return a stable result for empty / whitespace-only / non-string queries."""
         return ResolutionResult(
             status=ResolutionStatus.NO_MATCH,
-            reasons=[reason],
+            reasons=(reason,),
         )

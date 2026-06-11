@@ -21,11 +21,16 @@ _EXPECTED: dict[str, tuple[str, ...]] = {
         "AugmentResult",
         "BulkResult",
         "Crosswalk",
+        "CrosswalkError",
+        "DataPackNotAvailableError",
         "DroppedSpan",
         "EntityNotFoundError",
         "EntityRecord",
+        "ExplainNotAvailableError",
         "GroupNotFoundError",
         "IGNORE",
+        "NoModulesInstalledError",
+        "OutputMissingError",
         "ParseResult",
         "ParsedEntity",
         "ResolutionContext",
@@ -34,6 +39,9 @@ _EXPECTED: dict[str, tuple[str, ...]] = {
         "ResolutionStatus",
         "Resolver",
         "ResolverError",
+        "UnknownCodeSystemError",
+        "UnknownDomainError",
+        "UnknownOutputError",
         "bulk",
         "configure",
         "download",
@@ -240,7 +248,7 @@ def test_resolvekit_all() -> None:
 
 
 def test_resolvekit_all_count() -> None:
-    assert len(resolvekit.__all__) == 28
+    assert len(resolvekit.__all__) == 36
 
 
 def test_resolvekit_all_excludes_removed_names() -> None:

@@ -43,8 +43,7 @@ def did_you_mean_lines(result: ResolutionResult) -> str | None:
     """Build ``resolvekit.resolve(text=...)`` lines from candidate names.
 
     Returns one line per unique candidate canonical_name (excluding the
-    original query_text), joined with ``"\\n  "``.  Used by both the AMBIGUOUS
-    disambiguation path and the NO_MATCH DID_YOU_MEAN refinement path.
+    original query_text), joined with ``"\\n  "``.
     """
     names = [c.canonical_name for c in result.candidates if c.canonical_name]
     unique_names = [n for n in dict.fromkeys(names) if n != result.query_text]
@@ -54,7 +53,7 @@ def did_you_mean_lines(result: ResolutionResult) -> str | None:
     return "\n  ".join(lines)
 
 
-def render_refinement_hint(  # noqa: PLR0911 (per-hint dispatch is naturally branchy)
+def render_refinement_hint(  # noqa: PLR0911
     result: ResolutionResult, hint: RefinementHint
 ) -> str | None:
     """Map one RefinementHint value to a runnable resolve() argument string.
@@ -90,7 +89,7 @@ def render_refinement_hint(  # noqa: PLR0911 (per-hint dispatch is naturally bra
             ),
             None,
         )
-        placeholder = country or "<your-iso2>"
+        placeholder = country or "<country-code>"
         return f'{prefix}context=ResolutionContext(country="{placeholder}"))'
 
     if hint == RefinementHint.PARENT_IDS:

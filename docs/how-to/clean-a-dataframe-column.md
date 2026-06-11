@@ -101,6 +101,45 @@ detail = result.unnest()
 
 `result.failures` gives a sub-result containing only the non-resolved rows, so you can inspect or re-attempt just the misses.
 
+## Use the Series accessor
+
+Install the extras (`resolvekit[pandas]` or `resolvekit[polars]`) to get a `.resolvekit` accessor directly on Series and Expr objects:
+
+```python
+import pandas as pd
+import resolvekit.pandas          # registers the accessor
+
+df["iso3"] = df["country"].resolvekit.resolve(to="iso3")
+```
+
+```python
+import polars as pl
+import resolvekit.polars          # registers the namespace
+
+df = df.with_columns(
+    pl.col("country").resolvekit.resolve(to="iso3").alias("iso3")
+)
+```
+
+The accessor accepts the same parameters as `rk.bulk()`. By default, parameter mistakes (unknown `to=`, bad `domain=`, unknown `from_system=`) raise immediately rather than silently producing all-`None` output.
+
+### Control per-row errors with `on_error`
+
+`on_error` governs what happens when an individual row's resolution raises an unexpected error at runtime:
+
+| value | behaviour |
+|-------|-----------|
+| `"raise"` (default) | propagate the exception |
+| `"null"` | return `None` for that row |
+| `"keep"` | return the original input string |
+
+```python
+# Silently drop failed rows instead of raising
+df["iso3"] = df["country"].resolvekit.resolve(to="iso3", on_error="null")
+```
+
+Note: `not_found` (for rows that simply don't match any entity) is independent of `on_error` (for rows that hit an unexpected runtime error). The defaults — `not_found="null"`, `on_error="raise"` — match `rk.bulk()`.
+
 ## Input code systems
 
 If your column already contains ISO 2-letter codes, skip fuzzy matching entirely:

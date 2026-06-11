@@ -57,7 +57,7 @@ class PipelineResult:
 
 _TIMEOUT_RESULT = ResolutionResult(
     status=ResolutionStatus.ERROR,
-    reasons=[ReasonCode.TIMEOUT],
+    reasons=(ReasonCode.TIMEOUT,),
 )
 
 

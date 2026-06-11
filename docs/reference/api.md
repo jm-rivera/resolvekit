@@ -633,9 +633,9 @@ Frozen Pydantic model. Returned by `resolve()` (when `to` is not set) and by the
 | `entity` | [`EntityRecord`](#entityrecord) `| None` | Populated when `include_entity=True`. |
 | `pack_id` | `str | None` | Domain pack that produced the result (e.g. `"geo"`). |
 | `match_tier` | `str | None` | How the match was found: `"exact_code"`, `"exact_name"`, `"acronym"`, `"fts"`, `"fuzzy"`, or `"fallback"`. |
-| `candidates` | `list[CandidateSummary]` | Top candidates (up to 10), including the winner on a resolved result. |
-| `reasons` | `list[str]` | Reason codes explaining the outcome (e.g. `["exact_code_match"]`). Currently always a single-element list. |
-| `refinement_hints` | `list[str]` | Suggestions for a retry that would likely succeed (e.g. `["entity_types"]`). |
+| `candidates` | `tuple[CandidateSummary, ...]` | Top candidates (up to 10), including the winner on a resolved result. |
+| `reasons` | `tuple[str, ...]` | Reason codes explaining the outcome (e.g. `("exact_code_match",)`). Currently always a single-element tuple. |
+| `refinement_hints` | `tuple[str, ...]` | Suggestions for a retry that would likely succeed (e.g. `("entity_types",)`). |
 | `query_text` | `str | None` | The original input text as seen by the resolver. |
 
 **Convenience properties** (delegate to `entity`; return `None` when `entity` is not populated)
@@ -654,7 +654,7 @@ Frozen Pydantic model. Returned by `resolve()` (when `to` is not set) and by the
 
 | Method | Returns | Meaning |
 |---|---|---|
-| `.top_candidates(n=3)` | `list[CandidateSummary]` | Top *n* candidates by confidence. |
+| `.top_candidates(n=3)` | `tuple[CandidateSummary, ...]` | Top *n* candidates by confidence. |
 | `.explain(verbosity="standard")` | `Scorecard` | Re-run with full tracing. Verbosity: `"minimal"`, `"standard"`, `"full"`. Raises `ExplainNotAvailableError` on detached results. |
 | `.to_dict()` | `dict` | JSON-serializable dict (delegates to `model_dump()`). |
 | `.to_json(indent=None)` | `str` | JSON string. |
@@ -672,7 +672,7 @@ Frozen Pydantic model. Returned by `resolve()` (when `to` is not set) and by the
 >>> r.is_resolved
 True
 >>> r.reasons
-[<ReasonCode.EXACT_NAME_MATCH: 'exact_name_match'>]
+(<ReasonCode.EXACT_NAME_MATCH: 'exact_name_match'>,)
 ```
 
 **Explain**
@@ -820,7 +820,7 @@ from resolvekit import ResolutionContext
 | `as_of` | `date | None` | Resolve against entities valid at this date. |
 | `entity_types` | `frozenset[str] | None` | Restrict to specific entity types (e.g. `{"geo.country"}`). Must be a collection — a bare string raises `ValueError`. |
 | `parent_ids` | `list[str] | None` | Restrict to entities contained within these parent IDs. |
-| `country` | `str | None` | ISO 3166-1 alpha-2 country code hint. Max 2 characters. |
+| `country` | `str | None` | ISO 3166-1 country code hint — alpha-2 (`"US"`) or alpha-3 (`"USA"`). |
 | `languages` | `list[str] | None` | Preferred language codes for name matching. |
 | `attributes` | `dict` | Escape hatch for domain-specific hints. |
 
@@ -1184,7 +1184,7 @@ Pass a custom blocklist to `Resolver.auto(sentinel_blocklist=...)`, or disable b
 
 ## Errors { #errors }
 
-All public errors are importable from `resolvekit` or the dedicated `resolvekit.errors` namespace. The resolution errors most callers need:
+All public errors are importable from `resolvekit` or the dedicated `resolvekit.errors` namespace. The errors most callers need:
 
 ```python
 from resolvekit import (
@@ -1193,14 +1193,18 @@ from resolvekit import (
     AmbiguousResolutionError,
     EntityNotFoundError,
     GroupNotFoundError,
+    CrosswalkError,
+    DataPackNotAvailableError,
+    ExplainNotAvailableError,
+    NoModulesInstalledError,
+    OutputMissingError,
+    UnknownCodeSystemError,
+    UnknownDomainError,
+    UnknownOutputError,
 )
 ```
 
-Output-related errors introduced with configurable default output:
-
-```python
-from resolvekit.errors import UnknownOutputError, OutputMissingError
-```
+All of the above are also available via `resolvekit.errors`. The full catalogue of datapack and registry errors (e.g. `DataPackRuntimeVersionError`, `ModuleConflictError`) lives exclusively in `resolvekit.errors`.
 
 ### `ResolverError` { #resolvererror }
 
@@ -1258,7 +1262,7 @@ except EntityNotFoundError as e:
 Raised at configuration or compile time when `default_to` contains a malformed token (including a malformed `name:` grammar segment in a per-call `to=`) or names a code system that no loaded pack carries. A per-call `to=` naming an unknown code system raises [`UnknownCodeSystemError`](#unknowncodesystemerror) instead.
 
 ```python
-from resolvekit.errors import UnknownOutputError
+from resolvekit import UnknownOutputError  # or: from resolvekit.errors import UnknownOutputError
 ```
 
 | Attribute | Type | Meaning |
@@ -1273,7 +1277,7 @@ Carries `.hint` with difflib did-you-mean suggestions.
 Raised when a per-call `to=` (or `EntityRecord.to(system)`) names a code system that no loaded pack carries, and by `Resolver.members_of` when the requested `as_codes` is not loaded.
 
 ```python
-from resolvekit.errors import UnknownCodeSystemError
+from resolvekit import UnknownCodeSystemError  # or: from resolvekit.errors import UnknownCodeSystemError
 ```
 
 | Attribute | Type | Meaning |
@@ -1288,7 +1292,7 @@ Carries `.hint` with difflib did-you-mean suggestions.
 Raised at runtime when a resolved entity (and the full fallback chain) has no value for the requested output, under `on_missing="raise"` (or `on_missing="auto"` for scalar `resolve()`/`snap()`).
 
 ```python
-from resolvekit.errors import OutputMissingError
+from resolvekit import OutputMissingError  # or: from resolvekit.errors import OutputMissingError
 ```
 
 | Attribute | Type | Meaning |
@@ -1306,7 +1310,7 @@ Carries `.hint` listing the available codes.
 Raised by [`bulk`](#bulk) when a [`Crosswalk`](#crosswalk) built with `strict=True` (the default) maps one or more values to entity IDs that no loaded pack carries — typically a crosswalk saved before a data rebuild that changed IDs.
 
 ```python
-from resolvekit.errors import CrosswalkError
+from resolvekit import CrosswalkError  # or: from resolvekit.errors import CrosswalkError
 ```
 
 | Attribute | Type | Meaning |

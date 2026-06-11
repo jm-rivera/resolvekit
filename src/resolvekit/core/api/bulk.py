@@ -11,6 +11,7 @@ The public surface lives at :func:`resolvekit.bulk` (convenience layer) and
 from __future__ import annotations
 
 import difflib
+import math
 import warnings
 import weakref
 from typing import Any, Literal
@@ -49,6 +50,35 @@ def _closest_match(value: str, choices: tuple[str, ...]) -> str | None:
     return matches[0] if matches else None
 
 
+def _numeric_to_str(v: int | float) -> str:
+    """Coerce an ``int`` or ``float`` to its canonical string form.
+
+    Integral floats (``840.0``) produce the same string as the equivalent
+    integer (``"840"``), matching the numeric codes stored in data packs.
+    Non-integral floats (``840.5``) are left to plain ``str()`` — they will
+    not match any code, but the string is well-defined.
+
+    This is the shared coercion kernel used by both the scalar resolve path
+    and ``_flatten_input`` so the two can never diverge.
+    """
+    if isinstance(v, float) and math.isfinite(v) and v == int(v):
+        # Integral float — strip the decimal part.
+        return str(int(v))
+    return str(v)
+
+
+def _coerce_item_to_str(v: object) -> str:
+    """Coerce a non-null collection element to ``str``.
+
+    ``int`` and ``float`` values are passed through ``_numeric_to_str`` so
+    that integral floats (``840.0``) map to ``"840"`` rather than
+    ``"840.0"``.  All other types fall back to ``str()``.
+    """
+    if isinstance(v, (int, float)) and not isinstance(v, bool):
+        return _numeric_to_str(v)  # type: ignore[arg-type]
+    return str(v)
+
+
 # ---------------------------------------------------------------------------
 # Module-level sentinels for the crosswalk short-circuit
 # ---------------------------------------------------------------------------
@@ -57,7 +87,7 @@ def _closest_match(value: str, choices: tuple[str, ...]) -> str | None:
 # _assemble_output can bypass _apply_not_found unconditionally.
 _IGNORE_RESULT: ResolutionResult = ResolutionResult(
     status=ResolutionStatus.NO_MATCH,
-    reasons=[ReasonCode.SENTINEL_BLOCKED],
+    reasons=(ReasonCode.SENTINEL_BLOCKED,),
 )
 
 # ---------------------------------------------------------------------------
@@ -206,7 +236,7 @@ def _apply_not_found(
     if not_found == "raise":
         raise ResolutionError(
             status=result.status,
-            candidates=[],
+            candidates=(),
             message=f"no match for {original!r}",
         )
     if not_found == "null":
@@ -283,25 +313,27 @@ def _flatten_input(
         orig_name = raw.name
         # Coerce to object before map so typed Series (Int64, categorical) don't reject ""
         items: list[str | None] = [
-            None if pd.isna(v) else str(v) for v in raw.astype(object)
+            None if pd.isna(v) else _coerce_item_to_str(v) for v in raw.astype(object)
         ]
     elif kind == "polars":
         orig_polars_name = raw.name
-        items = [None if v is None else str(v) for v in raw.to_list()]
+        items = [None if v is None else _coerce_item_to_str(v) for v in raw.to_list()]
     elif kind == "numpy":
         import numpy as np
 
         items = [
-            None if (v is None or (isinstance(v, float) and np.isnan(v))) else str(v)
+            None
+            if (v is None or (isinstance(v, float) and np.isnan(v)))
+            else _coerce_item_to_str(v)
             for v in raw.tolist()
         ]
     elif kind == "dict":
         orig_keys = list(raw.keys())
-        items = [None if v is None else str(v) for v in raw.values()]
+        items = [None if v is None else _coerce_item_to_str(v) for v in raw.values()]
     elif kind == "tuple":
-        items = [None if v is None else str(v) for v in raw]
+        items = [None if v is None else _coerce_item_to_str(v) for v in raw]
     else:  # list
-        items = [None if v is None else str(v) for v in raw]
+        items = [None if v is None else _coerce_item_to_str(v) for v in raw]
 
     return items, orig_index, orig_name, orig_polars_name, orig_keys
 
@@ -359,7 +391,7 @@ def _resolve_uniques(
             unique_results[i] = ResolutionResult(
                 status=ResolutionStatus.NO_MATCH,
                 query_text=u,
-                reasons=[ReasonCode.SENTINEL_BLOCKED],
+                reasons=(ReasonCode.SENTINEL_BLOCKED,),
             )
             continue
         # Entity found — synthetic RESOLVED result with entity attached.
@@ -368,7 +400,7 @@ def _resolve_uniques(
             entity_id=eid,
             entity=entity,
             query_text=u,
-            reasons=[ReasonCode.EXACT_CODE_MATCH],
+            reasons=(ReasonCode.EXACT_CODE_MATCH,),
         )
 
     # Fail fast on unknown ids when strict mode is active.
@@ -405,12 +437,12 @@ def _resolve_uniques(
                 if on_error == "null":
                     r = ResolutionResult(
                         status=ResolutionStatus.ERROR,
-                        reasons=[ReasonCode.INTERNAL_ERROR],
+                        reasons=(ReasonCode.INTERNAL_ERROR,),
                     )
                 else:  # keep — pass through original input string as query_text
                     r = ResolutionResult(
                         status=ResolutionStatus.NO_MATCH,
-                        reasons=[ReasonCode.INTERNAL_ERROR],
+                        reasons=(ReasonCode.INTERNAL_ERROR,),
                         query_text=u,
                     )
             resolved_subset.append(r)
@@ -439,7 +471,7 @@ def _resolve_uniques(
                 raise
             _batch_sentinel = ResolutionResult(
                 status=ResolutionStatus.ERROR,
-                reasons=[ReasonCode.INTERNAL_ERROR],
+                reasons=(ReasonCode.INTERNAL_ERROR,),
             )
             resolved_subset = [_batch_sentinel] * len(to_resolve)
     else:
@@ -485,7 +517,7 @@ def _assemble_output(
     # Shared sentinel for null-input rows — allocated once, reused for all nulls.
     _null_sentinel = ResolutionResult(
         status=ResolutionStatus.NO_MATCH,
-        reasons=[ReasonCode.INVALID_QUERY],
+        reasons=(ReasonCode.INVALID_QUERY,),
     )
 
     # Whether pivoting is active on this call (either explicit to= or spec path).

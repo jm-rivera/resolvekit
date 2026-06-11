@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import difflib
+from collections.abc import Sequence
 from typing import Any
 
 from resolvekit.core.errors_base import ExplainNotAvailableError, ResolverError
@@ -359,7 +360,7 @@ class ResolutionError(ResolverError):
     def __init__(
         self,
         status: ResolutionStatus,
-        candidates: list[CandidateSummary] | None = None,
+        candidates: Sequence[CandidateSummary] | None = None,
         message: str | None = None,
         *,
         hint: str | None = None,
@@ -374,7 +375,7 @@ class ResolutionError(ResolverError):
 
 
 def _single_candidate_type(
-    candidates: list[CandidateSummary] | None,
+    candidates: Sequence[CandidateSummary] | None,
 ) -> str | None:
     """Return an entity type carried by exactly one candidate, else ``None``.
 
@@ -393,7 +394,7 @@ def _single_candidate_type(
 
 
 def entity_types_would_disambiguate(
-    candidates: list[CandidateSummary] | None,
+    candidates: Sequence[CandidateSummary] | None,
 ) -> bool:
     """True when an ``entity_types`` filter could break the *contended* tie.
 
@@ -414,7 +415,9 @@ def entity_types_would_disambiguate(
     return first.entity_type != second.entity_type
 
 
-def _ambiguous_resolution_hint(candidates: list[CandidateSummary] | None) -> str:
+def _ambiguous_resolution_hint(
+    candidates: Sequence[CandidateSummary] | None,
+) -> str:
     """Candidate-aware disambiguation advice for ``AmbiguousResolutionError``.
 
     Suggests ``entity_types`` only when a single-type filter would actually
@@ -434,7 +437,9 @@ def _ambiguous_resolution_hint(candidates: list[CandidateSummary] | None) -> str
     )
 
 
-def _candidate_preview(candidates: list[CandidateSummary], *, limit: int = 3) -> str:
+def _candidate_preview(
+    candidates: Sequence[CandidateSummary], *, limit: int = 3
+) -> str:
     """Render ``entity_id (conf)`` for the top *limit* candidates."""
     parts: list[str] = []
     for c in candidates[:limit]:
@@ -453,7 +458,7 @@ class AmbiguousResolutionError(ResolutionError):
 
     def __init__(
         self,
-        candidates: list[CandidateSummary] | None = None,
+        candidates: Sequence[CandidateSummary] | None = None,
         *,
         hint: str | None = None,
     ) -> None:

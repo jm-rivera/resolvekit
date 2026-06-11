@@ -113,14 +113,14 @@ class OrgDecisionPolicy(ThresholdDecisionPolicy):
         if (
             result.status == ResolutionStatus.AMBIGUOUS
             and self._is_acronym_like(query.normalized.original)
-            and result.reasons == [ReasonCode.AMBIGUOUS_LOW_GAP]
+            and result.reasons == (ReasonCode.AMBIGUOUS_LOW_GAP,)
         ):
             return ResolutionResult(
                 status=result.status,
                 entity_id=result.entity_id,
                 confidence=result.confidence,
                 candidates=result.candidates,
-                reasons=[ReasonCode.ACRONYM_MATCH_AMBIGUOUS],
+                reasons=(ReasonCode.ACRONYM_MATCH_AMBIGUOUS,),
             )
 
         return result

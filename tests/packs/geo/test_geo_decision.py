@@ -52,7 +52,7 @@ class TestGeoResolvedReason:
         )
 
         assert result.status == ResolutionStatus.RESOLVED
-        assert result.reasons == [ReasonCode.FUZZY_MATCH]
+        assert result.reasons == (ReasonCode.FUZZY_MATCH,)
 
     def test_geo_fuzzy_reranker_source_returns_fuzzy_match(self) -> None:
         """Both geo fuzzy sources (geo_fuzzy and geo_fuzzy_retrieval) report FUZZY_MATCH."""
@@ -94,7 +94,7 @@ class TestGeoResolvedReason:
         result = policy.decide(query, ResolutionContext(), [candidate], NullTraceSink())
 
         assert result.status == ResolutionStatus.RESOLVED
-        assert result.reasons == [ReasonCode.FUZZY_MATCH]
+        assert result.reasons == (ReasonCode.FUZZY_MATCH,)
 
     def test_fuzzy_tier_win_is_resolved(self) -> None:
         """Sanity: FUZZY-tier single candidate reaches RESOLVED with the expected entity_id."""

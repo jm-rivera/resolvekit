@@ -56,17 +56,11 @@ class TestResolutionContextCountry:
         ctx = ResolutionContext(country=None)
         assert ctx.country is None
 
-    def test_iso3_rejected_with_alpha2_guidance(self) -> None:
-        from pydantic import ValidationError
-
+    def test_iso3_accepted_and_uppercased(self) -> None:
         from resolvekit.core.model.query import ResolutionContext
 
-        with pytest.raises(ValidationError) as exc_info:
-            ResolutionContext(country="USA")
-        msg = str(exc_info.value)
-        # Must mention alpha-2 guidance, not just a generic max_length error.
-        assert "alpha-2" in msg
-        assert "USA" in msg
+        assert ResolutionContext(country="USA").country == "USA"
+        assert ResolutionContext(country="usa").country == "USA"
 
     def test_single_char_rejected(self) -> None:
         from pydantic import ValidationError
@@ -100,16 +94,10 @@ class TestResolutionContextCountry:
         with pytest.raises(ValidationError):
             ResolutionContext(country="USAA")
 
-    def test_iso3_hint_mentions_alpha2_not_usa(self) -> None:
-        """USA hint message should say 'alpha-2 code' and suggest the pattern."""
-        from pydantic import ValidationError
-
+    def test_alpha2_accepted_and_uppercased(self) -> None:
         from resolvekit.core.model.query import ResolutionContext
 
-        with pytest.raises(ValidationError) as exc_info:
-            ResolutionContext(country="USA")
-        msg = str(exc_info.value)
-        assert "alpha-2" in msg
+        assert ResolutionContext(country="us").country == "US"
 
 
 # ---------------------------------------------------------------------------

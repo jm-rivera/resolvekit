@@ -1,9 +1,15 @@
-"""resolve_id on_ambiguous kwarg tests.
+"""resolve_id on_ambiguous kwarg and numeric coercion tests.
 
 Tests for the Resolver.resolve_id() on_ambiguous parameter:
 - "raise" (default): raises AmbiguousResolutionError
 - "null": returns None on AMBIGUOUS
 - "best": returns the top candidate's entity_id
+
+Tests for numeric input coercion:
+- int / float coerced to canonical string form (840 → "840", 840.0 → "840")
+- None returns None silently
+- bool raises TypeError
+- bytes / arbitrary types raise TypeError
 """
 
 from __future__ import annotations
@@ -167,3 +173,86 @@ class TestResolveIdIntegration:
 
     def test_resolve_id_lowercase_iso3_with_from_system(self, resolver: Any) -> None:
         assert resolver.resolve_id("usa", from_system="iso3") == "country/USA"
+
+
+# ---------------------------------------------------------------------------
+# Bundled-data tests for numeric input coercion
+# ---------------------------------------------------------------------------
+
+
+def _bundled_geo_available() -> bool:
+    try:
+        from resolvekit import Resolver
+
+        r = Resolver.from_modules(module_ids=["geo.countries"])
+        r.close()
+        return True
+    except Exception:
+        return False
+
+
+_BUNDLED = _bundled_geo_available()
+bundled = pytest.mark.skipif(
+    not _BUNDLED, reason="bundled geo.countries data not available"
+)
+
+
+@bundled
+class TestNumericCoercionResolveId:
+    """resolve_id / resolve numeric-input coercion against bundled geo data."""
+
+    @pytest.fixture(scope="class")
+    def resolver(self) -> Any:
+        from resolvekit.core.api.resolver import Resolver
+
+        r = Resolver.from_modules(module_ids=["geo.countries"])
+        yield r
+        r.close()
+
+    def test_int_resolves_usa(self, resolver: Any) -> None:
+        """840 (int) should resolve to country/USA via iso_numeric coercion."""
+        assert resolver.resolve_id(840) == "country/USA"
+
+    def test_integral_float_resolves_usa(self, resolver: Any) -> None:
+        """840.0 (float) should resolve identically to 840 (int)."""
+        assert resolver.resolve_id(840.0) == "country/USA"
+
+    def test_none_returns_none(self, resolver: Any) -> None:
+        """None input returns None (unchanged NO_MATCH behaviour)."""
+        assert resolver.resolve_id(None) is None
+
+    def test_bool_raises_type_error(self, resolver: Any) -> None:
+        """bool is an int subclass but must raise TypeError to avoid True→'1'."""
+        with pytest.raises(TypeError, match="bool"):
+            resolver.resolve_id(True)
+        with pytest.raises(TypeError, match="bool"):
+            resolver.resolve_id(False)
+
+    def test_bytes_raises_type_error(self, resolver: Any) -> None:
+        """Unsupported types raise TypeError."""
+        with pytest.raises(TypeError):
+            resolver.resolve_id(b"840")
+
+    def test_list_raises_type_error_with_bulk_hint(self, resolver: Any) -> None:
+        """Non-empty list raises TypeError with a hint to bulk()."""
+        with pytest.raises(TypeError, match="bulk"):
+            resolver.resolve_id(["840"])
+
+    def test_module_level_resolve_id_int(self) -> None:
+        """Module-level resolve_id() also coerces int input."""
+        import resolvekit as rk
+
+        assert rk.resolve_id(840) == "country/USA"
+
+    def test_module_level_resolve_id_integral_float(self) -> None:
+        """Module-level resolve_id() also coerces integral float input."""
+        import resolvekit as rk
+
+        assert rk.resolve_id(840.0) == "country/USA"
+
+    def test_resolver_int_coercion_consistent_with_string(self, resolver: Any) -> None:
+        """resolve(840) produces the same resolution as resolve('840')."""
+        # Both should land on country/USA via iso_numeric.
+        r_str = resolver.resolve("840", to=None)
+        r_int = resolver.resolve(840, to=None)
+        assert r_int.entity_id == r_str.entity_id

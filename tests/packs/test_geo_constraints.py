@@ -597,6 +597,84 @@ class TestContainmentConstraint:
             for co in cl_candidate.constraint_outcomes
         )
 
+    def test_uses_alpha3_country_as_parent_filter(self):
+        from resolvekit.core.explain import NullTraceSink
+        from resolvekit.core.model import (
+            Candidate,
+            CandidateEvidence,
+            NormalizedText,
+            Query,
+            ResolutionContext,
+            RetrievalSummary,
+            ScoreSummary,
+        )
+        from resolvekit.core.store import EntityStore
+        from resolvekit.packs.geo.constraints.containment import (
+            GeoContainmentConstraint,
+        )
+
+        class MockStore(EntityStore):
+            def get_entity(self, entity_id):
+                return None
+
+            def lookup_code(self, system, value_norm):
+                if system == "iso3" and value_norm == "gtm":
+                    return ["country/GTM"]
+                return []
+
+            def lookup_name_exact(self, value_norm, name_kinds=None):
+                return []
+
+            def search_fulltext(self, query_norm, fields=None, limit=10):
+                return []
+
+            def bulk_get_entities(self, entity_ids):
+                return {}
+
+            def get_relations(self, entity_id, relation_type=None):
+                if relation_type != "contained_in":
+                    return []
+                if entity_id == "city/ConcepcionGT":
+                    return ["country/GTM"]
+                if entity_id == "city/ConcepcionCL":
+                    return ["country/CHL"]
+                return []
+
+        constraint = GeoContainmentConstraint()
+        query = Query(
+            raw_text="concepcion",
+            normalized=NormalizedText(original="concepcion", normalized="concepcion"),
+        )
+        context = ResolutionContext(country="GTM")
+
+        gt_candidate = Candidate(
+            entity_id="city/ConcepcionGT",
+            sources=[
+                CandidateEvidence(
+                    entity_id="city/ConcepcionGT", source_name="test", raw_score=0.9
+                )
+            ],
+            retrieval=RetrievalSummary(best_source="test"),
+            scores=ScoreSummary(raw_score=0.9, calibrated_score=0.9),
+        )
+        cl_candidate = Candidate(
+            entity_id="city/ConcepcionCL",
+            sources=[
+                CandidateEvidence(
+                    entity_id="city/ConcepcionCL", source_name="test", raw_score=0.9
+                )
+            ],
+            retrieval=RetrievalSummary(best_source="test"),
+            scores=ScoreSummary(raw_score=0.9, calibrated_score=0.9),
+        )
+
+        result = constraint.apply(
+            query, context, [gt_candidate, cl_candidate], MockStore(), NullTraceSink()
+        )
+
+        assert len(result) == 1
+        assert result[0].entity_id == "city/ConcepcionGT"
+
     def test_country_without_match_does_not_filter(self):
         from resolvekit.core.explain import NullTraceSink
         from resolvekit.core.model import (

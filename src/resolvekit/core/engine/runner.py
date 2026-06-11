@@ -703,7 +703,7 @@ class PipelineRunner:
                 return _make_result(
                     ResolutionResult(
                         status=ResolutionStatus.NO_MATCH,
-                        reasons=[ReasonCode.NO_CANDIDATES],
+                        reasons=(ReasonCode.NO_CANDIDATES,),
                     )
                 )
 
@@ -741,7 +741,7 @@ class PipelineRunner:
                 return _make_result(
                     ResolutionResult(
                         status=ResolutionStatus.NO_MATCH,
-                        reasons=[ReasonCode.FILTERED_BY_CONSTRAINT],
+                        reasons=(ReasonCode.FILTERED_BY_CONSTRAINT,),
                     )
                 )
 
@@ -813,7 +813,7 @@ class PipelineRunner:
             return _make_result(
                 ResolutionResult(
                     status=ResolutionStatus.ERROR,
-                    reasons=[ReasonCode.INTERNAL_ERROR],
+                    reasons=(ReasonCode.INTERNAL_ERROR,),
                 )
             )
 

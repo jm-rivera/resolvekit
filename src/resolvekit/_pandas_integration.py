@@ -52,6 +52,7 @@ def register() -> None:
             domain: str | list[str] | None = None,
             from_system: str | None = None,
             not_found: str = "null",
+            on_error: str = "raise",
             on_ambiguous: str = "null",
         ) -> pd.Series:
             """Resolve the Series and pivot to a code or attribute.
@@ -64,6 +65,11 @@ def register() -> None:
                 domain: Optional domain filter.
                 from_system: Force code-system for lookup.
                 not_found: ``"null"`` (default), ``"raise"``, or sentinel string.
+                on_error: ``"raise"`` (default), ``"null"``, or ``"keep"``.
+                    Controls what happens when a per-row resolution raises an
+                    unexpected error.  ``"raise"`` propagates the exception;
+                    ``"null"`` silently returns ``None``; ``"keep"`` returns the
+                    original input string.
                 on_ambiguous: ``"null"`` (default), ``"raise"``, or ``"best"``.
 
             Returns:
@@ -74,6 +80,7 @@ def register() -> None:
                 domain=domain,
                 from_system=from_system,
                 not_found=not_found,
+                on_error=on_error,
                 on_ambiguous=on_ambiguous,
             )
 
@@ -85,6 +92,7 @@ def register() -> None:
             domain: str | list[str] | None = None,
             from_system: str | None = None,
             not_found: str = "null",
+            on_error: str = "raise",
             on_ambiguous: str = "null",
         ) -> object:
             """Run bulk resolution on the Series.
@@ -99,6 +107,11 @@ def register() -> None:
                 domain: Optional domain filter.
                 from_system: Force code-system for lookup.
                 not_found: ``"null"`` (default), ``"raise"``, or sentinel.
+                on_error: ``"raise"`` (default), ``"null"``, or ``"keep"``.
+                    Controls what happens when a per-row resolution raises an
+                    unexpected error.  ``"raise"`` propagates the exception;
+                    ``"null"`` silently returns ``None``; ``"keep"`` returns the
+                    original input string.
                 on_ambiguous: ``"null"`` (default), ``"raise"``, or ``"best"``.
 
             Returns:
@@ -118,7 +131,7 @@ def register() -> None:
                 context=None,
                 from_system=from_system,
                 not_found=not_found,
-                on_error="null",
+                on_error=on_error,
                 on_ambiguous=on_ambiguous,
             )
 

@@ -450,7 +450,7 @@ class TestMultiPackRunner:
 
         assert result.status == ResolutionStatus.AMBIGUOUS
         assert result.match_tier == MatchTier.EXACT_NAME
-        assert result.reasons == [ReasonCode.AMBIGUOUS_DOMAIN_COLLISION]
+        assert result.reasons == (ReasonCode.AMBIGUOUS_DOMAIN_COLLISION,)
         assert RefinementHint.ENTITY_TYPES in result.refinement_hints
         assert {candidate.pack_id for candidate in result.candidates} == {"geo", "org"}
 

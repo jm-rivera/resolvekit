@@ -130,7 +130,7 @@ class ResultEnricher:
                 did_you_mean_candidates = self._spelling_suggestions(query_text)
                 if did_you_mean_candidates:
                     result = result.model_copy(
-                        update={"candidates": did_you_mean_candidates}
+                        update={"candidates": tuple(did_you_mean_candidates)}
                     )
                     did_you_mean_active = True
                     refinement_hints = first_pass_hints
@@ -153,8 +153,8 @@ class ResultEnricher:
             update={
                 "pack_id": result.pack_id or self._pack_id,
                 "match_tier": result.match_tier or match_tier,
-                "reasons": reasons,
-                "refinement_hints": list(
+                "reasons": tuple(reasons),
+                "refinement_hints": tuple(
                     dict.fromkeys(result.refinement_hints or refinement_hints)
                 ),
             }
@@ -179,10 +179,10 @@ class ResultEnricher:
         }:
             return result
 
-        summaries = [
+        summaries = tuple(
             build_candidate_summary(candidate)
             for candidate in final_candidates[:DEFAULT_TOP_K_RESULTS]
-        ]
+        )
         return result.model_copy(update={"candidates": summaries})
 
     def _load_result_entities(
@@ -259,7 +259,7 @@ class ResultEnricher:
                     key=lambda c: (-round(c.confidence or 0.0, 3), ranks[c.entity_id]),
                 )
 
-        return result.model_copy(update={"candidates": enriched})
+        return result.model_copy(update={"candidates": tuple(enriched)})
 
     def _derive_result_match_tier(
         self,

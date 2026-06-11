@@ -75,8 +75,7 @@ def parse_name_grammar(token: str) -> OutputTarget:
     Middle-token disambiguation (kind wins): if the middle segment is in
     ``KNOWN_KINDS`` (after folding ``abbr``→``acronym``), it is treated as a
     kind selector; otherwise it is validated as a language code (must match
-    ``^[a-z]{2,3}$``).  The kind-set is closed (5 names) and collision-free
-    with the ISO-639-1 langs present in the data (en/fr/es/de/ru/ja/it/pt/zh/ar).
+    ``^[a-z]{2,3}$``).
 
     Args:
         token: A raw token starting with ``"name"`` (e.g. ``"name"``,

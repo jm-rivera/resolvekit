@@ -404,7 +404,7 @@ class MultiPackRunner:
             )
             error_result = ResolutionResult(
                 status=ResolutionStatus.ERROR,
-                reasons=[ReasonCode.INTERNAL_ERROR],
+                reasons=(ReasonCode.INTERNAL_ERROR,),
             )
             return PipelineResult(result=error_result, candidates=None)
 
@@ -539,7 +539,7 @@ class MultiPackRunner:
             return (
                 ResolutionResult(
                     status=ResolutionStatus.NO_MATCH,
-                    reasons=[ReasonCode.NO_CANDIDATES],
+                    reasons=(ReasonCode.NO_CANDIDATES,),
                 ),
                 None,
             )
@@ -792,10 +792,10 @@ class MultiPackRunner:
 
         return ResolutionResult(
             status=ResolutionStatus.AMBIGUOUS,
-            candidates=interleaved,
+            candidates=tuple(interleaved),
             match_tier=top_tier,
-            reasons=[ReasonCode.AMBIGUOUS_DOMAIN_COLLISION],
-            refinement_hints=hints,
+            reasons=(ReasonCode.AMBIGUOUS_DOMAIN_COLLISION,),
+            refinement_hints=tuple(hints),
         )
 
     def _any_candidate_matches_country_scoped_prefix(
