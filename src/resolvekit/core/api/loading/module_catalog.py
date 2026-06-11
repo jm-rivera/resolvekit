@@ -134,12 +134,41 @@ def _load_and_separate_datapacks(
     return base_packs, overlay_packs
 
 
+def _remote_dependency_uncached(
+    module_id: str,
+    available: dict[str, Path],
+    manifest_overrides: dict[str, dict[str, object]],
+) -> bool:
+    """Return True if ``module_id`` is a remote-distribution module whose data
+    is not in the local cache.
+
+    Such a dependency may be absent from a load set without error: remote
+    packs the user hasn't downloaded are not hard errors (partial caches are
+    first-class, and ``Resolver.auto()`` never triggers a network fetch).
+    Bundled dependencies and unknown module ids stay hard errors.
+    """
+    from resolvekit.core.module_registry import load_module_metadata
+    from resolvekit.core.remote import is_cached
+
+    if module_id not in available:
+        return False
+    path = available[module_id]
+    if not (path / "metadata.json").exists():
+        return False
+    metadata = load_module_metadata(module_id, path, overrides=manifest_overrides)
+    return metadata.distribution == "remote" and not is_cached(metadata)
+
+
 def _validate_module_dependencies(
     base_packs: dict[str, LoadedDataPack],
     overlay_packs: dict[str, LoadedDataPack],
     pack_filter: set[str],
 ) -> None:
+    from resolvekit.core.module_registry import get_manifest_overrides
+
     available_module_ids = set(base_packs) | set(overlay_packs)
+    registry: dict[str, Path] | None = None
+    manifest_overrides: dict[str, dict[str, object]] | None = None
     for loaded in [*base_packs.values(), *overlay_packs.values()]:
         if pack_filter and loaded.pack_id not in pack_filter:
             continue
@@ -149,6 +178,22 @@ def _validate_module_dependencies(
             for module_id in loaded.metadata.module_dependencies
             if module_id not in available_module_ids
         ]
+        if missing:
+            # An absent dependency is only a hard error when its data could
+            # have been loaded — a declared dep on a remote pack the user
+            # hasn't downloaded is skipped, mirroring the auto-mode intent in
+            # _resolve_requested_module_paths.
+            if registry is None:
+                registry = list_available_modules()
+                manifest_overrides = get_manifest_overrides()
+            assert manifest_overrides is not None
+            missing = [
+                module_id
+                for module_id in missing
+                if not _remote_dependency_uncached(
+                    module_id, registry, manifest_overrides
+                )
+            ]
         if missing:
             raise MissingModuleDependencyError(loaded.module_id, missing)
 
@@ -250,8 +295,10 @@ def _resolve_requested_module_paths(
                 continue
             # In auto mode, silently skip dependencies whose data isn't
             # locally available (remote packs the user hasn't downloaded
-            # are not hard errors — see v1-scope §225). In explicit mode
-            # we always queue them so the queue-loop's own
+            # are not hard errors — see v1-scope §225). In explicit mode,
+            # likewise skip remote-uncached dependencies so requesting one
+            # module never transitively forces sibling downloads; unknown
+            # module ids are still queued so the queue-loop's own
             # ``module_id not in available`` check raises
             # ``DataModuleNotFoundError``.
             if auto_mode and (
@@ -259,6 +306,10 @@ def _resolve_requested_module_paths(
                 or not _module_data_locally_available(
                     dependency, available[dependency], manifest_overrides
                 )
+            ):
+                continue
+            if not auto_mode and _remote_dependency_uncached(
+                dependency, available, manifest_overrides
             ):
                 continue
             queue.append(dependency)
