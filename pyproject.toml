@@ -1,0 +1,333 @@
+[project]
+name = "resolvekit"
+version = "0.1.0"
+description = "Entity and place resolution system that maps messy place/entity strings and codes to canonical entities"
+requires-python = ">=3.12"
+
+license = "MIT"
+license-files = ["LICENSE"]
+readme = "README.md"
+authors = [
+    {name = "Jorge Rivera", email = "jorge.rivera@one.org"}
+]
+
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Scientific/Engineering :: GIS",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Text Processing :: Linguistic",
+    "Typing :: Typed"
+]
+
+keywords = [
+    "entity-resolution",
+    "geocoding",
+    "place-names",
+    "data-commons",
+    "iso-codes",
+    "offline",
+    "disambiguation",
+    "normalization"
+]
+
+dependencies = [
+    "packaging>=24.0",
+    "pooch>=1.8.0,<2.0",
+    "pydantic>=2.9,<3.0",
+    "rapidfuzz>=3.0.0,<4.0",
+    "symspellpy>=6.7.7,<7.0",
+]
+
+[project.optional-dependencies]
+calibration = [
+    "gecko-syndata>=0.6.4",
+    "scikit-learn>=1.8.0",
+]
+data = [
+    "babel>=2.18.0",
+    "datacommons-client>=2.1.4",
+    "pycountry>=23.12.11",
+    "pyyaml>=6.0",
+]
+pandas = [
+    "pandas>=2.0",
+]
+polars = [
+    "polars>=1.0",
+]
+parsing = [
+    "ahocorasick_rs>=1.0.3,<2.0",
+]
+baselines = [
+    "spacy>=3.7,<4.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/jm-rivera/resolvekit"
+Repository = "https://github.com/jm-rivera/resolvekit"
+Documentation = "https://jm-rivera.github.io/resolvekit/"
+Issues = "https://github.com/jm-rivera/resolvekit/issues"
+
+[build-system]
+requires = ["uv_build>=0.11.7,<0.12.0"]
+build-backend = "uv_build"
+
+
+[tool.uv]
+# gecko-syndata (calibration extra, dev-only) caps numpy<2 conservatively, but
+# imports nothing removed in numpy 2. Override the cap so the project resolves
+# numpy 2.x, which also has cp313 wheels for Windows.
+override-dependencies = ["numpy>=2.1"]
+
+[tool.uv.build-backend]
+# Two classes of files are excluded from the sdist and wheel:
+#
+# 1. Datapack build provenance (changelog/diff/qa/reports) is regenerated on
+#    every build and not read at runtime.
+# 2. Remote-distribution module assets — the sqlite + symspell.dict for the
+#    admin1..5 and cities geo tiers. These ship from the GitHub Release and
+#    are fetched on first use by ``resolvekit.core.remote``; the wheel only
+#    carries each remote module's ``metadata.json`` so the client knows what
+#    to download. Local copies (when produced by a build) are also kept out
+#    by .gitignore.
+#
+# Runtime essentials kept in the wheel: entities.sqlite + symspell.dict for
+# bundled tiers, every metadata.json, and *_calibrator.json.
+source-exclude = [
+    "src/resolvekit/builder/data",
+    "src/resolvekit/builder/data/**",
+    "src/resolvekit/_data/**/changelog.md",
+    "src/resolvekit/_data/**/diff_*.json",
+    "src/resolvekit/_data/**/qa_report.json",
+    "src/resolvekit/_data/**/reports",
+    "src/resolvekit/_data/**/reports/**",
+    "src/resolvekit/_data/**/*.sqlite.gz",
+    "src/resolvekit/_data/**/*.dict.gz",
+    "src/resolvekit/_data/**/*.sqlite-shm",
+    "src/resolvekit/_data/**/*.sqlite-wal",
+    "src/resolvekit/_data/geo/admin1/entities.sqlite",
+    "src/resolvekit/_data/geo/admin1/symspell.dict",
+    "src/resolvekit/_data/geo/admin2/entities.sqlite",
+    "src/resolvekit/_data/geo/admin2/symspell.dict",
+    "src/resolvekit/_data/geo/admin3/entities.sqlite",
+    "src/resolvekit/_data/geo/admin3/symspell.dict",
+    "src/resolvekit/_data/geo/admin4/entities.sqlite",
+    "src/resolvekit/_data/geo/admin4/symspell.dict",
+    "src/resolvekit/_data/geo/admin5/entities.sqlite",
+    "src/resolvekit/_data/geo/admin5/symspell.dict",
+    "src/resolvekit/_data/geo/cities/entities.sqlite",
+    "src/resolvekit/_data/geo/cities/symspell.dict",
+]
+wheel-exclude = [
+    "src/resolvekit/builder/data",
+    "src/resolvekit/builder/data/**",
+    "src/resolvekit/_data/**/changelog.md",
+    "src/resolvekit/_data/**/diff_*.json",
+    "src/resolvekit/_data/**/qa_report.json",
+    "src/resolvekit/_data/**/reports",
+    "src/resolvekit/_data/**/reports/**",
+    "src/resolvekit/_data/**/*.sqlite.gz",
+    "src/resolvekit/_data/**/*.dict.gz",
+    "src/resolvekit/_data/**/*.sqlite-shm",
+    "src/resolvekit/_data/**/*.sqlite-wal",
+    "src/resolvekit/_data/geo/admin1/entities.sqlite",
+    "src/resolvekit/_data/geo/admin1/symspell.dict",
+    "src/resolvekit/_data/geo/admin2/entities.sqlite",
+    "src/resolvekit/_data/geo/admin2/symspell.dict",
+    "src/resolvekit/_data/geo/admin3/entities.sqlite",
+    "src/resolvekit/_data/geo/admin3/symspell.dict",
+    "src/resolvekit/_data/geo/admin4/entities.sqlite",
+    "src/resolvekit/_data/geo/admin4/symspell.dict",
+    "src/resolvekit/_data/geo/admin5/entities.sqlite",
+    "src/resolvekit/_data/geo/admin5/symspell.dict",
+    "src/resolvekit/_data/geo/cities/entities.sqlite",
+    "src/resolvekit/_data/geo/cities/symspell.dict",
+]
+
+[dependency-groups]
+dev = [
+    "uv-build>=0.11.7",
+    "pre-commit>=4.6.0",
+    "ruff>=0.15.12",
+    "ty>=0.0.32",
+    "pandas-stubs>=3.0.0.260204",
+]
+test = [
+    "pytest>=9.0.3",
+    "pytest-benchmark>=5.2.3",
+    "pytest-cov>=7.1.0",
+    "pytest-xdist>=3.8.0",
+]
+
+data = [
+    "babel>=2.18.0",
+    "datacommons-client>=2.1.4",
+    "pycountry>=23.12.11",
+    "pyyaml>=6.0",
+]
+
+benchmark = [
+    "pycountry>=23.12.11",
+    "country-converter>=1.2",
+    "countryguess>=0.3.0",
+    "hdx-python-country>=3.8.0",
+    "geonamescache>=2.0.0",
+    "rapidfuzz>=3.0.0",
+    "psutil>=5.9.0",
+    "polars>=1.0.0",
+    "datacommons-client>=2.1.4",
+]
+
+[tool.ruff]
+# Set the maximum line length
+line-length = 88
+
+# Target Python 3.12+
+target-version = "py312"
+
+# Exclude common directories
+exclude = [
+    ".git",
+    ".venv",
+    "venv",
+    "__pycache__",
+    "build",
+    "dist",
+    "*.egg-info",
+    ".pytest_cache",
+    "htmlcov",
+]
+
+[tool.ruff.lint]
+# Enable recommended rules plus extras
+select = [
+    "E",     # pycodestyle errors
+    "W",     # pycodestyle warnings
+    "F",     # pyflakes
+    "I",     # isort
+    "N",     # pep8-naming
+    "UP",    # pyupgrade
+    "B",     # flake8-bugbear
+    "C4",    # flake8-comprehensions
+    "SIM",   # flake8-simplify
+    "PL",    # pylint
+    "RUF",   # ruff-specific rules
+]
+
+# Ignore specific rules that might be too strict
+ignore = [
+    "E501",    # Line too long (handled by formatter)
+    "PLR0913", # Too many arguments
+    "PLR2004", # Magic value used in comparison
+    "PLC0415", # import not at top-level (intentional: lazy imports for optional deps + circular-import avoidance)
+    "PLW0603", # global statement (intentional: module-level singletons for default resolver / config)
+    "PLR0915", # too many statements (existing complex functions accepted)
+    "PLR0912", # too many branches (existing complex functions accepted)
+]
+
+# Allow autofix for all enabled rules
+fixable = ["ALL"]
+unfixable = []
+
+[tool.ruff.lint.per-file-ignores]
+# Allow test files to have more relaxed rules
+"tests/**/*.py" = ["E501", "PLR2004", "B017"]
+
+[tool.ruff.format]
+# Use double quotes for strings
+quote-style = "double"
+
+# Use spaces for indentation
+indent-style = "space"
+
+# Like Black, respect magic trailing commas
+skip-magic-trailing-comma = false
+
+# Like Black, automatically detect line endings
+line-ending = "auto"
+
+[tool.ty.src]
+include = [
+    "src/resolvekit/__init__.py",
+    "src/resolvekit/_convenience.py",
+    "src/resolvekit/core",
+    "src/resolvekit/packs",
+    "src/resolvekit/shared",
+    "scripts",
+]
+
+[tool.ty.environment]
+python-version = "3.12"
+root = ["./src", "."]
+
+[tool.ty.terminal]
+error-on-warning = true
+
+[tool.pytest.ini_options]
+# Test discovery patterns
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+
+# Test execution options
+addopts = [
+    "-v",
+    "--strict-markers",
+    "--strict-config",
+    "--tb=short",
+]
+
+# Warning filters - treat ResourceWarnings as errors to catch connection leaks
+filterwarnings = [
+    "error::ResourceWarning",
+    "ignore:unclosed database.*sqlite3.Connection:ResourceWarning",
+]
+
+# Custom markers for organizing tests
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
+    "matcher: marks tests related to matcher functionality",
+    "calibration: marks tests related to confidence calibration",
+    "temporal: marks tests related to temporal validation",
+    "requires_remote_data: marks tests that need remote data packs not bundled in the wheel (run with --run-remote-data)",
+]
+
+# Ignore patterns
+norecursedirs = [
+    ".git",
+    ".venv",
+    "venv",
+    "__pycache__",
+    "*.egg-info",
+    ".pytest_cache",
+    "htmlcov",
+]
+
+[tool.coverage.run]
+source = ["src/resolvekit"]
+omit = [
+    "*/tests/*",
+    "*/__pycache__/*",
+]
+
+[tool.coverage.report]
+precision = 2
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "@abstractmethod",
+]

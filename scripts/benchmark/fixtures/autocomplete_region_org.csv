@@ -1,0 +1,7 @@
+query,expected_ids
+york,geoId/36
+cote,country/CIV
+unit,country/USA
+germa,country/DEU
+braz,country/BRA
+mexic,country/MEX

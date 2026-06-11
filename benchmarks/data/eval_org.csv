@@ -1,0 +1,26 @@
+query_id,text,expected_ids,language,entity_type,category,difficulty,capabilities,source
+extras_066,Gates Foundation,"wikidataId/Q1052967,BillAndMelindaGatesFoundation",en,org,alias,medium,informal_alias,benchmark
+extras_067,World Bank,"wikidataId/Q7164,undata-geo/G00700300",en,org,canonical,easy,,benchmark
+extras_068,IMF,"wikidataId/Q7804,org/oecd:agency:907:1",en,org,alias,medium,"informal_alias,iso_code",benchmark
+extras_069,UNICEF,"wikidataId/Q42177,undata-geo/G00601300",en,org,canonical,easy,,benchmark
+extras_070,UNHCR,"wikidataId/Q40477,UNHCR",en,org,alias,easy,"informal_alias,iso_code",benchmark
+extras_071,WHO,"wikidataId/Q7817,org/oecd:agency:928:1",en,org,alias,easy,"informal_alias,iso_code",benchmark
+extras_074,USAID,"wikidataId/Q193159,org/oecd:agency:USA:1",en,org,alias,easy,"informal_alias,iso_code",benchmark
+extras_075,GAVI,"wikidataId/Q841455,org/oecd:agency:1311:1",en,org,alias,medium,"informal_alias,iso_code",benchmark
+extras_076,Global Fund,"wikidataId/Q498933,GlobalFund",en,org,alias,easy,informal_alias,benchmark
+extras_077,Open Society Foundations,"wikidataId/Q1464115,OpenSocietyFoundations",en,org,alias,easy,informal_alias,benchmark
+extras_078,Wellcome Trust,"wikidataId/Q1430303,WellcomeTrust",en,org,alias,easy,informal_alias,benchmark
+extras_079,Ford Foundation,"wikidataId/Q1130858,FordFoundation",en,org,alias,easy,informal_alias,benchmark
+extras_080,Rockefeller Foundation,"wikidataId/Q1412138,RockefellerFoundation",en,org,alias,easy,informal_alias,benchmark
+8a5f1e7b3c9d4a8a,UNDP,UNDP,en,org,alias,easy,"informal_alias,iso_code",curated
+f1d4a8e7c2b9f1f1,FAO,FoodandAgricultureOrganisation,en,org,alias,easy,"informal_alias,iso_code",curated
+7b2f5d1c9e4a6b7b,WFP,UN_World_Food_Programme,en,org,alias,easy,"informal_alias,iso_code",curated
+6c4b1f8e9a2d7c6c,ILO,InternationalLabourOrganisation,en,org,alias,easy,"informal_alias,iso_code",curated
+d6e1b9f4a7c3d6d6,DFID,org/oecd:agency:GBR:1,en,org,alias,medium,"informal_alias,iso_code",curated
+9f4c7a2e8b5d1f9f,FCDO,org/oecd:agency:GBR:17,en,org,alias,medium,"informal_alias,iso_code",curated
+2b6e9d1f5a3c8b2b,African Development Bank,African_Dev_Bank,en,org,canonical,easy,,curated
+5a1d8c4f9e7b3a5a,Asian Development Bank,AsianDevelopmentBank,en,org,canonical,easy,,curated
+a3f7e2b9c5d4a3a3,Inter-American Development Bank,InterAmericanDevelopmentBank,en,org,canonical,medium,,curated
+1f9b6e3a7c2d5f1f,asdf,,en,org,no_match,easy,,curated
+d8ca24bdedaaa0b7,Global Partnership for Education,GlobalPartnershipforEducation,en,org,canonical,easy,,curated-review
+2e5e4cec3204c0a8,GPE,GlobalPartnershipforEducation,en,org,alias,medium,"informal_alias,iso_code",curated-review

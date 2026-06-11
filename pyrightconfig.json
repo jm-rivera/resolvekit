@@ -1,0 +1,14 @@
+{
+  "//": "Pyright is NOT the project's typechecker \u2014 ty is (see [tool.ty] in pyproject.toml). This file exists only so editor LSPs that default to Pyright can resolve the uv-managed venv and avoid 'pydantic could not be resolved'-style noise.",
+  "venvPath": ".",
+  "venv": ".venv",
+  "pythonVersion": "3.12",
+  "useLibraryCodeForTypes": true,
+  "exclude": [
+    ".venv",
+    "**/__pycache__",
+    "**/.pytest_cache",
+    "build",
+    "dist"
+  ]
+}

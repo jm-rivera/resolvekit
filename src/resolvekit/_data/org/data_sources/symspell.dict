@@ -1,0 +1,313 @@
+(bea)	1
+(bjs)	1
+(bls)	1
+(cbs),	1
+(cdc)	1
+(crdc)	1
+(cso),	1
+(dac)	1
+(dea)	1
+(dol)	1
+(e-stat)	1
+(ed)	1
+(eia)	1
+(epa)	1
+(eu)	2
+(fao)	1
+(fbi)	1
+(fec)	1
+(glims)	1
+(gso),	1
+(hud)	1
+(ibge)	1
+(indec)	1
+(inegi)	1
+(kosa)	1
+(nasa)	1
+(nces)	1
+(nhtsa)	1
+(noaa)	1
+(rff)	1
+(uae)	1
+(un	1
+(un)	1
+(usda)	1
+(usgs)	1
+administration	4
+aeronautics	1
+affairs	1
+africa	1
+against	1
+agency	4
+agriculture	2
+america	1
+analysis	1
+and	14
+arab	1
+assessment	1
+assistance	1
+assistance,	1
+atlas	1
+atmospheric	1
+australian	1
+australian bureau of statistics	1
+bank	2
+bayanat	1
+brazil	2
+brazil inpe - national institute for space research	1
+brazil ministry of development and social assistance, family and fight against hunger	1
+brazilian	1
+brazilian institute of geography and statistics (ibge)	1
+budget	1
+bulgaria	1
+bureau	10
+california	1
+california assessment of student performance and progress	1
+canada	1
+census	3
+census of india	1
+censuses	1
+center	1
+centers	1
+central	3
+central bureau of statistics (cbs), israel	1
+central statistics office (cso), ireland	1
+centre	1
+city	1
+civil	2
+civil rights data collection (crdc)	1
+climate	1
+climate trace	1
+collection	1
+commerce	1
+commission	1
+committee	1
+commons	1
+communities	1
+control	1
+coordinating	1
+coordination	1
+copernicus	1
+crdc_instructional_wifi_devices	1
+dartmouth	1
+dartmouth atlas project	1
+data	9
+data commons	1
+datameet	1
+denmark	1
+department	8
+department of statistics singapore	1
+development	3
+disease	1
+drug	1
+dynamic	1
+dynamic world project	1
+economic	2
+education	4
+egypt	1
+election	1
+emergency	1
+emirates	1
+energy	1
+enforcement	1
+environmental	1
+european	2
+european union (eu) copernicus	1
+european union (eu) eurostat	1
+eurostat	1
+family	1
+federal	4
+federal emergency management agency	1
+feeding	1
+feeding america	1
+fight	1
+finland	1
+food	1
+food and agriculture organization (fao) of the united nations	1
+for	8
+foundation	2
+france	1
+from	1
+future	1
+general	1
+general statistics office (gso), vietnam	1
+geoboundaries	1
+geography	2
+geological	1
+geosadak	1
+geosadak pmgsy national gis, india	1
+gis,	1
+global	1
+global land ice measurements from space (glims)	1
+google	1
+government	1
+group	1
+health	3
+highway	1
+housing	2
+hub	1
+humanitarian	1
+hunger	1
+ice	1
+implementation	1
+in	1
+india	10
+india ministry of education	1
+india ministry of statistics and programme implementation	1
+india national health mission	1
+india national informatics centre	1
+india national sample survey	1
+india water resources information system	1
+indonesia	1
+informatics	1
+information	2
+inpe	1
+insights	1
+institute	8
+institution	1
+investigation	1
+ireland	1
+israel	1
+japan	1
+justice	1
+korea	1
+labor	2
+land	1
+local	1
+management	1
+marineregions.org	1
+measurements	1
+mexico	1
+mexico national institute of statistics and geography (inegi)	1
+ministry	4
+mission	1
+mongolian	1
+mongolian statistical service	1
+national	18
+national institute of statistics and censuses (indec)	1
+national institute of statistics and economic studies, france	1
+national institution for transforming india	1
+national statistical institute of bulgaria	1
+national statistical institute of poland	1
+nations	3
+new	4
+new york city department of education urban data	1
+new york university	1
+oceanic	1
+ocha)	1
+oecd	1
+oecd development assistance committee (dac)	1
+of	35
+office	5
+office of civil rights data	1
+official	1
+open	3
+open data for africa	1
+openfigi	1
+opportunity	1
+opportunity insights	1
+organization	1
+our	1
+our world in data	1
+performance	1
+pmgsy	1
+poland	1
+portal	2
+portal site of official statistics of japan (e-stat)	1
+prevention	1
+programme	1
+progress	1
+project	2
+protection	1
+research	1
+reserve	2
+reserve bank of india	1
+resources	2
+resources for the future (rff)	1
+rights	2
+safety	1
+sample	1
+science	1
+service	2
+singapore	1
+site	1
+social	1
+south	1
+south korea statistics agency (kosa)	1
+southafrica	1
+southafrica budget	1
+space	3
+stadt	1
+stadt zurich open data	1
+states	6
+statistical	3
+statistics	22
+statistics canada	1
+statistics denmark	1
+statistics egypt	1
+statistics finland	1
+statistics of new zealand	1
+statistics,	1
+student	1
+studies,	1
+survey	1
+system	1
+tennessee	1
+tennessee department of health	1
+texas	1
+texas department of health	1
+the	5
+the central bureau of statistics, indonesia	1
+the new york times	1
+times	1
+trace	1
+traffic	1
+transforming	1
+transportation	1
+u.s.	19
+u.s. bureau of economic analysis (bea)	1
+u.s. bureau of justice statistics (bjs)	1
+u.s. bureau of labor statistics (bls)	1
+u.s. census bureau	1
+u.s. centers for disease control and prevention (cdc)	1
+u.s. commerce data hub	1
+u.s. department of agriculture (usda)	1
+u.s. department of education (ed)	1
+u.s. department of housing and urban development (hud)	1
+u.s. department of labor (dol)	1
+u.s. energy information administration (eia)	1
+u.s. federal bureau of investigation (fbi)	1
+u.s. federal reserve	1
+u.s. national aeronautics and space administration (nasa)	1
+u.s. national center for education statistics (nces)	1
+u.s. national highway traffic safety administration (nhtsa)	1
+u.s. national oceanic and atmospheric administration (noaa)	1
+u.s. national science foundation	1
+u.s. national wildfire coordinating group	1
+uk	2
+uk ministry of housing communities and local government	1
+uk office for national statistics	1
+union	2
+united	10
+united arab emirates (uae) bayanat open data portal	1
+united nations (un)	1
+united nations office for the coordination of humanitarian affairs (un ocha)	1
+united states bureau of transportation statistics	1
+united states census bureau	1
+united states drug enforcement agency (dea)	1
+united states environmental protection agency (epa)	1
+united states federal election commission (fec)	1
+united states geological service (usgs)	1
+university	1
+urban	3
+urban institute	1
+vietnam	1
+water	1
+wikimedia	1
+wikimedia foundation	1
+wildfire	1
+world	3
+world bank	1
+york	3
+zealand	1
+zurich	1

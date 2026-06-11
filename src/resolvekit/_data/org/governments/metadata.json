@@ -1,0 +1,46 @@
+{
+  "datapack_id": "org.governments-v2026.06",
+  "module_id": "org.governments",
+  "domain_pack_id": "org",
+  "module_dependencies": [
+    "org.providers"
+  ],
+  "entity_schema_version": "1.0",
+  "feature_schema_version": "org.features.v1",
+  "normalizer_version": "casefold.1",
+  "index_versions": {
+    "fts": "fts5",
+    "symspell": "symspell.dict"
+  },
+  "build_timestamp": "2026-05-31T15:20:16.302616+00:00",
+  "source_datasets": [
+    "datacommons"
+  ],
+  "artifacts": {
+    "symspell": "symspell.dict"
+  },
+  "description": null,
+  "checksums": {
+    "sqlite": "12a6914f33f102504105e4c536de1827ebf5d8f2eb0894087e285244471907dd",
+    "symspell": "85a1c6e057e37291383f3ae384b18b2bddbb9cfa5205c1c32e261c72faf35e38"
+  },
+  "distribution": "bundled",
+  "remote_artifacts": null,
+  "data_version": "2026.06",
+  "min_resolvekit_version": "0.1.0a1",
+  "pack_type": "base",
+  "store_type": "sqlite",
+  "store_file": "entities.sqlite",
+  "link_keys": null,
+  "base_module_ids": null,
+  "allow_new_entities": false,
+  "quality_metrics": {
+    "entity_count": 1374,
+    "names_count": 3507,
+    "codes_count": 1374,
+    "relations_count": 1374,
+    "names_coverage": 0.9992721979621543,
+    "codes_coverage": 1.0,
+    "relations_density": 1.0
+  }
+}

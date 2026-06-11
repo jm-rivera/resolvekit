@@ -1,0 +1,61 @@
+{
+  "datapack_id": "geo.admin3-v2026.06",
+  "module_id": "geo.admin3",
+  "domain_pack_id": "geo",
+  "module_dependencies": [
+    "geo.admin1",
+    "geo.admin2",
+    "geo.admin4",
+    "geo.admin5",
+    "geo.cities",
+    "geo.countries"
+  ],
+  "entity_schema_version": "1.0",
+  "feature_schema_version": "geo.features.v1",
+  "normalizer_version": "casefold.1",
+  "index_versions": {
+    "fts": "fts5",
+    "symspell": "symspell.dict"
+  },
+  "build_timestamp": "2026-05-31T15:26:24.446467+00:00",
+  "source_datasets": [
+    "datacommons"
+  ],
+  "artifacts": {
+    "symspell": "symspell.dict"
+  },
+  "description": null,
+  "checksums": null,
+  "distribution": "remote",
+  "remote_artifacts": {
+    "sqlite": {
+      "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.06/geo-admin3-entities.sqlite.gz",
+      "sha256": "b1d6ea6e1a0e1e63aafe19ce8af2d917232e80762f24c299ce85ea57e456b6d2",
+      "gz_sha256": "93e3916af670f7cd210e1e9c2e8580d80702ff537f4e8fad2640237e4c457cd5",
+      "size_mb": 157.63
+    },
+    "symspell": {
+      "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.06/geo-admin3-symspell.dict.gz",
+      "sha256": "a6f57760fca120beb49aef70360ba694914167c8f59594e7f5054747d72064f1",
+      "gz_sha256": "d3b31a8ba6fa8eb2ea5db2283479f9c56a85d26f4a9d26e345d2a531d715cd45",
+      "size_mb": 2.54
+    }
+  },
+  "data_version": "2026.06",
+  "min_resolvekit_version": "0.1.0a1",
+  "pack_type": "base",
+  "store_type": "sqlite",
+  "store_file": "entities.sqlite",
+  "link_keys": null,
+  "base_module_ids": null,
+  "allow_new_entities": false,
+  "quality_metrics": {
+    "entity_count": 116912,
+    "names_count": 168417,
+    "codes_count": 337851,
+    "relations_count": 125190,
+    "names_coverage": 1.0,
+    "codes_coverage": 1.0,
+    "relations_density": 1.0708053920897769
+  }
+}

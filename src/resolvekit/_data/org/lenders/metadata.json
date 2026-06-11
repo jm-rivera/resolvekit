@@ -1,0 +1,44 @@
+{
+  "datapack_id": "org.lenders-v2026.06",
+  "module_id": "org.lenders",
+  "domain_pack_id": "org",
+  "module_dependencies": [],
+  "entity_schema_version": "1.0",
+  "feature_schema_version": "org.features.v1",
+  "normalizer_version": "casefold.1",
+  "index_versions": {
+    "fts": "fts5",
+    "symspell": "symspell.dict"
+  },
+  "build_timestamp": "2026-05-31T15:20:14.944074+00:00",
+  "source_datasets": [
+    "datacommons"
+  ],
+  "artifacts": {
+    "symspell": "symspell.dict"
+  },
+  "description": null,
+  "checksums": {
+    "sqlite": "44d7ca7dc87ffa1e50f1c48aa8f2ae4100c50e4b1c546383a174cc4cd4d21817",
+    "symspell": "7e16dafba5d41c34a2d806940676dfab392331a3c279dce05fc8c4e3637e5f5d"
+  },
+  "distribution": "bundled",
+  "remote_artifacts": null,
+  "data_version": "2026.06",
+  "min_resolvekit_version": "0.1.0a1",
+  "pack_type": "base",
+  "store_type": "sqlite",
+  "store_file": "entities.sqlite",
+  "link_keys": null,
+  "base_module_ids": null,
+  "allow_new_entities": false,
+  "quality_metrics": {
+    "entity_count": 75,
+    "names_count": 75,
+    "codes_count": 75,
+    "relations_count": 0,
+    "names_coverage": 1.0,
+    "codes_coverage": 1.0,
+    "relations_density": 0.0
+  }
+}

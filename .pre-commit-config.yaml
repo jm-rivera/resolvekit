@@ -1,0 +1,118 @@
+# Pre-commit hooks for Resolvekit
+#
+# Installation:
+#   1. Install pre-commit: `uv sync --group dev`
+#   2. Install hooks: `pre-commit install`
+#
+# Usage:
+#   - Hooks run automatically on `git commit`
+#   - Run manually on all files: `pre-commit run --all-files`
+#   - Run on specific files: `pre-commit run --files src/file.py`
+#   - Update hooks: `pre-commit autoupdate`
+#   - Skip hooks temporarily: `git commit --no-verify`
+
+repos:
+  # ============================================================================
+  # uv - Keep the lockfile synchronized with pyproject.toml
+  # ============================================================================
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.11.7
+    hooks:
+      - id: uv-lock
+
+  # ============================================================================
+  # Ruff - Fast Python linter and formatter (replaces black, isort, flake8)
+  # ============================================================================
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.12
+    hooks:
+      # Run the linter
+      - id: ruff-check
+        args: [--fix]
+      # Run the formatter
+      - id: ruff-format
+
+  # ============================================================================
+  # ty - Fast Python type checker
+  # ============================================================================
+  - repo: local
+    hooks:
+      - id: ty-check
+        name: ty check
+        entry: uv run ty check
+        language: system
+        pass_filenames: false
+        require_serial: true
+
+  # ============================================================================
+  # Built-in pre-commit hooks for file quality, config validation, and security
+  # ============================================================================
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      # Remove trailing whitespace
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+
+      # Ensure files end with a newline
+      - id: end-of-file-fixer
+
+      # Prevent mixed line endings (Unix vs Windows)
+      - id: mixed-line-ending
+        args: [--fix=lf]
+
+      # Check for files that would conflict on case-insensitive filesystems
+      - id: check-case-conflict
+
+      # Check for merge conflict strings
+      - id: check-merge-conflict
+
+      # Check for debug statements (pdb, breakpoint, etc.)
+      - id: debug-statements
+
+      # Validate Python syntax
+      - id: check-ast
+
+      # Check for proper shebang formatting
+      - id: check-shebang-scripts-are-executable
+
+      # Prevent large files from being committed (default 500kb)
+      - id: check-added-large-files
+        # Bundled datapack sqlites/symspell legitimately reach a few MB (geo.countries
+        # ~2.7MB, geo.admin4 symspell ~4.6MB). 5MB still catches an accidental full
+        # remote sqlite (those are hundreds of MB; their .gz assets are gitignored).
+        args: [--maxkb=5000]
+        exclude: |
+          (?x)^(
+              .*\.parquet|
+              .*\.feather|
+              uv\.lock
+          )$
+
+      # Check JSON syntax
+      - id: check-json
+
+      # Pretty-format JSON files
+      - id: pretty-format-json
+        args: [--autofix, --indent=2, --no-sort-keys]
+        exclude: |
+          (?x)^(
+              \.vscode/.*|
+              \.claude/.*
+          )$
+
+      # Check YAML syntax
+      - id: check-yaml
+        args: [--allow-multiple-documents]
+
+      # Detect private keys
+      - id: detect-private-key
+
+      # Check for common Python mistakes
+      - id: check-builtin-literals
+
+      # Check docstring is first
+      - id: check-docstring-first
+
+      # Validate pyproject.toml
+      - id: check-toml

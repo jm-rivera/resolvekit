@@ -1,0 +1,121 @@
+# Entity-level temporal validity (valid_from / valid_until) for geo entities.
+#
+# Curated source of truth for `EntityRecord.valid_from` / `valid_until`
+# (src/resolvekit/core/model/entity.py). Every builder currently hardcodes
+# these to None; an enricher applies this file so the (soft) TemporalConstraint
+# can annotate candidates as "not yet valid" / "no longer valid".
+#
+# HALF-OPEN INTERVAL CONVENTION  [valid_from, valid_until)
+# --------------------------------------------------------
+# TemporalConstraint (src/resolvekit/shared/constraints/temporal_constraint.py)
+# marks an entity invalid when:
+#     as_of < valid_from        (not yet valid)
+#     as_of >= valid_until      (no longer valid)
+# So the interval is half-open: `valid_until` is the FIRST day the entity no
+# longer exists (the day AFTER its last valid day), and `valid_from` is the
+# first day it exists (inclusive).
+#   e.g. Czechoslovakia's last day was 1992-12-31 and it dissolved on
+#        1993-01-01, so valid_until: "1993-01-01".
+# Dates are ISO-8601 strings.
+#
+# Only entities that actually ship in the bundled geo data are curated here;
+# keys are real shipped entity_ids (verified against
+# src/resolvekit/_data/geo/countries/entities.sqlite). Successor states that
+# merely shrank (e.g. country/SDN "Sudan" after South Sudan split off) keep
+# existing and get NO dates, so they are intentionally absent.
+
+version: 1
+generated_from:
+  wikidata_query_date: 2026-06-07
+  manual_review: maintainer
+
+entities:
+  # ── New / restored states (valid_from only) ─────────────────────────────
+  # The predecessor state still exists, so only the new entity is bounded.
+
+  - entity_id: country/SSD
+    canonical_name: South Sudan
+    # Independence from Sudan. Sudan (country/SDN) is unbounded — it still exists.
+    valid_from: "2011-07-09"
+    sources:
+      - https://www.wikidata.org/wiki/Q958
+      - https://history.state.gov/countries/south-sudan
+
+  - entity_id: country/MNE
+    canonical_name: Montenegro
+    # Declaration of independence after the 2006-05-21 referendum, ending the
+    # State Union of Serbia and Montenegro. Serbia (country/SRB) is NOT bounded
+    # here: it is the legal continuator/successor state (kept the UN seat), so —
+    # like Sudan — it keeps existing and gets no valid_from.
+    valid_from: "2006-06-03"
+    sources:
+      - https://www.wikidata.org/wiki/Q236
+      - https://en.wikipedia.org/wiki/2006_Montenegrin_independence_referendum
+
+  - entity_id: country/TLS
+    canonical_name: East Timor
+    # Restoration of independence at the end of UN administration (UNTAET);
+    # first new sovereign state of the 21st century. (Earlier 1975-11-28
+    # declaration was followed immediately by Indonesian occupation.)
+    valid_from: "2002-05-20"
+    sources:
+      - https://www.wikidata.org/wiki/Q574
+      - https://history.state.gov/countries/timor-leste
+
+  # ── Dissolved states (valid_until, with valid_from where well-sourced) ───
+  # ISO 3166-3 ("formerly used names of countries") is the registry of these.
+
+  - entity_id: country/CSK
+    canonical_name: Czechoslovakia
+    # First Czechoslovak Republic declared 1918-10-28; "Velvet Divorce" into the
+    # Czech Republic and Slovakia took effect 1993-01-01 (last day 1992-12-31).
+    valid_from: "1918-10-28"
+    valid_until: "1993-01-01"
+    sources:
+      - https://www.wikidata.org/wiki/Q33946
+      - https://en.wikipedia.org/wiki/Dissolution_of_Czechoslovakia
+      - https://en.wikipedia.org/wiki/ISO_3166-3
+
+  - entity_id: country/YUG
+    canonical_name: Yugoslavia
+    # AMBIGUOUS — flag for review. country/YUG maps to the Socialist Federal
+    # Republic of Yugoslavia (Wikidata Q36704): proclaimed 1945-11-29, de-jure
+    # dissolved 1992-04-27 when the Federal Republic of Yugoslavia (FRY) was
+    # proclaimed. Both dates below are taken from Q36704 for citation
+    # consistency, per the "prefer the de-jure state-existence date" rule.
+    #
+    # CAVEAT: the ISO alpha-3 code YUG was INHERITED by the FRY (1992–2003),
+    # which most 1990s statistical datasets also label "Yugoslavia". The FRY was
+    # renamed "Serbia and Montenegro" on 2003-02-04 (Wikidata Q37024) and the
+    # ISO code was retired YUG→SCG on 2003-07-23. If data here turns out to code
+    # FRY-era records as YUG, this valid_until should move to "2003-02-04"
+    # (de-jure rename) — NOT the lagging 2003-07-23 ISO withdrawal.
+    valid_from: "1945-11-29"
+    valid_until: "1992-04-27"
+    sources:
+      - https://www.wikidata.org/wiki/Q36704
+      - https://en.wikipedia.org/wiki/ISO_3166-3
+
+  - entity_id: country/ANT
+    canonical_name: Netherlands Antilles
+    # Constituent country of the Kingdom of the Netherlands from the Charter of
+    # 1954-12-15; dissolved 2010-10-10 into Curaçao, Sint Maarten, and the
+    # Caribbean Netherlands (BES islands).
+    valid_from: "1954-12-15"
+    valid_until: "2010-10-10"
+    sources:
+      - https://www.wikidata.org/wiki/Q25227
+      - https://en.wikipedia.org/wiki/Dissolution_of_the_Netherlands_Antilles
+      - https://en.wikipedia.org/wiki/ISO_3166-3
+
+  - entity_id: country/CTE
+    canonical_name: Canton and Enderbury Islands
+    # Minor / edge case (an Anglo-American condominium, 1939–1979, not a
+    # sovereign state). U.S. personnel left and the islands became part of
+    # newly independent Kiribati on Kiribati's independence day, 1979-07-12.
+    # valid_from omitted: the 1939 condominium start is not cleanly dated in the
+    # sources. valid_until is the de-jure transfer to Kiribati.
+    valid_until: "1979-07-12"
+    sources:
+      - https://en.wikipedia.org/wiki/Canton_and_Enderbury_Islands
+      - https://en.wikipedia.org/wiki/ISO_3166-3

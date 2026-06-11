@@ -1,0 +1,166 @@
+name: Tests
+
+on:
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - 'LICENSE'
+  push:
+    branches: [main]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - 'LICENSE'
+
+# Supersede in-flight runs for the same ref so rapid successive pushes don't
+# stack a full matrix each.
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ${{ matrix.os }}
+
+    # Run Python in UTF-8 mode so test fixture writers behave the same on
+    # Windows (whose default text encoding is cp1252). Shipped library code
+    # sets encoding explicitly and does not rely on this.
+    env:
+      PYTHONUTF8: "1"
+      # Single version: the `requires-python` floor. Testing the minimum
+      # supported version guards against accidentally using newer-only syntax.
+      PYTHON_VERSION: "3.12"
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v8.1.0
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: uv sync --all-groups --all-extras
+
+      - name: Run Ruff
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          uv run ruff format --check .
+          uv run ruff check .
+
+      - name: Run ty
+        if: matrix.os == 'ubuntu-latest'
+        run: uv run ty check
+
+      # Tests run in parallel via xdist (-n auto). --benchmark-disable runs the
+      # microbenchmark in tests/core as a plain correctness check; real perf
+      # benchmarking lives in benchmark.yml.
+      #
+      # Linux is the full run: it carries coverage (no second pass) and is the
+      # only platform that exercises tests/building + tests/benchmarks. Those
+      # cover the data build/release tooling, which only ever runs on Linux —
+      # the runtime tests that read the built artifacts run on every OS below.
+      - name: Run pytest with coverage (Linux, full suite)
+        if: matrix.os == 'ubuntu-latest'
+        run: >
+          uv run pytest -n auto --benchmark-disable
+          --cov=src/resolvekit --cov-report=xml --cov-report=term --cov-branch
+
+      # macOS/Windows run the runtime suite only — build-tooling integration
+      # tests (tests/building, tests/benchmarks) are Linux-only by design.
+      - name: Run pytest (runtime suite)
+        if: matrix.os != 'ubuntu-latest'
+        run: >
+          uv run pytest -n auto --benchmark-disable
+          --ignore=tests/building --ignore=tests/benchmarks
+
+      - name: Upload coverage reports
+        if: matrix.os == 'ubuntu-latest'
+        uses: codecov/codecov-action@v5
+        with:
+          file: ./coverage.xml
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Run parse eval
+        if: matrix.os == 'ubuntu-latest'
+        env:
+          PYTHONUNBUFFERED: "1"
+        run: uv run python -m benchmarks.parse
+
+      - name: Check parse eval gate
+        if: matrix.os == 'ubuntu-latest'
+        env:
+          PYTHONUNBUFFERED: "1"
+        run: uv run python -m scripts.benchmark.check_parse_eval_gate
+
+      - name: Check suggest eval gate
+        if: matrix.os == 'ubuntu-latest'
+        env:
+          PYTHONUNBUFFERED: "1"
+        run: uv run python -m scripts.benchmark.check_autocomplete_eval_gate
+
+      - name: Verify bundled data
+        run: uv run python -m scripts.release.verify_bundled_data
+
+  wheel-smoke:
+    name: Wheel smoke test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v8.1.0
+        with:
+          python-version: "3.12"
+
+      - name: Build wheel
+        run: uv build --wheel
+
+      - name: Install wheel into clean environment
+        run: |
+          uv venv .venv-smoke
+          uv pip install --python .venv-smoke/bin/python dist/*.whl
+
+      - name: Smoke import — public API and offline resolve
+        run: |
+          .venv-smoke/bin/python - <<'EOF'
+          import resolvekit
+
+          # Core names that must always be present — adding new exports is fine,
+          # but accidentally dropping any of these is a regression.
+          core_names = {
+              "Resolver", "resolve", "resolve_id", "bulk", "configure",
+              "entity", "download", "to",
+              "ResolverError", "ResolutionResult", "ResolutionStatus",
+          }
+          missing_core = core_names - set(resolvekit.__all__)
+          assert not missing_core, f"Core names missing from __all__: {sorted(missing_core)}"
+
+          # Every name in __all__ must be importable as an attribute.
+          broken = [name for name in resolvekit.__all__ if not hasattr(resolvekit, name)]
+          assert not broken, f"Names in __all__ not importable as attributes: {broken}"
+
+          print(f"__all__ has {len(resolvekit.__all__)} names, all importable. Core subset present.")
+
+          result = resolvekit.resolve_id("United States")
+          assert result is not None, "resolve_id('United States') returned None"
+          assert "country" in result.lower() or result.startswith("country/") or "/" in result, (
+              f"resolve_id('United States') returned unexpected id: {result!r}"
+          )
+          print(f"resolve_id('United States') -> {result!r}  OK")
+          print("Wheel smoke test passed.")
+          EOF

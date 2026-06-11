@@ -1,0 +1,1580 @@
+version: 1
+generated_from:
+  wikidata_query_date: 2026-04-25
+  manual_review: maintainer
+
+groups:
+  # ── Canonical time-aware entities ────────────────────────────────────────
+
+  - id: EuropeanUnion
+    type: geo.continental_union
+    canonical_name: European Union
+    aliases: [EU, "E.U.", "European Union"]
+    valid_from: "1993-11-01"
+    snapshot: false
+    sources:
+      - https://www.wikidata.org/wiki/Q458
+      - https://european-union.europa.eu/principles-countries-history/country-profiles_en
+    members:
+      - {iso3: AUT, valid_from: "1995-01-01"}
+      - {iso3: BEL, valid_from: "1958-01-01"}
+      - {iso3: BGR, valid_from: "2007-01-01"}
+      - {iso3: CYP, valid_from: "2004-05-01"}
+      - {iso3: CZE, valid_from: "2004-05-01"}
+      - {iso3: DEU, valid_from: "1958-01-01"}
+      - {iso3: DNK, valid_from: "1973-01-01"}
+      - {iso3: ESP, valid_from: "1986-01-01"}
+      - {iso3: EST, valid_from: "2004-05-01"}
+      - {iso3: FIN, valid_from: "1995-01-01"}
+      - {iso3: FRA, valid_from: "1958-01-01"}
+      # Half-open right: UK is a member through 2020-01-31 and not from 2020-02-01.
+      - {iso3: GBR, valid_from: "1973-01-01", valid_until: "2020-02-01"}
+      - {iso3: GRC, valid_from: "1981-01-01"}
+      - {iso3: HRV, valid_from: "2013-07-01"}
+      - {iso3: HUN, valid_from: "2004-05-01"}
+      - {iso3: IRL, valid_from: "1973-01-01"}
+      - {iso3: ITA, valid_from: "1958-01-01"}
+      - {iso3: LTU, valid_from: "2004-05-01"}
+      - {iso3: LUX, valid_from: "1958-01-01"}
+      - {iso3: LVA, valid_from: "2004-05-01"}
+      - {iso3: MLT, valid_from: "2004-05-01"}
+      - {iso3: NLD, valid_from: "1958-01-01"}
+      - {iso3: POL, valid_from: "2004-05-01"}
+      - {iso3: PRT, valid_from: "1986-01-01"}
+      - {iso3: ROU, valid_from: "2007-01-01"}
+      - {iso3: SVK, valid_from: "2004-05-01"}
+      - {iso3: SVN, valid_from: "2004-05-01"}
+      - {iso3: SWE, valid_from: "1995-01-01"}
+
+  - id: groups/NATO
+    type: geo.organization
+    canonical_name: North Atlantic Treaty Organization
+    aliases: [NATO, "N.A.T.O.", "North Atlantic Treaty Organization"]
+    valid_from: "1949-04-04"
+    snapshot: false
+    sources:
+      - https://www.wikidata.org/wiki/Q7184
+      - https://www.nato.int/cps/en/natohq/nato_countries.htm
+    members:
+      # Founding members (1949)
+      - {iso3: BEL, valid_from: "1949-04-04"}
+      - {iso3: CAN, valid_from: "1949-04-04"}
+      - {iso3: DNK, valid_from: "1949-04-04"}
+      - {iso3: FRA, valid_from: "1949-04-04"}
+      - {iso3: ISL, valid_from: "1949-04-04"}
+      - {iso3: ITA, valid_from: "1949-04-04"}
+      - {iso3: LUX, valid_from: "1949-04-04"}
+      - {iso3: NLD, valid_from: "1949-04-04"}
+      - {iso3: NOR, valid_from: "1949-04-04"}
+      - {iso3: PRT, valid_from: "1949-04-04"}
+      - {iso3: GBR, valid_from: "1949-04-04"}
+      - {iso3: USA, valid_from: "1949-04-04"}
+      # Later accessions
+      - {iso3: GRC, valid_from: "1952-02-18"}
+      - {iso3: TUR, valid_from: "1952-02-18"}
+      - {iso3: DEU, valid_from: "1955-05-06"}
+      - {iso3: ESP, valid_from: "1982-05-30"}
+      - {iso3: CZE, valid_from: "1999-03-12"}
+      - {iso3: HUN, valid_from: "1999-03-12"}
+      - {iso3: POL, valid_from: "1999-03-12"}
+      - {iso3: BGR, valid_from: "2004-03-29"}
+      - {iso3: EST, valid_from: "2004-03-29"}
+      - {iso3: LVA, valid_from: "2004-03-29"}
+      - {iso3: LTU, valid_from: "2004-03-29"}
+      - {iso3: ROU, valid_from: "2004-03-29"}
+      - {iso3: SVK, valid_from: "2004-03-29"}
+      - {iso3: SVN, valid_from: "2004-03-29"}
+      - {iso3: ALB, valid_from: "2009-04-01"}
+      - {iso3: HRV, valid_from: "2009-04-01"}
+      - {iso3: MNE, valid_from: "2017-06-05"}
+      - {iso3: MKD, valid_from: "2020-03-27"}
+      - {iso3: FIN, valid_from: "2023-04-04"}
+      - {iso3: SWE, valid_from: "2024-03-07"}
+
+  - id: groups/G7
+    type: geo.organization
+    canonical_name: Group of Seven
+    aliases: [G7, "G-7", "Group of Seven", "Group of 7"]
+    valid_from: "1975-01-01"
+    snapshot: false
+    sources:
+      - https://www.wikidata.org/wiki/Q192350
+      - https://www.g7italy.it/en/
+    members:
+      - {iso3: CAN, valid_from: "1976-01-01"}
+      - {iso3: DEU, valid_from: "1975-01-01"}
+      - {iso3: FRA, valid_from: "1975-01-01"}
+      - {iso3: GBR, valid_from: "1975-01-01"}
+      - {iso3: ITA, valid_from: "1975-01-01"}
+      - {iso3: JPN, valid_from: "1975-01-01"}
+      - {iso3: USA, valid_from: "1975-01-01"}
+
+  - id: groups/G20
+    type: geo.organization
+    canonical_name: Group of Twenty
+    aliases: [G20, "G-20", "Group of 20", "Group of Twenty"]
+    valid_from: "1999-09-26"
+    snapshot: false
+    sources:
+      - https://www.wikidata.org/wiki/Q19771
+      - https://www.g20.org/
+    members:
+      - {iso3: ARG, valid_from: "1999-09-26"}
+      - {iso3: AUS, valid_from: "1999-09-26"}
+      - {iso3: BRA, valid_from: "1999-09-26"}
+      - {iso3: CAN, valid_from: "1999-09-26"}
+      - {iso3: CHN, valid_from: "1999-09-26"}
+      - {iso3: DEU, valid_from: "1999-09-26"}
+      - {iso3: FRA, valid_from: "1999-09-26"}
+      - {iso3: GBR, valid_from: "1999-09-26"}
+      - {iso3: IDN, valid_from: "1999-09-26"}
+      - {iso3: IND, valid_from: "1999-09-26"}
+      - {iso3: ITA, valid_from: "1999-09-26"}
+      - {iso3: JPN, valid_from: "1999-09-26"}
+      - {iso3: KOR, valid_from: "1999-09-26"}
+      - {iso3: MEX, valid_from: "1999-09-26"}
+      - {iso3: RUS, valid_from: "1999-09-26"}
+      - {iso3: SAU, valid_from: "1999-09-26"}
+      - {iso3: TUR, valid_from: "1999-09-26"}
+      - {iso3: USA, valid_from: "1999-09-26"}
+      - {iso3: ZAF, valid_from: "1999-09-26"}
+      # AU joined as full member in 2023
+      - {iso3: AGO, valid_from: "2023-09-09"}
+      - {iso3: BEN, valid_from: "2023-09-09"}
+      - {iso3: BWA, valid_from: "2023-09-09"}
+      - {iso3: CMR, valid_from: "2023-09-09"}
+      - {iso3: COM, valid_from: "2023-09-09"}
+      - {iso3: CPV, valid_from: "2023-09-09"}
+      - {iso3: COD, valid_from: "2023-09-09"}
+      - {iso3: DJI, valid_from: "2023-09-09"}
+      - {iso3: DZA, valid_from: "2023-09-09"}
+      - {iso3: EGY, valid_from: "2023-09-09"}
+      - {iso3: ERI, valid_from: "2023-09-09"}
+      - {iso3: ETH, valid_from: "2023-09-09"}
+      - {iso3: GAB, valid_from: "2023-09-09"}
+      - {iso3: GHA, valid_from: "2023-09-09"}
+      - {iso3: GIN, valid_from: "2023-09-09"}
+      - {iso3: GMB, valid_from: "2023-09-09"}
+      - {iso3: GNB, valid_from: "2023-09-09"}
+      - {iso3: GNQ, valid_from: "2023-09-09"}
+      - {iso3: KEN, valid_from: "2023-09-09"}
+      - {iso3: LBR, valid_from: "2023-09-09"}
+      - {iso3: LBY, valid_from: "2023-09-09"}
+      - {iso3: LSO, valid_from: "2023-09-09"}
+      - {iso3: MAR, valid_from: "2023-09-09"}
+      - {iso3: MDG, valid_from: "2023-09-09"}
+      - {iso3: MLI, valid_from: "2023-09-09"}
+      - {iso3: MOZ, valid_from: "2023-09-09"}
+      - {iso3: MRT, valid_from: "2023-09-09"}
+      - {iso3: MUS, valid_from: "2023-09-09"}
+      - {iso3: MWI, valid_from: "2023-09-09"}
+      - {iso3: NAM, valid_from: "2023-09-09"}
+      - {iso3: NER, valid_from: "2023-09-09"}
+      - {iso3: NGA, valid_from: "2023-09-09"}
+      - {iso3: RWA, valid_from: "2023-09-09"}
+      - {iso3: SDN, valid_from: "2023-09-09"}
+      - {iso3: SEN, valid_from: "2023-09-09"}
+      - {iso3: SLE, valid_from: "2023-09-09"}
+      - {iso3: SOM, valid_from: "2023-09-09"}
+      - {iso3: SSD, valid_from: "2023-09-09"}
+      - {iso3: STP, valid_from: "2023-09-09"}
+      - {iso3: SWZ, valid_from: "2023-09-09"}
+      - {iso3: SYC, valid_from: "2023-09-09"}
+      - {iso3: TCD, valid_from: "2023-09-09"}
+      - {iso3: TGO, valid_from: "2023-09-09"}
+      - {iso3: TUN, valid_from: "2023-09-09"}
+      - {iso3: TZA, valid_from: "2023-09-09"}
+      - {iso3: UGA, valid_from: "2023-09-09"}
+      - {iso3: ZMB, valid_from: "2023-09-09"}
+      - {iso3: ZWE, valid_from: "2023-09-09"}
+
+  - id: groups/G77
+    type: geo.organization
+    canonical_name: Group of 77
+    aliases: [G77, "G-77", "Group of 77"]
+    valid_from: "1964-06-15"
+    snapshot: false
+    sources:
+      - https://www.wikidata.org/wiki/Q190523
+      - https://www.g77.org/doc/members.html
+    members:
+      # Current membership (134 countries as of 2024); ISO-3 codes
+      - {iso3: AFG}
+      - {iso3: AGO}
+      - {iso3: ALB}
+      - {iso3: ARE}
+      - {iso3: ARG}
+      - {iso3: AZE}
+      - {iso3: BDI}
+      - {iso3: BEN}
+      - {iso3: BFA}
+      - {iso3: BGD}
+      - {iso3: BHR}
+      - {iso3: BOL}
+      - {iso3: BRA}
+      - {iso3: BTN}
+      - {iso3: BWA}
+      - {iso3: CAF}
+      - {iso3: CHN}
+      - {iso3: CHL}
+      - {iso3: CMR}
+      - {iso3: COD}
+      - {iso3: COG}
+      - {iso3: COL}
+      - {iso3: COM}
+      - {iso3: CPV}
+      - {iso3: CRI}
+      - {iso3: CUB}
+      - {iso3: DJI}
+      - {iso3: DMA}
+      - {iso3: DOM}
+      - {iso3: DZA}
+      - {iso3: ECU}
+      - {iso3: EGY}
+      - {iso3: ERI}
+      - {iso3: ETH}
+      - {iso3: FJI}
+      - {iso3: GAB}
+      - {iso3: GHA}
+      - {iso3: GIN}
+      - {iso3: GMB}
+      - {iso3: GNB}
+      - {iso3: GNQ}
+      - {iso3: GRD}
+      - {iso3: GTM}
+      - {iso3: GUY}
+      - {iso3: HND}
+      - {iso3: HTI}
+      - {iso3: IDN}
+      - {iso3: IND}
+      - {iso3: IRN}
+      - {iso3: IRQ}
+      - {iso3: JAM}
+      - {iso3: JOR}
+      - {iso3: KEN}
+      - {iso3: KGZ}
+      - {iso3: KHM}
+      - {iso3: KIR}
+      - {iso3: KNA}
+      - {iso3: KWT}
+      - {iso3: LAO}
+      - {iso3: LBN}
+      - {iso3: LBR}
+      - {iso3: LBY}
+      - {iso3: LCA}
+      - {iso3: LKA}
+      - {iso3: LSO}
+      - {iso3: MAR}
+      - {iso3: MDG}
+      - {iso3: MDV}
+      - {iso3: MEX}
+      - {iso3: MHL}
+      - {iso3: MLI}
+      - {iso3: MMR}
+      - {iso3: MNG}
+      - {iso3: MOZ}
+      - {iso3: MRT}
+      - {iso3: MUS}
+      - {iso3: MWI}
+      - {iso3: MYS}
+      - {iso3: NAM}
+      - {iso3: NER}
+      - {iso3: NGA}
+      - {iso3: NIC}
+      - {iso3: NPL}
+      - {iso3: NRU}
+      - {iso3: OMN}
+      - {iso3: PAK}
+      - {iso3: PAN}
+      - {iso3: PER}
+      - {iso3: PHL}
+      - {iso3: PLW}
+      - {iso3: PNG}
+      - {iso3: PRK}
+      - {iso3: PRY}
+      - {iso3: PSE}
+      - {iso3: QAT}
+      - {iso3: RWA}
+      - {iso3: SAU}
+      - {iso3: SDN}
+      - {iso3: SEN}
+      - {iso3: SGP}
+      - {iso3: SLE}
+      - {iso3: SLB}
+      - {iso3: SLV}
+      - {iso3: SOM}
+      - {iso3: SSD}
+      - {iso3: STP}
+      - {iso3: SUR}
+      - {iso3: SWZ}
+      - {iso3: SYC}
+      - {iso3: SYR}
+      - {iso3: TCD}
+      - {iso3: TGO}
+      - {iso3: THA}
+      - {iso3: TJK}
+      - {iso3: TKM}
+      - {iso3: TLS}
+      - {iso3: TON}
+      - {iso3: TTO}
+      - {iso3: TUN}
+      - {iso3: TUV}
+      - {iso3: TZA}
+      - {iso3: UGA}
+      - {iso3: URY}
+      - {iso3: UZB}
+      - {iso3: VCT}
+      - {iso3: VEN}
+      - {iso3: VNM}
+      - {iso3: VUT}
+      - {iso3: WSM}
+      - {iso3: YEM}
+      - {iso3: ZAF}
+      - {iso3: ZMB}
+      - {iso3: ZWE}
+
+  - id: groups/OECD
+    type: geo.organization
+    canonical_name: Organisation for Economic Co-operation and Development
+    aliases: [OECD, "O.E.C.D.", "Organisation for Economic Co-operation and Development",
+              "Organization for Economic Co-operation and Development"]
+    valid_from: "1961-09-30"
+    snapshot: false
+    sources:
+      - https://www.wikidata.org/wiki/Q8908
+      - https://www.oecd.org/en/about/members-partners.html
+    members:
+      - {iso3: AUS, valid_from: "1971-06-07"}
+      - {iso3: AUT, valid_from: "1961-09-29"}
+      - {iso3: BEL, valid_from: "1961-09-13"}
+      - {iso3: CAN, valid_from: "1961-04-10"}
+      - {iso3: CHL, valid_from: "2010-05-07"}
+      - {iso3: COL, valid_from: "2020-04-28"}
+      - {iso3: CRI, valid_from: "2021-05-25"}
+      - {iso3: CZE, valid_from: "1995-12-21"}
+      - {iso3: DEU, valid_from: "1961-09-27"}
+      - {iso3: DNK, valid_from: "1961-05-30"}
+      - {iso3: ESP, valid_from: "1961-08-03"}
+      - {iso3: EST, valid_from: "2010-12-09"}
+      - {iso3: FIN, valid_from: "1969-01-28"}
+      - {iso3: FRA, valid_from: "1961-08-07"}
+      - {iso3: GBR, valid_from: "1961-05-02"}
+      - {iso3: GRC, valid_from: "1961-09-27"}
+      - {iso3: HUN, valid_from: "1996-05-07"}
+      - {iso3: IRL, valid_from: "1961-08-17"}
+      - {iso3: ISL, valid_from: "1961-06-05"}
+      - {iso3: ISR, valid_from: "2010-09-07"}
+      - {iso3: ITA, valid_from: "1962-03-29"}
+      - {iso3: JPN, valid_from: "1964-04-28"}
+      - {iso3: KOR, valid_from: "1996-12-12"}
+      - {iso3: LTU, valid_from: "2018-07-05"}
+      - {iso3: LUX, valid_from: "1961-12-07"}
+      - {iso3: LVA, valid_from: "2016-07-01"}
+      - {iso3: MEX, valid_from: "1994-05-18"}
+      - {iso3: NLD, valid_from: "1961-11-13"}
+      - {iso3: NOR, valid_from: "1961-07-04"}
+      - {iso3: NZL, valid_from: "1973-05-29"}
+      - {iso3: POL, valid_from: "1996-11-22"}
+      - {iso3: PRT, valid_from: "1961-08-04"}
+      - {iso3: SVK, valid_from: "2000-12-14"}
+      - {iso3: SVN, valid_from: "2010-07-21"}
+      - {iso3: SWE, valid_from: "1961-09-28"}
+      - {iso3: TUR, valid_from: "1961-08-02"}
+      - {iso3: USA, valid_from: "1961-04-12"}
+
+  - id: groups/ASEAN
+    type: geo.organization
+    canonical_name: Association of Southeast Asian Nations
+    aliases: [ASEAN, "A.S.E.A.N.", "Association of Southeast Asian Nations"]
+    valid_from: "1967-08-08"
+    snapshot: false
+    sources:
+      - https://www.wikidata.org/wiki/Q7785
+      - https://asean.org/about-asean/member-states/
+    members:
+      - {iso3: BRN, valid_from: "1984-01-07"}
+      - {iso3: IDN, valid_from: "1967-08-08"}
+      - {iso3: KHM, valid_from: "1999-04-30"}
+      - {iso3: LAO, valid_from: "1997-07-23"}
+      - {iso3: MMR, valid_from: "1997-07-23"}
+      - {iso3: MYS, valid_from: "1967-08-08"}
+      - {iso3: PHL, valid_from: "1967-08-08"}
+      - {iso3: SGP, valid_from: "1967-08-08"}
+      - {iso3: THA, valid_from: "1967-08-08"}
+      - {iso3: VNM, valid_from: "1995-07-28"}
+
+  - id: groups/BRICS
+    type: geo.organization
+    canonical_name: BRICS
+    aliases: [BRICS]
+    valid_from: "2009-06-16"
+    snapshot: false
+    sources:
+      - https://www.wikidata.org/wiki/Q1054197
+      - https://brics-russia2024.ru/en/
+    members:
+      # Original five
+      - {iso3: BRA, valid_from: "2009-06-16"}
+      - {iso3: CHN, valid_from: "2009-06-16"}
+      - {iso3: IND, valid_from: "2009-06-16"}
+      - {iso3: RUS, valid_from: "2009-06-16"}
+      - {iso3: ZAF, valid_from: "2010-12-24"}
+      # 2024 enlargement (effective 2024-01-01)
+      - {iso3: ARE, valid_from: "2024-01-01"}
+      - {iso3: EGY, valid_from: "2024-01-01"}
+      - {iso3: ETH, valid_from: "2024-01-01"}
+      - {iso3: IRN, valid_from: "2024-01-01"}
+
+  - id: groups/MERCOSUR
+    type: geo.organization
+    canonical_name: Southern Common Market
+    aliases: [MERCOSUR, "Mercosur", MERCOSUL, "Southern Common Market"]
+    valid_from: "1991-03-26"
+    snapshot: false
+    sources:
+      - https://www.wikidata.org/wiki/Q190551
+      - https://www.mercosur.int/
+    members:
+      - {iso3: ARG, valid_from: "1991-03-26"}
+      - {iso3: BOL, valid_from: "2024-07-08"}
+      - {iso3: BRA, valid_from: "1991-03-26"}
+      - {iso3: PRY, valid_from: "1991-03-26"}
+      - {iso3: URY, valid_from: "1991-03-26"}
+
+  - id: groups/OPEC
+    type: geo.organization
+    canonical_name: Organization of the Petroleum Exporting Countries
+    aliases: [OPEC, "O.P.E.C.", "Organization of the Petroleum Exporting Countries",
+              "Organisation of the Petroleum Exporting Countries"]
+    valid_from: "1960-09-14"
+    snapshot: false
+    sources:
+      - https://www.wikidata.org/wiki/Q7795
+      - https://www.opec.org/opec_web/en/about_us/25.htm
+    members:
+      - {iso3: AGO, valid_from: "2007-01-01"}
+      - {iso3: ARE, valid_from: "1967-11-01"}
+      - {iso3: COG, valid_from: "2018-06-22"}
+      - {iso3: GAB, valid_from: "2016-07-01"}
+      - {iso3: GNQ, valid_from: "2017-05-25"}
+      - {iso3: IRN, valid_from: "1960-09-14"}
+      - {iso3: IRQ, valid_from: "1960-09-14"}
+      - {iso3: KWT, valid_from: "1960-09-14"}
+      - {iso3: LBY, valid_from: "1962-07-01"}
+      - {iso3: NGA, valid_from: "1971-07-01"}
+      - {iso3: SAU, valid_from: "1960-09-14"}
+      - {iso3: VEN, valid_from: "1960-09-14"}
+
+  - id: groups/AU
+    type: geo.organization
+    canonical_name: African Union
+    aliases: [AU, "African Union"]
+    valid_from: "2002-07-09"
+    snapshot: false
+    sources:
+      - https://www.wikidata.org/wiki/Q7159
+      - https://au.int/en/member_states/countryprofiles2
+    members:
+      - {iso3: AGO}
+      - {iso3: BDI}
+      - {iso3: BEN}
+      - {iso3: BFA}
+      - {iso3: BWA}
+      - {iso3: CAF}
+      - {iso3: CIV}
+      - {iso3: CMR}
+      - {iso3: COD}
+      - {iso3: COG}
+      - {iso3: COM}
+      - {iso3: CPV}
+      - {iso3: DJI}
+      - {iso3: DZA}
+      - {iso3: EGY}
+      - {iso3: ERI}
+      - {iso3: ETH}
+      - {iso3: GAB}
+      - {iso3: GHA}
+      - {iso3: GIN}
+      - {iso3: GMB}
+      - {iso3: GNB}
+      - {iso3: GNQ}
+      - {iso3: KEN}
+      - {iso3: LBR}
+      - {iso3: LBY}
+      - {iso3: LSO}
+      - {iso3: MAR}
+      - {iso3: MDG}
+      - {iso3: MLI}
+      - {iso3: MOZ}
+      - {iso3: MRT}
+      - {iso3: MUS}
+      - {iso3: MWI}
+      - {iso3: NAM}
+      - {iso3: NER}
+      - {iso3: NGA}
+      - {iso3: RWA}
+      - {iso3: SDN}
+      - {iso3: SEN}
+      - {iso3: SLE}
+      - {iso3: SLB}
+      - {iso3: SOM}
+      - {iso3: SSD}
+      - {iso3: STP}
+      - {iso3: SWZ}
+      - {iso3: SYC}
+      - {iso3: TCD}
+      - {iso3: TGO}
+      - {iso3: TUN}
+      - {iso3: TZA}
+      - {iso3: UGA}
+      - {iso3: ZAF}
+      - {iso3: ZMB}
+      - {iso3: ZWE}
+
+  - id: groups/Commonwealth
+    type: geo.organization
+    canonical_name: Commonwealth of Nations
+    aliases: ["Commonwealth of Nations", "the Commonwealth"]
+    valid_from: "1931-12-11"
+    snapshot: false
+    sources:
+      - https://www.wikidata.org/wiki/Q161885
+      - https://thecommonwealth.org/our-member-countries
+    members:
+      - {iso3: AGO}
+      - {iso3: ATG}
+      - {iso3: AUS}
+      - {iso3: BDI}
+      - {iso3: BGD}
+      - {iso3: BHS}
+      - {iso3: BLZ}
+      - {iso3: BWA}
+      - {iso3: CMR}
+      - {iso3: CYP}
+      - {iso3: DMA}
+      - {iso3: FJI}
+      - {iso3: GBR}
+      - {iso3: GHA}
+      - {iso3: GMB}
+      - {iso3: GRD}
+      - {iso3: GUY}
+      - {iso3: IND}
+      - {iso3: JAM}
+      - {iso3: KEN}
+      - {iso3: KIR}
+      - {iso3: KNA}
+      - {iso3: LCA}
+      - {iso3: LKA}
+      - {iso3: LSO}
+      - {iso3: MDV}
+      - {iso3: MLT}
+      - {iso3: MOZ}
+      - {iso3: MRT}
+      - {iso3: MUS}
+      - {iso3: MWI}
+      - {iso3: MYS}
+      - {iso3: NAM}
+      - {iso3: NGA}
+      - {iso3: NRU}
+      - {iso3: NZL}
+      - {iso3: PAK}
+      - {iso3: PNG}
+      - {iso3: RWA}
+      - {iso3: SEN}
+      - {iso3: SGP}
+      - {iso3: SLB}
+      - {iso3: SLE}
+      - {iso3: SWZ}
+      - {iso3: SYC}
+      - {iso3: TON}
+      - {iso3: TTO}
+      - {iso3: TUV}
+      - {iso3: TZA}
+      - {iso3: UGA}
+      - {iso3: VCT}
+      - {iso3: VUT}
+      - {iso3: WSM}
+      - {iso3: ZAF}
+      - {iso3: ZMB}
+
+  - id: groups/UN
+    type: geo.organization
+    canonical_name: United Nations
+    aliases: [UN, "U.N.", "United Nations"]
+    valid_from: "1945-10-24"
+    snapshot: false
+    sources:
+      - https://www.wikidata.org/wiki/Q1065
+      - https://www.un.org/en/about-us/member-states
+    members:
+      # 193 member states (as of 2024); all founding and subsequent members
+      - {iso3: AFG, valid_from: "1945-11-19"}
+      - {iso3: AGO, valid_from: "1976-12-01"}
+      - {iso3: ALB, valid_from: "1955-12-14"}
+      - {iso3: AND, valid_from: "1993-07-28"}
+      - {iso3: ARE, valid_from: "1971-12-09"}
+      - {iso3: ARG, valid_from: "1945-10-24"}
+      - {iso3: ARM, valid_from: "1992-03-02"}
+      - {iso3: ATG, valid_from: "1981-11-11"}
+      - {iso3: AUS, valid_from: "1945-11-01"}
+      - {iso3: AUT, valid_from: "1955-12-14"}
+      - {iso3: AZE, valid_from: "1992-03-02"}
+      - {iso3: BDI, valid_from: "1962-09-18"}
+      - {iso3: BEL, valid_from: "1945-12-27"}
+      - {iso3: BEN, valid_from: "1960-09-20"}
+      - {iso3: BFA, valid_from: "1960-09-20"}
+      - {iso3: BGD, valid_from: "1974-09-17"}
+      - {iso3: BGR, valid_from: "1955-12-14"}
+      - {iso3: BHR, valid_from: "1971-09-21"}
+      - {iso3: BHS, valid_from: "1973-09-18"}
+      - {iso3: BIH, valid_from: "1992-05-22"}
+      - {iso3: BLR, valid_from: "1945-10-24"}
+      - {iso3: BLZ, valid_from: "1981-09-25"}
+      - {iso3: BOL, valid_from: "1945-11-14"}
+      - {iso3: BRA, valid_from: "1945-10-24"}
+      - {iso3: BRB, valid_from: "1966-12-09"}
+      - {iso3: BRN, valid_from: "1984-09-21"}
+      - {iso3: BTN, valid_from: "1971-09-21"}
+      - {iso3: BWA, valid_from: "1966-10-17"}
+      - {iso3: CAF, valid_from: "1960-09-20"}
+      - {iso3: CAN, valid_from: "1945-11-09"}
+      - {iso3: CHE, valid_from: "2002-09-10"}
+      - {iso3: CHL, valid_from: "1945-10-24"}
+      - {iso3: CHN, valid_from: "1945-10-24"}
+      - {iso3: CIV, valid_from: "1960-09-20"}
+      - {iso3: CMR, valid_from: "1960-09-20"}
+      - {iso3: COD, valid_from: "1960-09-20"}
+      - {iso3: COG, valid_from: "1960-09-20"}
+      - {iso3: COL, valid_from: "1945-11-05"}
+      - {iso3: COM, valid_from: "1975-11-12"}
+      - {iso3: CPV, valid_from: "1975-09-16"}
+      - {iso3: CRI, valid_from: "1945-11-02"}
+      - {iso3: CUB, valid_from: "1945-10-24"}
+      - {iso3: CYP, valid_from: "1960-09-20"}
+      - {iso3: CZE, valid_from: "1993-01-19"}
+      - {iso3: DEU, valid_from: "1973-09-18"}
+      - {iso3: DJI, valid_from: "1977-09-20"}
+      - {iso3: DMA, valid_from: "1978-12-18"}
+      - {iso3: DNK, valid_from: "1945-10-24"}
+      - {iso3: DOM, valid_from: "1945-10-24"}
+      - {iso3: DZA, valid_from: "1962-10-08"}
+      - {iso3: ECU, valid_from: "1945-12-21"}
+      - {iso3: EGY, valid_from: "1945-10-24"}
+      - {iso3: ERI, valid_from: "1993-05-28"}
+      - {iso3: ESP, valid_from: "1955-12-14"}
+      - {iso3: EST, valid_from: "1991-09-17"}
+      - {iso3: ETH, valid_from: "1945-11-13"}
+      - {iso3: FIN, valid_from: "1955-12-14"}
+      - {iso3: FJI, valid_from: "1970-10-13"}
+      - {iso3: FRA, valid_from: "1945-10-24"}
+      - {iso3: FSM, valid_from: "1991-09-17"}
+      - {iso3: GAB, valid_from: "1960-09-20"}
+      - {iso3: GBR, valid_from: "1945-10-24"}
+      - {iso3: GEO, valid_from: "1992-07-31"}
+      - {iso3: GHA, valid_from: "1957-03-08"}
+      - {iso3: GIN, valid_from: "1958-12-12"}
+      - {iso3: GMB, valid_from: "1965-09-21"}
+      - {iso3: GNB, valid_from: "1974-09-17"}
+      - {iso3: GNQ, valid_from: "1968-11-12"}
+      - {iso3: GRC, valid_from: "1945-10-25"}
+      - {iso3: GRD, valid_from: "1974-09-17"}
+      - {iso3: GTM, valid_from: "1945-11-21"}
+      - {iso3: GUY, valid_from: "1966-09-20"}
+      - {iso3: HND, valid_from: "1945-12-17"}
+      - {iso3: HRV, valid_from: "1992-05-22"}
+      - {iso3: HTI, valid_from: "1945-10-24"}
+      - {iso3: HUN, valid_from: "1955-12-14"}
+      - {iso3: IDN, valid_from: "1950-09-28"}
+      - {iso3: IND, valid_from: "1945-10-30"}
+      - {iso3: IRL, valid_from: "1955-12-14"}
+      - {iso3: IRN, valid_from: "1945-10-24"}
+      - {iso3: IRQ, valid_from: "1945-12-21"}
+      - {iso3: ISL, valid_from: "1946-11-19"}
+      - {iso3: ISR, valid_from: "1949-05-11"}
+      - {iso3: ITA, valid_from: "1955-12-14"}
+      - {iso3: JAM, valid_from: "1962-09-18"}
+      - {iso3: JOR, valid_from: "1955-12-14"}
+      - {iso3: JPN, valid_from: "1956-12-18"}
+      - {iso3: KAZ, valid_from: "1992-03-02"}
+      - {iso3: KEN, valid_from: "1963-12-16"}
+      - {iso3: KGZ, valid_from: "1992-03-02"}
+      - {iso3: KHM, valid_from: "1955-12-14"}
+      - {iso3: KIR, valid_from: "1999-09-14"}
+      - {iso3: KNA, valid_from: "1983-09-23"}
+      - {iso3: KOR, valid_from: "1991-09-17"}
+      - {iso3: KWT, valid_from: "1963-05-14"}
+      - {iso3: LAO, valid_from: "1955-12-14"}
+      - {iso3: LBN, valid_from: "1945-10-24"}
+      - {iso3: LBR, valid_from: "1945-11-02"}
+      - {iso3: LBY, valid_from: "1955-12-14"}
+      - {iso3: LCA, valid_from: "1979-09-18"}
+      - {iso3: LIE, valid_from: "1990-09-18"}
+      - {iso3: LKA, valid_from: "1955-12-14"}
+      - {iso3: LSO, valid_from: "1966-10-17"}
+      - {iso3: LTU, valid_from: "1991-09-17"}
+      - {iso3: LUX, valid_from: "1945-10-24"}
+      - {iso3: LVA, valid_from: "1991-09-17"}
+      - {iso3: MAR, valid_from: "1956-11-12"}
+      - {iso3: MCO, valid_from: "1993-05-28"}
+      - {iso3: MDA, valid_from: "1992-03-02"}
+      - {iso3: MDG, valid_from: "1960-09-20"}
+      - {iso3: MDV, valid_from: "1965-09-21"}
+      - {iso3: MEX, valid_from: "1945-11-07"}
+      - {iso3: MHL, valid_from: "1991-09-17"}
+      - {iso3: MKD, valid_from: "1993-04-08"}
+      - {iso3: MLI, valid_from: "1960-09-28"}
+      - {iso3: MLT, valid_from: "1964-12-01"}
+      - {iso3: MMR, valid_from: "1948-04-19"}
+      - {iso3: MNE, valid_from: "2006-06-28"}
+      - {iso3: MNG, valid_from: "1961-10-27"}
+      - {iso3: MOZ, valid_from: "1975-09-16"}
+      - {iso3: MRT, valid_from: "1961-10-27"}
+      - {iso3: MUS, valid_from: "1968-04-24"}
+      - {iso3: MWI, valid_from: "1964-12-01"}
+      - {iso3: MYS, valid_from: "1957-09-17"}
+      - {iso3: NAM, valid_from: "1990-04-23"}
+      - {iso3: NER, valid_from: "1960-09-20"}
+      - {iso3: NGA, valid_from: "1960-10-07"}
+      - {iso3: NIC, valid_from: "1945-10-24"}
+      - {iso3: NLD, valid_from: "1945-12-10"}
+      - {iso3: NOR, valid_from: "1945-11-27"}
+      - {iso3: NPL, valid_from: "1955-12-14"}
+      - {iso3: NRU, valid_from: "1999-09-14"}
+      - {iso3: NZL, valid_from: "1945-10-24"}
+      - {iso3: OMN, valid_from: "1971-10-07"}
+      - {iso3: PAK, valid_from: "1947-09-30"}
+      - {iso3: PAN, valid_from: "1945-11-13"}
+      - {iso3: PER, valid_from: "1945-10-31"}
+      - {iso3: PHL, valid_from: "1945-10-24"}
+      - {iso3: PLW, valid_from: "1994-12-15"}
+      - {iso3: PNG, valid_from: "1975-10-10"}
+      - {iso3: POL, valid_from: "1945-10-24"}
+      - {iso3: PRK, valid_from: "1991-09-17"}
+      - {iso3: PRT, valid_from: "1955-12-14"}
+      - {iso3: PRY, valid_from: "1945-10-24"}
+      - {iso3: PSE, valid_from: "2012-11-29"}
+      - {iso3: QAT, valid_from: "1971-09-21"}
+      - {iso3: ROU, valid_from: "1955-12-14"}
+      - {iso3: RUS, valid_from: "1945-10-24"}
+      - {iso3: RWA, valid_from: "1962-09-18"}
+      - {iso3: SAU, valid_from: "1945-10-24"}
+      - {iso3: SDN, valid_from: "1956-11-12"}
+      - {iso3: SEN, valid_from: "1960-09-28"}
+      - {iso3: SGP, valid_from: "1965-09-21"}
+      - {iso3: SLB, valid_from: "1978-09-19"}
+      - {iso3: SLE, valid_from: "1961-09-27"}
+      - {iso3: SLV, valid_from: "1945-10-24"}
+      - {iso3: SMR, valid_from: "1992-03-02"}
+      - {iso3: SOM, valid_from: "1960-09-20"}
+      - {iso3: SRB, valid_from: "2000-11-01"}
+      - {iso3: SSD, valid_from: "2011-07-14"}
+      - {iso3: STP, valid_from: "1975-09-16"}
+      - {iso3: SUR, valid_from: "1975-12-04"}
+      - {iso3: SVK, valid_from: "1993-01-19"}
+      - {iso3: SVN, valid_from: "1992-05-22"}
+      - {iso3: SWE, valid_from: "1946-11-19"}
+      - {iso3: SWZ, valid_from: "1968-09-24"}
+      - {iso3: SYC, valid_from: "1976-09-21"}
+      - {iso3: SYR, valid_from: "1945-10-24"}
+      - {iso3: TCD, valid_from: "1960-09-20"}
+      - {iso3: TGO, valid_from: "1960-09-20"}
+      - {iso3: THA, valid_from: "1946-12-16"}
+      - {iso3: TJK, valid_from: "1992-03-02"}
+      - {iso3: TKM, valid_from: "1992-03-02"}
+      - {iso3: TLS, valid_from: "2002-09-27"}
+      - {iso3: TON, valid_from: "1999-09-14"}
+      - {iso3: TTO, valid_from: "1962-09-18"}
+      - {iso3: TUN, valid_from: "1956-11-12"}
+      - {iso3: TUR, valid_from: "1945-10-24"}
+      - {iso3: TUV, valid_from: "2000-09-05"}
+      - {iso3: TZA, valid_from: "1961-12-14"}
+      - {iso3: UGA, valid_from: "1962-10-25"}
+      - {iso3: UKR, valid_from: "1945-10-24"}
+      - {iso3: URY, valid_from: "1945-12-18"}
+      - {iso3: USA, valid_from: "1945-10-24"}
+      - {iso3: UZB, valid_from: "1992-03-02"}
+      - {iso3: VCT, valid_from: "1980-09-16"}
+      - {iso3: VEN, valid_from: "1945-11-15"}
+      - {iso3: VNM, valid_from: "1977-09-20"}
+      - {iso3: VUT, valid_from: "1981-09-15"}
+      - {iso3: WSM, valid_from: "1976-12-15"}
+      - {iso3: YEM, valid_from: "1947-09-30"}
+      - {iso3: ZAF, valid_from: "1945-11-07"}
+      - {iso3: ZMB, valid_from: "1964-12-01"}
+      - {iso3: ZWE, valid_from: "1980-08-25"}
+
+  - id: groups/EEA
+    type: geo.organization
+    canonical_name: European Economic Area
+    aliases: [EEA, "European Economic Area", "European Economic Area (EEA)"]
+    valid_from: "1994-01-01"
+    snapshot: false
+    sources:
+      - https://www.wikidata.org/wiki/Q8932
+      - https://www.efta.int/eea/eea-agreement/eea-agreement-contracting-parties
+    members:
+      # All current EU members plus Iceland, Liechtenstein, Norway
+      - {iso3: AUT, valid_from: "1995-01-01"}
+      - {iso3: BEL, valid_from: "1994-01-01"}
+      - {iso3: BGR, valid_from: "2007-01-01"}
+      - {iso3: CYP, valid_from: "2004-05-01"}
+      - {iso3: CZE, valid_from: "2004-05-01"}
+      - {iso3: DEU, valid_from: "1994-01-01"}
+      - {iso3: DNK, valid_from: "1994-01-01"}
+      - {iso3: ESP, valid_from: "1994-01-01"}
+      - {iso3: EST, valid_from: "2004-05-01"}
+      - {iso3: FIN, valid_from: "1995-01-01"}
+      - {iso3: FRA, valid_from: "1994-01-01"}
+      - {iso3: GBR, valid_from: "1994-01-01", valid_until: "2020-02-01"}
+      - {iso3: GRC, valid_from: "1994-01-01"}
+      - {iso3: HRV, valid_from: "2013-07-01"}
+      - {iso3: HUN, valid_from: "2004-05-01"}
+      - {iso3: IRL, valid_from: "1994-01-01"}
+      - {iso3: ISL, valid_from: "1994-01-01"}
+      - {iso3: ITA, valid_from: "1994-01-01"}
+      - {iso3: LIE, valid_from: "1995-05-01"}
+      - {iso3: LTU, valid_from: "2004-05-01"}
+      - {iso3: LUX, valid_from: "1994-01-01"}
+      - {iso3: LVA, valid_from: "2004-05-01"}
+      - {iso3: MLT, valid_from: "2004-05-01"}
+      - {iso3: NLD, valid_from: "1994-01-01"}
+      - {iso3: NOR, valid_from: "1994-01-01"}
+      - {iso3: POL, valid_from: "2004-05-01"}
+      - {iso3: PRT, valid_from: "1994-01-01"}
+      - {iso3: ROU, valid_from: "2007-01-01"}
+      - {iso3: SVK, valid_from: "2004-05-01"}
+      - {iso3: SVN, valid_from: "2004-05-01"}
+      - {iso3: SWE, valid_from: "1995-01-01"}
+
+  - id: groups/Schengen
+    type: geo.organization
+    canonical_name: Schengen Area
+    aliases: ["Schengen", "Schengen Area"]
+    valid_from: "1995-03-26"
+    snapshot: false
+    sources:
+      - https://www.wikidata.org/wiki/Q457
+      - https://ec.europa.eu/home-affairs/schengen-cooperation/schengen-area_en
+    members:
+      - {iso3: AUT, valid_from: "1997-12-01"}
+      - {iso3: BEL, valid_from: "1995-03-26"}
+      - {iso3: BGR, valid_from: "2024-01-01"}
+      - {iso3: CHE, valid_from: "2008-12-12"}
+      - {iso3: CZE, valid_from: "2007-12-21"}
+      - {iso3: DEU, valid_from: "1995-03-26"}
+      - {iso3: DNK, valid_from: "2001-03-25"}
+      - {iso3: ESP, valid_from: "1995-03-26"}
+      - {iso3: EST, valid_from: "2007-12-21"}
+      - {iso3: FIN, valid_from: "2001-03-25"}
+      - {iso3: FRA, valid_from: "1995-03-26"}
+      - {iso3: GRC, valid_from: "2000-01-01"}
+      - {iso3: HRV, valid_from: "2023-01-01"}
+      - {iso3: HUN, valid_from: "2007-12-21"}
+      - {iso3: ISL, valid_from: "2001-03-25"}
+      - {iso3: ITA, valid_from: "1997-10-26"}
+      - {iso3: LIE, valid_from: "2011-12-19"}
+      - {iso3: LTU, valid_from: "2007-12-21"}
+      - {iso3: LUX, valid_from: "1995-03-26"}
+      - {iso3: LVA, valid_from: "2007-12-21"}
+      - {iso3: MLT, valid_from: "2007-12-21"}
+      - {iso3: NLD, valid_from: "1995-03-26"}
+      - {iso3: NOR, valid_from: "2001-03-25"}
+      - {iso3: POL, valid_from: "2007-12-21"}
+      - {iso3: PRT, valid_from: "1995-03-26"}
+      - {iso3: ROU, valid_from: "2024-01-01"}
+      - {iso3: SVK, valid_from: "2007-12-21"}
+      - {iso3: SVN, valid_from: "2007-12-21"}
+      - {iso3: SWE, valid_from: "2001-03-25"}
+
+  - id: groups/Eurozone
+    type: geo.organization
+    canonical_name: Eurozone
+    aliases: [Eurozone, "Euro Area", "Euro Zone"]
+    valid_from: "1999-01-01"
+    snapshot: false
+    sources:
+      - https://www.wikidata.org/wiki/Q8104
+      - https://ec.europa.eu/info/business-economy-euro/euro-area/what-euro-area_en
+    members:
+      - {iso3: AUT, valid_from: "1999-01-01"}
+      - {iso3: BEL, valid_from: "1999-01-01"}
+      - {iso3: CYP, valid_from: "2008-01-01"}
+      - {iso3: DEU, valid_from: "1999-01-01"}
+      - {iso3: ESP, valid_from: "1999-01-01"}
+      - {iso3: EST, valid_from: "2011-01-01"}
+      - {iso3: FIN, valid_from: "1999-01-01"}
+      - {iso3: FRA, valid_from: "1999-01-01"}
+      - {iso3: GRC, valid_from: "2001-01-01"}
+      - {iso3: HRV, valid_from: "2023-01-01"}
+      - {iso3: IRL, valid_from: "1999-01-01"}
+      - {iso3: ITA, valid_from: "1999-01-01"}
+      - {iso3: LTU, valid_from: "2015-01-01"}
+      - {iso3: LUX, valid_from: "1999-01-01"}
+      - {iso3: LVA, valid_from: "2014-01-01"}
+      - {iso3: MLT, valid_from: "2008-01-01"}
+      - {iso3: NLD, valid_from: "1999-01-01"}
+      - {iso3: POL, valid_from: "2025-01-01"}
+      - {iso3: PRT, valid_from: "1999-01-01"}
+      - {iso3: SVK, valid_from: "2009-01-01"}
+      - {iso3: SVN, valid_from: "2007-01-01"}
+
+  # ── Snapshot entities ─────────────────────────────────────────────────────
+
+  - id: groups/EU27_2020
+    type: geo.organization
+    canonical_name: "European Union (27 members, post-Brexit)"
+    aliases: [EU27, EU27_2020, "European Union (27 members, post-Brexit)"]
+    snapshot: true
+    sources:
+      - https://www.wikidata.org/wiki/Q458
+    members:
+      - {iso3: AUT}
+      - {iso3: BEL}
+      - {iso3: BGR}
+      - {iso3: CYP}
+      - {iso3: CZE}
+      - {iso3: DEU}
+      - {iso3: DNK}
+      - {iso3: ESP}
+      - {iso3: EST}
+      - {iso3: FIN}
+      - {iso3: FRA}
+      - {iso3: GRC}
+      - {iso3: HRV}
+      - {iso3: HUN}
+      - {iso3: IRL}
+      - {iso3: ITA}
+      - {iso3: LTU}
+      - {iso3: LUX}
+      - {iso3: LVA}
+      - {iso3: MLT}
+      - {iso3: NLD}
+      - {iso3: POL}
+      - {iso3: PRT}
+      - {iso3: ROU}
+      - {iso3: SVK}
+      - {iso3: SVN}
+      - {iso3: SWE}
+
+  - id: groups/EU28
+    type: geo.organization
+    canonical_name: "European Union (28 members, 2013–2020)"
+    aliases: [EU28, "European Union (28 members, 2013–2020)"]
+    snapshot: true
+    sources:
+      - https://www.wikidata.org/wiki/Q458
+    members:
+      - {iso3: AUT}
+      - {iso3: BEL}
+      - {iso3: BGR}
+      - {iso3: CYP}
+      - {iso3: CZE}
+      - {iso3: DEU}
+      - {iso3: DNK}
+      - {iso3: ESP}
+      - {iso3: EST}
+      - {iso3: FIN}
+      - {iso3: FRA}
+      - {iso3: GBR}
+      - {iso3: GRC}
+      - {iso3: HRV}
+      - {iso3: HUN}
+      - {iso3: IRL}
+      - {iso3: ITA}
+      - {iso3: LTU}
+      - {iso3: LUX}
+      - {iso3: LVA}
+      - {iso3: MLT}
+      - {iso3: NLD}
+      - {iso3: POL}
+      - {iso3: PRT}
+      - {iso3: ROU}
+      - {iso3: SVK}
+      - {iso3: SVN}
+      - {iso3: SWE}
+
+  - id: groups/EU27_2007
+    type: geo.organization
+    canonical_name: "European Union (27 members, 2007–2013)"
+    aliases: [EU27_2007, "European Union (27 members, 2007–2013)"]
+    snapshot: true
+    sources:
+      - https://www.wikidata.org/wiki/Q458
+    members:
+      - {iso3: AUT}
+      - {iso3: BEL}
+      - {iso3: BGR}
+      - {iso3: CYP}
+      - {iso3: CZE}
+      - {iso3: DEU}
+      - {iso3: DNK}
+      - {iso3: ESP}
+      - {iso3: EST}
+      - {iso3: FIN}
+      - {iso3: FRA}
+      - {iso3: GBR}
+      - {iso3: GRC}
+      - {iso3: HUN}
+      - {iso3: IRL}
+      - {iso3: ITA}
+      - {iso3: LTU}
+      - {iso3: LUX}
+      - {iso3: LVA}
+      - {iso3: MLT}
+      - {iso3: NLD}
+      - {iso3: POL}
+      - {iso3: PRT}
+      - {iso3: ROU}
+      - {iso3: SVK}
+      - {iso3: SVN}
+      - {iso3: SWE}
+
+  - id: groups/EU25
+    type: geo.organization
+    canonical_name: "European Union (25 members, 2004–2007)"
+    aliases: [EU25, "European Union (25 members, 2004–2007)"]
+    snapshot: true
+    sources:
+      - https://www.wikidata.org/wiki/Q458
+    members:
+      - {iso3: AUT}
+      - {iso3: BEL}
+      - {iso3: CYP}
+      - {iso3: CZE}
+      - {iso3: DEU}
+      - {iso3: DNK}
+      - {iso3: ESP}
+      - {iso3: EST}
+      - {iso3: FIN}
+      - {iso3: FRA}
+      - {iso3: GBR}
+      - {iso3: GRC}
+      - {iso3: HUN}
+      - {iso3: IRL}
+      - {iso3: ITA}
+      - {iso3: LTU}
+      - {iso3: LUX}
+      - {iso3: LVA}
+      - {iso3: MLT}
+      - {iso3: NLD}
+      - {iso3: POL}
+      - {iso3: PRT}
+      - {iso3: SVK}
+      - {iso3: SVN}
+      - {iso3: SWE}
+
+  - id: groups/EU15
+    type: geo.organization
+    canonical_name: "European Union (15 members, 1995–2004)"
+    aliases: [EU15, "European Union (15 members, 1995–2004)"]
+    snapshot: true
+    sources:
+      - https://www.wikidata.org/wiki/Q458
+    members:
+      - {iso3: AUT}
+      - {iso3: BEL}
+      - {iso3: DEU}
+      - {iso3: DNK}
+      - {iso3: ESP}
+      - {iso3: FIN}
+      - {iso3: FRA}
+      - {iso3: GBR}
+      - {iso3: GRC}
+      - {iso3: IRL}
+      - {iso3: ITA}
+      - {iso3: LUX}
+      - {iso3: NLD}
+      - {iso3: PRT}
+      - {iso3: SWE}
+
+  - id: groups/EU12
+    type: geo.organization
+    canonical_name: "European Union (12 members, 1986–1995)"
+    aliases: [EU12, "European Union (12 members, 1986–1995)"]
+    snapshot: true
+    sources:
+      - https://www.wikidata.org/wiki/Q458
+    members:
+      - {iso3: BEL}
+      - {iso3: DEU}
+      - {iso3: DNK}
+      - {iso3: ESP}
+      - {iso3: FRA}
+      - {iso3: GBR}
+      - {iso3: GRC}
+      - {iso3: IRL}
+      - {iso3: ITA}
+      - {iso3: LUX}
+      - {iso3: NLD}
+      - {iso3: PRT}
+
+  - id: groups/G8
+    type: geo.organization
+    canonical_name: Group of Eight
+    aliases: [G8, "G-8", "Group of Eight"]
+    snapshot: true
+    sources:
+      - https://www.wikidata.org/wiki/Q16469
+    members:
+      - {iso3: CAN}
+      - {iso3: DEU}
+      - {iso3: FRA}
+      - {iso3: GBR}
+      - {iso3: ITA}
+      - {iso3: JPN}
+      - {iso3: RUS}
+      - {iso3: USA}
+
+  - id: groups/BRIC
+    type: geo.organization
+    canonical_name: BRIC
+    aliases: [BRIC]
+    snapshot: true
+    sources:
+      - https://www.wikidata.org/wiki/Q1050963
+    members:
+      - {iso3: BRA}
+      - {iso3: CHN}
+      - {iso3: IND}
+      - {iso3: RUS}
+
+  # ── Development-economic classifications ────────────────────────────────
+
+  - id: groups/WB.IncomeGroup.High
+    type: geo.organization
+    canonical_name: World Bank High-Income Countries
+    aliases: [HIC, "high-income", "World Bank high income", "high income countries",
+              "World Bank High-Income Countries"]
+    snapshot: true
+    attributes:
+      snapshot_year: 2025
+    sources:
+      - https://www.wikidata.org/wiki/Q10656060
+      - https://datahelpdesk.worldbank.org/knowledgebase/articles/906519-world-bank-country-and-lending-groups
+    members:
+      - {iso3: AND}
+      - {iso3: ARE}
+      - {iso3: ATG}
+      - {iso3: AUS}
+      - {iso3: AUT}
+      - {iso3: BEL}
+      - {iso3: BHR}
+      - {iso3: BHS}
+      - {iso3: BRB}
+      - {iso3: BRN}
+      - {iso3: CAN}
+      - {iso3: CHE}
+      - {iso3: CHL}
+      - {iso3: CYP}
+      - {iso3: CZE}
+      - {iso3: DEU}
+      - {iso3: DNK}
+      - {iso3: ESP}
+      - {iso3: EST}
+      - {iso3: FIN}
+      - {iso3: FRA}
+      - {iso3: GBR}
+      - {iso3: GRC}
+      - {iso3: GUM}
+      - {iso3: HKG}
+      - {iso3: HRV}
+      - {iso3: HUN}
+      - {iso3: IMN}
+      - {iso3: IRL}
+      - {iso3: ISL}
+      - {iso3: ISR}
+      - {iso3: ITA}
+      - {iso3: JPN}
+      - {iso3: KNA}
+      - {iso3: KOR}
+      - {iso3: KWT}
+      - {iso3: LIE}
+      - {iso3: LTU}
+      - {iso3: LUX}
+      - {iso3: LVA}
+      - {iso3: MAC}
+      - {iso3: MCO}
+      - {iso3: MLT}
+      - {iso3: MNE}
+      - {iso3: NLD}
+      - {iso3: NOR}
+      - {iso3: NZL}
+      - {iso3: OMN}
+      - {iso3: PAN}
+      - {iso3: POL}
+      - {iso3: PRI}
+      - {iso3: PRT}
+      - {iso3: QAT}
+      - {iso3: ROU}
+      - {iso3: SAU}
+      - {iso3: SGP}
+      - {iso3: SMR}
+      - {iso3: SVK}
+      - {iso3: SVN}
+      - {iso3: SWE}
+      - {iso3: SYC}
+      - {iso3: TTO}
+      - {iso3: TWN}
+      - {iso3: URY}
+      - {iso3: USA}
+      - {iso3: VIR}
+
+  - id: groups/WB.IncomeGroup.UpperMiddle
+    type: geo.organization
+    canonical_name: World Bank Upper-Middle-Income Countries
+    aliases: [UMIC, "upper-middle-income", "upper middle income countries",
+              "World Bank Upper-Middle-Income Countries"]
+    snapshot: true
+    attributes:
+      snapshot_year: 2025
+    sources:
+      - https://www.wikidata.org/wiki/Q10656060
+      - https://datahelpdesk.worldbank.org/knowledgebase/articles/906519-world-bank-country-and-lending-groups
+    members:
+      - {iso3: ALB}
+      - {iso3: ARM}
+      - {iso3: AZE}
+      - {iso3: BIH}
+      - {iso3: BLR}
+      - {iso3: BOL}
+      - {iso3: BRA}
+      - {iso3: BWA}
+      - {iso3: CHN}
+      - {iso3: COL}
+      - {iso3: CRI}
+      - {iso3: CUB}
+      - {iso3: DMA}
+      - {iso3: DOM}
+      - {iso3: DZA}
+      - {iso3: ECU}
+      - {iso3: FJI}
+      - {iso3: GAB}
+      - {iso3: GEO}
+      - {iso3: GNQ}
+      - {iso3: GRD}
+      - {iso3: GTM}
+      - {iso3: GUY}
+      - {iso3: IRN}
+      - {iso3: IRQ}
+      - {iso3: JAM}
+      - {iso3: JOR}
+      - {iso3: KAZ}
+      - {iso3: LBY}
+      - {iso3: LCA}
+      - {iso3: MDA}
+      - {iso3: MDV}
+      - {iso3: MEX}
+      - {iso3: MHL}
+      - {iso3: MKD}
+      - {iso3: MNE}
+      - {iso3: MUS}
+      - {iso3: MYS}
+      - {iso3: NAM}
+      - {iso3: PER}
+      - {iso3: PRY}
+      - {iso3: RUS}
+      - {iso3: SRB}
+      - {iso3: SUR}
+      - {iso3: THA}
+      - {iso3: TKM}
+      - {iso3: TON}
+      - {iso3: TUR}
+      - {iso3: TUV}
+      - {iso3: VCT}
+      - {iso3: VEN}
+      - {iso3: WSM}
+      - {iso3: ZAF}
+
+  - id: groups/WB.IncomeGroup.LowerMiddle
+    type: geo.organization
+    canonical_name: World Bank Lower-Middle-Income Countries
+    aliases: [LMIC, "lower-middle-income", "lower middle income countries",
+              "World Bank Lower-Middle-Income Countries"]
+    snapshot: true
+    attributes:
+      snapshot_year: 2025
+    sources:
+      - https://www.wikidata.org/wiki/Q10656060
+      - https://datahelpdesk.worldbank.org/knowledgebase/articles/906519-world-bank-country-and-lending-groups
+    members:
+      - {iso3: AGO}
+      - {iso3: BEN}
+      - {iso3: BGD}
+      - {iso3: BFA}
+      - {iso3: BTN}
+      - {iso3: CIV}
+      - {iso3: CMR}
+      - {iso3: COD}
+      - {iso3: COG}
+      - {iso3: COM}
+      - {iso3: CPV}
+      - {iso3: DJI}
+      - {iso3: EGY}
+      - {iso3: FSM}
+      - {iso3: GHA}
+      - {iso3: GIN}
+      - {iso3: GMB}
+      - {iso3: HND}
+      - {iso3: HTI}
+      - {iso3: IND}
+      - {iso3: IRN}
+      - {iso3: KEN}
+      - {iso3: KGZ}
+      - {iso3: KHM}
+      - {iso3: KIR}
+      - {iso3: LKA}
+      - {iso3: LSO}
+      - {iso3: MAR}
+      - {iso3: MMR}
+      - {iso3: MNG}
+      - {iso3: MOZ}
+      - {iso3: MRT}
+      - {iso3: NGA}
+      - {iso3: NIC}
+      - {iso3: NPL}
+      - {iso3: PAK}
+      - {iso3: PHL}
+      - {iso3: PNG}
+      - {iso3: PSE}
+      - {iso3: SEN}
+      - {iso3: SLB}
+      - {iso3: SLE}
+      - {iso3: SLV}
+      - {iso3: STP}
+      - {iso3: SWZ}
+      - {iso3: TJK}
+      - {iso3: TLS}
+      - {iso3: TUN}
+      - {iso3: TZA}
+      - {iso3: UKR}
+      - {iso3: UZB}
+      - {iso3: VNM}
+      - {iso3: VUT}
+      - {iso3: ZMB}
+      - {iso3: ZWE}
+
+  - id: groups/WB.IncomeGroup.Low
+    type: geo.organization
+    canonical_name: World Bank Low-Income Countries
+    aliases: [LIC, "low-income", "World Bank low income", "low income countries",
+              "World Bank Low-Income Countries"]
+    snapshot: true
+    attributes:
+      snapshot_year: 2025
+    sources:
+      - https://www.wikidata.org/wiki/Q10656060
+      - https://datahelpdesk.worldbank.org/knowledgebase/articles/906519-world-bank-country-and-lending-groups
+    members:
+      - {iso3: AFG}
+      - {iso3: BDI}
+      - {iso3: CAF}
+      - {iso3: COD}
+      - {iso3: ERI}
+      - {iso3: ETH}
+      - {iso3: GNB}
+      - {iso3: GIN}
+      - {iso3: LBR}
+      - {iso3: MDG}
+      - {iso3: MLI}
+      - {iso3: MOZ}
+      - {iso3: MWI}
+      - {iso3: NER}
+      - {iso3: PRK}
+      - {iso3: RWA}
+      - {iso3: SDN}
+      - {iso3: SOM}
+      - {iso3: SSD}
+      - {iso3: SYR}
+      - {iso3: TCD}
+      - {iso3: TGO}
+      - {iso3: UGA}
+      - {iso3: YEM}
+      - {iso3: ZWE}
+
+  - id: groups/OECD.DAC
+    type: geo.organization
+    canonical_name: OECD Development Assistance Committee
+    aliases: ["DAC", "OECD DAC", "OECD Development Assistance Committee"]
+    snapshot: true
+    sources:
+      - https://www.wikidata.org/wiki/Q682791
+      - https://www.oecd.org/dac/financing-sustainable-development/development-finance-standards/daclist.htm
+    members:
+      - {iso3: AUS}
+      - {iso3: AUT}
+      - {iso3: BEL}
+      - {iso3: CAN}
+      - {iso3: CHE}
+      - {iso3: CZE}
+      - {iso3: DEU}
+      - {iso3: DNK}
+      - {iso3: ESP}
+      - {iso3: EST}
+      - {iso3: FIN}
+      - {iso3: FRA}
+      - {iso3: GBR}
+      - {iso3: GRC}
+      - {iso3: HUN}
+      - {iso3: IRL}
+      - {iso3: ISL}
+      - {iso3: ITA}
+      - {iso3: JPN}
+      - {iso3: KOR}
+      - {iso3: LTU}
+      - {iso3: LUX}
+      - {iso3: LVA}
+      - {iso3: NLD}
+      - {iso3: NOR}
+      - {iso3: NZL}
+      - {iso3: POL}
+      - {iso3: PRT}
+      - {iso3: SVK}
+      - {iso3: SVN}
+      - {iso3: SWE}
+      - {iso3: USA}
+
+  - id: groups/UN.LDC
+    type: geo.organization
+    canonical_name: Least Developed Countries
+    aliases: [LDC, "Least Developed Countries"]
+    snapshot: true
+    sources:
+      - https://www.wikidata.org/wiki/Q128406
+      - https://unctad.org/topic/least-developed-countries/list
+    members:
+      - {iso3: AFG}
+      - {iso3: AGO}
+      - {iso3: BDI}
+      - {iso3: BEN}
+      - {iso3: BFA}
+      - {iso3: BGD}
+      - {iso3: BTN}
+      - {iso3: CAF}
+      - {iso3: COM}
+      - {iso3: COD}
+      - {iso3: DJI}
+      - {iso3: ERI}
+      - {iso3: ETH}
+      - {iso3: GMB}
+      - {iso3: GIN}
+      - {iso3: GNB}
+      - {iso3: HTI}
+      - {iso3: KIR}
+      - {iso3: LAO}
+      - {iso3: LBR}
+      - {iso3: LSO}
+      - {iso3: MDG}
+      - {iso3: MDV}
+      - {iso3: MLI}
+      - {iso3: MMR}
+      - {iso3: MOZ}
+      - {iso3: MRT}
+      - {iso3: MWI}
+      - {iso3: NER}
+      - {iso3: NPL}
+      - {iso3: RWA}
+      - {iso3: SEN}
+      - {iso3: SLE}
+      - {iso3: SLB}
+      - {iso3: SOM}
+      - {iso3: SSD}
+      - {iso3: STP}
+      - {iso3: SDN}
+      - {iso3: TCD}
+      - {iso3: TGO}
+      - {iso3: TLS}
+      - {iso3: TUV}
+      - {iso3: TZA}
+      - {iso3: UGA}
+      - {iso3: VUT}
+      - {iso3: WSM}
+      - {iso3: YEM}
+      - {iso3: ZMB}
+
+  - id: groups/UN.LLDC
+    type: geo.organization
+    canonical_name: Landlocked Developing Countries
+    aliases: [LLDC, "Landlocked Developing Countries"]
+    snapshot: true
+    sources:
+      - https://www.wikidata.org/wiki/Q17107
+      - https://www.un.org/ohrlls/content/list-landlocked-developing-countries
+    members:
+      - {iso3: AFG}
+      - {iso3: ARM}
+      - {iso3: AZE}
+      - {iso3: BDI}
+      - {iso3: BFA}
+      - {iso3: BOL}
+      - {iso3: BTN}
+      - {iso3: CAF}
+      - {iso3: ETH}
+      - {iso3: KAZ}
+      - {iso3: KGZ}
+      - {iso3: LAO}
+      - {iso3: LSO}
+      - {iso3: MDA}
+      - {iso3: MDG}
+      - {iso3: MLI}
+      - {iso3: MNG}
+      - {iso3: MWI}
+      - {iso3: NER}
+      - {iso3: NPL}
+      - {iso3: PRY}
+      - {iso3: RWA}
+      - {iso3: SDN}
+      - {iso3: SSD}
+      - {iso3: SWZ}
+      - {iso3: TJK}
+      - {iso3: TKM}
+      - {iso3: UGA}
+      - {iso3: UZB}
+      - {iso3: ZMB}
+      - {iso3: ZWE}
+
+  - id: groups/UN.SIDS
+    type: geo.organization
+    canonical_name: Small Island Developing States
+    aliases: [SIDS, "Small Island Developing States"]
+    snapshot: true
+    sources:
+      - https://www.wikidata.org/wiki/Q1967988
+      - https://www.un.org/ohrlls/content/list-sids
+    members:
+      - {iso3: ATG}
+      - {iso3: BHS}
+      - {iso3: BLZ}
+      - {iso3: BRB}
+      - {iso3: COM}
+      - {iso3: CPV}
+      - {iso3: CUB}
+      - {iso3: DMA}
+      - {iso3: DOM}
+      - {iso3: FJI}
+      - {iso3: FSM}
+      - {iso3: GRD}
+      - {iso3: GUY}
+      - {iso3: HTI}
+      - {iso3: JAM}
+      - {iso3: KIR}
+      - {iso3: KNA}
+      - {iso3: LCA}
+      - {iso3: MDV}
+      - {iso3: MHL}
+      - {iso3: MUS}
+      - {iso3: NRU}
+      - {iso3: PLW}
+      - {iso3: PNG}
+      - {iso3: PRI}
+      - {iso3: SGP}
+      - {iso3: SLB}
+      - {iso3: STP}
+      - {iso3: SUR}
+      - {iso3: SYC}
+      - {iso3: TLS}
+      - {iso3: TON}
+      - {iso3: TTO}
+      - {iso3: TUV}
+      - {iso3: VCT}
+      - {iso3: VUT}
+      - {iso3: WSM}

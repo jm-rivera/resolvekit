@@ -1,0 +1,26 @@
+{
+  "version": "1.0",
+  "note": "Curated deny-list for the parse() precision gate covering two categories: (a) multi-language function words/conjunctions that should never resolve to an entity (e.g. 'the', 'de', 'et'), and (b) common-noun English surfaces that collide with foreign-language place aliases (e.g. 'island'/'islands' match Iceland's Danish/German/Norwegian alias 'Island'). Each term is stored in its ordinary lowercase form; matching is casefolded at runtime against hit.surface. The gate fires ONLY for lowercase/mixed-case surfaces \u2014 all-caps ASCII surfaces (e.g. 'LA', 'IN') bypass the deny-list and fall through to the code-case channel, which is the correct layer for casing discrimination. This means terms like 'la' and 'in' (whose uppercase forms are wanted codes) are safe to include: 'la'/'La' \u2192 dropped here; 'LA' \u2192 deferred to code-channel. INVARIANT: a term must NEVER be added whose UPPERCASE form is a wanted ISO code or org acronym \u2014 the code channel owns those. 'island'/'islands' are safe because neither 'ISLAND' nor 'ISLANDS' is a wanted code.",
+  "terms": [
+    "or",
+    "the",
+    "of",
+    "a",
+    "an",
+    "in",
+    "on",
+    "at",
+    "to",
+    "is",
+    "as",
+    "by",
+    "et",
+    "y",
+    "und",
+    "de",
+    "la",
+    "le",
+    "island",
+    "islands"
+  ]
+}

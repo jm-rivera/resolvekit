@@ -1,0 +1,4705 @@
+{
+  "benchmark_version": "1",
+  "generated_at": "2026-06-10T16:27:57Z",
+  "hardware": {
+    "cpu": "arm",
+    "cores": 18,
+    "memory_mb": 49152,
+    "platform": "macOS-26.4.1-arm64-arm-64bit",
+    "python": "3.12.13"
+  },
+  "warmup": 100,
+  "seed": 42,
+  "datasets": {
+    "geo_countries_en": {
+      "sha256": "71453cc82206aad59c93fdc9b7187cc9958ca20e805ecd0b23ba98888e9cc85f",
+      "row_count": 4155,
+      "path": "benchmarks/data/geo_countries_en.parquet"
+    },
+    "geo_countries_multilingual": {
+      "sha256": "0cdb932d48ce688b9b993c1496fb234d66aeb65a7a8948f7c80e770cd234720f",
+      "row_count": 2240,
+      "path": "benchmarks/data/geo_countries_multilingual.parquet"
+    },
+    "geo_admin": {
+      "sha256": "c00b4865d2ce083cbbfb2b24290bfe9db7df0e86c008450f3312a498fb6a94ba",
+      "row_count": 2657,
+      "path": "benchmarks/data/geo_admin.parquet"
+    },
+    "geo_cities": {
+      "sha256": "39d087a1af086e1c903ca1a8ce1fe93ae8281ee4eb0f48639dc64235fd69b60d",
+      "row_count": 2148,
+      "path": "benchmarks/data/geo_cities.parquet"
+    },
+    "ambiguous": {
+      "sha256": "a578ad16e956f46af5f769040302a8054b832dae739736207bbebffdc13e5fa7",
+      "row_count": 58,
+      "path": "benchmarks/data/ambiguous.parquet"
+    },
+    "no_match": {
+      "sha256": "58405a1893e1a77b52693a681b1e747259663dd5ae0bbb96e86d4e7135d65037",
+      "row_count": 43,
+      "path": "benchmarks/data/no_match.parquet"
+    },
+    "eval_geo": {
+      "sha256": "f115ac82771c084a63f49a6c8e2aa43916ce46a09816fc91cf425e737e1dfa39",
+      "row_count": 467,
+      "path": "benchmarks/data/eval_geo.parquet"
+    },
+    "eval_org": {
+      "sha256": "4b527129a91e41fbf084fb2fad3834326780ec406c746188ab34cf8f1ed9b8cc",
+      "row_count": 25,
+      "path": "benchmarks/data/eval_org.parquet"
+    }
+  },
+  "tools": [
+    {
+      "name": "country_converter",
+      "version": "1.3.2",
+      "offline": true,
+      "dataset": "ambiguous",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.9130434782608695,
+          "by_capability": {
+            "ambiguity_signaling": 0.9130434782608695,
+            "admin_hierarchy": 0.875
+          },
+          "by_language": {
+            "en": 0.9130434782608695
+          },
+          "by_difficulty": {
+            "hard": 0.9130434782608695
+          },
+          "by_entity_type": {
+            "country": 0.9130434782608695
+          },
+          "wrong_match_rate": 0.0,
+          "abstention_precision": 0.0,
+          "abstention_recall": 0.0,
+          "error_rate": 0.0,
+          "row_count": 23,
+          "accuracy_ci_low": 0.7320359570190598,
+          "accuracy_ci_high": 0.9758205045927666,
+          "by_entity_type_n": {
+            "country": 23
+          },
+          "by_entity_type_wrong_match": {
+            "country": 0.0
+          }
+        },
+        "ambiguity_recall": 0.9130434782608695,
+        "latency_ms": {
+          "p50": 0.10395800927653909,
+          "p95": 0.12778718955814838,
+          "p99": 0.13321772566996515,
+          "mean": 0.10581143736920279,
+          "min": 0.06108300294727087,
+          "max": 0.13466598466038704,
+          "sample_count": 23
+        },
+        "throughput_qps": 9410.482201266535,
+        "effective_warmup": 5,
+        "cold_start_ms": 25.720665988046676,
+        "peak_rss_mb": 115.53125,
+        "wheel_size_mb": 0.14886188507080078,
+        "data_size_mb": null,
+        "calibration": null
+      },
+      "skipped_reason": null,
+      "coverage": 0.4827586206896552
+    },
+    {
+      "name": "countryguess",
+      "version": "0.4.9",
+      "offline": true,
+      "dataset": "ambiguous",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.9565217391304348,
+          "by_capability": {
+            "ambiguity_signaling": 0.9565217391304348,
+            "admin_hierarchy": 1.0
+          },
+          "by_language": {
+            "en": 0.9565217391304348
+          },
+          "by_difficulty": {
+            "hard": 0.9565217391304348
+          },
+          "by_entity_type": {
+            "country": 0.9565217391304348
+          },
+          "wrong_match_rate": 0.0,
+          "abstention_precision": 0.0,
+          "abstention_recall": 0.0,
+          "error_rate": 0.0,
+          "row_count": 23,
+          "accuracy_ci_low": 0.7900841350594088,
+          "accuracy_ci_high": 0.9922835330378734,
+          "by_entity_type_n": {
+            "country": 23
+          },
+          "by_entity_type_wrong_match": {
+            "country": 0.0
+          }
+        },
+        "ambiguity_recall": 0.9565217391304348,
+        "latency_ms": {
+          "p50": 0.013125012628734112,
+          "p95": 0.10034579900093367,
+          "p99": 0.23132221307605524,
+          "mean": 0.02950547597087596,
+          "min": 0.003374996595084667,
+          "max": 0.2664579660631716,
+          "sample_count": 23
+        },
+        "throughput_qps": 33550.095786872655,
+        "effective_warmup": 5,
+        "cold_start_ms": 5.944499978795648,
+        "peak_rss_mb": 113.734375,
+        "wheel_size_mb": 0.33511829376220703,
+        "data_size_mb": null,
+        "calibration": null
+      },
+      "skipped_reason": null,
+      "coverage": 0.4827586206896552
+    },
+    {
+      "name": "data_commons_resolve",
+      "version": "2.1.6",
+      "offline": false,
+      "dataset": "ambiguous",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.9090909090909091,
+          "by_capability": {
+            "ambiguity_signaling": 0.9090909090909091,
+            "admin_hierarchy": 0.88
+          },
+          "by_language": {
+            "en": 0.9090909090909091
+          },
+          "by_difficulty": {
+            "hard": 0.9090909090909091
+          },
+          "by_entity_type": {
+            "admin1": 0.8333333333333334,
+            "admin2": 0.9,
+            "city": 1.0,
+            "country": 0.9090909090909091
+          },
+          "wrong_match_rate": 0.022727272727272728,
+          "abstention_precision": 0.0,
+          "abstention_recall": 0.0,
+          "error_rate": 0.0,
+          "row_count": 44,
+          "accuracy_ci_low": 0.7884048060208251,
+          "accuracy_ci_high": 0.9640783885211635,
+          "by_entity_type_n": {
+            "admin1": 6,
+            "admin2": 10,
+            "city": 6,
+            "country": 22
+          },
+          "by_entity_type_wrong_match": {
+            "admin1": 0.0,
+            "admin2": 0.0,
+            "city": 0.0,
+            "country": 0.045454545454545456
+          }
+        },
+        "ambiguity_recall": 0.9090909090909091,
+        "latency_ms": {
+          "p50": 0.20414547179825604,
+          "p95": 0.376266971579753,
+          "p99": 0.46925171918701386,
+          "mean": 0.22390917795498602,
+          "min": 0.1366250216960907,
+          "max": 0.5259579629637301,
+          "sample_count": 44
+        },
+        "throughput_qps": 4438.074678279115,
+        "effective_warmup": 10,
+        "cold_start_ms": 469.9447499588132,
+        "peak_rss_mb": 125.828125,
+        "wheel_size_mb": 0.28513336181640625,
+        "data_size_mb": null,
+        "calibration": null
+      },
+      "skipped_reason": null,
+      "coverage": 0.9310344827586207
+    },
+    {
+      "name": "geonamescache",
+      "version": "3.0.1",
+      "offline": true,
+      "dataset": "ambiguous",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.5357142857142857,
+          "by_capability": {
+            "ambiguity_signaling": 0.5357142857142857,
+            "admin_hierarchy": 0.7777777777777778
+          },
+          "by_language": {
+            "en": 0.5357142857142857
+          },
+          "by_difficulty": {
+            "hard": 0.5357142857142857
+          },
+          "by_entity_type": {
+            "city": 0.0,
+            "country": 0.6818181818181818
+          },
+          "wrong_match_rate": 0.21428571428571427,
+          "abstention_precision": 0.0,
+          "abstention_recall": 0.0,
+          "error_rate": 0.0,
+          "row_count": 28,
+          "accuracy_ci_low": 0.3581239514210167,
+          "accuracy_ci_high": 0.7046869626034041,
+          "by_entity_type_n": {
+            "city": 6,
+            "country": 22
+          },
+          "by_entity_type_wrong_match": {
+            "city": 1.0,
+            "country": 0.0
+          }
+        },
+        "ambiguity_recall": 0.5357142857142857,
+        "latency_ms": {
+          "p50": 0.001291482476517558,
+          "p95": 73.90208924480248,
+          "p99": 76.11763432330918,
+          "mean": 15.861318496588085,
+          "min": 0.0007919734343886375,
+          "max": 76.91091700689867,
+          "sample_count": 28
+        },
+        "throughput_qps": 63.043320705477264,
+        "effective_warmup": 7,
+        "cold_start_ms": 52.61470895493403,
+        "peak_rss_mb": 190.75,
+        "wheel_size_mb": 164.73299312591553,
+        "data_size_mb": null,
+        "calibration": null
+      },
+      "skipped_reason": null,
+      "coverage": 0.603448275862069
+    },
+    {
+      "name": "hdx_python_country",
+      "version": "4.1.1",
+      "offline": true,
+      "dataset": "ambiguous",
+      "metrics": {
+        "accuracy": {
+          "overall": 1.0,
+          "by_capability": {
+            "ambiguity_signaling": 1.0,
+            "admin_hierarchy": 1.0
+          },
+          "by_language": {
+            "en": 1.0
+          },
+          "by_difficulty": {
+            "hard": 1.0
+          },
+          "by_entity_type": {
+            "country": 1.0
+          },
+          "wrong_match_rate": 0.0,
+          "abstention_precision": 0.0,
+          "abstention_recall": 0.0,
+          "error_rate": 0.0,
+          "row_count": 23,
+          "accuracy_ci_low": 0.8568788745827374,
+          "accuracy_ci_high": 1.0,
+          "by_entity_type_n": {
+            "country": 23
+          },
+          "by_entity_type_wrong_match": {
+            "country": 0.0
+          }
+        },
+        "ambiguity_recall": 1.0,
+        "latency_ms": {
+          "p50": 0.000792031642049551,
+          "p95": 4.920121049508444,
+          "p99": 5.585671728476882,
+          "mean": 0.493525390756195,
+          "min": 0.000500003807246685,
+          "max": 5.62237499980256,
+          "sample_count": 23
+        },
+        "throughput_qps": 2024.7740749015618,
+        "effective_warmup": 5,
+        "cold_start_ms": 134.52441699337214,
+        "peak_rss_mb": 177.234375,
+        "wheel_size_mb": 0.19714641571044922,
+        "data_size_mb": null,
+        "calibration": null
+      },
+      "skipped_reason": null,
+      "coverage": 0.4827586206896552
+    },
+    {
+      "name": "pycountry",
+      "version": "26.2.16",
+      "offline": true,
+      "dataset": "ambiguous",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.6521739130434783,
+          "by_capability": {
+            "ambiguity_signaling": 0.6521739130434783,
+            "admin_hierarchy": 0.875
+          },
+          "by_language": {
+            "en": 0.6521739130434783
+          },
+          "by_difficulty": {
+            "hard": 0.6521739130434783
+          },
+          "by_entity_type": {
+            "country": 0.6521739130434783
+          },
+          "wrong_match_rate": 0.0,
+          "abstention_precision": 0.0,
+          "abstention_recall": 0.0,
+          "error_rate": 0.0,
+          "row_count": 23,
+          "accuracy_ci_low": 0.4488997690689164,
+          "accuracy_ci_high": 0.8118894536301776,
+          "by_entity_type_n": {
+            "country": 23
+          },
+          "by_entity_type_wrong_match": {
+            "country": 0.0
+          }
+        },
+        "ambiguity_recall": 0.6521739130434783,
+        "latency_ms": {
+          "p50": 0.00200001522898674,
+          "p95": 0.002725020749494433,
+          "p99": 0.002814764156937599,
+          "mean": 0.0020887869734155097,
+          "min": 0.0017500133253633976,
+          "max": 0.002833025064319372,
+          "sample_count": 23
+        },
+        "throughput_qps": 422988.6809276833,
+        "effective_warmup": 5,
+        "cold_start_ms": 1.9325839821249247,
+        "peak_rss_mb": 112.65625,
+        "wheel_size_mb": 20.141146659851074,
+        "data_size_mb": null,
+        "calibration": null
+      },
+      "skipped_reason": null,
+      "coverage": 0.4827586206896552
+    },
+    {
+      "name": "rapidfuzz_dict",
+      "version": "3.14.5",
+      "offline": true,
+      "dataset": "ambiguous",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.782608695652174,
+          "by_capability": {
+            "ambiguity_signaling": 0.782608695652174,
+            "admin_hierarchy": 0.875
+          },
+          "by_language": {
+            "en": 0.782608695652174
+          },
+          "by_difficulty": {
+            "hard": 0.782608695652174
+          },
+          "by_entity_type": {
+            "country": 0.782608695652174
+          },
+          "wrong_match_rate": 0.21739130434782608,
+          "abstention_precision": 0.0,
+          "abstention_recall": 0.0,
+          "error_rate": 0.0,
+          "row_count": 23,
+          "accuracy_ci_low": 0.5809611981726508,
+          "accuracy_ci_high": 0.9033616439828094,
+          "by_entity_type_n": {
+            "country": 23
+          },
+          "by_entity_type_wrong_match": {
+            "country": 0.21739130434782608
+          }
+        },
+        "ambiguity_recall": 0.782608695652174,
+        "latency_ms": {
+          "p50": 0.17712503904476762,
+          "p95": 0.3258089127484709,
+          "p99": 0.33920071669854224,
+          "mean": 0.19163956723945297,
+          "min": 0.06724998820573092,
+          "max": 0.34258299274370074,
+          "sample_count": 23
+        },
+        "throughput_qps": 5206.319693732097,
+        "effective_warmup": 5,
+        "cold_start_ms": 2.9767919913865626,
+        "peak_rss_mb": 113.015625,
+        "wheel_size_mb": 4.124938011169434,
+        "data_size_mb": null,
+        "calibration": null
+      },
+      "skipped_reason": null,
+      "coverage": 0.4827586206896552
+    },
+    {
+      "name": "resolvekit",
+      "version": "0.1.0",
+      "offline": true,
+      "dataset": "ambiguous",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.8723404255319149,
+          "by_capability": {
+            "ambiguity_signaling": 0.8723404255319149,
+            "admin_hierarchy": 0.8214285714285714
+          },
+          "by_language": {
+            "en": 0.8723404255319149
+          },
+          "by_difficulty": {
+            "hard": 0.8723404255319149
+          },
+          "by_entity_type": {
+            "admin1": 0.6666666666666666,
+            "admin2": 0.7,
+            "city": 0.8333333333333334,
+            "country": 1.0,
+            "admin3": 1.0,
+            "admin4": 1.0
+          },
+          "wrong_match_rate": 0.0,
+          "abstention_precision": 0.0,
+          "abstention_recall": 0.0,
+          "error_rate": 0.0,
+          "row_count": 47,
+          "accuracy_ci_low": 0.7482578662713097,
+          "accuracy_ci_high": 0.9401547721979753,
+          "by_entity_type_n": {
+            "admin1": 6,
+            "admin2": 10,
+            "city": 6,
+            "country": 22,
+            "admin3": 2,
+            "admin4": 1
+          },
+          "by_entity_type_wrong_match": {
+            "admin1": 0.0,
+            "admin2": 0.0,
+            "city": 0.0,
+            "country": 0.0,
+            "admin3": 0.0,
+            "admin4": 0.0
+          }
+        },
+        "ambiguity_recall": 0.8723404255319149,
+        "latency_ms": {
+          "p50": 2.0549999899230897,
+          "p95": 3.357741690706461,
+          "p99": 3.478158952202648,
+          "mean": 1.9616985339374142,
+          "min": 0.2382500097155571,
+          "max": 3.516166005283594,
+          "sample_count": 47
+        },
+        "throughput_qps": 509.60201885830503,
+        "effective_warmup": 11,
+        "cold_start_ms": 6157.660084019881,
+        "peak_rss_mb": 1140.15625,
+        "wheel_size_mb": 9.482624053955078,
+        "data_size_mb": 807.2899999999998,
+        "calibration": {
+          "n_with_confidence": 14,
+          "ece": null,
+          "brier": null,
+          "reliability_bins": [
+            {
+              "lower": 0.0,
+              "upper": 0.1,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.1,
+              "upper": 0.2,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.2,
+              "upper": 0.3,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.3,
+              "upper": 0.4,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.4,
+              "upper": 0.5,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.6,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.6,
+              "upper": 0.7,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.9,
+              "upper": 1.0,
+              "count": 14,
+              "mean_confidence": 0.9077808217167468,
+              "observed_accuracy": 1.0
+            }
+          ]
+        }
+      },
+      "skipped_reason": null,
+      "coverage": 1.0
+    },
+    {
+      "name": "resolvekit_typed",
+      "version": "0.1.0",
+      "offline": true,
+      "dataset": "ambiguous",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.9148936170212766,
+          "by_capability": {
+            "ambiguity_signaling": 0.9148936170212766,
+            "admin_hierarchy": 0.8928571428571429
+          },
+          "by_language": {
+            "en": 0.9148936170212766
+          },
+          "by_difficulty": {
+            "hard": 0.9148936170212766
+          },
+          "by_entity_type": {
+            "admin1": 1.0,
+            "admin2": 0.7,
+            "city": 0.8333333333333334,
+            "country": 1.0,
+            "admin3": 1.0,
+            "admin4": 1.0
+          },
+          "wrong_match_rate": 0.0,
+          "abstention_precision": 0.0,
+          "abstention_recall": 0.0,
+          "error_rate": 0.0,
+          "row_count": 47,
+          "accuracy_ci_low": 0.8006819480497736,
+          "accuracy_ci_high": 0.9664064205302869,
+          "by_entity_type_n": {
+            "admin1": 6,
+            "admin2": 10,
+            "city": 6,
+            "country": 22,
+            "admin3": 2,
+            "admin4": 1
+          },
+          "by_entity_type_wrong_match": {
+            "admin1": 0.0,
+            "admin2": 0.0,
+            "city": 0.0,
+            "country": 0.0,
+            "admin3": 0.0,
+            "admin4": 0.0
+          }
+        },
+        "ambiguity_recall": 0.9148936170212766,
+        "latency_ms": {
+          "p50": 1.8937920103780925,
+          "p95": 2.9739581281319256,
+          "p99": 3.542752341600135,
+          "mean": 1.775741132540985,
+          "min": 0.25170802837237716,
+          "max": 3.705458017066121,
+          "sample_count": 47
+        },
+        "throughput_qps": 562.9444810222017,
+        "effective_warmup": 11,
+        "cold_start_ms": 195.68216596962884,
+        "peak_rss_mb": 174.1875,
+        "wheel_size_mb": 9.482624053955078,
+        "data_size_mb": 807.2899999999998,
+        "calibration": {
+          "n_with_confidence": 31,
+          "ece": 0.09498034898317101,
+          "brier": 0.00924510457141006,
+          "reliability_bins": [
+            {
+              "lower": 0.0,
+              "upper": 0.1,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.1,
+              "upper": 0.2,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.2,
+              "upper": 0.3,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.3,
+              "upper": 0.4,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.4,
+              "upper": 0.5,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.6,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.6,
+              "upper": 0.7,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "count": 7,
+              "mean_confidence": 0.8817229305905961,
+              "observed_accuracy": 1.0
+            },
+            {
+              "lower": 0.9,
+              "upper": 1.0,
+              "count": 24,
+              "mean_confidence": 0.9118145278078136,
+              "observed_accuracy": 1.0
+            }
+          ]
+        }
+      },
+      "skipped_reason": null,
+      "coverage": 1.0
+    },
+    {
+      "name": "country_converter",
+      "version": "1.3.2",
+      "offline": true,
+      "dataset": "eval_geo",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.7,
+          "by_capability": {
+            "multilingual": 0.0,
+            "transliteration": 0.0,
+            "informal_alias": 1.0
+          },
+          "by_language": {
+            "en": 0.875,
+            "es": 0.0,
+            "fr": 0.0
+          },
+          "by_difficulty": {
+            "easy": 1.0,
+            "hard": 0.5,
+            "medium": 0.3333333333333333
+          },
+          "by_entity_type": {
+            "country": 0.7
+          },
+          "wrong_match_rate": 0.0,
+          "abstention_precision": 0.25,
+          "abstention_recall": 1.0,
+          "error_rate": 0.0,
+          "row_count": 10,
+          "accuracy_ci_low": 0.39677321997956516,
+          "accuracy_ci_high": 0.892210712513788,
+          "by_entity_type_n": {
+            "country": 10
+          },
+          "by_entity_type_wrong_match": {
+            "country": 0.0
+          }
+        },
+        "ambiguity_recall": 1.0,
+        "latency_ms": {
+          "p50": 0.090666493633762,
+          "p95": null,
+          "p99": null,
+          "mean": 0.08038770174607635,
+          "min": 0.03512500552460551,
+          "max": 0.1300839940086007,
+          "sample_count": 10
+        },
+        "throughput_qps": 12365.40227954112,
+        "effective_warmup": 100,
+        "cold_start_ms": 25.720665988046676,
+        "peak_rss_mb": 115.53125,
+        "wheel_size_mb": 0.14886188507080078,
+        "data_size_mb": null,
+        "calibration": null
+      },
+      "skipped_reason": null,
+      "coverage": 0.23554603854389722
+    },
+    {
+      "name": "countryguess",
+      "version": "0.4.9",
+      "offline": true,
+      "dataset": "eval_geo",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.8,
+          "by_capability": {
+            "multilingual": 0.5,
+            "transliteration": 0.0,
+            "informal_alias": 1.0
+          },
+          "by_language": {
+            "en": 0.875,
+            "es": 0.0,
+            "fr": 1.0
+          },
+          "by_difficulty": {
+            "easy": 1.0,
+            "hard": 0.5,
+            "medium": 0.6666666666666666
+          },
+          "by_entity_type": {
+            "country": 0.8
+          },
+          "wrong_match_rate": 0.1,
+          "abstention_precision": 0.5,
+          "abstention_recall": 1.0,
+          "error_rate": 0.0,
+          "row_count": 10,
+          "accuracy_ci_low": 0.49015684672072335,
+          "accuracy_ci_high": 0.9433190520193067,
+          "by_entity_type_n": {
+            "country": 10
+          },
+          "by_entity_type_wrong_match": {
+            "country": 0.1
+          }
+        },
+        "ambiguity_recall": 1.0,
+        "latency_ms": {
+          "p50": 0.032542040571570396,
+          "p95": null,
+          "p99": null,
+          "mean": 0.08872951730154455,
+          "min": 0.003208988346159458,
+          "max": 0.29799999902024865,
+          "sample_count": 10
+        },
+        "throughput_qps": 11227.023837740953,
+        "effective_warmup": 100,
+        "cold_start_ms": 5.944499978795648,
+        "peak_rss_mb": 113.734375,
+        "wheel_size_mb": 0.33511829376220703,
+        "data_size_mb": null,
+        "calibration": null
+      },
+      "skipped_reason": null,
+      "coverage": 0.23554603854389722
+    },
+    {
+      "name": "data_commons_resolve",
+      "version": "2.1.6",
+      "offline": false,
+      "dataset": "eval_geo",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.7632850241545893,
+          "by_capability": {
+            "informal_alias": 0.9130434782608695,
+            "iso_code": 0.9,
+            "transliteration": 0.9333333333333333,
+            "multilingual": 0.6666666666666666
+          },
+          "by_language": {
+            "en": 0.7661691542288557,
+            "es": 0.6666666666666666,
+            "fr": 0.6666666666666666
+          },
+          "by_difficulty": {
+            "hard": 0.7586206896551724,
+            "easy": 0.8524590163934426,
+            "medium": 0.5714285714285714
+          },
+          "by_entity_type": {
+            "country": 0.821917808219178,
+            "city": 0.7941176470588235,
+            "admin2": 0.6153846153846154,
+            "admin1": 0.7
+          },
+          "wrong_match_rate": 0.09178743961352658,
+          "abstention_precision": 0.28125,
+          "abstention_recall": 0.6428571428571429,
+          "error_rate": 0.0,
+          "row_count": 207,
+          "accuracy_ci_low": 0.7009111844106307,
+          "accuracy_ci_high": 0.8160645926656197,
+          "by_entity_type_n": {
+            "country": 73,
+            "city": 68,
+            "admin2": 26,
+            "admin1": 40
+          },
+          "by_entity_type_wrong_match": {
+            "country": 0.0684931506849315,
+            "city": 0.058823529411764705,
+            "admin2": 0.23076923076923078,
+            "admin1": 0.1
+          }
+        },
+        "ambiguity_recall": 0.9154929577464789,
+        "latency_ms": {
+          "p50": 0.13574998592957854,
+          "p95": 0.23669539368711412,
+          "p99": 0.2893864049110561,
+          "mean": 0.13794584406746757,
+          "min": 0.028958020266145468,
+          "max": 0.4853749996982515,
+          "sample_count": 207
+        },
+        "throughput_qps": 7214.1459980815525,
+        "effective_warmup": 100,
+        "cold_start_ms": 469.9447499588132,
+        "peak_rss_mb": 125.828125,
+        "wheel_size_mb": 0.28513336181640625,
+        "data_size_mb": null,
+        "calibration": null
+      },
+      "skipped_reason": null,
+      "coverage": 0.6573875802997858
+    },
+    {
+      "name": "geonamescache",
+      "version": "3.0.1",
+      "offline": true,
+      "dataset": "eval_geo",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.28,
+          "by_capability": {
+            "informal_alias": 0.13333333333333333,
+            "iso_code": 0.0,
+            "transliteration": 0.09090909090909091,
+            "multilingual": 0.0
+          },
+          "by_language": {
+            "en": 0.2916666666666667,
+            "fr": 0.0,
+            "es": 0.0
+          },
+          "by_difficulty": {
+            "medium": 0.12121212121212122,
+            "hard": 0.1875,
+            "easy": 0.4117647058823529
+          },
+          "by_entity_type": {
+            "country": 0.5,
+            "city": 0.0
+          },
+          "wrong_match_rate": 0.33,
+          "abstention_precision": 0.1875,
+          "abstention_recall": 1.0,
+          "error_rate": 0.0,
+          "row_count": 100,
+          "accuracy_ci_low": 0.2013955916759837,
+          "accuracy_ci_high": 0.37488212361345724,
+          "by_entity_type_n": {
+            "country": 56,
+            "city": 44
+          },
+          "by_entity_type_wrong_match": {
+            "country": 0.017857142857142856,
+            "city": 0.7272727272727273
+          }
+        },
+        "ambiguity_recall": 0.375,
+        "latency_ms": {
+          "p50": 0.0036040146369487047,
+          "p95": 73.20841426262632,
+          "p99": 79.3705508578569,
+          "mean": 31.593807435128838,
+          "min": 0.0004169996827840805,
+          "max": 86.14470798056573,
+          "sample_count": 100
+        },
+        "throughput_qps": 31.650512087838248,
+        "effective_warmup": 100,
+        "cold_start_ms": 52.61470895493403,
+        "peak_rss_mb": 190.75,
+        "wheel_size_mb": 164.73299312591553,
+        "data_size_mb": null,
+        "calibration": null
+      },
+      "skipped_reason": null,
+      "coverage": 0.4282655246252677
+    },
+    {
+      "name": "hdx_python_country",
+      "version": "4.1.1",
+      "offline": true,
+      "dataset": "eval_geo",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.8,
+          "by_capability": {
+            "multilingual": 1.0,
+            "transliteration": 1.0,
+            "informal_alias": 1.0
+          },
+          "by_language": {
+            "en": 0.75,
+            "es": 1.0,
+            "fr": 1.0
+          },
+          "by_difficulty": {
+            "easy": 1.0,
+            "hard": 1.0,
+            "medium": 0.3333333333333333
+          },
+          "by_entity_type": {
+            "country": 0.8
+          },
+          "wrong_match_rate": 0.0,
+          "abstention_precision": 0.3333333333333333,
+          "abstention_recall": 1.0,
+          "error_rate": 0.0,
+          "row_count": 10,
+          "accuracy_ci_low": 0.49015684672072335,
+          "accuracy_ci_high": 0.9433190520193067,
+          "by_entity_type_n": {
+            "country": 10
+          },
+          "by_entity_type_wrong_match": {
+            "country": 0.0
+          }
+        },
+        "ambiguity_recall": 1.0,
+        "latency_ms": {
+          "p50": 0.053270981879904866,
+          "p95": null,
+          "p99": null,
+          "mean": 2.3696249874774367,
+          "min": 0.0007919734343886375,
+          "max": 6.26462500076741,
+          "sample_count": 10
+        },
+        "throughput_qps": 421.9253509053138,
+        "effective_warmup": 100,
+        "cold_start_ms": 134.52441699337214,
+        "peak_rss_mb": 177.234375,
+        "wheel_size_mb": 0.19714641571044922,
+        "data_size_mb": null,
+        "calibration": null
+      },
+      "skipped_reason": null,
+      "coverage": 0.23554603854389722
+    },
+    {
+      "name": "pycountry",
+      "version": "26.2.16",
+      "offline": true,
+      "dataset": "eval_geo",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.5,
+          "by_capability": {
+            "multilingual": 0.0,
+            "transliteration": 0.0,
+            "informal_alias": 0.0
+          },
+          "by_language": {
+            "en": 0.625,
+            "es": 0.0,
+            "fr": 0.0
+          },
+          "by_difficulty": {
+            "easy": 1.0,
+            "hard": 0.0,
+            "medium": 0.0
+          },
+          "by_entity_type": {
+            "country": 0.5
+          },
+          "wrong_match_rate": 0.0,
+          "abstention_precision": 0.16666666666666666,
+          "abstention_recall": 1.0,
+          "error_rate": 0.0,
+          "row_count": 10,
+          "accuracy_ci_low": 0.23658959361548731,
+          "accuracy_ci_high": 0.7634104063845126,
+          "by_entity_type_n": {
+            "country": 10
+          },
+          "by_entity_type_wrong_match": {
+            "country": 0.0
+          }
+        },
+        "ambiguity_recall": 0.75,
+        "latency_ms": {
+          "p50": 0.0020415172912180424,
+          "p95": null,
+          "p99": null,
+          "mean": 0.0020709005184471607,
+          "min": 0.001834006980061531,
+          "max": 0.002374988980591297,
+          "sample_count": 10
+        },
+        "throughput_qps": 423279.80742839543,
+        "effective_warmup": 100,
+        "cold_start_ms": 1.9325839821249247,
+        "peak_rss_mb": 112.65625,
+        "wheel_size_mb": 20.141146659851074,
+        "data_size_mb": null,
+        "calibration": null
+      },
+      "skipped_reason": null,
+      "coverage": 0.23554603854389722
+    },
+    {
+      "name": "rapidfuzz_dict",
+      "version": "3.14.5",
+      "offline": true,
+      "dataset": "eval_geo",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.6,
+          "by_capability": {
+            "multilingual": 0.5,
+            "transliteration": 1.0,
+            "informal_alias": 0.0
+          },
+          "by_language": {
+            "en": 0.625,
+            "es": 1.0,
+            "fr": 0.0
+          },
+          "by_difficulty": {
+            "easy": 0.8,
+            "hard": 0.5,
+            "medium": 0.3333333333333333
+          },
+          "by_entity_type": {
+            "country": 0.6
+          },
+          "wrong_match_rate": 0.4,
+          "abstention_precision": 0.0,
+          "abstention_recall": 0.0,
+          "error_rate": 0.0,
+          "row_count": 10,
+          "accuracy_ci_low": 0.3126695474501863,
+          "accuracy_ci_high": 0.8318224187964902,
+          "by_entity_type_n": {
+            "country": 10
+          },
+          "by_entity_type_wrong_match": {
+            "country": 0.4
+          }
+        },
+        "ambiguity_recall": 0.75,
+        "latency_ms": {
+          "p50": 0.24158350424841046,
+          "p95": null,
+          "p99": null,
+          "mean": 0.22920840419828892,
+          "min": 0.046874978579580784,
+          "max": 0.437250011600554,
+          "sample_count": 10
+        },
+        "throughput_qps": 4347.669198566372,
+        "effective_warmup": 100,
+        "cold_start_ms": 2.9767919913865626,
+        "peak_rss_mb": 113.015625,
+        "wheel_size_mb": 4.124938011169434,
+        "data_size_mb": null,
+        "calibration": null
+      },
+      "skipped_reason": null,
+      "coverage": 0.23554603854389722
+    },
+    {
+      "name": "resolvekit",
+      "version": "0.1.0",
+      "offline": true,
+      "dataset": "eval_geo",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.888283378746594,
+          "by_capability": {
+            "multilingual": 0.875,
+            "transliteration": 0.8333333333333334,
+            "informal_alias": 0.9375,
+            "iso_code": 1.0
+          },
+          "by_language": {
+            "en": 0.8885793871866295,
+            "de": 1.0,
+            "fr": 1.0,
+            "es": 0.6666666666666666
+          },
+          "by_difficulty": {
+            "easy": 0.9224806201550387,
+            "medium": 0.8701298701298701,
+            "hard": 0.65625
+          },
+          "by_entity_type": {
+            "admin1": 0.7818181818181819,
+            "admin3": 0.8181818181818182,
+            "country": 0.963855421686747,
+            "admin5": 0.8857142857142857,
+            "admin2": 0.96875,
+            "continental_union": 1.0,
+            "city": 0.8888888888888888,
+            "admin4": 0.90625,
+            "continent": 1.0,
+            "world_region": 0.5555555555555556
+          },
+          "wrong_match_rate": 0.04904632152588556,
+          "abstention_precision": 0.5384615384615384,
+          "abstention_recall": 0.8235294117647058,
+          "error_rate": 0.0,
+          "row_count": 367,
+          "accuracy_ci_low": 0.8519473453836499,
+          "accuracy_ci_high": 0.9165748484586806,
+          "by_entity_type_n": {
+            "admin1": 55,
+            "admin3": 33,
+            "country": 83,
+            "admin5": 35,
+            "admin2": 32,
+            "continental_union": 9,
+            "city": 72,
+            "admin4": 32,
+            "continent": 7,
+            "world_region": 9
+          },
+          "by_entity_type_wrong_match": {
+            "admin1": 0.01818181818181818,
+            "admin3": 0.09090909090909091,
+            "country": 0.0,
+            "admin5": 0.08571428571428572,
+            "admin2": 0.0,
+            "continental_union": 0.0,
+            "city": 0.08333333333333333,
+            "admin4": 0.03125,
+            "continent": 0.0,
+            "world_region": 0.4444444444444444
+          }
+        },
+        "ambiguity_recall": 0.9058823529411765,
+        "latency_ms": {
+          "p50": 0.5385000258684158,
+          "p95": 2.6294081297237426,
+          "p99": 3.3702109102159676,
+          "mean": 0.8744766156326178,
+          "min": 0.005125009920448065,
+          "max": 4.238917026668787,
+          "sample_count": 367
+        },
+        "throughput_qps": 1142.833860984252,
+        "effective_warmup": 100,
+        "cold_start_ms": 6157.660084019881,
+        "peak_rss_mb": 1140.15625,
+        "wheel_size_mb": 9.482624053955078,
+        "data_size_mb": 807.2899999999998,
+        "calibration": {
+          "n_with_confidence": 244,
+          "ece": 0.04319519049943959,
+          "brier": 0.06849376742170193,
+          "reliability_bins": [
+            {
+              "lower": 0.0,
+              "upper": 0.1,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.1,
+              "upper": 0.2,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.2,
+              "upper": 0.3,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.3,
+              "upper": 0.4,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.4,
+              "upper": 0.5,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.6,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.6,
+              "upper": 0.7,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "count": 4,
+              "mean_confidence": 0.7779670792497737,
+              "observed_accuracy": 0.5
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "count": 110,
+              "mean_confidence": 0.8730397257784943,
+              "observed_accuracy": 0.9454545454545454
+            },
+            {
+              "lower": 0.9,
+              "upper": 1.0,
+              "count": 130,
+              "mean_confidence": 0.9118297846115497,
+              "observed_accuracy": 0.9230769230769231
+            }
+          ]
+        }
+      },
+      "skipped_reason": null,
+      "coverage": 1.0
+    },
+    {
+      "name": "resolvekit_typed",
+      "version": "0.1.0",
+      "offline": true,
+      "dataset": "eval_geo",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.9128065395095368,
+          "by_capability": {
+            "multilingual": 0.875,
+            "transliteration": 0.8333333333333334,
+            "informal_alias": 0.96875,
+            "iso_code": 1.0
+          },
+          "by_language": {
+            "en": 0.9136490250696379,
+            "de": 1.0,
+            "fr": 1.0,
+            "es": 0.6666666666666666
+          },
+          "by_difficulty": {
+            "easy": 0.9573643410852714,
+            "medium": 0.8441558441558441,
+            "hard": 0.71875
+          },
+          "by_entity_type": {
+            "admin1": 0.8181818181818182,
+            "admin3": 0.8484848484848485,
+            "country": 0.9518072289156626,
+            "admin5": 0.9714285714285714,
+            "admin2": 0.9375,
+            "continental_union": 1.0,
+            "city": 0.8888888888888888,
+            "admin4": 0.9375,
+            "continent": 1.0,
+            "world_region": 1.0
+          },
+          "wrong_match_rate": 0.02452316076294278,
+          "abstention_precision": 0.4230769230769231,
+          "abstention_recall": 0.6470588235294118,
+          "error_rate": 0.0,
+          "row_count": 367,
+          "accuracy_ci_low": 0.8794995670550372,
+          "accuracy_ci_high": 0.9375608706089142,
+          "by_entity_type_n": {
+            "admin1": 55,
+            "admin3": 33,
+            "country": 83,
+            "admin5": 35,
+            "admin2": 32,
+            "continental_union": 9,
+            "city": 72,
+            "admin4": 32,
+            "continent": 7,
+            "world_region": 9
+          },
+          "by_entity_type_wrong_match": {
+            "admin1": 0.01818181818181818,
+            "admin3": 0.0,
+            "country": 0.03614457831325301,
+            "admin5": 0.0,
+            "admin2": 0.0,
+            "continental_union": 0.0,
+            "city": 0.06944444444444445,
+            "admin4": 0.0,
+            "continent": 0.0,
+            "world_region": 0.0
+          }
+        },
+        "ambiguity_recall": 0.9294117647058824,
+        "latency_ms": {
+          "p50": 0.293209042865783,
+          "p95": 2.286637295037508,
+          "p99": 3.7076120020356003,
+          "mean": 1.6605140762187907,
+          "min": 0.00658305361866951,
+          "max": 370.6715420121327,
+          "sample_count": 367
+        },
+        "throughput_qps": 602.029553197973,
+        "effective_warmup": 100,
+        "cold_start_ms": 195.68216596962884,
+        "peak_rss_mb": 174.1875,
+        "wheel_size_mb": 9.482624053955078,
+        "data_size_mb": 807.2899999999998,
+        "calibration": {
+          "n_with_confidence": 276,
+          "ece": 0.07292954470462497,
+          "brier": 0.037901303347634606,
+          "reliability_bins": [
+            {
+              "lower": 0.0,
+              "upper": 0.1,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.1,
+              "upper": 0.2,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.2,
+              "upper": 0.3,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.3,
+              "upper": 0.4,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.4,
+              "upper": 0.5,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.6,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.6,
+              "upper": 0.7,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "count": 5,
+              "mean_confidence": 0.7760491156782644,
+              "observed_accuracy": 0.8
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "count": 116,
+              "mean_confidence": 0.873357062967526,
+              "observed_accuracy": 0.9741379310344828
+            },
+            {
+              "lower": 0.9,
+              "upper": 1.0,
+              "count": 155,
+              "mean_confidence": 0.914076005025156,
+              "observed_accuracy": 0.967741935483871
+            }
+          ]
+        }
+      },
+      "skipped_reason": null,
+      "coverage": 1.0
+    },
+    {
+      "name": "country_converter",
+      "version": "1.3.2",
+      "offline": true,
+      "dataset": "eval_org",
+      "metrics": null,
+      "skipped_reason": "scope: supports ['country'], dataset has ['org']",
+      "coverage": null
+    },
+    {
+      "name": "countryguess",
+      "version": "0.4.9",
+      "offline": true,
+      "dataset": "eval_org",
+      "metrics": null,
+      "skipped_reason": "scope: supports ['country'], dataset has ['org']",
+      "coverage": null
+    },
+    {
+      "name": "geonamescache",
+      "version": "3.0.1",
+      "offline": true,
+      "dataset": "eval_org",
+      "metrics": null,
+      "skipped_reason": "scope: supports ['city', 'country'], dataset has ['org']",
+      "coverage": null
+    },
+    {
+      "name": "hdx_python_country",
+      "version": "4.1.1",
+      "offline": true,
+      "dataset": "eval_org",
+      "metrics": null,
+      "skipped_reason": "scope: supports ['country'], dataset has ['org']",
+      "coverage": null
+    },
+    {
+      "name": "pycountry",
+      "version": "26.2.16",
+      "offline": true,
+      "dataset": "eval_org",
+      "metrics": null,
+      "skipped_reason": "scope: supports ['country'], dataset has ['org']",
+      "coverage": null
+    },
+    {
+      "name": "rapidfuzz_dict",
+      "version": "3.14.5",
+      "offline": true,
+      "dataset": "eval_org",
+      "metrics": null,
+      "skipped_reason": "scope: supports ['country'], dataset has ['org']",
+      "coverage": null
+    },
+    {
+      "name": "resolvekit",
+      "version": "0.1.0",
+      "offline": true,
+      "dataset": "eval_org",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.75,
+          "by_capability": {
+            "informal_alias": 0.7142857142857143,
+            "iso_code": 0.5555555555555556
+          },
+          "by_language": {
+            "en": 0.75
+          },
+          "by_difficulty": {
+            "easy": 0.7333333333333333,
+            "medium": 0.8
+          },
+          "by_entity_type": {
+            "org": 0.75
+          },
+          "wrong_match_rate": 0.1,
+          "abstention_precision": 1.0,
+          "abstention_recall": 1.0,
+          "error_rate": 0.0,
+          "row_count": 20,
+          "accuracy_ci_low": 0.5312949900419365,
+          "accuracy_ci_high": 0.888139947210597,
+          "by_entity_type_n": {
+            "org": 20
+          },
+          "by_entity_type_wrong_match": {
+            "org": 0.1
+          }
+        },
+        "ambiguity_recall": 1.0,
+        "latency_ms": {
+          "p50": 0.8049374737311155,
+          "p95": 3.6685726197902144,
+          "p99": 7.048514505149791,
+          "mean": 1.480708346934989,
+          "min": 0.006167043466120958,
+          "max": 7.893499976489693,
+          "sample_count": 20
+        },
+        "throughput_qps": 675.0314313510626,
+        "effective_warmup": 5,
+        "cold_start_ms": 6157.660084019881,
+        "peak_rss_mb": 1140.15625,
+        "wheel_size_mb": 9.482624053955078,
+        "data_size_mb": 807.2899999999998,
+        "calibration": {
+          "n_with_confidence": 4,
+          "ece": null,
+          "brier": null,
+          "reliability_bins": [
+            {
+              "lower": 0.0,
+              "upper": 0.1,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.1,
+              "upper": 0.2,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.2,
+              "upper": 0.3,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.3,
+              "upper": 0.4,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.4,
+              "upper": 0.5,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.6,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.6,
+              "upper": 0.7,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "count": 3,
+              "mean_confidence": 0.8592597389200617,
+              "observed_accuracy": 0.3333333333333333
+            },
+            {
+              "lower": 0.9,
+              "upper": 1.0,
+              "count": 1,
+              "mean_confidence": 0.9067406096718764,
+              "observed_accuracy": 1.0
+            }
+          ]
+        }
+      },
+      "skipped_reason": null,
+      "coverage": 1.0
+    },
+    {
+      "name": "resolvekit_typed",
+      "version": "0.1.0",
+      "offline": true,
+      "dataset": "eval_org",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.75,
+          "by_capability": {
+            "informal_alias": 0.7142857142857143,
+            "iso_code": 0.5555555555555556
+          },
+          "by_language": {
+            "en": 0.75
+          },
+          "by_difficulty": {
+            "easy": 0.7333333333333333,
+            "medium": 0.8
+          },
+          "by_entity_type": {
+            "org": 0.75
+          },
+          "wrong_match_rate": 0.1,
+          "abstention_precision": 1.0,
+          "abstention_recall": 1.0,
+          "error_rate": 0.0,
+          "row_count": 20,
+          "accuracy_ci_low": 0.5312949900419365,
+          "accuracy_ci_high": 0.888139947210597,
+          "by_entity_type_n": {
+            "org": 20
+          },
+          "by_entity_type_wrong_match": {
+            "org": 0.1
+          }
+        },
+        "ambiguity_recall": 1.0,
+        "latency_ms": {
+          "p50": 0.7721869915258139,
+          "p95": 2.708489567157814,
+          "p99": 4.566530702286397,
+          "mean": 1.1623874452197924,
+          "min": 0.008083006832748652,
+          "max": 5.031040986068547,
+          "sample_count": 20
+        },
+        "throughput_qps": 859.8190553073584,
+        "effective_warmup": 5,
+        "cold_start_ms": 195.68216596962884,
+        "peak_rss_mb": 174.1875,
+        "wheel_size_mb": 9.482624053955078,
+        "data_size_mb": 807.2899999999998,
+        "calibration": {
+          "n_with_confidence": 4,
+          "ece": null,
+          "brier": null,
+          "reliability_bins": [
+            {
+              "lower": 0.0,
+              "upper": 0.1,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.1,
+              "upper": 0.2,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.2,
+              "upper": 0.3,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.3,
+              "upper": 0.4,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.4,
+              "upper": 0.5,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.6,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.6,
+              "upper": 0.7,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "count": 3,
+              "mean_confidence": 0.8592597389200617,
+              "observed_accuracy": 0.3333333333333333
+            },
+            {
+              "lower": 0.9,
+              "upper": 1.0,
+              "count": 1,
+              "mean_confidence": 0.9067406096718764,
+              "observed_accuracy": 1.0
+            }
+          ]
+        }
+      },
+      "skipped_reason": null,
+      "coverage": 1.0
+    },
+    {
+      "name": "country_converter",
+      "version": "1.3.2",
+      "offline": true,
+      "dataset": "geo_admin",
+      "metrics": null,
+      "skipped_reason": "scope: supports ['country'], dataset has ['admin1', 'admin2', 'admin3']",
+      "coverage": null
+    },
+    {
+      "name": "countryguess",
+      "version": "0.4.9",
+      "offline": true,
+      "dataset": "geo_admin",
+      "metrics": null,
+      "skipped_reason": "scope: supports ['country'], dataset has ['admin1', 'admin2', 'admin3']",
+      "coverage": null
+    },
+    {
+      "name": "data_commons_resolve",
+      "version": "2.1.6",
+      "offline": false,
+      "dataset": "geo_admin",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.5975550122249389,
+          "by_capability": {
+            "typo": 0.4192872117400419,
+            "alias": 0.7247706422018348
+          },
+          "by_language": {
+            "en": 0.5975550122249389
+          },
+          "by_difficulty": {
+            "medium": 0.4506114769520226,
+            "easy": 0.7566191446028513
+          },
+          "by_entity_type": {
+            "admin2": 0.5640822784810127,
+            "admin1": 0.6517285531370038
+          },
+          "wrong_match_rate": 0.14621026894865527,
+          "abstention_precision": 0.0,
+          "abstention_recall": 0.0,
+          "error_rate": 0.0,
+          "row_count": 2045,
+          "accuracy_ci_low": 0.5761367075532666,
+          "accuracy_ci_high": 0.61860748350572,
+          "by_entity_type_n": {
+            "admin2": 1264,
+            "admin1": 781
+          },
+          "by_entity_type_wrong_match": {
+            "admin2": 0.1629746835443038,
+            "admin1": 0.11907810499359796
+          }
+        },
+        "ambiguity_recall": 0.0,
+        "latency_ms": {
+          "p50": 522.9110419750214,
+          "p95": 882.013883977197,
+          "p99": 1350.4199929907916,
+          "mean": 520.3987830495269,
+          "min": 0.24087500059977174,
+          "max": 6719.806667009834,
+          "sample_count": 2045
+        },
+        "throughput_qps": 1.921574384286339,
+        "effective_warmup": 100,
+        "cold_start_ms": 469.9447499588132,
+        "peak_rss_mb": 125.828125,
+        "wheel_size_mb": 0.28513336181640625,
+        "data_size_mb": null,
+        "calibration": null
+      },
+      "skipped_reason": null,
+      "coverage": 0.8073014678208505
+    },
+    {
+      "name": "geonamescache",
+      "version": "3.0.1",
+      "offline": true,
+      "dataset": "geo_admin",
+      "metrics": null,
+      "skipped_reason": "scope: supports ['city', 'country'], dataset has ['admin1', 'admin2', 'admin3']",
+      "coverage": null
+    },
+    {
+      "name": "hdx_python_country",
+      "version": "4.1.1",
+      "offline": true,
+      "dataset": "geo_admin",
+      "metrics": null,
+      "skipped_reason": "scope: supports ['country'], dataset has ['admin1', 'admin2', 'admin3']",
+      "coverage": null
+    },
+    {
+      "name": "pycountry",
+      "version": "26.2.16",
+      "offline": true,
+      "dataset": "geo_admin",
+      "metrics": null,
+      "skipped_reason": "scope: supports ['country'], dataset has ['admin1', 'admin2', 'admin3']",
+      "coverage": null
+    },
+    {
+      "name": "rapidfuzz_dict",
+      "version": "3.14.5",
+      "offline": true,
+      "dataset": "geo_admin",
+      "metrics": null,
+      "skipped_reason": "scope: supports ['country'], dataset has ['admin1', 'admin2', 'admin3']",
+      "coverage": null
+    },
+    {
+      "name": "resolvekit",
+      "version": "0.1.0",
+      "offline": true,
+      "dataset": "geo_admin",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.9346890887759093,
+          "by_capability": {
+            "typo": 0.926605504587156,
+            "alias": 0.9344262295081968
+          },
+          "by_language": {
+            "en": 0.9346890887759093
+          },
+          "by_difficulty": {
+            "easy": 0.9425566343042071,
+            "medium": 0.927327781983346
+          },
+          "by_entity_type": {
+            "admin1": 0.9595448798988622,
+            "admin2": 0.9209702660406885,
+            "admin3": 0.930327868852459
+          },
+          "wrong_match_rate": 0.04262807978099335,
+          "abstention_precision": 0.0,
+          "abstention_recall": 0.0,
+          "error_rate": 0.0,
+          "row_count": 2557,
+          "accuracy_ci_low": 0.9244452636633439,
+          "accuracy_ci_high": 0.9436287320105784,
+          "by_entity_type_n": {
+            "admin1": 791,
+            "admin2": 1278,
+            "admin3": 488
+          },
+          "by_entity_type_wrong_match": {
+            "admin1": 0.03034134007585335,
+            "admin2": 0.048513302034428794,
+            "admin3": 0.0471311475409836
+          }
+        },
+        "ambiguity_recall": 0.0,
+        "latency_ms": {
+          "p50": 0.5692919949069619,
+          "p95": 3.289067209698257,
+          "p99": 10.439953575842091,
+          "mean": 1.1436656999955734,
+          "min": 0.01008401159197092,
+          "max": 56.2088749720715,
+          "sample_count": 2557
+        },
+        "throughput_qps": 873.9594350876952,
+        "effective_warmup": 100,
+        "cold_start_ms": 6157.660084019881,
+        "peak_rss_mb": 1140.15625,
+        "wheel_size_mb": 9.482624053955078,
+        "data_size_mb": 807.2899999999998,
+        "calibration": {
+          "n_with_confidence": 2076,
+          "ece": 0.09780883538569152,
+          "brier": 0.05605244071052304,
+          "reliability_bins": [
+            {
+              "lower": 0.0,
+              "upper": 0.1,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.1,
+              "upper": 0.2,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.2,
+              "upper": 0.3,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.3,
+              "upper": 0.4,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.4,
+              "upper": 0.5,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.6,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.6,
+              "upper": 0.7,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "count": 1981,
+              "mean_confidence": 0.8766260183439197,
+              "observed_accuracy": 0.9641595153962645
+            },
+            {
+              "lower": 0.9,
+              "upper": 1.0,
+              "count": 95,
+              "mean_confidence": 0.9120766800000057,
+              "observed_accuracy": 0.6
+            }
+          ]
+        }
+      },
+      "skipped_reason": null,
+      "coverage": 1.0
+    },
+    {
+      "name": "resolvekit_typed",
+      "version": "0.1.0",
+      "offline": true,
+      "dataset": "geo_admin",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.9773171685569026,
+          "by_capability": {
+            "typo": 0.9724770642201835,
+            "alias": 0.9344262295081968
+          },
+          "by_language": {
+            "en": 0.9773171685569026
+          },
+          "by_difficulty": {
+            "easy": 0.9862459546925566,
+            "medium": 0.9689629068887207
+          },
+          "by_entity_type": {
+            "admin1": 0.9797724399494311,
+            "admin2": 0.9726134585289515,
+            "admin3": 0.985655737704918
+          },
+          "wrong_match_rate": 0.0011732499022291747,
+          "abstention_precision": 0.0,
+          "abstention_recall": 0.0,
+          "error_rate": 0.0,
+          "row_count": 2557,
+          "accuracy_ci_low": 0.9707900959966484,
+          "accuracy_ci_high": 0.9824121637604566,
+          "by_entity_type_n": {
+            "admin1": 791,
+            "admin2": 1278,
+            "admin3": 488
+          },
+          "by_entity_type_wrong_match": {
+            "admin1": 0.0,
+            "admin2": 0.001564945226917058,
+            "admin3": 0.0020491803278688526
+          }
+        },
+        "ambiguity_recall": 0.0,
+        "latency_ms": {
+          "p50": 0.23791700368747115,
+          "p95": 1.3966909842565651,
+          "p99": 2.455623031128199,
+          "mean": 0.5934858750626605,
+          "min": 0.05345902172848582,
+          "max": 373.037250014022,
+          "sample_count": 2557
+        },
+        "throughput_qps": 1683.4925846734452,
+        "effective_warmup": 100,
+        "cold_start_ms": 195.68216596962884,
+        "peak_rss_mb": 174.1875,
+        "wheel_size_mb": 9.482624053955078,
+        "data_size_mb": 807.2899999999998,
+        "calibration": {
+          "n_with_confidence": 2168,
+          "ece": 0.12063326428791973,
+          "brier": 0.015958564088723183,
+          "reliability_bins": [
+            {
+              "lower": 0.0,
+              "upper": 0.1,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.1,
+              "upper": 0.2,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.2,
+              "upper": 0.3,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.3,
+              "upper": 0.4,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.4,
+              "upper": 0.5,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.6,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.6,
+              "upper": 0.7,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "count": 2086,
+              "mean_confidence": 0.8766557976287161,
+              "observed_accuracy": 0.99856184084372
+            },
+            {
+              "lower": 0.9,
+              "upper": 1.0,
+              "count": 82,
+              "mean_confidence": 0.9117449898815622,
+              "observed_accuracy": 1.0
+            }
+          ]
+        }
+      },
+      "skipped_reason": null,
+      "coverage": 1.0
+    },
+    {
+      "name": "country_converter",
+      "version": "1.3.2",
+      "offline": true,
+      "dataset": "geo_cities",
+      "metrics": null,
+      "skipped_reason": "scope: supports ['country'], dataset has ['city']",
+      "coverage": null
+    },
+    {
+      "name": "countryguess",
+      "version": "0.4.9",
+      "offline": true,
+      "dataset": "geo_cities",
+      "metrics": null,
+      "skipped_reason": "scope: supports ['country'], dataset has ['city']",
+      "coverage": null
+    },
+    {
+      "name": "data_commons_resolve",
+      "version": "2.1.6",
+      "offline": false,
+      "dataset": "geo_cities",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.501953125,
+          "by_capability": {
+            "typo": 0.2010752688172043,
+            "alias": 0.7867647058823529
+          },
+          "by_language": {
+            "en": 0.501953125
+          },
+          "by_difficulty": {
+            "medium": 0.275797373358349,
+            "easy": 0.7474541751527495
+          },
+          "by_entity_type": {
+            "city": 0.501953125
+          },
+          "wrong_match_rate": 0.1982421875,
+          "abstention_precision": 0.0,
+          "abstention_recall": 0.0,
+          "error_rate": 0.0,
+          "row_count": 2048,
+          "accuracy_ci_low": 0.480314769431891,
+          "accuracy_ci_high": 0.5235841670162247,
+          "by_entity_type_n": {
+            "city": 2048
+          },
+          "by_entity_type_wrong_match": {
+            "city": 0.1982421875
+          }
+        },
+        "ambiguity_recall": 0.0,
+        "latency_ms": {
+          "p50": 493.20072898990475,
+          "p95": 998.1148312537694,
+          "p99": 1336.8711437517773,
+          "mean": 503.5482367967745,
+          "min": 0.11520902626216412,
+          "max": 2715.4043330228887,
+          "sample_count": 2048
+        },
+        "throughput_qps": 1.9858753567219316,
+        "effective_warmup": 100,
+        "cold_start_ms": 469.9447499588132,
+        "peak_rss_mb": 125.828125,
+        "wheel_size_mb": 0.28513336181640625,
+        "data_size_mb": null,
+        "calibration": null
+      },
+      "skipped_reason": null,
+      "coverage": 1.0
+    },
+    {
+      "name": "geonamescache",
+      "version": "3.0.1",
+      "offline": true,
+      "dataset": "geo_cities",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.0,
+          "by_capability": {
+            "typo": 0.0,
+            "alias": 0.0
+          },
+          "by_language": {
+            "en": 0.0
+          },
+          "by_difficulty": {
+            "medium": 0.0,
+            "easy": 0.0
+          },
+          "by_entity_type": {
+            "city": 0.0
+          },
+          "wrong_match_rate": 0.15380859375,
+          "abstention_precision": 0.0,
+          "abstention_recall": 0.0,
+          "error_rate": 0.0,
+          "row_count": 2048,
+          "accuracy_ci_low": 0.0,
+          "accuracy_ci_high": 0.0018722692823851506,
+          "by_entity_type_n": {
+            "city": 2048
+          },
+          "by_entity_type_wrong_match": {
+            "city": 0.15380859375
+          }
+        },
+        "ambiguity_recall": 0.0,
+        "latency_ms": {
+          "p50": 69.68120852252468,
+          "p95": 73.19713169708848,
+          "p99": 86.86435475829052,
+          "mean": 70.18523681458078,
+          "min": 66.96395797189325,
+          "max": 103.51612500380725,
+          "sample_count": 2048
+        },
+        "throughput_qps": 14.247611387357749,
+        "effective_warmup": 100,
+        "cold_start_ms": 52.61470895493403,
+        "peak_rss_mb": 190.75,
+        "wheel_size_mb": 164.73299312591553,
+        "data_size_mb": null,
+        "calibration": null
+      },
+      "skipped_reason": null,
+      "coverage": 1.0
+    },
+    {
+      "name": "hdx_python_country",
+      "version": "4.1.1",
+      "offline": true,
+      "dataset": "geo_cities",
+      "metrics": null,
+      "skipped_reason": "scope: supports ['country'], dataset has ['city']",
+      "coverage": null
+    },
+    {
+      "name": "pycountry",
+      "version": "26.2.16",
+      "offline": true,
+      "dataset": "geo_cities",
+      "metrics": null,
+      "skipped_reason": "scope: supports ['country'], dataset has ['city']",
+      "coverage": null
+    },
+    {
+      "name": "rapidfuzz_dict",
+      "version": "3.14.5",
+      "offline": true,
+      "dataset": "geo_cities",
+      "metrics": null,
+      "skipped_reason": "scope: supports ['country'], dataset has ['city']",
+      "coverage": null
+    },
+    {
+      "name": "resolvekit",
+      "version": "0.1.0",
+      "offline": true,
+      "dataset": "geo_cities",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.85791015625,
+          "by_capability": {
+            "typo": 0.832258064516129,
+            "alias": 0.9852941176470589
+          },
+          "by_language": {
+            "en": 0.85791015625
+          },
+          "by_difficulty": {
+            "medium": 0.851782363977486,
+            "easy": 0.8645621181262729
+          },
+          "by_entity_type": {
+            "city": 0.85791015625
+          },
+          "wrong_match_rate": 0.01025390625,
+          "abstention_precision": 0.0,
+          "abstention_recall": 0.0,
+          "error_rate": 0.0,
+          "row_count": 2048,
+          "accuracy_ci_low": 0.8421179072247582,
+          "accuracy_ci_high": 0.8723621968924407,
+          "by_entity_type_n": {
+            "city": 2048
+          },
+          "by_entity_type_wrong_match": {
+            "city": 0.01025390625
+          }
+        },
+        "ambiguity_recall": 0.0,
+        "latency_ms": {
+          "p50": 0.6341459811665118,
+          "p95": 2.805662513128481,
+          "p99": 4.991217242786661,
+          "mean": 0.9398447181183656,
+          "min": 0.009874987881630659,
+          "max": 11.300958984065801,
+          "sample_count": 2048
+        },
+        "throughput_qps": 1063.3574048331855,
+        "effective_warmup": 100,
+        "cold_start_ms": 6157.660084019881,
+        "peak_rss_mb": 1140.15625,
+        "wheel_size_mb": 9.482624053955078,
+        "data_size_mb": 807.2899999999998,
+        "calibration": {
+          "n_with_confidence": 1042,
+          "ece": 0.10152807381513898,
+          "brier": 0.029912430580734412,
+          "reliability_bins": [
+            {
+              "lower": 0.0,
+              "upper": 0.1,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.1,
+              "upper": 0.2,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.2,
+              "upper": 0.3,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.3,
+              "upper": 0.4,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.4,
+              "upper": 0.5,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.6,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.6,
+              "upper": 0.7,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "count": 1,
+              "mean_confidence": 0.7,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "count": 944,
+              "mean_confidence": 0.877169642004851,
+              "observed_accuracy": 0.9872881355932204
+            },
+            {
+              "lower": 0.9,
+              "upper": 1.0,
+              "count": 97,
+              "mean_confidence": 0.9057691240417097,
+              "observed_accuracy": 0.9175257731958762
+            }
+          ]
+        }
+      },
+      "skipped_reason": null,
+      "coverage": 1.0
+    },
+    {
+      "name": "resolvekit_typed",
+      "version": "0.1.0",
+      "offline": true,
+      "dataset": "geo_cities",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.8623046875,
+          "by_capability": {
+            "typo": 0.8365591397849462,
+            "alias": 0.9852941176470589
+          },
+          "by_language": {
+            "en": 0.8623046875
+          },
+          "by_difficulty": {
+            "medium": 0.8555347091932458,
+            "easy": 0.869653767820774
+          },
+          "by_entity_type": {
+            "city": 0.8623046875
+          },
+          "wrong_match_rate": 0.00537109375,
+          "abstention_precision": 0.0,
+          "abstention_recall": 0.0,
+          "error_rate": 0.0,
+          "row_count": 2048,
+          "accuracy_ci_low": 0.8467010544180495,
+          "accuracy_ci_high": 0.8765516567074096,
+          "by_entity_type_n": {
+            "city": 2048
+          },
+          "by_entity_type_wrong_match": {
+            "city": 0.00537109375
+          }
+        },
+        "ambiguity_recall": 0.0,
+        "latency_ms": {
+          "p50": 0.498958514072001,
+          "p95": 2.4522585357772186,
+          "p99": 3.9379512617597348,
+          "mean": 0.9781855417543284,
+          "min": 0.11433399049565196,
+          "max": 368.14649996813387,
+          "sample_count": 2048
+        },
+        "throughput_qps": 1021.7218157701666,
+        "effective_warmup": 100,
+        "cold_start_ms": 195.68216596962884,
+        "peak_rss_mb": 174.1875,
+        "wheel_size_mb": 9.482624053955078,
+        "data_size_mb": 807.2899999999998,
+        "calibration": {
+          "n_with_confidence": 1033,
+          "ece": 0.10976086044731097,
+          "brier": 0.022541843898969082,
+          "reliability_bins": [
+            {
+              "lower": 0.0,
+              "upper": 0.1,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.1,
+              "upper": 0.2,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.2,
+              "upper": 0.3,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.3,
+              "upper": 0.4,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.4,
+              "upper": 0.5,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.6,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.6,
+              "upper": 0.7,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "count": 944,
+              "mean_confidence": 0.8771394837919659,
+              "observed_accuracy": 0.9883474576271186
+            },
+            {
+              "lower": 0.9,
+              "upper": 1.0,
+              "count": 89,
+              "mean_confidence": 0.9055882972844036,
+              "observed_accuracy": 1.0
+            }
+          ]
+        }
+      },
+      "skipped_reason": null,
+      "coverage": 1.0
+    },
+    {
+      "name": "country_converter",
+      "version": "1.3.2",
+      "offline": true,
+      "dataset": "geo_countries_en",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.5664611590628853,
+          "by_capability": {
+            "typo": 0.4983067247218191,
+            "case_noise": 0.5411003236245955,
+            "alias": 0.6047835990888383,
+            "unicode_normalization": 0.7857142857142857,
+            "prefix_truncation": 0.2037037037037037
+          },
+          "by_language": {
+            "en": 0.5664611590628853
+          },
+          "by_difficulty": {
+            "easy": 0.9959349593495935,
+            "hard": 0.5405580791693705,
+            "medium": 0.5374779541446209
+          },
+          "by_entity_type": {
+            "country": 0.5664611590628853
+          },
+          "wrong_match_rate": 0.024907521578298397,
+          "abstention_precision": 0.0,
+          "abstention_recall": 0.0,
+          "error_rate": 0.0,
+          "row_count": 4055,
+          "accuracy_ci_low": 0.551152189269778,
+          "accuracy_ci_high": 0.5816443209463388,
+          "by_entity_type_n": {
+            "country": 4055
+          },
+          "by_entity_type_wrong_match": {
+            "country": 0.024907521578298397
+          }
+        },
+        "ambiguity_recall": 0.0,
+        "latency_ms": {
+          "p50": 0.1212499919347465,
+          "p95": 0.22180369705893088,
+          "p99": 0.3445029805880041,
+          "mean": 0.12092995188921304,
+          "min": 0.023875036276876926,
+          "max": 1.1464169947430491,
+          "sample_count": 4055
+        },
+        "throughput_qps": 8239.83576713875,
+        "effective_warmup": 100,
+        "cold_start_ms": 25.720665988046676,
+        "peak_rss_mb": 115.53125,
+        "wheel_size_mb": 0.14886188507080078,
+        "data_size_mb": null,
+        "calibration": null
+      },
+      "skipped_reason": null,
+      "coverage": 1.0
+    },
+    {
+      "name": "countryguess",
+      "version": "0.4.9",
+      "offline": true,
+      "dataset": "geo_countries_en",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.6749691738594328,
+          "by_capability": {
+            "typo": 0.6502177068214804,
+            "case_noise": 0.6537216828478964,
+            "alias": 0.6685649202733486,
+            "unicode_normalization": 0.8233082706766918,
+            "prefix_truncation": 0.3549382716049383
+          },
+          "by_language": {
+            "en": 0.6749691738594328
+          },
+          "by_difficulty": {
+            "easy": 1.0,
+            "hard": 0.6528228423101882,
+            "medium": 0.6547619047619048
+          },
+          "by_entity_type": {
+            "country": 0.6749691738594328
+          },
+          "wrong_match_rate": 0.037731196054254006,
+          "abstention_precision": 0.0,
+          "abstention_recall": 0.0,
+          "error_rate": 0.0,
+          "row_count": 4055,
+          "accuracy_ci_low": 0.6603927744675603,
+          "accuracy_ci_high": 0.6892143646728289,
+          "by_entity_type_n": {
+            "country": 4055
+          },
+          "by_entity_type_wrong_match": {
+            "country": 0.037731196054254006
+          }
+        },
+        "ambiguity_recall": 0.0,
+        "latency_ms": {
+          "p50": 0.05720899207517505,
+          "p95": 0.32890382572077204,
+          "p99": 0.3740949963685125,
+          "mean": 0.10873045985909631,
+          "min": 0.00104197533801198,
+          "max": 0.6723339902237058,
+          "sample_count": 4055
+        },
+        "throughput_qps": 9165.307221648398,
+        "effective_warmup": 100,
+        "cold_start_ms": 5.944499978795648,
+        "peak_rss_mb": 113.734375,
+        "wheel_size_mb": 0.33511829376220703,
+        "data_size_mb": null,
+        "calibration": null
+      },
+      "skipped_reason": null,
+      "coverage": 1.0
+    },
+    {
+      "name": "data_commons_resolve",
+      "version": "2.1.6",
+      "offline": false,
+      "dataset": "geo_countries_en",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.6246609124537608,
+          "by_capability": {
+            "typo": 0.5882922109337204,
+            "case_noise": 0.574757281553398,
+            "alias": 0.6890660592255126,
+            "unicode_normalization": 0.7537593984962406,
+            "prefix_truncation": 0.18209876543209877
+          },
+          "by_language": {
+            "en": 0.6246609124537608
+          },
+          "by_difficulty": {
+            "easy": 0.991869918699187,
+            "hard": 0.5736534717715769,
+            "medium": 0.6194885361552028
+          },
+          "by_entity_type": {
+            "country": 0.6246609124537608
+          },
+          "wrong_match_rate": 0.04734895191122072,
+          "abstention_precision": 0.0,
+          "abstention_recall": 0.0,
+          "error_rate": 0.0,
+          "row_count": 4055,
+          "accuracy_ci_low": 0.609645790450902,
+          "accuracy_ci_high": 0.6394400570973245,
+          "by_entity_type_n": {
+            "country": 4055
+          },
+          "by_entity_type_wrong_match": {
+            "country": 0.04734895191122072
+          }
+        },
+        "ambiguity_recall": 0.0,
+        "latency_ms": {
+          "p50": 0.49341697013005614,
+          "p95": 855.4525586252566,
+          "p99": 1143.6420364829246,
+          "mean": 227.88282915167213,
+          "min": 0.027959002181887627,
+          "max": 5351.015084015671,
+          "sample_count": 4055
+        },
+        "throughput_qps": 4.388144231709499,
+        "effective_warmup": 100,
+        "cold_start_ms": 469.9447499588132,
+        "peak_rss_mb": 125.828125,
+        "wheel_size_mb": 0.28513336181640625,
+        "data_size_mb": null,
+        "calibration": null
+      },
+      "skipped_reason": null,
+      "coverage": 1.0
+    },
+    {
+      "name": "geonamescache",
+      "version": "3.0.1",
+      "offline": true,
+      "dataset": "geo_countries_en",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.05745992601726264,
+          "by_capability": {
+            "typo": 0.0004837929366231253,
+            "case_noise": 0.0006472491909385113,
+            "alias": 0.01366742596810934,
+            "unicode_normalization": 0.0,
+            "prefix_truncation": 0.0
+          },
+          "by_language": {
+            "en": 0.05745992601726264
+          },
+          "by_difficulty": {
+            "easy": 0.8739837398373984,
+            "hard": 0.0006489292667099286,
+            "medium": 0.007495590828924162
+          },
+          "by_entity_type": {
+            "country": 0.05745992601726264
+          },
+          "wrong_match_rate": 0.0004932182490752158,
+          "abstention_precision": 0.0,
+          "abstention_recall": 0.0,
+          "error_rate": 0.0,
+          "row_count": 4055,
+          "accuracy_ci_low": 0.05070695980406811,
+          "accuracy_ci_high": 0.06505060018546191,
+          "by_entity_type_n": {
+            "country": 4055
+          },
+          "by_entity_type_wrong_match": {
+            "country": 0.0004932182490752158
+          }
+        },
+        "ambiguity_recall": 0.0,
+        "latency_ms": {
+          "p50": 0.0003750319592654705,
+          "p95": 0.0005839974619448185,
+          "p99": 0.0012500095181167126,
+          "mean": 0.0005016366936238862,
+          "min": 0.0002919696271419525,
+          "max": 0.20633399253711104,
+          "sample_count": 4055
+        },
+        "throughput_qps": 1320596.1277970248,
+        "effective_warmup": 100,
+        "cold_start_ms": 52.61470895493403,
+        "peak_rss_mb": 190.75,
+        "wheel_size_mb": 164.73299312591553,
+        "data_size_mb": null,
+        "calibration": null
+      },
+      "skipped_reason": null,
+      "coverage": 1.0
+    },
+    {
+      "name": "hdx_python_country",
+      "version": "4.1.1",
+      "offline": true,
+      "dataset": "geo_countries_en",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.6416769420468558,
+          "by_capability": {
+            "typo": 0.5989356555394292,
+            "case_noise": 0.6653721682847896,
+            "alias": 0.643507972665148,
+            "unicode_normalization": 0.7913533834586466,
+            "prefix_truncation": 0.3888888888888889
+          },
+          "by_language": {
+            "en": 0.6416769420468558
+          },
+          "by_difficulty": {
+            "easy": 0.9959349593495935,
+            "hard": 0.6645035691109669,
+            "medium": 0.5877425044091711
+          },
+          "by_entity_type": {
+            "country": 0.6416769420468558
+          },
+          "wrong_match_rate": 0.04192355117139334,
+          "abstention_precision": 0.0,
+          "abstention_recall": 0.0,
+          "error_rate": 0.0,
+          "row_count": 4055,
+          "accuracy_ci_low": 0.6267902484702854,
+          "accuracy_ci_high": 0.656295447704702,
+          "by_entity_type_n": {
+            "country": 4055
+          },
+          "by_entity_type_wrong_match": {
+            "country": 0.04192355117139334
+          }
+        },
+        "ambiguity_recall": 0.0,
+        "latency_ms": {
+          "p50": 0.08666602661833167,
+          "p95": 5.665520590264349,
+          "p99": 6.053272995632142,
+          "mean": 1.9885520039082638,
+          "min": 0.0007919734343886375,
+          "max": 19.632583018392324,
+          "sample_count": 4055
+        },
+        "throughput_qps": 502.5604296966172,
+        "effective_warmup": 100,
+        "cold_start_ms": 134.52441699337214,
+        "peak_rss_mb": 177.234375,
+        "wheel_size_mb": 0.19714641571044922,
+        "data_size_mb": null,
+        "calibration": null
+      },
+      "skipped_reason": null,
+      "coverage": 1.0
+    },
+    {
+      "name": "pycountry",
+      "version": "26.2.16",
+      "offline": true,
+      "dataset": "geo_countries_en",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.09889025893958077,
+          "by_capability": {
+            "typo": 0.008708272859216255,
+            "case_noise": 0.012297734627831715,
+            "alias": 0.1947608200455581,
+            "unicode_normalization": 0.0,
+            "prefix_truncation": 0.0
+          },
+          "by_language": {
+            "en": 0.09889025893958077
+          },
+          "by_difficulty": {
+            "easy": 0.8333333333333334,
+            "hard": 0.011680726800778715,
+            "medium": 0.07848324514991181
+          },
+          "by_entity_type": {
+            "country": 0.09889025893958077
+          },
+          "wrong_match_rate": 0.0014796547472256474,
+          "abstention_precision": 0.0,
+          "abstention_recall": 0.0,
+          "error_rate": 0.0,
+          "row_count": 4055,
+          "accuracy_ci_low": 0.09007829457630581,
+          "accuracy_ci_high": 0.10846150554794642,
+          "by_entity_type_n": {
+            "country": 4055
+          },
+          "by_entity_type_wrong_match": {
+            "country": 0.0014796547472256474
+          }
+        },
+        "ambiguity_recall": 0.0,
+        "latency_ms": {
+          "p50": 0.002167013008147478,
+          "p95": 0.003500026650726795,
+          "p99": 0.004602343542501332,
+          "mean": 0.0025047548574598736,
+          "min": 0.0008750357665121555,
+          "max": 0.29020896181464195,
+          "sample_count": 4055
+        },
+        "throughput_qps": 347380.3496914383,
+        "effective_warmup": 100,
+        "cold_start_ms": 1.9325839821249247,
+        "peak_rss_mb": 112.65625,
+        "wheel_size_mb": 20.141146659851074,
+        "data_size_mb": null,
+        "calibration": null
+      },
+      "skipped_reason": null,
+      "coverage": 1.0
+    },
+    {
+      "name": "rapidfuzz_dict",
+      "version": "3.14.5",
+      "offline": true,
+      "dataset": "geo_countries_en",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.4688039457459926,
+          "by_capability": {
+            "typo": 0.4431543299467828,
+            "case_noise": 0.44854368932038835,
+            "alias": 0.4419134396355353,
+            "unicode_normalization": 0.5733082706766918,
+            "prefix_truncation": 0.1882716049382716
+          },
+          "by_language": {
+            "en": 0.4688039457459926
+          },
+          "by_difficulty": {
+            "easy": 0.9105691056910569,
+            "hard": 0.44776119402985076,
+            "medium": 0.4351851851851852
+          },
+          "by_entity_type": {
+            "country": 0.4688039457459926
+          },
+          "wrong_match_rate": 0.5065351418002466,
+          "abstention_precision": 0.0,
+          "abstention_recall": 0.0,
+          "error_rate": 0.0,
+          "row_count": 4055,
+          "accuracy_ci_low": 0.4534809803499466,
+          "accuracy_ci_high": 0.48418596383432516,
+          "by_entity_type_n": {
+            "country": 4055
+          },
+          "by_entity_type_wrong_match": {
+            "country": 0.5065351418002466
+          }
+        },
+        "ambiguity_recall": 0.0,
+        "latency_ms": {
+          "p50": 0.29850000282749534,
+          "p95": 0.540674926014617,
+          "p99": 0.64337098156102,
+          "mean": 0.3105933982827247,
+          "min": 0.00300002284348011,
+          "max": 26.904208003543317,
+          "sample_count": 4055
+        },
+        "throughput_qps": 3212.3047238376494,
+        "effective_warmup": 100,
+        "cold_start_ms": 2.9767919913865626,
+        "peak_rss_mb": 113.015625,
+        "wheel_size_mb": 4.124938011169434,
+        "data_size_mb": null,
+        "calibration": null
+      },
+      "skipped_reason": null,
+      "coverage": 1.0
+    },
+    {
+      "name": "resolvekit",
+      "version": "0.1.0",
+      "offline": true,
+      "dataset": "geo_countries_en",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.7928483353884094,
+          "by_capability": {
+            "typo": 0.7266569908079342,
+            "case_noise": 0.6394822006472491,
+            "alias": 0.9111617312072893,
+            "unicode_normalization": 0.9962406015037594,
+            "prefix_truncation": 0.4012345679012346
+          },
+          "by_language": {
+            "en": 0.7928483353884094
+          },
+          "by_difficulty": {
+            "easy": 0.9959349593495935,
+            "hard": 0.6398442569759896,
+            "medium": 0.8747795414462081
+          },
+          "by_entity_type": {
+            "country": 0.7928483353884094
+          },
+          "wrong_match_rate": 0.038717632552404437,
+          "abstention_precision": 0.0,
+          "abstention_recall": 0.0,
+          "error_rate": 0.0,
+          "row_count": 4055,
+          "accuracy_ci_low": 0.7801001524329666,
+          "accuracy_ci_high": 0.8050421699478821,
+          "by_entity_type_n": {
+            "country": 4055
+          },
+          "by_entity_type_wrong_match": {
+            "country": 0.038717632552404437
+          }
+        },
+        "ambiguity_recall": 0.0,
+        "latency_ms": {
+          "p50": 0.8399580256082118,
+          "p95": 5.137700098566695,
+          "p99": 12.542851023608822,
+          "mean": 1.4315701540962606,
+          "min": 0.011000025551766157,
+          "max": 43.24566700961441,
+          "sample_count": 4055
+        },
+        "throughput_qps": 698.2524946240824,
+        "effective_warmup": 100,
+        "cold_start_ms": 6157.660084019881,
+        "peak_rss_mb": 1140.15625,
+        "wheel_size_mb": 9.482624053955078,
+        "data_size_mb": 807.2899999999998,
+        "calibration": {
+          "n_with_confidence": 3247,
+          "ece": 0.07524526280825689,
+          "brier": 0.050059856628847335,
+          "reliability_bins": [
+            {
+              "lower": 0.0,
+              "upper": 0.1,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.1,
+              "upper": 0.2,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.2,
+              "upper": 0.3,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.3,
+              "upper": 0.4,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.4,
+              "upper": 0.5,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.6,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.6,
+              "upper": 0.7,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "count": 295,
+              "mean_confidence": 0.765659659300004,
+              "observed_accuracy": 0.9288135593220339
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "count": 819,
+              "mean_confidence": 0.865352366807335,
+              "observed_accuracy": 0.8498168498168498
+            },
+            {
+              "lower": 0.9,
+              "upper": 1.0,
+              "count": 2133,
+              "mean_confidence": 0.907891523949037,
+              "observed_accuracy": 0.993905297702766
+            }
+          ]
+        }
+      },
+      "skipped_reason": null,
+      "coverage": 1.0
+    },
+    {
+      "name": "resolvekit_typed",
+      "version": "0.1.0",
+      "offline": true,
+      "dataset": "geo_countries_en",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.7938347718865598,
+          "by_capability": {
+            "typo": 0.7358490566037735,
+            "case_noise": 0.6563106796116505,
+            "alias": 0.9009111617312073,
+            "unicode_normalization": 0.9868421052631579,
+            "prefix_truncation": 0.4351851851851852
+          },
+          "by_language": {
+            "en": 0.7938347718865598
+          },
+          "by_difficulty": {
+            "easy": 0.9634146341463414,
+            "hard": 0.6554185593770279,
+            "medium": 0.8694885361552028
+          },
+          "by_entity_type": {
+            "country": 0.7938347718865598
+          },
+          "wrong_match_rate": 0.009864364981504316,
+          "abstention_precision": 0.0,
+          "abstention_recall": 0.0,
+          "error_rate": 0.0,
+          "row_count": 4055,
+          "accuracy_ci_low": 0.7811076147924882,
+          "accuracy_ci_high": 0.806005713305854,
+          "by_entity_type_n": {
+            "country": 4055
+          },
+          "by_entity_type_wrong_match": {
+            "country": 0.009864364981504316
+          }
+        },
+        "ambiguity_recall": 0.0,
+        "latency_ms": {
+          "p50": 0.3547919914126396,
+          "p95": 1.2606457748916,
+          "p99": 2.3747085139621076,
+          "mean": 0.48772502131013684,
+          "min": 0.08045899448916316,
+          "max": 8.599208027590066,
+          "sample_count": 4055
+        },
+        "throughput_qps": 2048.1053479140355,
+        "effective_warmup": 100,
+        "cold_start_ms": 195.68216596962884,
+        "peak_rss_mb": 174.1875,
+        "wheel_size_mb": 9.482624053955078,
+        "data_size_mb": 807.2899999999998,
+        "calibration": {
+          "n_with_confidence": 3202,
+          "ece": 0.1034683892934489,
+          "brier": 0.024836224865001852,
+          "reliability_bins": [
+            {
+              "lower": 0.0,
+              "upper": 0.1,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.1,
+              "upper": 0.2,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.2,
+              "upper": 0.3,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.3,
+              "upper": 0.4,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.4,
+              "upper": 0.5,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.6,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.6,
+              "upper": 0.7,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "count": 324,
+              "mean_confidence": 0.7632116794003667,
+              "observed_accuracy": 0.9598765432098766
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "count": 721,
+              "mean_confidence": 0.8649520036152014,
+              "observed_accuracy": 0.9833564493758669
+            },
+            {
+              "lower": 0.9,
+              "upper": 1.0,
+              "count": 2157,
+              "mean_confidence": 0.9085689563050986,
+              "observed_accuracy": 0.9930458970792768
+            }
+          ]
+        }
+      },
+      "skipped_reason": null,
+      "coverage": 1.0
+    },
+    {
+      "name": "country_converter",
+      "version": "1.3.2",
+      "offline": true,
+      "dataset": "geo_countries_multilingual",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.41915887850467287,
+          "by_capability": {
+            "multilingual": 0.41873536299765807,
+            "alias": 0.3724525650035137,
+            "case_noise": 0.6
+          },
+          "by_language": {
+            "fr": 0.375,
+            "de": 0.4470588235294118,
+            "es": 0.45454545454545453
+          },
+          "by_difficulty": {
+            "medium": 0.3741403026134801,
+            "easy": 0.5145772594752187
+          },
+          "by_entity_type": {
+            "country": 0.41915887850467287
+          },
+          "wrong_match_rate": 0.024766355140186914,
+          "abstention_precision": 0.0,
+          "abstention_recall": 0.0,
+          "error_rate": 0.0,
+          "row_count": 2140,
+          "accuracy_ci_low": 0.3984161569478821,
+          "accuracy_ci_high": 0.4401913222614027,
+          "by_entity_type_n": {
+            "country": 2140
+          },
+          "by_entity_type_wrong_match": {
+            "country": 0.024766355140186914
+          }
+        },
+        "ambiguity_recall": 0.0,
+        "latency_ms": {
+          "p50": 0.09620797936804593,
+          "p95": 0.1785708678653463,
+          "p99": 0.28779425076209053,
+          "mean": 0.09909854126358666,
+          "min": 0.02412503818050027,
+          "max": 1.0927909752354026,
+          "sample_count": 2140
+        },
+        "throughput_qps": 10052.737743123773,
+        "effective_warmup": 100,
+        "cold_start_ms": 25.720665988046676,
+        "peak_rss_mb": 115.53125,
+        "wheel_size_mb": 0.14886188507080078,
+        "data_size_mb": null,
+        "calibration": null
+      },
+      "skipped_reason": null,
+      "coverage": 1.0
+    },
+    {
+      "name": "countryguess",
+      "version": "0.4.9",
+      "offline": true,
+      "dataset": "geo_countries_multilingual",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.5121495327102804,
+          "by_capability": {
+            "multilingual": 0.5114754098360655,
+            "alias": 0.42515811665495434,
+            "case_noise": 0.8
+          },
+          "by_language": {
+            "fr": 0.46316964285714285,
+            "de": 0.5411764705882353,
+            "es": 0.5531587057010786
+          },
+          "by_difficulty": {
+            "medium": 0.4264099037138927,
+            "easy": 0.6938775510204082
+          },
+          "by_entity_type": {
+            "country": 0.5121495327102804
+          },
+          "wrong_match_rate": 0.02850467289719626,
+          "abstention_precision": 0.0,
+          "abstention_recall": 0.0,
+          "error_rate": 0.0,
+          "row_count": 2140,
+          "accuracy_ci_low": 0.4909684416416927,
+          "accuracy_ci_high": 0.5332870817141374,
+          "by_entity_type_n": {
+            "country": 2140
+          },
+          "by_entity_type_wrong_match": {
+            "country": 0.02850467289719626
+          }
+        },
+        "ambiguity_recall": 0.0,
+        "latency_ms": {
+          "p50": 0.13143799151293933,
+          "p95": 0.3540207602782175,
+          "p99": 0.37298261362593643,
+          "mean": 0.14734440999949855,
+          "min": 0.001292035449296236,
+          "max": 0.49775000661611557,
+          "sample_count": 2140
+        },
+        "throughput_qps": 6769.616848337858,
+        "effective_warmup": 100,
+        "cold_start_ms": 5.944499978795648,
+        "peak_rss_mb": 113.734375,
+        "wheel_size_mb": 0.33511829376220703,
+        "data_size_mb": null,
+        "calibration": null
+      },
+      "skipped_reason": null,
+      "coverage": 1.0
+    },
+    {
+      "name": "data_commons_resolve",
+      "version": "2.1.6",
+      "offline": false,
+      "dataset": "geo_countries_multilingual",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.8271028037383178,
+          "by_capability": {
+            "multilingual": 0.8276346604215457,
+            "alias": 0.7680955727336612,
+            "case_noise": 0.6
+          },
+          "by_language": {
+            "fr": 0.7946428571428571,
+            "de": 0.8420168067226891,
+            "es": 0.8582434514637904
+          },
+          "by_difficulty": {
+            "medium": 0.7730398899587345,
+            "easy": 0.9416909620991254
+          },
+          "by_entity_type": {
+            "country": 0.8271028037383178
+          },
+          "wrong_match_rate": 0.02850467289719626,
+          "abstention_precision": 0.0,
+          "abstention_recall": 0.0,
+          "error_rate": 0.0,
+          "row_count": 2140,
+          "accuracy_ci_low": 0.8104980668366855,
+          "accuracy_ci_high": 0.8425352542818152,
+          "by_entity_type_n": {
+            "country": 2140
+          },
+          "by_entity_type_wrong_match": {
+            "country": 0.02850467289719626
+          }
+        },
+        "ambiguity_recall": 0.0,
+        "latency_ms": {
+          "p50": 0.10868749814108014,
+          "p95": 0.16075210296548903,
+          "p99": 0.2987681305967277,
+          "mean": 0.12303746243390455,
+          "min": 0.022957974579185247,
+          "max": 2.141250006388873,
+          "sample_count": 2140
+        },
+        "throughput_qps": 8095.940679152647,
+        "effective_warmup": 100,
+        "cold_start_ms": 469.9447499588132,
+        "peak_rss_mb": 125.828125,
+        "wheel_size_mb": 0.28513336181640625,
+        "data_size_mb": null,
+        "calibration": null
+      },
+      "skipped_reason": null,
+      "coverage": 1.0
+    },
+    {
+      "name": "geonamescache",
+      "version": "3.0.1",
+      "offline": true,
+      "dataset": "geo_countries_multilingual",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.14813084112149533,
+          "by_capability": {
+            "multilingual": 0.1484777517564403,
+            "alias": 0.035137034434293744,
+            "case_noise": 0.0
+          },
+          "by_language": {
+            "fr": 0.10714285714285714,
+            "de": 0.1915966386554622,
+            "es": 0.16486902927580893
+          },
+          "by_difficulty": {
+            "medium": 0.03782668500687758,
+            "easy": 0.3819241982507289
+          },
+          "by_entity_type": {
+            "country": 0.14813084112149533
+          },
+          "wrong_match_rate": 0.002336448598130841,
+          "abstention_precision": 0.0,
+          "abstention_recall": 0.0,
+          "error_rate": 0.0,
+          "row_count": 2140,
+          "accuracy_ci_low": 0.13371088321514796,
+          "accuracy_ci_high": 0.16381184421023648,
+          "by_entity_type_n": {
+            "country": 2140
+          },
+          "by_entity_type_wrong_match": {
+            "country": 0.002336448598130841
+          }
+        },
+        "ambiguity_recall": 0.0,
+        "latency_ms": {
+          "p50": 0.00045797787606716156,
+          "p95": 0.000667001586407423,
+          "p99": 0.0011089979670941882,
+          "mean": 0.0005109641193978001,
+          "min": 0.00033294782042503357,
+          "max": 0.03404100425541401,
+          "sample_count": 2140
+        },
+        "throughput_qps": 1294420.069281639,
+        "effective_warmup": 100,
+        "cold_start_ms": 52.61470895493403,
+        "peak_rss_mb": 190.75,
+        "wheel_size_mb": 164.73299312591553,
+        "data_size_mb": null,
+        "calibration": null
+      },
+      "skipped_reason": null,
+      "coverage": 1.0
+    },
+    {
+      "name": "hdx_python_country",
+      "version": "4.1.1",
+      "offline": true,
+      "dataset": "geo_countries_multilingual",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.5654205607476636,
+          "by_capability": {
+            "multilingual": 0.5648711943793912,
+            "alias": 0.4511595221363317,
+            "case_noise": 0.8
+          },
+          "by_language": {
+            "fr": 0.5859375,
+            "de": 0.46554621848739497,
+            "es": 0.6286594761171033
+          },
+          "by_difficulty": {
+            "medium": 0.4580467675378267,
+            "easy": 0.793002915451895
+          },
+          "by_entity_type": {
+            "country": 0.5654205607476636
+          },
+          "wrong_match_rate": 0.08411214953271028,
+          "abstention_precision": 0.0,
+          "abstention_recall": 0.0,
+          "error_rate": 0.0,
+          "row_count": 2140,
+          "accuracy_ci_low": 0.5443193992643177,
+          "accuracy_ci_high": 0.5862872649593823,
+          "by_entity_type_n": {
+            "country": 2140
+          },
+          "by_entity_type_wrong_match": {
+            "country": 0.08411214953271028
+          }
+        },
+        "ambiguity_recall": 0.0,
+        "latency_ms": {
+          "p50": 0.09122901246882975,
+          "p95": 5.85957319708541,
+          "p99": 6.310189702780919,
+          "mean": 2.4287686087561022,
+          "min": 0.000667001586407423,
+          "max": 18.47491698572412,
+          "sample_count": 2140
+        },
+        "throughput_qps": 411.6511411405857,
+        "effective_warmup": 100,
+        "cold_start_ms": 134.52441699337214,
+        "peak_rss_mb": 177.234375,
+        "wheel_size_mb": 0.19714641571044922,
+        "data_size_mb": null,
+        "calibration": null
+      },
+      "skipped_reason": null,
+      "coverage": 1.0
+    },
+    {
+      "name": "pycountry",
+      "version": "26.2.16",
+      "offline": true,
+      "dataset": "geo_countries_multilingual",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.14299065420560747,
+          "by_capability": {
+            "multilingual": 0.14238875878220142,
+            "alias": 0.035839775122979624,
+            "case_noise": 0.4
+          },
+          "by_language": {
+            "fr": 0.10491071428571429,
+            "de": 0.1865546218487395,
+            "es": 0.15562403697996918
+          },
+          "by_difficulty": {
+            "medium": 0.0405777166437414,
+            "easy": 0.36005830903790087
+          },
+          "by_entity_type": {
+            "country": 0.14299065420560747
+          },
+          "wrong_match_rate": 0.001869158878504673,
+          "abstention_precision": 0.0,
+          "abstention_recall": 0.0,
+          "error_rate": 0.0,
+          "row_count": 2140,
+          "accuracy_ci_low": 0.1287980139033162,
+          "accuracy_ci_high": 0.15846276133306325,
+          "by_entity_type_n": {
+            "country": 2140
+          },
+          "by_entity_type_wrong_match": {
+            "country": 0.001869158878504673
+          }
+        },
+        "ambiguity_recall": 0.0,
+        "latency_ms": {
+          "p50": 0.0021249870769679546,
+          "p95": 0.0025020679458975775,
+          "p99": 0.003083607880398631,
+          "mean": 0.0022085558973409442,
+          "min": 0.00100000761449337,
+          "max": 0.03791600465774536,
+          "sample_count": 2140
+        },
+        "throughput_qps": 406483.522513708,
+        "effective_warmup": 100,
+        "cold_start_ms": 1.9325839821249247,
+        "peak_rss_mb": 112.65625,
+        "wheel_size_mb": 20.141146659851074,
+        "data_size_mb": null,
+        "calibration": null
+      },
+      "skipped_reason": null,
+      "coverage": 1.0
+    },
+    {
+      "name": "rapidfuzz_dict",
+      "version": "3.14.5",
+      "offline": true,
+      "dataset": "geo_countries_multilingual",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.37009345794392523,
+          "by_capability": {
+            "multilingual": 0.3695550351288056,
+            "alias": 0.31131412508784256,
+            "case_noise": 0.6
+          },
+          "by_language": {
+            "fr": 0.35714285714285715,
+            "de": 0.3663865546218487,
+            "es": 0.3913713405238829
+          },
+          "by_difficulty": {
+            "medium": 0.3115543328748281,
+            "easy": 0.49416909620991256
+          },
+          "by_entity_type": {
+            "country": 0.37009345794392523
+          },
+          "wrong_match_rate": 0.49485981308411214,
+          "abstention_precision": 0.0,
+          "abstention_recall": 0.0,
+          "error_rate": 0.0,
+          "row_count": 2140,
+          "accuracy_ci_low": 0.34988620464973635,
+          "accuracy_ci_high": 0.39076627639177336,
+          "by_entity_type_n": {
+            "country": 2140
+          },
+          "by_entity_type_wrong_match": {
+            "country": 0.49485981308411214
+          }
+        },
+        "ambiguity_recall": 0.0,
+        "latency_ms": {
+          "p50": 0.3109585086349398,
+          "p95": 0.5923937511397526,
+          "p99": 0.7143073971383277,
+          "mean": 0.32995318091979303,
+          "min": 0.001166015863418579,
+          "max": 1.0979159851558506,
+          "sample_count": 2140
+        },
+        "throughput_qps": 3024.5470626844294,
+        "effective_warmup": 100,
+        "cold_start_ms": 2.9767919913865626,
+        "peak_rss_mb": 113.015625,
+        "wheel_size_mb": 4.124938011169434,
+        "data_size_mb": null,
+        "calibration": null
+      },
+      "skipped_reason": null,
+      "coverage": 1.0
+    },
+    {
+      "name": "resolvekit",
+      "version": "0.1.0",
+      "offline": true,
+      "dataset": "geo_countries_multilingual",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.6317757009345795,
+          "by_capability": {
+            "multilingual": 0.6313817330210773,
+            "alias": 0.44905130007027405,
+            "case_noise": 0.8
+          },
+          "by_language": {
+            "fr": 0.5613839285714286,
+            "de": 0.7058823529411765,
+            "es": 0.6610169491525424
+          },
+          "by_difficulty": {
+            "medium": 0.4594222833562586,
+            "easy": 0.9970845481049563
+          },
+          "by_entity_type": {
+            "country": 0.6317757009345795
+          },
+          "wrong_match_rate": 0.02663551401869159,
+          "abstention_precision": 0.0,
+          "abstention_recall": 0.0,
+          "error_rate": 0.0,
+          "row_count": 2140,
+          "accuracy_ci_low": 0.6111209460663962,
+          "accuracy_ci_high": 0.651958191869914,
+          "by_entity_type_n": {
+            "country": 2140
+          },
+          "by_entity_type_wrong_match": {
+            "country": 0.02663551401869159
+          }
+        },
+        "ambiguity_recall": 0.0,
+        "latency_ms": {
+          "p50": 0.44656250975094736,
+          "p95": 2.2410461824620143,
+          "p99": 4.8408476181794,
+          "mean": 0.783043874973849,
+          "min": 0.005791021976619959,
+          "max": 11.012041999492794,
+          "sample_count": 2140
+        },
+        "throughput_qps": 1276.1918755175584,
+        "effective_warmup": 100,
+        "cold_start_ms": 6157.660084019881,
+        "peak_rss_mb": 1140.15625,
+        "wheel_size_mb": 9.482624053955078,
+        "data_size_mb": 807.2899999999998,
+        "calibration": {
+          "n_with_confidence": 1373,
+          "ece": 0.09654959674894516,
+          "brier": 0.03934458887379307,
+          "reliability_bins": [
+            {
+              "lower": 0.0,
+              "upper": 0.1,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.1,
+              "upper": 0.2,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.2,
+              "upper": 0.3,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.3,
+              "upper": 0.4,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.4,
+              "upper": 0.5,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.6,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.6,
+              "upper": 0.7,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "count": 38,
+              "mean_confidence": 0.7580720979631523,
+              "observed_accuracy": 0.6578947368421053
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "count": 87,
+              "mean_confidence": 0.8612424728432934,
+              "observed_accuracy": 0.5977011494252874
+            },
+            {
+              "lower": 0.9,
+              "upper": 1.0,
+              "count": 1248,
+              "mean_confidence": 0.9079905757401159,
+              "observed_accuracy": 0.9927884615384616
+            }
+          ]
+        }
+      },
+      "skipped_reason": null,
+      "coverage": 1.0
+    },
+    {
+      "name": "resolvekit_typed",
+      "version": "0.1.0",
+      "offline": true,
+      "dataset": "geo_countries_multilingual",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.6140186915887851,
+          "by_capability": {
+            "multilingual": 0.6135831381733021,
+            "alias": 0.44553759662684467,
+            "case_noise": 0.8
+          },
+          "by_language": {
+            "fr": 0.5491071428571429,
+            "de": 0.6840336134453782,
+            "es": 0.6394453004622496
+          },
+          "by_difficulty": {
+            "medium": 0.4497936726272352,
+            "easy": 0.9620991253644315
+          },
+          "by_entity_type": {
+            "country": 0.6140186915887851
+          },
+          "wrong_match_rate": 0.005607476635514018,
+          "abstention_precision": 0.0,
+          "abstention_recall": 0.0,
+          "error_rate": 0.0,
+          "row_count": 2140,
+          "accuracy_ci_low": 0.5932054698804872,
+          "accuracy_ci_high": 0.634423287766533,
+          "by_entity_type_n": {
+            "country": 2140
+          },
+          "by_entity_type_wrong_match": {
+            "country": 0.005607476635514018
+          }
+        },
+        "ambiguity_recall": 0.0,
+        "latency_ms": {
+          "p50": 0.2901664993260056,
+          "p95": 1.2878878478659317,
+          "p99": 2.8483263851376535,
+          "mean": 0.6409013145015723,
+          "min": 0.09587500244379044,
+          "max": 374.6798330103047,
+          "sample_count": 2140
+        },
+        "throughput_qps": 1559.0560320251461,
+        "effective_warmup": 100,
+        "cold_start_ms": 195.68216596962884,
+        "peak_rss_mb": 174.1875,
+        "wheel_size_mb": 9.482624053955078,
+        "data_size_mb": 807.2899999999998,
+        "calibration": {
+          "n_with_confidence": 1312,
+          "ece": 0.08851437142514469,
+          "brier": 0.016269641793733323,
+          "reliability_bins": [
+            {
+              "lower": 0.0,
+              "upper": 0.1,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.1,
+              "upper": 0.2,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.2,
+              "upper": 0.3,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.3,
+              "upper": 0.4,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.4,
+              "upper": 0.5,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.6,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.6,
+              "upper": 0.7,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "count": 32,
+              "mean_confidence": 0.7535759128172774,
+              "observed_accuracy": 0.8125
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "count": 49,
+              "mean_confidence": 0.8592278433774692,
+              "observed_accuracy": 0.9183673469387755
+            },
+            {
+              "lower": 0.9,
+              "upper": 1.0,
+              "count": 1231,
+              "mean_confidence": 0.9079224623513902,
+              "observed_accuracy": 0.9983753046303818
+            }
+          ]
+        }
+      },
+      "skipped_reason": null,
+      "coverage": 1.0
+    },
+    {
+      "name": "country_converter",
+      "version": "1.3.2",
+      "offline": true,
+      "dataset": "no_match",
+      "metrics": {
+        "accuracy": {
+          "overall": 1.0,
+          "by_capability": {
+            "abstention": 1.0
+          },
+          "by_language": {
+            "en": 1.0
+          },
+          "by_difficulty": {
+            "easy": 1.0
+          },
+          "by_entity_type": {
+            "country": 1.0
+          },
+          "wrong_match_rate": 0.0,
+          "abstention_precision": 1.0,
+          "abstention_recall": 1.0,
+          "error_rate": 0.0,
+          "row_count": 35,
+          "accuracy_ci_low": 0.9010957324106112,
+          "accuracy_ci_high": 1.0,
+          "by_entity_type_n": {
+            "country": 35
+          },
+          "by_entity_type_wrong_match": {
+            "country": 0.0
+          }
+        },
+        "ambiguity_recall": 0.0,
+        "latency_ms": {
+          "p50": 0.0432920060120523,
+          "p95": 0.29141263803467155,
+          "p99": 1.8326692562550229,
+          "mean": 0.1630523441625493,
+          "min": 0.02600002335384488,
+          "max": 2.6237499550916255,
+          "sample_count": 35
+        },
+        "throughput_qps": 6119.372177147129,
+        "effective_warmup": 8,
+        "cold_start_ms": 25.720665988046676,
+        "peak_rss_mb": 115.53125,
+        "wheel_size_mb": 0.14886188507080078,
+        "data_size_mb": null,
+        "calibration": null
+      },
+      "skipped_reason": null,
+      "coverage": 1.0
+    },
+    {
+      "name": "countryguess",
+      "version": "0.4.9",
+      "offline": true,
+      "dataset": "no_match",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.9428571428571428,
+          "by_capability": {
+            "abstention": 0.9428571428571428
+          },
+          "by_language": {
+            "en": 0.9428571428571428
+          },
+          "by_difficulty": {
+            "easy": 0.9428571428571428
+          },
+          "by_entity_type": {
+            "country": 0.9428571428571428
+          },
+          "wrong_match_rate": 0.05714285714285714,
+          "abstention_precision": 1.0,
+          "abstention_recall": 0.9428571428571428,
+          "error_rate": 0.0,
+          "row_count": 35,
+          "accuracy_ci_low": 0.8139261926062996,
+          "accuracy_ci_high": 0.984187170385956,
+          "by_entity_type_n": {
+            "country": 35
+          },
+          "by_entity_type_wrong_match": {
+            "country": 0.05714285714285714
+          }
+        },
+        "ambiguity_recall": 0.0,
+        "latency_ms": {
+          "p50": 0.1772079849615693,
+          "p95": 0.25250461767427623,
+          "p99": 0.27760834083892394,
+          "mean": 0.16131433990917035,
+          "min": 0.06587500683963299,
+          "max": 0.28908299282193184,
+          "sample_count": 35
+        },
+        "throughput_qps": 6186.660738072703,
+        "effective_warmup": 8,
+        "cold_start_ms": 5.944499978795648,
+        "peak_rss_mb": 113.734375,
+        "wheel_size_mb": 0.33511829376220703,
+        "data_size_mb": null,
+        "calibration": null
+      },
+      "skipped_reason": null,
+      "coverage": 1.0
+    },
+    {
+      "name": "data_commons_resolve",
+      "version": "2.1.6",
+      "offline": false,
+      "dataset": "no_match",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.9714285714285714,
+          "by_capability": {
+            "abstention": 0.9714285714285714
+          },
+          "by_language": {
+            "en": 0.9714285714285714
+          },
+          "by_difficulty": {
+            "easy": 0.9714285714285714
+          },
+          "by_entity_type": {
+            "country": 0.9714285714285714
+          },
+          "wrong_match_rate": 0.02857142857142857,
+          "abstention_precision": 1.0,
+          "abstention_recall": 0.9714285714285714,
+          "error_rate": 0.0,
+          "row_count": 35,
+          "accuracy_ci_low": 0.8546659090672868,
+          "accuracy_ci_high": 0.9949386386341466,
+          "by_entity_type_n": {
+            "country": 35
+          },
+          "by_entity_type_wrong_match": {
+            "country": 0.02857142857142857
+          }
+        },
+        "ambiguity_recall": 0.0,
+        "latency_ms": {
+          "p50": 0.21475000539794564,
+          "p95": 0.36792121827602353,
+          "p99": 0.5091404845006762,
+          "mean": 0.23893222844760334,
+          "min": 0.1514590112492442,
+          "max": 0.5359579809010029,
+          "sample_count": 35
+        },
+        "throughput_qps": 4153.111713740137,
+        "effective_warmup": 8,
+        "cold_start_ms": 469.9447499588132,
+        "peak_rss_mb": 125.828125,
+        "wheel_size_mb": 0.28513336181640625,
+        "data_size_mb": null,
+        "calibration": null
+      },
+      "skipped_reason": null,
+      "coverage": 1.0
+    },
+    {
+      "name": "geonamescache",
+      "version": "3.0.1",
+      "offline": true,
+      "dataset": "no_match",
+      "metrics": {
+        "accuracy": {
+          "overall": 1.0,
+          "by_capability": {
+            "abstention": 1.0
+          },
+          "by_language": {
+            "en": 1.0
+          },
+          "by_difficulty": {
+            "easy": 1.0
+          },
+          "by_entity_type": {
+            "country": 1.0
+          },
+          "wrong_match_rate": 0.0,
+          "abstention_precision": 1.0,
+          "abstention_recall": 1.0,
+          "error_rate": 0.0,
+          "row_count": 35,
+          "accuracy_ci_low": 0.9010957324106112,
+          "accuracy_ci_high": 1.0,
+          "by_entity_type_n": {
+            "country": 35
+          },
+          "by_entity_type_wrong_match": {
+            "country": 0.0
+          }
+        },
+        "ambiguity_recall": 0.0,
+        "latency_ms": {
+          "p50": 0.0003750319592654705,
+          "p95": 0.000553589779883623,
+          "p99": 0.0005830079317092896,
+          "mean": 0.00040717589269791333,
+          "min": 0.00033300602808594704,
+          "max": 0.0005830079317092896,
+          "sample_count": 35
+        },
+        "throughput_qps": 1448255.5323156368,
+        "effective_warmup": 8,
+        "cold_start_ms": 52.61470895493403,
+        "peak_rss_mb": 190.75,
+        "wheel_size_mb": 164.73299312591553,
+        "data_size_mb": null,
+        "calibration": null
+      },
+      "skipped_reason": null,
+      "coverage": 1.0
+    },
+    {
+      "name": "hdx_python_country",
+      "version": "4.1.1",
+      "offline": true,
+      "dataset": "no_match",
+      "metrics": {
+        "accuracy": {
+          "overall": 1.0,
+          "by_capability": {
+            "abstention": 1.0
+          },
+          "by_language": {
+            "en": 1.0
+          },
+          "by_difficulty": {
+            "easy": 1.0
+          },
+          "by_entity_type": {
+            "country": 1.0
+          },
+          "wrong_match_rate": 0.0,
+          "abstention_precision": 1.0,
+          "abstention_recall": 1.0,
+          "error_rate": 0.0,
+          "row_count": 35,
+          "accuracy_ci_low": 0.9010957324106112,
+          "accuracy_ci_high": 1.0,
+          "by_entity_type_n": {
+            "country": 35
+          },
+          "by_entity_type_wrong_match": {
+            "country": 0.0
+          }
+        },
+        "ambiguity_recall": 0.0,
+        "latency_ms": {
+          "p50": 5.555042007472366,
+          "p95": 5.898937716847286,
+          "p99": 6.096676050219684,
+          "mean": 3.886606028702642,
+          "min": 0.001334003172814846,
+          "max": 6.159249984193593,
+          "sample_count": 35
+        },
+        "throughput_qps": 257.2637198191671,
+        "effective_warmup": 8,
+        "cold_start_ms": 134.52441699337214,
+        "peak_rss_mb": 177.234375,
+        "wheel_size_mb": 0.19714641571044922,
+        "data_size_mb": null,
+        "calibration": null
+      },
+      "skipped_reason": null,
+      "coverage": 1.0
+    },
+    {
+      "name": "pycountry",
+      "version": "26.2.16",
+      "offline": true,
+      "dataset": "no_match",
+      "metrics": {
+        "accuracy": {
+          "overall": 1.0,
+          "by_capability": {
+            "abstention": 1.0
+          },
+          "by_language": {
+            "en": 1.0
+          },
+          "by_difficulty": {
+            "easy": 1.0
+          },
+          "by_entity_type": {
+            "country": 1.0
+          },
+          "wrong_match_rate": 0.0,
+          "abstention_precision": 1.0,
+          "abstention_recall": 1.0,
+          "error_rate": 0.0,
+          "row_count": 35,
+          "accuracy_ci_low": 0.9010957324106112,
+          "accuracy_ci_high": 1.0,
+          "by_entity_type_n": {
+            "country": 35
+          },
+          "by_entity_type_wrong_match": {
+            "country": 0.0
+          }
+        },
+        "ambiguity_recall": 0.0,
+        "latency_ms": {
+          "p50": 0.002040993422269821,
+          "p95": 0.002275174483656883,
+          "p99": 0.002801277441903946,
+          "mean": 0.0020593970215746333,
+          "min": 0.0018749851733446121,
+          "max": 0.00304199056699872,
+          "sample_count": 35
+        },
+        "throughput_qps": 432985.978031537,
+        "effective_warmup": 8,
+        "cold_start_ms": 1.9325839821249247,
+        "peak_rss_mb": 112.65625,
+        "wheel_size_mb": 20.141146659851074,
+        "data_size_mb": null,
+        "calibration": null
+      },
+      "skipped_reason": null,
+      "coverage": 1.0
+    },
+    {
+      "name": "rapidfuzz_dict",
+      "version": "3.14.5",
+      "offline": true,
+      "dataset": "no_match",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.2,
+          "by_capability": {
+            "abstention": 0.2
+          },
+          "by_language": {
+            "en": 0.2
+          },
+          "by_difficulty": {
+            "easy": 0.2
+          },
+          "by_entity_type": {
+            "country": 0.2
+          },
+          "wrong_match_rate": 0.8,
+          "abstention_precision": 1.0,
+          "abstention_recall": 0.2,
+          "error_rate": 0.0,
+          "row_count": 35,
+          "accuracy_ci_low": 0.10042319445900805,
+          "accuracy_ci_high": 0.3589193660946251,
+          "by_entity_type_n": {
+            "country": 35
+          },
+          "by_entity_type_wrong_match": {
+            "country": 0.8
+          }
+        },
+        "ambiguity_recall": 0.0,
+        "latency_ms": {
+          "p50": 0.3357910318300128,
+          "p95": 0.5738795851357281,
+          "p99": 0.6228706333786247,
+          "mean": 0.3681190262016441,
+          "min": 0.21312502212822437,
+          "max": 0.6407910259440541,
+          "sample_count": 35
+        },
+        "throughput_qps": 2712.3021577590243,
+        "effective_warmup": 8,
+        "cold_start_ms": 2.9767919913865626,
+        "peak_rss_mb": 113.015625,
+        "wheel_size_mb": 4.124938011169434,
+        "data_size_mb": null,
+        "calibration": null
+      },
+      "skipped_reason": null,
+      "coverage": 1.0
+    },
+    {
+      "name": "resolvekit",
+      "version": "0.1.0",
+      "offline": true,
+      "dataset": "no_match",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.7714285714285715,
+          "by_capability": {
+            "abstention": 0.7714285714285715
+          },
+          "by_language": {
+            "en": 0.7714285714285715
+          },
+          "by_difficulty": {
+            "easy": 0.7714285714285715
+          },
+          "by_entity_type": {
+            "country": 0.7714285714285715
+          },
+          "wrong_match_rate": 0.08571428571428572,
+          "abstention_precision": 1.0,
+          "abstention_recall": 0.7714285714285715,
+          "error_rate": 0.0,
+          "row_count": 35,
+          "accuracy_ci_low": 0.6098236221989801,
+          "accuracy_ci_high": 0.879342632538209,
+          "by_entity_type_n": {
+            "country": 35
+          },
+          "by_entity_type_wrong_match": {
+            "country": 0.08571428571428572
+          }
+        },
+        "ambiguity_recall": 0.0,
+        "latency_ms": {
+          "p50": 0.004832982085645199,
+          "p95": 2.9449377034325144,
+          "p99": 3.9461885439231956,
+          "mean": 0.603719088914139,
+          "min": 0.0025840126909315586,
+          "max": 4.352374991867691,
+          "sample_count": 35
+        },
+        "throughput_qps": 1655.1463732807783,
+        "effective_warmup": 8,
+        "cold_start_ms": 6157.660084019881,
+        "peak_rss_mb": 1140.15625,
+        "wheel_size_mb": 9.482624053955078,
+        "data_size_mb": 807.2899999999998,
+        "calibration": {
+          "n_with_confidence": 3,
+          "ece": null,
+          "brier": null,
+          "reliability_bins": [
+            {
+              "lower": 0.0,
+              "upper": 0.1,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.1,
+              "upper": 0.2,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.2,
+              "upper": 0.3,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.3,
+              "upper": 0.4,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.4,
+              "upper": 0.5,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.6,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.6,
+              "upper": 0.7,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "count": 1,
+              "mean_confidence": 0.7224260818051875,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "count": 2,
+              "mean_confidence": 0.8795809489770892,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.9,
+              "upper": 1.0,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            }
+          ]
+        }
+      },
+      "skipped_reason": null,
+      "coverage": 1.0
+    },
+    {
+      "name": "resolvekit_typed",
+      "version": "0.1.0",
+      "offline": true,
+      "dataset": "no_match",
+      "metrics": {
+        "accuracy": {
+          "overall": 0.9142857142857143,
+          "by_capability": {
+            "abstention": 0.9142857142857143
+          },
+          "by_language": {
+            "en": 0.9142857142857143
+          },
+          "by_difficulty": {
+            "easy": 0.9142857142857143
+          },
+          "by_entity_type": {
+            "country": 0.9142857142857143
+          },
+          "wrong_match_rate": 0.08571428571428572,
+          "abstention_precision": 1.0,
+          "abstention_recall": 0.9142857142857143,
+          "error_rate": 0.0,
+          "row_count": 35,
+          "accuracy_ci_low": 0.7762040092883747,
+          "accuracy_ci_high": 0.970418168994703,
+          "by_entity_type_n": {
+            "country": 35
+          },
+          "by_entity_type_wrong_match": {
+            "country": 0.08571428571428572
+          }
+        },
+        "ambiguity_recall": 0.0,
+        "latency_ms": {
+          "p50": 0.0069579691626131535,
+          "p95": 1.6570248873904347,
+          "p99": 2.841498225461686,
+          "mean": 0.2972535173674779,
+          "min": 0.003667024429887533,
+          "max": 3.4358749981038272,
+          "sample_count": 35
+        },
+        "throughput_qps": 3359.3010535732146,
+        "effective_warmup": 8,
+        "cold_start_ms": 195.68216596962884,
+        "peak_rss_mb": 174.1875,
+        "wheel_size_mb": 9.482624053955078,
+        "data_size_mb": 807.2899999999998,
+        "calibration": {
+          "n_with_confidence": 3,
+          "ece": null,
+          "brier": null,
+          "reliability_bins": [
+            {
+              "lower": 0.0,
+              "upper": 0.1,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.1,
+              "upper": 0.2,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.2,
+              "upper": 0.3,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.3,
+              "upper": 0.4,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.4,
+              "upper": 0.5,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.6,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.6,
+              "upper": 0.7,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "count": 3,
+              "mean_confidence": 0.7451905982267782,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            },
+            {
+              "lower": 0.9,
+              "upper": 1.0,
+              "count": 0,
+              "mean_confidence": 0.0,
+              "observed_accuracy": 0.0
+            }
+          ]
+        }
+      },
+      "skipped_reason": null,
+      "coverage": 1.0
+    }
+  ]
+}

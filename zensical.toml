@@ -1,0 +1,137 @@
+# Zensical site configuration for the resolvekit documentation.
+# Build:  uvx --with mkdocstrings-python zensical build   (output -> site/)
+# Preview: uvx --with mkdocstrings-python zensical serve
+
+[project]
+site_name = "ResolveKit"
+site_description = "Resolve messy place and entity strings (and codes) to canonical entity IDs — offline and deterministic."
+site_author = "Jorge Rivera"
+site_url = "https://jm-rivera.github.io/resolvekit/"
+repo_url = "https://github.com/jm-rivera/resolvekit"
+repo_name = "jm-rivera/resolvekit"
+docs_dir = "docs"
+site_dir = "site"
+use_directory_urls = true
+copyright = "Copyright &copy; 2026 Jorge Rivera"
+
+nav = [
+    { "Home" = "index.md" },
+    { "Getting started" = [
+        { "Install" = "getting-started/install.md" },
+        { "Your first resolution" = "getting-started/first-resolution.md" },
+    ] },
+    { "How-to guides" = [
+        { "Clean a DataFrame column" = "how-to/clean-a-dataframe-column.md" },
+        { "Reconcile a column with a review" = "how-to/reconcile-a-column-with-review.md" },
+        { "Handle ambiguous matches" = "how-to/handle-ambiguous-matches.md" },
+        { "Convert between code systems" = "how-to/convert-between-code-systems.md" },
+        { "Resolve group membership" = "how-to/resolve-group-membership.md" },
+        { "List the entities in a region" = "how-to/list-entities-in-a-region.md" },
+        { "Extract entities from text" = "how-to/extract-entities-from-text.md" },
+        { "Extract entities with your own NER" = "how-to/extract-entities-with-your-own-ner.md" },
+        { "Build typeahead autocomplete" = "how-to/build-typeahead-autocomplete.md" },
+        { "Bring your own data" = "how-to/bring-your-own-data.md" },
+        { "Work offline and manage data packs" = "how-to/work-offline-and-manage-data-packs.md" },
+    ] },
+    { "Reference" = [
+        { "Module-level API" = "reference/api.md" },
+        { "Resolver" = "reference/resolver.md" },
+        { "Advanced (builder, calibration)" = "reference/advanced.md" },
+    ] },
+    { "Explanation" = [
+        { "How resolution works" = "explanation/how-resolution-works.md" },
+        { "Offline-first and data packs" = "explanation/offline-and-data-packs.md" },
+        { "Confidence and calibration" = "explanation/confidence.md" },
+        { "Entities, modules, and domains" = "explanation/entities-and-modules.md" },
+        { "The entity graph" = "explanation/knowledge-graph.md" },
+    ] },
+    { "Roadmap" = "roadmap.md" },
+]
+
+[project.theme]
+language = "en"
+features = [
+    "announce.dismiss",
+    "content.code.annotate",
+    "content.code.copy",
+    "content.code.select",
+    "content.tooltips",
+    "navigation.footer",
+    "navigation.indexes",
+    "navigation.instant",
+    "navigation.instant.prefetch",
+    "navigation.path",
+    "navigation.sections",
+    "navigation.tabs",
+    "navigation.top",
+    "navigation.tracking",
+    "search.highlight",
+    "toc.follow",
+]
+
+[project.theme.icon]
+logo = "lucide/map-pin"
+
+[[project.theme.palette]]
+scheme = "default"
+toggle.icon = "lucide/sun"
+toggle.name = "Switch to dark mode"
+
+[[project.theme.palette]]
+scheme = "slate"
+toggle.icon = "lucide/moon"
+toggle.name = "Switch to light mode"
+
+[[project.extra.social]]
+icon = "fontawesome/brands/github"
+link = "https://github.com/jm-rivera/resolvekit"
+
+[[project.extra.social]]
+icon = "fontawesome/brands/python"
+link = "https://pypi.org/project/resolvekit/"
+
+# --- API reference autodoc (preliminary mkdocstrings support, Zensical >= 0.0.11) ---
+[project.plugins.mkdocstrings.handlers.python]
+inventories = ["https://docs.python.org/3/objects.inv"]
+paths = ["src"]
+
+[project.plugins.mkdocstrings.handlers.python.options]
+docstring_style = "google"
+inherited_members = true
+show_source = false
+show_root_heading = true
+show_if_no_docstring = false
+separate_signature = true
+docstring_section_style = "table"
+
+# --- Markdown extensions (Material/Zensical default set; enables admonitions + details) ---
+[project.markdown_extensions.abbr]
+[project.markdown_extensions.admonition]
+[project.markdown_extensions.attr_list]
+[project.markdown_extensions.def_list]
+[project.markdown_extensions.footnotes]
+[project.markdown_extensions.md_in_html]
+[project.markdown_extensions.toc]
+permalink = true
+[project.markdown_extensions.pymdownx.betterem]
+[project.markdown_extensions.pymdownx.caret]
+[project.markdown_extensions.pymdownx.details]
+[project.markdown_extensions.pymdownx.emoji]
+emoji_generator = "zensical.extensions.emoji.to_svg"
+emoji_index = "zensical.extensions.emoji.twemoji"
+[project.markdown_extensions.pymdownx.highlight]
+anchor_linenums = true
+line_spans = "__span"
+pygments_lang_class = true
+[project.markdown_extensions.pymdownx.inlinehilite]
+[project.markdown_extensions.pymdownx.keys]
+[project.markdown_extensions.pymdownx.magiclink]
+[project.markdown_extensions.pymdownx.mark]
+[project.markdown_extensions.pymdownx.smartsymbols]
+[project.markdown_extensions.pymdownx.superfences]
+[project.markdown_extensions.pymdownx.tabbed]
+alternate_style = true
+combine_header_slug = true
+[project.markdown_extensions.pymdownx.tasklist]
+custom_checkbox = true
+[project.markdown_extensions.pymdownx.tilde]

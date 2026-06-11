@@ -1,0 +1,92 @@
+# Publishes to PyPI via Trusted Publishing (OIDC) — no stored token. Requires
+# a trusted publisher registered on pypi.org for jm-rivera/resolvekit pointing
+# at this workflow and the "pypi" environment, and the "pypi" environment to
+# exist in the repo settings. The smoke-test job installs the exact wheel that
+# will be uploaded; a bad upload can only be yanked, never deleted.
+name: Publish to PyPI
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build distribution
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v8.1.0
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Build wheel and sdist
+        run: uv build
+
+      - name: Upload dist artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: dist
+          path: dist/
+
+  smoke-test:
+    name: Smoke-test wheel
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v8.1.0
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Download dist artifacts
+        uses: actions/download-artifact@v8
+        with:
+          name: dist
+          path: dist/
+
+      - name: Install wheel into a clean venv
+        run: |
+          uv venv smoke-venv
+          uv pip install --python smoke-venv/bin/python dist/*.whl
+
+      - name: Import, check public API, resolve offline
+        run: |
+          smoke-venv/bin/python - <<'PYEOF'
+          import resolvekit
+
+          broken = [n for n in resolvekit.__all__ if not hasattr(resolvekit, n)]
+          assert not broken, f"__all__ names not importable: {broken}"
+
+          result = resolvekit.resolve_id("United States")
+          assert result is not None, "bundled-tier resolution returned None"
+          print(f"resolve_id('United States') -> {result!r}")
+          print(f"{len(resolvekit.__all__)} public names OK; version {resolvekit.__version__}")
+          PYEOF
+
+  publish:
+    name: Publish to PyPI
+    needs: smoke-test
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/resolvekit
+    permissions:
+      id-token: write
+    steps:
+      - name: Download dist artifacts
+        uses: actions/download-artifact@v8
+        with:
+          name: dist
+          path: dist/
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1

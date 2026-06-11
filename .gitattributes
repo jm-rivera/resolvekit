@@ -1,0 +1,8 @@
+# Normalize line endings to LF on checkout for every platform. Bundled data
+# includes checksummed text artifacts (e.g. *.dict); a CRLF checkout on Windows
+# changes their bytes and breaks the SHA-256 recorded at build time on LF.
+* text=auto eol=lf
+
+# Binary data — never apply line-ending or text filters.
+*.sqlite binary
+*.db binary

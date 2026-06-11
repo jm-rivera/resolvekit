@@ -1,0 +1,69 @@
+# Curated short-form and abbreviation aliases for geo.region entities.
+#
+# These entries target undata-geo entities whose canonical names include a
+# prefix ("MDG Region: ...") or income-level suffix ("...: Low and middle
+# income") that prevents them from matching the plain geographic label most
+# users type.
+#
+# Each entry:
+#   entity_id:  The full undata-geo/GXXXXXXX ID as stored in the SQLite.
+#   aliases:    List of plain-text alias strings (English).
+#
+# Rationale per entry:
+#
+#   G01100220  MDG Region: Sub-Saharan Africa
+#              Users query "Sub-Saharan Africa" and "Sub Saharan Africa"
+#              (without hyphen). The income-stratified G00104xxx series all
+#              carry "Sub-Saharan Africa:" prefix, causing ambiguity. The MDG
+#              Region entity is the canonical aggregate for this query.
+#
+#   G01100290  MDG Region: Latin America and the Caribbean
+#              Users query "Latin America and the Caribbean". The G00137xxx
+#              income-breakdown series all carry that prefix, making the MDG
+#              entity ambiguous without an explicit alias.
+#
+#   G00138200  Latin America: Low and middle income
+#              The UN M.49 data does not have a plain "Latin America" aggregate
+#              entity (G00138000 does not exist). G00138200 is the closest
+#              available anchor; the alias "Latin America" routes to it.
+#
+#   G00152000  Middle East and North Africa
+#              "MENA" is the standard acronym; not present in any name row.
+#
+#   G00130000  Northern, Southern and Western Europe
+#              "Western Europe" is the dominant user label for this aggregate.
+#              No standalone "Western Europe" aggregate entity exists — only
+#              income-stratified G00132xxx variants. G00130000 is the
+#              inclusive aggregate for this region.
+#
+#   G01100210  MDG Region: Northern Africa
+#              Same MDG-prefix pattern as Sub-Saharan Africa; plain
+#              "Northern Africa" is the user-facing label.
+
+version: 1
+
+aliases:
+  - entity_id: undata-geo/G01100220
+    aliases:
+      - Sub-Saharan Africa
+      - Sub Saharan Africa
+
+  - entity_id: undata-geo/G01100290
+    aliases:
+      - Latin America and the Caribbean
+
+  - entity_id: undata-geo/G00138200
+    aliases:
+      - Latin America
+
+  - entity_id: undata-geo/G00152000
+    aliases:
+      - MENA
+
+  - entity_id: undata-geo/G00130000
+    aliases:
+      - Western Europe
+
+  - entity_id: undata-geo/G01100210
+    aliases:
+      - Northern Africa

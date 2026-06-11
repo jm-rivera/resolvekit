@@ -1,0 +1,7 @@
+{
+  "dataset": "eval_parse",
+  "tool": "resolvekit",
+  "min_precision": 0.95,
+  "max_p99_ms": 1.2,
+  "note": "Coherence-free Phase-1 parse baseline, pinned 2026-06-05 on Apple M-series (darwin). Measured: precision=1.0, recall=0.8986, f1=0.9466, tp=62, fp=0, fn=7 (50 rows); parse_p99_ms=0.8213ms. Pin formulas: min_precision = round(measured_precision - 0.05, 2) = 0.95; max_p99_ms = round(measured_p99 * 1.5, 1) = 1.2. SCOPE: max_p99_ms is a darwin/local-dev reference ceiling only. CI (ubuntu-latest) runs measure_latency=False, so no latency block is produced; the gate checker warns to stderr and passes on latency (presence-based, non-blocking), while min_precision always blocks. To re-pin after an intentional eval-data or lever change: run with measure_latency=True on darwin, then set min_precision = round(measured_precision - 0.05, 2) and max_p99_ms = round(measured_p99 * 1.5, 1)."
+}

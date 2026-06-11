@@ -1,0 +1,85 @@
+# This workflow runs the geo benchmark + eval gate, which require remote data
+# tiers (~800 MB) that are not present in clean CI. It is PR-path-triggered and
+# manually dispatchable. The parse eval gate lives in test.yml because it is
+# fully bundled and runs on every push/PR.
+#
+# In clean CI the geo eval cannot reach its accuracy floor (bundled-only data
+# scores far below the committed threshold), so the eval gate is informational
+# here (continue-on-error) — it posts results as a PR comment but never blocks.
+# Run it via workflow_dispatch on a runner that has the remote tiers to enforce
+# the gate for real, or wire remote-data download into this job in the future.
+name: benchmark
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'benchmarks/**'
+      - 'src/resolvekit/**'
+      - 'pyproject.toml'
+      - '.github/workflows/benchmark.yml'
+
+jobs:
+  benchmark:
+    name: Run benchmark + eval gate
+    # Fork PRs run with a read-only token, so the PR-comment step would fail;
+    # restrict to same-repo PRs and manual dispatch.
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v8.1.0
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: uv sync --group benchmark --extra calibration --extra parsing
+
+      - name: Run benchmark
+        env:
+          PYTHONUNBUFFERED: "1"
+        run: uv run python -m benchmarks
+
+      - name: Check eval gate
+        # Reads benchmarks/results/latest.json (written by the benchmark step above)
+        # and benchmarks/eval_gate.json (committed threshold). Exits non-zero when
+        # resolvekit accuracy on eval drops below the committed threshold, or
+        # when the gate is pending (not yet pinned after eval curation).
+        #
+        # Non-blocking: clean CI lacks the remote data tiers, so accuracy is
+        # below the floor and this would always fail. It surfaces the verdict in
+        # the logs without failing the run. See the header comment.
+        continue-on-error: true
+        env:
+          PYTHONUNBUFFERED: "1"
+        run: uv run python -m scripts.benchmark.check_eval_gate
+
+      - name: Upload results
+        uses: actions/upload-artifact@v7
+        with:
+          name: benchmark-results
+          path: |
+            benchmarks/results/latest.json
+            benchmarks/results/latest.md
+          retention-days: 30
+
+      - name: Post PR comment
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs = require('fs');
+            const body = fs.readFileSync('benchmarks/results/latest.md', 'utf8');
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `<details><summary>Benchmark results</summary>\n\n${body}\n</details>`,
+            });

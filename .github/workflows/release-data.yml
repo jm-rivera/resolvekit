@@ -1,0 +1,115 @@
+name: Release Data Packs
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "CalVer version (e.g., 2026.1)"
+        required: true
+        type: string
+  push:
+    tags:
+      - "data-v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v8.1.0
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Determine version
+        id: version
+        run: |
+          if [ -n "${{ github.event.inputs.version }}" ]; then
+            echo "calver=${{ github.event.inputs.version }}" >> "$GITHUB_OUTPUT"
+          else
+            # Extract from tag: data-v2026.1 -> 2026.1
+            TAG="${GITHUB_REF#refs/tags/data-v}"
+            echo "calver=$TAG" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Install dependencies
+        run: uv sync --group dev --group data
+
+      - name: Run release script
+        env:
+          RESOLVEKIT_RELEASE_CALVER: ${{ steps.version.outputs.calver }}
+          RESOLVEKIT_RELEASE_EXECUTE: "1"
+        run: |
+          uv run python -m scripts.release.release_data
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="data-v${{ steps.version.outputs.calver }}"
+          # Idempotent: only create if the release doesn't already exist,
+          # so re-runs on the same tag don't fail this step.
+          if ! gh release view "$TAG" >/dev/null 2>&1; then
+            gh release create "$TAG" \
+              --title "Data Pack Release $TAG" \
+              --notes "Data pack release for CalVer ${{ steps.version.outputs.calver }}." \
+              --draft
+          else
+            echo "Release $TAG already exists; skipping create."
+          fi
+
+      - name: Upload remote assets
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="data-v${{ steps.version.outputs.calver }}"
+          MANIFEST="release-manifest.json"
+
+          # Upload each remote asset listed in the manifest. The gz files on
+          # disk already have asset_name as their basename (see release_data),
+          # so the server-side name is correct without #label. --clobber lets
+          # partial re-runs heal by overwriting any prior partial uploads.
+          for row in $(jq -c '.assets[]' "$MANIFEST"); do
+            LOCAL_PATH=$(echo "$row" | jq -r '.local_path')
+            ASSET_NAME=$(echo "$row" | jq -r '.asset_name')
+            echo "Uploading $ASSET_NAME from $LOCAL_PATH"
+            gh release upload "$TAG" "$LOCAL_PATH" --clobber
+          done
+
+      - name: Verify remote asset URLs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="data-v${{ steps.version.outputs.calver }}"
+          REPO="jm-rivera/resolvekit"
+          MANIFEST="release-manifest.json"
+          FAILED=0
+
+          # Mark the release as non-draft so assets become publicly reachable
+          # before we probe the URLs (idempotent if already published).
+          gh release edit "$TAG" --draft=false
+
+          echo "Verifying asset URLs for release $TAG..."
+          for row in $(jq -c '.assets[]' "$MANIFEST"); do
+            ASSET_NAME=$(echo "$row" | jq -r '.asset_name')
+            URL="https://github.com/${REPO}/releases/download/${TAG}/${ASSET_NAME}"
+            STATUS=$(curl -fsSL -o /dev/null -w "%{http_code}" "$URL" 2>/dev/null || echo "000")
+            if [ "$STATUS" = "200" ]; then
+              echo "  OK  $STATUS  $ASSET_NAME"
+            else
+              echo "  FAIL $STATUS  $URL"
+              FAILED=$((FAILED + 1))
+            fi
+          done
+
+          if [ "$FAILED" -gt 0 ]; then
+            echo "ERROR: $FAILED asset(s) not reachable after upload. Release may be incomplete."
+            exit 1
+          fi
+          echo "All assets verified OK."

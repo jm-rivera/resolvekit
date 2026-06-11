@@ -1,0 +1,267 @@
+{
+  "schema_version": 1,
+  "modules": [
+    {
+      "module_id": "geo.countries",
+      "distribution": "bundled",
+      "domain": "geo",
+      "entity_types": [
+        "geo.country"
+      ],
+      "size_mb": 2.61,
+      "checksums": {
+        "sqlite": "1c92afe09b85d3e4736fb2857f2673874cb78fc6b0d05b7891371883a4f8668c"
+      }
+    },
+    {
+      "module_id": "geo.admin1",
+      "distribution": "remote",
+      "domain": "geo",
+      "entity_types": [
+        "geo.admin1"
+      ],
+      "size_mb": 11.709999999999999,
+      "remote_artifacts": {
+        "sqlite": {
+          "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.06/geo-admin1-entities.sqlite.gz",
+          "sha256": "8174d2fe365c4f5cd4971b2bb5495c31b4f9f5fbe2c1308a681c3638df9c17aa",
+          "gz_sha256": "956b54a116ae8655241f242b06c339fdc57246e182ef9db900cecaeecda7ae7d",
+          "size_mb": 11.45
+        },
+        "symspell": {
+          "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.06/geo-admin1-symspell.dict.gz",
+          "sha256": "b7967ea6e710877e2ca06634e363405156071f2b6c18f179c0e3a16f68ff629b",
+          "gz_sha256": "f5829bca78f84a5a0e1a7b734eb87d4a8b403b1fe5156952da7f6eea73bd69c6",
+          "size_mb": 0.26
+        }
+      }
+    },
+    {
+      "module_id": "geo.admin2",
+      "distribution": "remote",
+      "domain": "geo",
+      "entity_types": [
+        "geo.admin2"
+      ],
+      "size_mb": 99.78,
+      "remote_artifacts": {
+        "sqlite": {
+          "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.06/geo-admin2-entities.sqlite.gz",
+          "sha256": "07a593107e9bd4697c7d834a9c5168fe382814f7623764ee875ff392700da349",
+          "gz_sha256": "9f8deb3852fd62ec7b7b38ba233180b8b8d0b1b2c5ca969766e3fde8edd717ed",
+          "size_mb": 97.77
+        },
+        "symspell": {
+          "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.06/geo-admin2-symspell.dict.gz",
+          "sha256": "ff62f9d223f06ee4fbf6454e561a44baea1ea5e89a195c889054404cb8eae613",
+          "gz_sha256": "14d8de7f696453f17bf5a7e48c9ed20467c47e4652efe4ca526f050a41f4fa6f",
+          "size_mb": 2.01
+        }
+      }
+    },
+    {
+      "module_id": "geo.admin3",
+      "distribution": "remote",
+      "domain": "geo",
+      "entity_types": [
+        "geo.admin3"
+      ],
+      "size_mb": 160.17,
+      "remote_artifacts": {
+        "sqlite": {
+          "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.06/geo-admin3-entities.sqlite.gz",
+          "sha256": "b1d6ea6e1a0e1e63aafe19ce8af2d917232e80762f24c299ce85ea57e456b6d2",
+          "gz_sha256": "93e3916af670f7cd210e1e9c2e8580d80702ff537f4e8fad2640237e4c457cd5",
+          "size_mb": 157.63
+        },
+        "symspell": {
+          "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.06/geo-admin3-symspell.dict.gz",
+          "sha256": "a6f57760fca120beb49aef70360ba694914167c8f59594e7f5054747d72064f1",
+          "gz_sha256": "d3b31a8ba6fa8eb2ea5db2283479f9c56a85d26f4a9d26e345d2a531d715cd45",
+          "size_mb": 2.54
+        }
+      }
+    },
+    {
+      "module_id": "geo.admin4",
+      "distribution": "remote",
+      "domain": "geo",
+      "entity_types": [
+        "geo.admin4"
+      ],
+      "size_mb": 379.48999999999995,
+      "remote_artifacts": {
+        "sqlite": {
+          "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.06/geo-admin4-entities.sqlite.gz",
+          "sha256": "0ebb77d0859d3b334c499fb5cd4e3e73d581a76c41dc9df9b2c3ab468fc12eca",
+          "gz_sha256": "b7a07b82691d1ef3432e2020457202737c2701361fd9b8b0c3ef8d745c4d0551",
+          "size_mb": 374.84
+        },
+        "symspell": {
+          "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.06/geo-admin4-symspell.dict.gz",
+          "sha256": "196e17aa697340a47648ce52eab5edd335e87baefe7f5a95e9e7794da1e0702f",
+          "gz_sha256": "55156293cf68ad14884242d561699abe4933734a976949367e8e5231d26a6aff",
+          "size_mb": 4.65
+        }
+      }
+    },
+    {
+      "module_id": "geo.admin5",
+      "distribution": "remote",
+      "domain": "geo",
+      "entity_types": [
+        "geo.admin5"
+      ],
+      "size_mb": 1.92,
+      "remote_artifacts": {
+        "sqlite": {
+          "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.06/geo-admin5-entities.sqlite.gz",
+          "sha256": "7d769ee1ddff7c8f30becec71e492ee52052f18815b03ac57c5798d3978d4d1f",
+          "gz_sha256": "32a1123918e1351793d66979ca1342d56c29ce391240f4e4b76e3369e52615c0",
+          "size_mb": 1.88
+        },
+        "symspell": {
+          "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.06/geo-admin5-symspell.dict.gz",
+          "sha256": "d27bac63c7ccefbb2bd3d26e24c04ee7def450d190662d6b81b130f833662104",
+          "gz_sha256": "19d9d7f3f3274d510fd880658d0665f9e2d63d044a818ea32d97848b9950e057",
+          "size_mb": 0.04
+        }
+      }
+    },
+    {
+      "module_id": "geo.cities",
+      "distribution": "remote",
+      "domain": "geo",
+      "entity_types": [
+        "geo.city"
+      ],
+      "size_mb": 154.22000000000003,
+      "remote_artifacts": {
+        "sqlite": {
+          "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.06/geo-cities-entities.sqlite.gz",
+          "sha256": "f99b2a2fdcc0f4bc44fa024e9a0852a3c013a61cb438825c7e0ce1476586e918",
+          "gz_sha256": "8819f578d017d5b90437e2e5c093090aef9f3c11572fcb6a7d8a42139b9c9caf",
+          "size_mb": 151.61
+        },
+        "symspell": {
+          "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.06/geo-cities-symspell.dict.gz",
+          "sha256": "ff96a9a5d3a7bced178ca74d416e7de85aca931b4337d83f279fe4bb28a4ff5e",
+          "gz_sha256": "f6fb9fb323bd781d100d67527ab270ecc8d5bd35ea14a45d438d845c023fa759",
+          "size_mb": 2.61
+        }
+      }
+    },
+    {
+      "module_id": "geo.regions",
+      "distribution": "bundled",
+      "domain": "geo",
+      "entity_types": [
+        "geo.region",
+        "geo.subregion"
+      ],
+      "size_mb": 1.09,
+      "checksums": {
+        "sqlite": "a808bc226030d40046f783b4ee960e457ed7e722e676f0459bde1a40f18e14a0"
+      }
+    },
+    {
+      "module_id": "geo.continental_unions",
+      "distribution": "bundled",
+      "domain": "geo",
+      "entity_types": [
+        "geo.continental_union",
+        "geo.organization"
+      ],
+      "size_mb": 0.1,
+      "checksums": {
+        "sqlite": "e637e063549065af7a6803f3ef1028126b4bcd2bde7432a4f1afebc2d2ed2a21"
+      }
+    },
+    {
+      "module_id": "geo.continents",
+      "distribution": "bundled",
+      "domain": "geo",
+      "entity_types": [
+        "geo.continent"
+      ],
+      "size_mb": 0.09,
+      "checksums": {
+        "sqlite": "3e5efd12f749319d61cdd7554733bee76117176d46fd88ac2523fad938c5c3ec"
+      }
+    },
+    {
+      "module_id": "org.providers",
+      "distribution": "bundled",
+      "domain": "org",
+      "entity_types": [
+        "org.development_finance_provider"
+      ],
+      "size_mb": 0.31,
+      "checksums": {
+        "sqlite": "8ffa163bb1874b98b9f2121f8c23aee24be4a17366b6af282cf5b71836bfb35f"
+      }
+    },
+    {
+      "module_id": "org.lenders",
+      "distribution": "bundled",
+      "domain": "org",
+      "entity_types": [
+        "org.lending_entity"
+      ],
+      "size_mb": 0.12,
+      "checksums": {
+        "sqlite": "44d7ca7dc87ffa1e50f1c48aa8f2ae4100c50e4b1c546383a174cc4cd4d21817"
+      }
+    },
+    {
+      "module_id": "org.political_parties",
+      "distribution": "bundled",
+      "domain": "org",
+      "entity_types": [
+        "org.political_party"
+      ],
+      "size_mb": 0.12,
+      "checksums": {
+        "sqlite": "92f4b8985c038cf5d76e021a0c347c4ab7b714a9566eacaf5b7d3d4af90893ed"
+      }
+    },
+    {
+      "module_id": "org.companies",
+      "distribution": "bundled",
+      "domain": "org",
+      "entity_types": [
+        "org.company",
+        "org.corporation",
+        "org.subsidiary"
+      ],
+      "size_mb": 0.41,
+      "checksums": {
+        "sqlite": "ecfa816fd4a00310164ee778c6e9a0b62bf7c9d0cbb8e21d9c8084538281bcf6"
+      }
+    },
+    {
+      "module_id": "org.governments",
+      "distribution": "bundled",
+      "domain": "org",
+      "entity_types": [
+        "org.government_organization"
+      ],
+      "size_mb": 1.95,
+      "checksums": {
+        "sqlite": "12a6914f33f102504105e4c536de1827ebf5d8f2eb0894087e285244471907dd"
+      }
+    },
+    {
+      "module_id": "org.data_sources",
+      "distribution": "bundled",
+      "domain": "org",
+      "entity_types": [
+        "org.data_source"
+      ],
+      "size_mb": 0.18,
+      "checksums": {
+        "sqlite": "d7a85eb76c6d13ec9884df5974d350196097cf0aaadcfc840c7676d08190eae7"
+      }
+    }
+  ]
+}

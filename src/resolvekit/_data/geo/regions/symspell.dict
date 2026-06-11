@@ -1,0 +1,1500 @@
+(adb)	1
+(afdb)	1
+(afta)	1
+(amu)	1
+(ancom)	1
+(apec)	1
+(aripo)	1
+(asean)	1
+(bioko)	1
+(bis)	1
+(brics)	1
+(cacm)	1
+(caricom)	1
+(cdb)	1
+(central	1
+(cis)	1
+(cis):	2
+(cmea)	1
+(cocesna)	1
+(comesa)	1
+(dac)	1
+(denmark,	1
+(eapo)	1
+(east)	1
+(eca)	1
+(ece)	1
+(eclac)	1
+(ecowas)	1
+(eea)	1
+(efta)	1
+(emcca)	1
+(emcca),	1
+(epo)	1
+(escap)	1
+(escwa)	1
+(eu)	1
+(eu27)	1
+(eu28)	1
+(exc.	1
+(excl.	15
+(extra-eu27)	1
+(extra-eu28)	1
+(fao)	4
+(former)	1
+(former,	2
+(g20)	1
+(g7)	1
+(g77)	1
+(gatt)	1
+(gcc)	1
+(habitat)	1
+(iadb)	1
+(iaea)	1
+(ibrd)	1
+(icao)	1
+(ida)	1
+(ifad)	1
+(ifc)	1
+(ifni)	1
+(ilo)	1
+(imf)	1
+(imo)	1
+(incl.	5
+(itc)	1
+(itu)	1
+(kurdistan	1
+(laia)	1
+(laia),	1
+(las)	1
+(ldcs)	1
+(ldcs):	4
+(lldcs)	1
+(lldcs):	4
+(macias	1
+(mainland)	1
+(mercosur)	1
+(mru)	1
+(nafta)	1
+(neutral	1
+(oapi)	1
+(oecd)	1
+(oecs)	1
+(oic)	1
+(opec)	1
+(pta)	1
+(rapa)	1
+(rio	1
+(saarc)	1
+(sacu)	1
+(sids)	1
+(sids):	4
+(spanish	1
+(spc)	1
+(spec)	1
+(trust	1
+(unchs)	1
+(unctad)	1
+(undp)	1
+(undro)	1
+(unep)	1
+(unesco)	1
+(unfpa)	1
+(unhcr)	1
+(unicef)	1
+(unido)	1
+(unitar)	1
+(unrwa)	1
+(unu)	1
+(upu)	1
+(waec)	1
+(wb)	1
+(west	1
+(west)	1
+(wfc)	1
+(wfp)	1
+(who)	6
+(wipo)	1
+(wmo)	1
+(wto)	3
+(zanzibar)	1
+20	1
+27	2
+28	2
+77	1
+abu	1
+abu dhabi	1
+advanced	1
+africa	60
+africa)	1
+africa,	5
+africa, regional	1
+africa:	72
+africa: high income	1
+africa: low and middle income	1
+africa: low income	1
+africa: lower-middle income	1
+africa: middle income	1
+africa: upper-middle income	1
+africaine	1
+african	10
+african development bank	1
+african development bank (afdb)	1
+african intellectual property organization (oapi)	1
+african regional intellectual property organization (aripo)	1
+afrique	4
+afrique australe, régional	1
+afrique centrale, régional	1
+afrique de l'est, régional	1
+afrique occidentale, régional	1
+afrique,	1
+afrique, régional	1
+agalega	1
+agence	1
+agence internationale de l'énergie atomique	1
+agency	3
+agreement	3
+agricultural	1
+agriculture	5
+air	1
+ajman	1
+al	2
+america	29
+america,	4
+america, regional	1
+america:	42
+american	6
+american oceania	1
+americas	8
+americas:	6
+americas: high income	1
+americas: low and middle income	1
+americas: low income	1
+americas: lower-middle income	1
+americas: middle income	1
+americas: upper-middle income	1
+amérique	3
+amérique centrale, régional	1
+amérique du sud, régional	1
+amérique,	1
+amérique, régional	1
+and	291
+andean	3
+andean common market (ancom)	1
+andean integration group	1
+antarctic	1
+antarctic fisheries	1
+antarctica	1
+antilles	2
+arab	10
+arab maghreb union (amu)	1
+arab states	1
+arab states: high income	1
+arab states: low and middle income	1
+arab states: low income	1
+arab states: lower-middle income	1
+arab states: middle income	1
+arab states: upper-middle income	1
+area	4
+area:	15
+armenia,	2
+aruba)	2
+ascension	1
+asean	1
+asean free trade area (afta)	1
+asia	114
+asia and oceania	1
+asia and oceania: high income	1
+asia and oceania: low and middle income	1
+asia and oceania: low income	1
+asia and oceania: lower-middle income	1
+asia and oceania: middle income	1
+asia and oceania: upper-middle income	1
+asia and the pacific	1
+asia and the pacific: high income	1
+asia and the pacific: low and middle income	1
+asia and the pacific: low income	1
+asia and the pacific: lower-middle income	1
+asia and the pacific: middle income	1
+asia and the pacific: upper-middle income	1
+asia middle east	1
+asia middle east: high income	1
+asia middle east: low and middle income	1
+asia middle east: low income	1
+asia middle east: lower-middle income	1
+asia middle east: middle income	1
+asia middle east: upper-middle income	1
+asia,	5
+asia, regional	1
+asia-pacific	1
+asia-pacific economic cooperation (apec)	1
+asia:	72
+asia: high income	1
+asia: low and middle income	1
+asia: low income	1
+asia: lower-middle income	1
+asia: middle income	1
+asia: upper-middle income	1
+asian	4
+asian development bank	1
+asian development bank (adb)	1
+asiatique	1
+asie	3
+asie centrale, régional	1
+asie du sud & c., régional	1
+asie du sud, régional	1
+asie,	1
+asie, régional	1
+assistance	4
+associated	1
+association	8
+association internationale de développement	1
+association of southeast asian nations (asean)	1
+atlantic,	6
+atoll	1
+atomic	2
+atomique	1
+australasia	1
+australe,	1
+australia	14
+australia and new zealand	1
+australia and new zealand: high income	1
+australia and new zealand: low and middle income	1
+australia and new zealand: low income	1
+australia and new zealand: lower-middle income	1
+australia and new zealand: middle income	1
+australia and new zealand: upper-middle income	1
+australia,	1
+australia, new zealand and south africa	1
+australian	1
+australian oceania	1
+aviation	1
+azerbaijan,	2
+azores	1
+azores islands	1
+bangkok	1
+bangkok agreement	1
+bank	12
+bank for international settlements (bis)	1
+bank)	2
+banque	5
+banque africaine de développement	1
+banque asiatique de développement	1
+banque de développement des caraïbes	1
+banque interaméricaine de développement	1
+banque internationale pour la reconstruction et le développement	1
+beef	1
+beef island	1
+belgium	1
+belgium and luxembourg	1
+benelux	1
+benelux economic union	1
+bioko)	1
+biyogo	1
+biyogo,	1
+black	1
+bonaire	1
+bonin	1
+brandon	1
+brazil,	1
+brazil, russian federation, india, china and south africa (brics)	1
+brics	1
+burden	21
+bureau	1
+by	1
+c.,	1
+cameroon	2
+cameroon (east)	1
+cameroon (west)	1
+canal	1
+canary	1
+canary islands	1
+canton	2
+canton and enderbury islands	1
+caraïbes	2
+caraïbes et amérique centrale, régional	1
+caraïbes,	1
+caraïbes, régional	1
+caribbean	15
+caribbean & central america, regional	1
+caribbean community and common market (caricom)	1
+caribbean development bank	1
+caribbean development bank (cdb)	1
+caribbean,	1
+caribbean, regional	1
+caribbean:	12
+caribbean: high income	1
+caribbean: low and middle income	1
+caribbean: low income	1
+caribbean: lower-middle income	1
+caribbean: middle income	1
+caribbean: upper-middle income	1
+caroline	1
+caroline islands	1
+caucasus	2
+caucasus and central asia	1
+cee-onu	1
+centers	2
+central	103
+central africa	2
+central africa: high income	1
+central africa: low and middle income	1
+central africa: low income	1
+central africa: lower-middle income	1
+central africa: middle income	1
+central africa: upper-middle income	1
+central america	1
+central america, regional	1
+central america: high income	1
+central america: low and middle income	1
+central america: low income	1
+central america: lower-middle income	1
+central america: middle income	1
+central america: upper-middle income	1
+central american common market (cacm)	1
+central american corporation for air navigation services (cocesna)	1
+central and eastern europe	1
+central and eastern europe: high income	1
+central and eastern europe: low and middle income	1
+central and eastern europe: low income	1
+central and eastern europe: lower-middle income	1
+central and eastern europe: middle income	1
+central and eastern europe: upper-middle income	1
+central and south america	1
+central and south america: high income	1
+central and south america: low and middle income	1
+central and south america: low income	1
+central and south america: lower-middle income	1
+central and south america: middle income	1
+central and south america: upper-middle income	1
+central and southern asia	1
+central and southern asia (excl. india)	1
+central and southern asia: high income	1
+central and southern asia: low and middle income	1
+central and southern asia: low income	1
+central and southern asia: lower-middle income	1
+central and southern asia: middle income	1
+central and southern asia: upper-middle income	1
+central and western asia	1
+central and western asia: high income	1
+central and western asia: low and middle income	1
+central and western asia: low income	1
+central and western asia: lower-middle income	1
+central and western asia: middle income	1
+central and western asia: upper-middle income	1
+central asia	1
+central asia and europe	1
+central asia and europe: high income	1
+central asia and europe: low and middle income	1
+central asia and europe: low income	1
+central asia and europe: lower-middle income	1
+central asia and europe: middle income	1
+central asia and europe: upper-middle income	1
+central asia and southern asia	1
+central asia, regional	1
+central asia: high income	1
+central asia: low and middle income	1
+central asia: low income	1
+central asia: lower-middle income	1
+central asia: middle income	1
+central asia: upper-middle income	1
+central europe	1
+central europe: high income	1
+central europe: low and middle income	1
+central europe: low income	1
+central europe: lower-middle income	1
+central europe: middle income	1
+central europe: upper-middle income	1
+centrale,	4
+centre	2
+ceuta	1
+ceuta and melilla (spanish north africa)	1
+children's	1
+china	5
+china (incl. taiwan province)	1
+china)	2
+cis	1
+civil	1
+co-operation	1
+commerce	1
+commission	6
+commissioner	1
+committee	3
+common	5
+common market for eastern and southern africa (comesa)	1
+commonwealth	4
+commonwealth of independent states (cis)	1
+commonwealth of independent states (cis): asia	1
+commonwealth of independent states (cis): europe	1
+commonwealth of nations	1
+community	8
+conference	4
+conférence	1
+conférence des nations unies sur le commerce et le développement	1
+convention	1
+cook	1
+cook islands-niue	1
+cooperation	5
+cooperation council for the arab states of the gulf (gcc)	1
+corporation	3
+corresponding	1
+council	2
+council for mutual economic assistance (cmea)	1
+countries	24
+countries unallocated by income	1
+countries,	1
+croix	1
+cuby	1
+cultural	1
+cunha	1
+cunha)	1
+customs	1
+cyprus,	2
+da	2
+dac	2
+dac countries	1
+dac members	1
+de	8
+democratic	3
+democratic people's republic of korea and republic of korea	1
+democratic yemen	1
+denmark,	1
+denmark, greenland, faeroe islands	1
+dependency	1
+des	2
+developed	26
+developed economies	1
+developed economies: americas	1
+developed economies: asia	1
+developed economies: asia and oceania	1
+developed economies: central asia	1
+developed economies: eastern asia	1
+developed economies: eastern europe	1
+developed economies: europe	1
+developed economies: north america	1
+developed economies: northern europe	1
+developed economies: oceania	1
+developed economies: south-eastern asia	1
+developed economies: south-eastern europe	1
+developed economies: southern asia	1
+developed economies: southern europe	1
+developed economies: western asia	1
+developed economies: western europe	1
+developing	41
+developing countries, unspecified	1
+developing economies	1
+developing economies: africa	1
+developing economies: americas	1
+developing economies: asia	1
+developing economies: caribbean	1
+developing economies: central africa	1
+developing economies: central america	1
+developing economies: central asia	1
+developing economies: eastern africa	1
+developing economies: eastern asia	1
+developing economies: eastern mediterranean	1
+developing economies: latin america	1
+developing economies: latin america and the caribbean	1
+developing economies: melanesia	1
+developing economies: micronesia	1
+developing economies: middle east	1
+developing economies: north america	1
+developing economies: north-west africa	1
+developing economies: northern africa	1
+developing economies: oceania	1
+developing economies: polynesia	1
+developing economies: south america	1
+developing economies: south-eastern asia	1
+developing economies: southern africa	1
+developing economies: southern asia	1
+developing economies: sub-saharan africa	1
+developing economies: western africa	1
+developing economies: western asia	1
+development	21
+development assistance committee (dac)	1
+development assistance committee countries	1
+development assistance committee members	1
+dhabi	1
+disaster	1
+disease	21
+du	6
+dubai	1
+développement	7
+développement,	1
+eac	1
+east	21
+east africa	1
+east african community	2
+east asia	1
+east europe	1
+east,	1
+east:	12
+easter	1
+easter island	1
+eastern	90
+eastern africa	1
+eastern africa, regional	1
+eastern africa: high income	1
+eastern africa: low and middle income	1
+eastern africa: low income	1
+eastern africa: lower-middle income	1
+eastern africa: middle income	1
+eastern africa: upper-middle income	1
+eastern and south-eastern asia	1
+eastern and south-eastern asia and oceania	1
+eastern and south-eastern asia and oceania: high income	1
+eastern and south-eastern asia and oceania: low and middle income	1
+eastern and south-eastern asia and oceania: low income	1
+eastern and south-eastern asia and oceania: lower-middle income	1
+eastern and south-eastern asia and oceania: middle income	1
+eastern and south-eastern asia and oceania: upper-middle income	1
+eastern and south-eastern asia: high income	1
+eastern and south-eastern asia: low and middle income	1
+eastern and south-eastern asia: low income	1
+eastern and south-eastern asia: lower-middle income	1
+eastern and south-eastern asia: middle income	1
+eastern and south-eastern asia: upper-middle income	1
+eastern and southern africa	1
+eastern and southern africa: high income	1
+eastern and southern africa: low and middle income	1
+eastern and southern africa: low income	1
+eastern and southern africa: lower-middle income	1
+eastern and southern africa: middle income	1
+eastern and southern africa: upper-middle income	1
+eastern asia	1
+eastern asia (excl. china)	1
+eastern asia (excl. japan and china)	1
+eastern asia (excl. japan)	1
+eastern asia and the pacific	1
+eastern asia and the pacific: high income	1
+eastern asia and the pacific: low and middle income	1
+eastern asia and the pacific: low income	1
+eastern asia and the pacific: lower-middle income	1
+eastern asia and the pacific: middle income	1
+eastern asia and the pacific: upper-middle income	1
+eastern asia: high income	1
+eastern asia: low and middle income	1
+eastern asia: low income	1
+eastern asia: lower-middle income	1
+eastern asia: middle income	1
+eastern asia: upper-middle income	1
+eastern europe	1
+eastern europe and central asia	1
+eastern europe and central asia: high income	1
+eastern europe and central asia: low and middle income	1
+eastern europe and central asia: low income	1
+eastern europe and central asia: lower-middle income	1
+eastern europe and central asia: middle income	1
+eastern europe and central asia: upper-middle income	1
+eastern europe: high income	1
+eastern europe: low and middle income	1
+eastern europe: low income	1
+eastern europe: lower-middle income	1
+eastern europe: middle income	1
+eastern europe: upper-middle income	1
+eastern mediterranean	1
+eastern mediterranean: high income countries	1
+eastern mediterranean: low and middle income countries	1
+eastern mediterranean: low-middle income countries	1
+eastern mediterranean: lower-middle income countries	1
+eastern mediterranean: middle income countries	1
+eastern mediterranean: upper-middle income countries	1
+economic	16
+economic and monetary community of central africa (emcca)	1
+economic and monetary community of central africa (emcca), not else specified	1
+economic community of the great lakes countries	1
+economic community of west african states (ecowas)	1
+economies	2
+economies:	43
+educational,	1
+egypt	1
+else	2
+en	1
+enderbury	2
+energy	2
+england	1
+england and wales	1
+environment	1
+equatorial	2
+equatorial guinea (macias nguema biyogo, bioko)	1
+equatorial guinea (rio muni)	1
+et	4
+etats	1
+etats ex-yougoslavie non spécifié	1
+ethiopia	1
+ethiopia (former)	1
+eu	1
+eu institutions	1
+eurasian	1
+eurasian patent organization (eapo)	1
+euro	1
+euro area	1
+europe	46
+europe and central asia excluding high income	1
+europe and northern america	1
+europe and northern america: high income	1
+europe and northern america: low and middle income	1
+europe and northern america: low income	1
+europe and northern america: lower-middle income	1
+europe and northern america: middle income	1
+europe and northern america: upper-middle income	1
+europe,	2
+europe, regional	1
+europe, régional	1
+europe:	60
+europe: high income	1
+europe: low and middle income	1
+europe: low income	1
+europe: lower-middle income	1
+europe: middle income	1
+europe: upper-middle income	1
+european	6
+european economic area (eea)	1
+european free trade association (efta)	1
+european patent office (epo)	1
+european union (eu) institutions	1
+european union 27 (eu27)	1
+european union 28 (eu28)	1
+eustatius	1
+ex-yougoslavie	1
+ex-yugoslavia	1
+excl.	3
+excluding	13
+exporting	1
+extra-european	2
+extra-european union 27 (extra-eu27)	1
+extra-european union 28 (extra-eu28)	1
+extrême-orient,	1
+extrême-orient, régional	1
+faeroe	1
+fao	15
+fao major fishing area: atlantic, eastern central	1
+fao major fishing area: atlantic, northeast	1
+fao major fishing area: atlantic, northwest	1
+fao major fishing area: atlantic, southeast	1
+fao major fishing area: atlantic, southwest	1
+fao major fishing area: atlantic, western central	1
+fao major fishing area: indian ocean, eastern	1
+fao major fishing area: indian ocean, western	1
+fao major fishing area: mediterranean and black sea	1
+fao major fishing area: pacific, eastern central	1
+fao major fishing area: pacific, northeast	1
+fao major fishing area: pacific, northwest	1
+fao major fishing area: pacific, southeast	1
+fao major fishing area: pacific, southwest	1
+fao major fishing area: pacific, western central	1
+far	1
+far east asia, regional	1
+federal	1
+federal republic of germany	1
+federation,	1
+fida	1
+finance	2
+financière	1
+fisheries	1
+fishing	15
+fnuap	1
+fond	1
+fond monétaire international	1
+food	7
+food and agriculture organisation	1
+food and agriculture organization (fao)	1
+food and agriculture organization (fao) international centers	1
+food and agriculture organization (fao) regional centers	1
+food and agriculture organization (fao) regional office for asia and the pacific (rapa)	1
+for	22
+france	2
+france and monaco	1
+france and switzerland	1
+free	3
+fujairah	1
+fund	5
+g7	1
+gaza	1
+gaza strip	1
+general	1
+general agreement on tariffs and trade (gatt)	1
+geographies	1
+geography	1
+georgia)	2
+german	1
+german democratic republic	1
+germany	1
+global	21
+global burden of disease region: andean latin america	1
+global burden of disease region: asia pacific	1
+global burden of disease region: australasia	1
+global burden of disease region: caribbean	1
+global burden of disease region: central asia	1
+global burden of disease region: central europe	1
+global burden of disease region: central latin america	1
+global burden of disease region: central sub-saharan africa	1
+global burden of disease region: east asia	1
+global burden of disease region: eastern europe	1
+global burden of disease region: eastern sub-saharan africa	1
+global burden of disease region: north africa and middle east	1
+global burden of disease region: north america	1
+global burden of disease region: oceania	1
+global burden of disease region: south asia	1
+global burden of disease region: southeast asia	1
+global burden of disease region: southern latin america	1
+global burden of disease region: southern sub-saharan africa	1
+global burden of disease region: tropical latin america	1
+global burden of disease region: western europe	1
+global burden of disease region: western sub-saharan africa	1
+great	1
+greenland,	1
+group	5
+group of 20 (g20)	1
+group of 7	1
+group of 7 (g7)	1
+group of 77 (g77)	1
+guinea	2
+gulf	1
+hcr	1
+health	7
+helena	1
+high	68
+holy	1
+human	1
+ifad	1
+ifni	1
+ifni)	1
+in	2
+incl.	1
+including	1
+income	383
+independent	3
+india	3
+india (incl. sikkim)	2
+india)	2
+india,	1
+indian	2
+indies	2
+industrial	1
+institute	1
+institutions	2
+integration	3
+intellectual	3
+inter-american	2
+inter-american development bank	1
+inter-american development bank (iadb)	1
+interaméricaine	1
+international	21
+international atomic energy agency	1
+international atomic energy agency (iaea)	1
+international bank for reconstruction and development	1
+international bank for reconstruction and development (ibrd)	1
+international civil aviation organization (icao)	1
+international development association	1
+international development association (ida)	1
+international finance corporation	1
+international finance corporation (ifc)	1
+international fund for agricultural development (ifad)	1
+international labour organisation	1
+international labour organization (ilo)	1
+international maritime organization (imo)	1
+international monetary fund	1
+international monetary fund (imf)	1
+international telecommunication union (itu)	1
+international trade centre (itc)	1
+internationale	4
+iran)	2
+iraq	2
+iraq (central region)	1
+iraq (kurdistan region)	1
+ireland	1
+islamic	1
+island	13
+islands	13
+islands)	1
+islands-niue	1
+israel	2
+israel,	1
+israel, japan and south africa	1
+italy	1
+italy and san marino	1
+italy,	1
+italy, san marino and the holy see	1
+jan	1
+japan	4
+japan (excl. okinawa)	1
+japan (excl. okinawa, bonin and volcano islands)	1
+japan)	1
+john	1
+johnston	1
+johnston island	1
+jordan	1
+jordan (excl. the west bank)	1
+khaimah	1
+kingman	2
+kingman reef	2
+kiribati,	1
+kiribati, canton and enderbury islands	1
+korea	2
+kosovo	1
+kuwait	2
+kuwait (exc. neutral zone)	1
+kuwait (neutral zone)	1
+l'agriculture	1
+l'alimentation	1
+l'est,	1
+l'énergie	1
+la	2
+labour	2
+lac	1
+lakes	1
+landlocked	5
+landlocked developing countries (lldcs)	1
+landlocked developing countries (lldcs): africa	1
+landlocked developing countries (lldcs): americas	1
+landlocked developing countries (lldcs): asia	1
+landlocked developing countries (lldcs): europe	1
+latin	28
+latin america	2
+latin america & the caribbean	1
+latin america and caribbean excluding high income	1
+latin america and the caribbean	2
+latin america and the caribbean: high income	1
+latin america and the caribbean: low and middle income	1
+latin america and the caribbean: low income	1
+latin america and the caribbean: lower-middle income	1
+latin america and the caribbean: middle income	1
+latin america and the caribbean: upper-middle income	1
+latin america: high income	1
+latin america: low and middle income	1
+latin america: low income	1
+latin america: lower-middle income	1
+latin america: middle income	1
+latin america: upper-middle income	1
+latin american integration association (laia)	1
+latin american integration association (laia), not else specified	1
+le	3
+league	1
+league of arab states (las)	1
+least	5
+least developed countries (ldcs)	1
+least developed countries (ldcs): africa	1
+least developed countries (ldcs): americas	1
+least developed countries (ldcs): asia	1
+least developed countries (ldcs): oceania	1
+leeward	1
+leeward islands	1
+less	1
+less developed regions	1
+liechtenstein	1
+lome	1
+low	125
+low-middle	1
+lower-middle	63
+luxembourg	1
+macias	1
+macias nguema biyogo (bioko)	1
+madcts	1
+maghreb	1
+major	15
+malaysia,	1
+malaysia, sabah and sarawak	1
+mano	1
+mano river union (mru)	1
+marino	2
+maritime	1
+market	5
+mauritius	2
+mauritius island	1
+mauritius island and rodrigues island	1
+mayen	1
+mdg	13
+mdg region: caucasus and central asia	1
+mdg region: developed regions	1
+mdg region: developing regions	1
+mdg region: eastern asia	1
+mdg region: eastern asia excl. china	1
+mdg region: latin america and the caribbean	1
+mdg region: northern africa	1
+mdg region: oceania	1
+mdg region: south-eastern asia	1
+mdg region: southern asia	1
+mdg region: southern asia excl. india	1
+mdg region: sub-saharan africa	1
+mdg region: western asia	1
+mediterranean	4
+mediterranean:	6
+melanesia	1
+melanesia,	1
+melanesia, regional	1
+melanesia:	6
+melanesia: high income	1
+melanesia: low and middle income	1
+melanesia: low income	1
+melanesia: lower-middle income	1
+melanesia: middle income	1
+melanesia: upper-middle income	1
+melilla	1
+member	8
+members	2
+mena	1
+meteorological	1
+micronesia	8
+micronesia and polynesia	1
+micronesia and polynesia: high income	1
+micronesia and polynesia: low and middle income	1
+micronesia and polynesia: low income	1
+micronesia and polynesia: lower-middle income	1
+micronesia and polynesia: middle income	1
+micronesia and polynesia: upper-middle income	1
+micronesia,	1
+micronesia, regional	1
+micronesia:	6
+micronesia: high income	1
+micronesia: low and middle income	1
+micronesia: low income	1
+micronesia: lower-middle income	1
+micronesia: middle income	1
+micronesia: upper-middle income	1
+micronésie,	1
+micronésie, régional	1
+middle	160
+middle africa	1
+middle africa, regional	1
+middle africa: high income	1
+middle africa: low and middle income	1
+middle africa: low income	1
+middle africa: lower-middle income	1
+middle africa: middle income	1
+middle africa: upper-middle income	1
+middle east	2
+middle east and north africa	1
+middle east and north africa excluding high income	1
+middle east and north africa: high income	1
+middle east and north africa: low and middle income	1
+middle east and north africa: low income	1
+middle east and north africa: lower-middle income	1
+middle east and north africa: middle income	1
+middle east and north africa: upper-middle income	1
+middle east, regional	1
+middle east: high income	1
+middle east: low and middle income	1
+middle east: low income	1
+middle east: lower-middle income	1
+middle east: middle income	1
+middle east: upper-middle income	1
+midway	1
+midway islands	1
+miscellaneous	1
+monaco	1
+mondiale	1
+monetary	4
+monétaire	1
+more	1
+more advanced developed countries and territories	1
+morocco	2
+morocco (excl. ifni)	1
+morocco (ifni)	1
+morocco,	1
+morocco, ifni	1
+moyen-orient,	1
+moyen-orient, régional	1
+muni)	1
+mutual	1
+mélanésie,	1
+mélanésie, régional	1
+namibia	1
+nations	18
+navigation	1
+near	1
+netherlands	2
+netherlands antilles (former, excl. aruba)	1
+netherlands antilles (former, incl. aruba)	1
+neutral	1
+new	17
+new zealand and tokelau	1
+new zealand oceania	1
+nguema	2
+non	2
+non-oecd	1
+non-oecd:	8
+non-oecd: africa	1
+non-oecd: americas	1
+non-oecd: asia	1
+non-oecd: eastern mediterranean	1
+non-oecd: europe	1
+non-oecd: oceania	1
+non-oecd: south-east asia	1
+non-oecd: western pacific	1
+nord	1
+nord du sahara, régional	1
+north	23
+north africa	1
+north america: high income	1
+north america: low and middle income	1
+north america: low income	1
+north america: lower-middle income	1
+north america: middle income	1
+north america: upper-middle income	1
+north american free trade agreement (nafta)	1
+north europe	1
+north of sahara, regional	1
+north-west	8
+north-west africa	1
+north-west africa: high income	1
+north-west africa: low and middle income	1
+north-west africa: low income	1
+north-west africa: lower-middle income	1
+north-west africa: middle income	1
+north-west africa: upper-middle income	1
+northeast	2
+northern	42
+northern africa	2
+northern africa (excl. sudan)	1
+northern africa (excl. sudan) and western asia (incl. iran)	1
+northern africa and western asia	1
+northern africa and western asia: high income	1
+northern africa and western asia: low and middle income	1
+northern africa and western asia: low income	1
+northern africa and western asia: lower-middle income	1
+northern africa and western asia: middle income	1
+northern africa and western asia: upper-middle income	1
+northern africa: high income	1
+northern africa: low and middle income	1
+northern africa: low income	1
+northern africa: lower-middle income	1
+northern africa: middle income	1
+northern africa: upper-middle income	1
+northern america	1
+northern america: high income	1
+northern america: low and middle income	1
+northern america: low income	1
+northern america: lower-middle income	1
+northern america: middle income	1
+northern america: upper-middle income	1
+northern europe	1
+northern europe: high income	1
+northern europe: low and middle income	1
+northern europe: low income	1
+northern europe: lower-middle income	1
+northern europe: middle income	1
+northern europe: upper-middle income	1
+northern ireland	1
+northern,	7
+northern, southern and western europe	1
+northern, southern and western europe: high income	1
+northern, southern and western europe: low and middle income	1
+northern, southern and western europe: low income	1
+northern, southern and western europe: lower-middle income	1
+northern, southern and western europe: middle income	1
+northern, southern and western europe: upper-middle income	1
+northwest	2
+norway	2
+norway including svalbard and jan mayen islands	1
+not	2
+occidentale,	1
+ocean,	2
+oceania	21
+oceania excluding australia and new zealand	1
+oceania excluding australia and new zealand: high income	1
+oceania excluding australia and new zealand: low and middle income	1
+oceania excluding australia and new zealand: low income	1
+oceania excluding australia and new zealand: lower-middle income	1
+oceania excluding australia and new zealand: middle income	1
+oceania excluding australia and new zealand: upper-middle income	1
+oceania,	1
+oceania, regional	1
+oceania:	18
+oceania: high income	1
+oceania: low and middle income	1
+oceania: low income	1
+oceania: lower-middle income	1
+oceania: middle income	1
+oceania: upper-middle income	1
+océanie,	1
+océanie, régional	1
+oecd:	5
+oecd: americas	1
+oecd: asia	1
+oecd: europe	1
+oecd: oceania	1
+oecd: western pacific	1
+of	50
+office	2
+okinawa	1
+okinawa)	1
+okinawa,	1
+on	3
+organisation	7
+organisation for economic co-operation and development (oecd)	1
+organisation internationale du travail	1
+organisation mondiale de la santé	1
+organisation pour l'alimentation et l'agriculture	1
+organization	27
+organization of eastern caribbean states (oecs)	1
+organization of the islamic conference (oic)	1
+organization of the petroleum exporting countries (opec)	1
+pacific	14
+pacific islands (trust territory)	1
+pacific,	6
+pacific:	30
+pacific: high income	1
+pacific: low and middle income	1
+pacific: low income	1
+pacific: lower-middle income	1
+pacific: middle income	1
+pacific: upper-middle income	1
+palestine	2
+palmyra	1
+palmyra atoll	1
+pam	1
+patent	3
+patent cooperation treaty	1
+pays	1
+pays en développement, non spécifié	1
+people's	1
+petroleum	1
+pnud	1
+pnue	1
+polynesia	2
+polynesia,	1
+polynesia, regional	1
+polynesia:	12
+polynesia: high income	1
+polynesia: low and middle income	1
+polynesia: low income	1
+polynesia: lower-middle income	1
+polynesia: middle income	1
+polynesia: upper-middle income	1
+polynésie,	1
+polynésie, régional	1
+population	1
+postal	1
+pour	2
+preferential	1
+preferential trade area for eastern and southern african states (pta)	1
+programme	3
+property	3
+province	1
+province)	1
+qaiwain	1
+ras	1
+ras al khaimah	1
+reconstruction	3
+reef	2
+refugees	2
+region	1
+region)	2
+region:	34
+regional	27
+regions	3
+relief	2
+republic	6
+republics	1
+research	1
+river	1
+rodrigues	2
+rodrigues island	1
+ross	1
+ross dependency	1
+russian	1
+ryukyu	1
+ryukyu islands	1
+régional	23
+saba	1
+sabah	1
+sahara,	4
+saharan	2
+saint	5
+saint brandon and agalega	1
+saint croix	1
+saint helena (excl. ascension and tristan da cunha)	1
+saint john	1
+saint thomas	1
+san	2
+santé	1
+sarawak	1
+sark	1
+scandinavia	1
+scandinavia (denmark, norway and sweden)	1
+scientific	1
+scotland	1
+sea	1
+see	1
+services	1
+settlements	2
+sharjah	1
+sikkim)	2
+sint	1
+sint eustatius	1
+small	5
+small island developing states (sids)	1
+small island developing states (sids): africa	1
+small island developing states (sids): americas	1
+small island developing states (sids): asia	1
+small island developing states (sids): oceania	1
+social	2
+socialist	1
+société	1
+société financière international	1
+source	1
+source geographies without a corresponding geography in undata	1
+south	36
+south & central asia, regional	1
+south africa and namibia	1
+south africa region	1
+south america, regional	1
+south america: high income	1
+south america: low and middle income	1
+south america: low income	1
+south america: lower-middle income	1
+south america: middle income	1
+south america: upper-middle income	1
+south asia	2
+south asia, regional	1
+south asia: high income	1
+south asia: low and middle income	1
+south asia: low income	1
+south asia: lower-middle income	1
+south asia: middle income	1
+south asia: upper-middle income	1
+south asian association for regional cooperation (saarc)	1
+south europe	1
+south of sahara, regional	1
+south pacific bureau for economic cooperation (spec)	1
+south pacific commission (spc)	1
+south-east	3
+south-east asia	1
+south-eastern	41
+south-eastern asia	1
+south-eastern asia and the pacific	1
+south-eastern asia and the pacific: high income	1
+south-eastern asia and the pacific: low and middle income	1
+south-eastern asia and the pacific: low income	1
+south-eastern asia and the pacific: lower-middle income	1
+south-eastern asia and the pacific: middle income	1
+south-eastern asia and the pacific: upper-middle income	1
+south-eastern asia: high income	1
+south-eastern asia: low and middle income	1
+south-eastern asia: low income	1
+south-eastern asia: lower-middle income	1
+south-eastern asia: middle income	1
+south-eastern asia: upper-middle income	1
+south-eastern europe	1
+south-eastern europe and cis	1
+south-eastern europe: high income	1
+south-eastern europe: low and middle income	1
+south-eastern europe: low income	1
+south-eastern europe: lower-middle income	1
+south-eastern europe: middle income	1
+south-eastern europe: upper-middle income	1
+southeast	5
+southeast asia	1
+southern	59
+southern africa	1
+southern africa, regional	1
+southern africa: high income	1
+southern africa: low and middle income	1
+southern africa: low income	1
+southern africa: lower-middle income	1
+southern africa: middle income	1
+southern africa: upper-middle income	1
+southern african customs union (sacu)	1
+southern asia	1
+southern asia (excl. india)	1
+southern asia (excl. iran)	1
+southern asia: high income	1
+southern asia: low and middle income	1
+southern asia: low income	1
+southern asia: lower-middle income	1
+southern asia: middle income	1
+southern asia: upper-middle income	1
+southern common market (mercosur)	1
+southern europe	1
+southern europe: high income	1
+southern europe: low and middle income	1
+southern europe: low income	1
+southern europe: lower-middle income	1
+southern europe: middle income	1
+southern europe: upper-middle income	1
+southwest	2
+soviet	1
+specified	2
+spécifié	2
+state	1
+state of palestine (west bank)	1
+states	21
+states ex-yugoslavia unspecified	1
+states:	11
+strip	1
+sub	2
+sub saharan africa	1
+sub saharan africa excluding high income	1
+sub-saharan	16
+sub-saharan africa	3
+sub-saharan africa (incl. sudan)	1
+sub-saharan africa: high income	1
+sub-saharan africa: low and middle income	1
+sub-saharan africa: low income	1
+sub-saharan africa: lower-middle income	1
+sub-saharan africa: middle income	1
+sub-saharan africa: upper-middle income	1
+sud	2
+sud du sahara, régional	1
+sud,	2
+sudan)	3
+suez	1
+suez canal	1
+sur	1
+svalbard	1
+sweden)	1
+switzerland	2
+switzerland and liechtenstein	1
+taiwan	2
+taiwan province of china	1
+tanzania	2
+tariffs	1
+telecommunication	1
+territories	1
+territory)	1
+the	45
+the caribbean	1
+the lome convention	1
+thomas	1
+tokelau	1
+trade	11
+training	1
+transition	2
+transition countries	1
+transition countries of south-eastern europe	1
+travail	1
+treaty	2
+tristan	2
+tristan da cunha	1
+tropical	1
+umm	1
+umm al qaiwain	1
+un	5
+un economic and social commission for asia and the pacific (escap)	1
+un economic and social commission for western asia (escwa)	1
+un economic commission for africa (eca)	1
+un economic commission for europe (ece)	1
+un economic commission for latin america and the caribbean (eclac)	1
+unallocated	1
+undata	1
+undp	1
+unece	1
+unep	1
+unfpa	1
+unhcr	1
+unicef	2
+unies	1
+union	12
+union of soviet socialist republics	1
+united	18
+united nations centre for human settlements (unchs) (habitat)	1
+united nations children's fund (unicef)	1
+united nations conference on trade and development	1
+united nations conference on trade and development (unctad)	1
+united nations development programme (undp)	1
+united nations disaster relief organization (undro)	1
+united nations educational, scientific and cultural organization (unesco)	1
+united nations environment programme (unep)	1
+united nations high commissioner for refugees (unhcr)	1
+united nations industrial development organization (unido)	1
+united nations institute for training and research (unitar)	1
+united nations member states	1
+united nations population fund (unfpa)	1
+united nations relief and works agency for palestine refugees in the near east (unrwa)	1
+united nations university (unu)	1
+united republic of tanzania (mainland)	1
+united republic of tanzania (zanzibar)	1
+united states miscellaneous pacific islands	1
+universal	1
+universal postal union (upu)	1
+university	1
+unrwa	2
+unspecified	2
+upper-middle	63
+volcano	1
+wake	1
+wake island	1
+wales	1
+west	15
+west africa	1
+west african economic community (waec)	1
+west and central africa	1
+west and central africa: high income	1
+west and central africa: low and middle income	1
+west and central africa: low income	1
+west and central africa: lower-middle income	1
+west and central africa: middle income	1
+west and central africa: upper-middle income	1
+west asia	1
+west europe	1
+west indies	1
+west indies associated states	1
+western	68
+western africa	1
+western africa, regional	1
+western africa: high income	1
+western africa: low and middle income	1
+western africa: low income	1
+western africa: lower-middle income	1
+western africa: middle income	1
+western africa: upper-middle income	1
+western asia	1
+western asia (excl. armenia, azerbaijan, cyprus, israel and georgia)	1
+western asia (excl. armenia, azerbaijan, cyprus, israel and georgia) and egypt	1
+western asia: high income	1
+western asia: low and middle income	1
+western asia: low income	1
+western asia: lower-middle income	1
+western asia: middle income	1
+western asia: upper-middle income	1
+western europe	2
+western europe: high income	1
+western europe: low and middle income	1
+western europe: low income	1
+western europe: lower-middle income	1
+western europe: middle income	1
+western europe: upper-middle income	1
+western pacific	1
+western pacific: high income	1
+western pacific: low and middle income	1
+western pacific: low income	1
+western pacific: lower-middle income	1
+western pacific: middle income	1
+western pacific: upper-middle income	1
+wfp	1
+windward	1
+windward islands	1
+without	1
+works	1
+world	17
+world bank (wb)	1
+world excluding brics	1
+world excluding china	1
+world food conference (wfc)	1
+world food programme (wfp)	1
+world health organisation	1
+world health organization (who)	1
+world health organization (who) member states: africa	1
+world health organization (who) member states: americas	1
+world health organization (who) member states: europe	1
+world health organization (who) member states: south-east asia	1
+world health organization (who) member states: western pacific	1
+world intellectual property organization (wipo)	1
+world meteorological organization (wmo)	1
+world trade organization (wto)	1
+world trade organization (wto) developed member states	1
+world trade organization (wto) developing member states	1
+world:	6
+world: high income	1
+world: low and middle income	1
+world: low income	1
+world: lower-middle income	1
+world: middle income	1
+world: upper-middle income	1
+yaounde	1
+yaounde treaty states	1
+yemen	1
+zealand	5
+zealand:	12
+zone)	2

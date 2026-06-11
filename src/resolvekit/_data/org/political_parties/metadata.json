@@ -1,0 +1,44 @@
+{
+  "datapack_id": "org.political_parties-v2026.06",
+  "module_id": "org.political_parties",
+  "domain_pack_id": "org",
+  "module_dependencies": [],
+  "entity_schema_version": "1.0",
+  "feature_schema_version": "org.features.v1",
+  "normalizer_version": "casefold.1",
+  "index_versions": {
+    "fts": "fts5",
+    "symspell": "symspell.dict"
+  },
+  "build_timestamp": "2026-05-31T15:20:15.388643+00:00",
+  "source_datasets": [
+    "datacommons"
+  ],
+  "artifacts": {
+    "symspell": "symspell.dict"
+  },
+  "description": null,
+  "checksums": {
+    "sqlite": "92f4b8985c038cf5d76e021a0c347c4ab7b714a9566eacaf5b7d3d4af90893ed",
+    "symspell": "cb9ef012b62fab03da377785a8612cb42807886f3523e568215fe48a92c016ff"
+  },
+  "distribution": "bundled",
+  "remote_artifacts": null,
+  "data_version": "2026.06",
+  "min_resolvekit_version": "0.1.0a1",
+  "pack_type": "base",
+  "store_type": "sqlite",
+  "store_file": "entities.sqlite",
+  "link_keys": null,
+  "base_module_ids": null,
+  "allow_new_entities": false,
+  "quality_metrics": {
+    "entity_count": 79,
+    "names_count": 79,
+    "codes_count": 79,
+    "relations_count": 0,
+    "names_coverage": 1.0,
+    "codes_coverage": 1.0,
+    "relations_density": 0.0
+  }
+}

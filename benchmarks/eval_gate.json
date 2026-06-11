@@ -1,0 +1,6 @@
+{
+  "dataset": "eval_geo",
+  "tool": "resolvekit",
+  "min_accuracy": 0.82,
+  "note": "resolvekit overall accuracy on the curated geo eval set must not drop below this floor. Pinned at round(0.8747 - 0.05, 2) from the 2026-06-08 baseline (geo-only eval_geo, 367 rows measured after warmup, deep geo tiers loaded). After an intentional eval-data change, re-run the eval pass and repin: min_accuracy = round(measured - 0.05, 2)."
+}

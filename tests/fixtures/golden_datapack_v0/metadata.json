@@ -1,0 +1,15 @@
+{
+  "datapack_id": "geo.countries-v0.0.1",
+  "module_id": "geo.countries",
+  "domain_pack_id": "geo",
+  "entity_schema_version": "1.0",
+  "feature_schema_version": "geo.features.v1",
+  "normalizer_version": "casefold.1",
+  "build_timestamp": "2024-01-01T00:00:00Z",
+  "source_datasets": [
+    "geonames"
+  ],
+  "checksums": {
+    "sqlite": "f064269b50d8b0ec18bff3e46d70c670e2afcbd95e7349b234c79e7ee2a2a156"
+  }
+}

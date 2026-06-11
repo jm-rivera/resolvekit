@@ -1,0 +1,468 @@
+query_id,text,expected_ids,language,entity_type,category,difficulty,capabilities,source
+3ae68d2880e2b3c5,Samoa,"country/WSM,country/ASM",en,country,canonical,hard,,benchmark
+24ae2821ec0c20d5,Soudan,country/SDN,en,country,canonical,medium,,benchmark
+c6157c12600185ec,North Carolina,geoId/37,en,admin1,canonical,easy,,curated-review
+00ef0dfcfa774241,Acelanus,wikidataId/Q4673074,en,city,canonical,easy,,benchmark
+86b37be9ededa141,Gibraltar,country/GIB,en,country,canonical,easy,,benchmark
+0b16c8aa4d53311a,Sinaloa,wikidataId/Q80252,en,admin1,canonical,easy,,curated-review
+4684e21d3fb07fba,Castagnola-Cassalate,wikidataId/Q678128,en,admin2,canonical,medium,,benchmark
+f1f856da130f5e9a,Kumya Conty,wikidataId/Q706067,en,admin2,canonical,medium,,benchmark
+5ffad26302855962,Dminicana,country/DOM,en,country,canonical,medium,,benchmark
+d431d53899bd1b72,Summnt,geoId/2871480,en,city,canonical,medium,,benchmark
+b6e57a00f1204067,Shinxal,wikidataId/Q951509,en,city,canonical,medium,,benchmark
+a253fe4a1111fe43,South Hamgyong Province,wikidataId/Q109368,en,admin1,canonical,easy,,curated-review
+c24350179781ebea,Howes Township,geoId/3839140,en,city,canonical,easy,,benchmark
+a5f02b7c2f61b24f,Fort Ashby,geoId/5428444,en,city,canonical,easy,,benchmark
+ff0fc2cadb6b9d34,Athens (GA),geoId/1303440,en,admin2,canonical,hard,,curated-review
+fc102ed15ff49e26,St. Clair County,geoId/29185,en,admin2,canonical,easy,,benchmark
+527fb90f28b98dbb,The Somali Republic,country/SOM,en,country,alias,medium,informal_alias,benchmark
+4824c8afa2ec3d1d,the weather,,en,country,no_match,easy,informal_alias,benchmark
+05da84c1c98999bf,Dognecea,wikidataId/Q16439439,en,admin2,canonical,easy,,benchmark
+70c0b37a4a635ca8,Pingrup,wikidataId/Q21884346,en,city,canonical,easy,,benchmark
+69164db57627e7d7,Berg,wikidataId/Q21566507,en,admin3,canonical,medium,,benchmark
+f4ef5450d01f0a10,Boston,"wikidataId/Q894076,geoId/2507000",en,city,canonical,hard,,benchmark
+0c4eab0961f90413,Isandia,country/ISL,en,country,canonical,medium,,benchmark
+8403ff024e642f7c,Adamson,wikidataId/Q4680499,en,city,canonical,easy,,benchmark
+b736114ab6d14d57,Pvlestine Township,geoId/1993261,en,city,canonical,medium,,benchmark
+8c4674e3e2968ca6,nAdros (polis),wikidataId/Q62944263,en,city,canonical,medium,,benchmark
+bf056f88f620a9e9,Skagit Couty,geoId/53057,en,admin2,canonical,medium,,benchmark
+c6099232344f460a,---,,en,country,no_match,easy,,benchmark
+68043cf8dbbe50c1,Spearfish,geoId/4660020,en,city,canonical,easy,,benchmark
+c9a1ed8d60f63edd,Portland,"geoId/4159000,geoId/2360545,wikidataId/Q125148",en,city,canonical,hard,,benchmark
+0b15ad3db27920fe,Czechiwa,country/CZE,en,country,canonical,medium,,benchmark
+e8fb3ede5faeb0e6,Jinotega Department,wikidataId/Q728120,en,admin2,canonical,medium,,benchmark
+ee5e2455131829bd,Bihar,wikidataId/Q1165,en,admin1,canonical,easy,,curated-review
+24a5a1c4fcdc0c0b,Seirijia,wikidataId/Q1811561,en,city,canonical,medium,,benchmark
+5483758b7b354ad7,Correctonville,geoId/1916545,en,city,canonical,medium,,benchmark
+edeec1e8631bd81f,Norfolk Island,country/NFK,en,country,canonical,easy,,benchmark
+6a714941b111a718,qwerty,,en,country,no_match,easy,,benchmark
+271079c1e97fd493,Cypress Township,wikidataId/Q10835571,en,city,canonical,easy,,benchmark
+add25aaeed98a286,Saint Helena,country/SHN,en,country,canonical,easy,,benchmark
+27679ccebd2c7ec4,Glens Falls North,geoId/3629338,en,city,canonical,easy,,benchmark
+062d79782988f622,ID,country/IDN,en,country,alias,medium,"informal_alias,iso_code",benchmark
+c1f711ee6765d149,Norden fownship,geoId/3857340,en,city,canonical,medium,,benchmark
+1545eb8935d15b23,Cidr Municipio,geoId/72041,en,admin1,canonical,medium,,curated-review
+a13dc845b9957bec,Giden,geoId/2926974,en,city,canonical,medium,,benchmark
+6a31726325d829f3,la,country/LAO,en,country,canonical,medium,,benchmark
+345651fb6c1620d6,Mexico,country/MEX,en,country,canonical,easy,,benchmark
+ce7e0a155f677b2f,Bhutan,country/BTN,en,country,canonical,easy,,benchmark
+be3fb3bc5fdfe125,iNgde,nuts/TR713,en,admin1,canonical,medium,,curated-review
+884bda537c347709,Gmina Ciepielow,wikidataId/Q994604,en,admin3,canonical,medium,,benchmark
+9db6807c4992b609,Palesti,country/PSE,en,country,canonical,medium,,benchmark
+d97ec738fb2ea740,Kasulu istrict,wikidataId/Q6374890,en,admin2,canonical,medium,,benchmark
+af23470ee2967f3f,Manchester,"wikidataId/Q21525592,wikidataId/Q920496",en,city,canonical,hard,,curated
+c50c4b7f2cdeaa25,Eswatini,country/SWZ,en,country,canonical,easy,,benchmark
+d1daa7e9117a0e91,ZZ9,,en,country,no_match,easy,,benchmark
+dcff61c9e9cb3037,Chaplynkj,wikidataId/Q2658192,en,city,canonical,medium,,benchmark
+907dd0a68b1b8b7d,Republic of China,"country/TWN,country/CHN",en,country,alias,hard,informal_alias,benchmark
+32245b5641c89687,Stone Fort Township,wikidataId/Q7618934,en,city,canonical,easy,,benchmark
+10ff1e32c6906a10,Richmond,"geoId/5167000,wikidataId/Q1683013,geoId/0660620",en,admin2,canonical,hard,,benchmark
+49f1053adfba2dd2,"China, Macao Spe Administrative Region",country/MAC,en,country,canonical,hard,,benchmark
+6e3a348e5de4bc62,Wippergau,wikidataId/Q112269760,en,admin1,canonical,easy,,curated-review
+132159b6ec49c67e,Sabon Birni,wikidataId/Q94746170,en,admin3,canonical,easy,,benchmark
+ff0a6141a16aad9c,Vorderland,wikidataId/Q65040940,en,admin2,canonical,easy,,benchmark
+27f33129e9459300,Ceztenary,geoId/4512925,en,city,canonical,medium,,benchmark
+26ab4ebdb086457b,Aus,country/AUS,en,country,canonical,hard,,benchmark
+eca10fc37ef41730,Cosota Rca,country/CRI,en,country,canonical,hard,,benchmark
+fa738f33ead6f7e2,Lima,"wikidataId/Q579240,wikidataId/Q211795",en,admin1,canonical,hard,,curated-review
+fda86a4243c6eb87,lorem ipsum,,en,country,no_match,easy,,benchmark
+12340d1d022c09d1,Sint Maarten,country/SXM,en,country,canonical,easy,,benchmark
+2ec9f2ec7897e7c1,Warrenville,wikidataId/Q576023,en,city,canonical,easy,,benchmark
+be98aa8baeaa7a4d,Mandai,wikidataId/Q6747714,en,admin2,canonical,easy,,benchmark
+66dd03d6613010f5,Tchada,country/TCD,en,country,canonical,medium,,benchmark
+52fa733e188028c3,Veneko,nuts/ITH3,en,admin1,canonical,medium,,curated-review
+5f33594a92b78ad3,Andorra,"country/AND,wikidataId/Q24003627",en,country,canonical,hard,,benchmark
+de6ffcb4a4715d96,SaintChristophe-et-Niévès,country/KNA,en,country,canonical,medium,transliteration,benchmark
+5e9c9db758aea4ee,Alexandria,"wikidataId/Q2099372,geoId/5101000",en,city,canonical,hard,,curated
+8669055c99d0b817,Paraguay,country/PRY,en,country,canonical,easy,,benchmark
+62a6211eb33941c0,PRT,country/PRT,en,country,alias,medium,"informal_alias,iso_code",benchmark
+0fa65a14e0d65cae,Duho-dong,wikidataId/Q12593707,en,admin3,canonical,easy,,benchmark
+a34a6d3760bbb781,Japan,country/JPN,en,country,canonical,easy,,benchmark
+ef52e323ab270798,Namibia,country/NAM,en,country,canonical,easy,,benchmark
+ce5a948490b58e75,Serbia,country/SRB,en,country,canonical,easy,,benchmark
+019d44991fbe939a,Taiwan,country/TWN,en,country,canonical,easy,,benchmark
+90df69b60fc1ded8,Angola,country/AGO,en,country,canonical,easy,,benchmark
+f642353cfab542bb,Holy  See,country/VAT,en,country,canonical,medium,,benchmark
+eed3524e974f6dae,Viet  Nam,country/VNM,en,country,canonical,medium,,benchmark
+e10e7f3620b7e206,Republic of The Gambia,country/GMB,en,country,alias,medium,informal_alias,benchmark
+8f518e02c51a8c7d,les Marsvhall,country/MHL,en,country,canonical,hard,,benchmark
+extras_001,Germany,"country/DEU,wikidataId/Q183",en,country,canonical,easy,,benchmark
+extras_002,France,"country/FRA,wikidataId/Q142",en,country,canonical,easy,,benchmark
+extras_003,UK,"country/GBR,wikidataId/Q145",en,country,alias,easy,"informal_alias,iso_code",benchmark
+extras_004,USA,"country/USA,wikidataId/Q30",en,country,alias,easy,"informal_alias,iso_code",benchmark
+extras_005,JP,"country/JPN,wikidataId/Q17",en,country,alias,medium,"informal_alias,iso_code",benchmark
+extras_006,Italy,"country/ITA,wikidataId/Q38",en,country,canonical,easy,,benchmark
+extras_007,Poland,"country/POL,wikidataId/Q36",en,country,canonical,easy,,benchmark
+extras_008,Deutschland,"country/DEU,wikidataId/Q183",en,country,canonical,medium,,benchmark
+extras_009,España,"country/ESP,wikidataId/Q29",en,country,canonical,medium,transliteration,benchmark
+extras_010,Czech Republic,"country/CZE,wikidataId/Q213",en,country,canonical,easy,,benchmark
+extras_011,Czechia,"country/CZE,wikidataId/Q213",en,country,canonical,medium,,benchmark
+extras_012,the UK,"country/GBR,wikidataId/Q145",en,country,alias,medium,informal_alias,benchmark
+extras_013,Holland,"country/NLD,wikidataId/Q55",en,country,alias,medium,informal_alias,benchmark
+extras_014,Nigeria,"country/NGA,wikidataId/Q1033",en,country,canonical,easy,,benchmark
+extras_015,Ethiopia,"country/ETH,wikidataId/Q115",en,country,canonical,easy,,benchmark
+extras_016,Kenya,"country/KEN,wikidataId/Q114",en,country,canonical,easy,,benchmark
+extras_017,Ghana,"country/GHA,wikidataId/Q117",en,country,canonical,easy,,benchmark
+extras_018,Senegal,"country/SEN,wikidataId/Q1041",en,country,canonical,easy,,benchmark
+extras_019,DRC,"country/COD,wikidataId/Q974",en,country,alias,medium,"informal_alias,iso_code",benchmark
+extras_020,Brazil,"country/BRA,wikidataId/Q155",en,country,canonical,easy,,benchmark
+extras_021,Argentina,"country/ARG,wikidataId/Q414",en,country,canonical,easy,,benchmark
+extras_022,Colombia,"country/COL,wikidataId/Q739",en,country,canonical,easy,,benchmark
+extras_023,Chile,"country/CHL,wikidataId/Q298",en,country,canonical,easy,,benchmark
+extras_024,India,"country/IND,wikidataId/Q668",en,country,canonical,easy,,benchmark
+extras_025,Indonesia,"country/IDN,wikidataId/Q252",en,country,canonical,easy,,benchmark
+extras_026,London,"wikidataId/Q84,geoId/0644000",en,city,canonical,easy,,benchmark
+extras_027,Paris,"wikidataId/Q90,nuts/FR101",en,city,canonical,easy,,benchmark
+extras_028,Cairo,wikidataId/Q85,en,city,canonical,easy,,benchmark
+extras_029,Lagos,wikidataId/Q8673,en,city,canonical,easy,,benchmark
+extras_030,Mumbai,wikidataId/Q1156,en,city,canonical,easy,,benchmark
+extras_031,São Paulo,wikidataId/Q174,en,city,canonical,easy,transliteration,curated-review
+extras_032,Mexico City,wikidataId/Q1489,en,city,canonical,easy,,curated-review
+extras_033,Buenos Aires,wikidataId/Q1486,en,city,canonical,easy,,curated-review
+extras_034,Tokyo,wikidataId/Q1490,en,city,canonical,easy,,curated-review
+extras_035,Seoul,wikidataId/Q8684,en,city,canonical,easy,,benchmark
+extras_036,New York City,"geoId/3651000,wikidataId/Q60",en,city,canonical,easy,,benchmark
+extras_037,Toronto,wikidataId/Q172,en,city,canonical,easy,,benchmark
+extras_038,Sydney,wikidataId/Q3130,en,city,canonical,easy,,benchmark
+extras_039,Cape Town,wikidataId/Q5465,en,city,canonical,easy,,benchmark
+extras_040,Nairobi,wikidataId/Q3870,en,city,canonical,easy,,benchmark
+extras_041,Istanbul,wikidataId/Q406,en,city,canonical,easy,,benchmark
+extras_042,Bangkok,wikidataId/Q1861,en,city,canonical,easy,,benchmark
+extras_043,Jakarta,wikidataId/Q3630,en,city,canonical,easy,,benchmark
+extras_044,Berlin,"wikidataId/Q64,nuts/DE3",en,city,canonical,easy,,benchmark
+extras_045,Madrid,wikidataId/Q2807,en,city,canonical,easy,,benchmark
+extras_046,Rome,wikidataId/Q220,en,city,canonical,easy,,benchmark
+extras_047,Düsseldorf,"wikidataId/Q1718,nuts/DEA11",en,city,canonical,easy,transliteration,benchmark
+extras_048,Stockholm,wikidataId/Q1754,en,city,canonical,easy,,benchmark
+extras_049,NYC,"geoId/3651000,wikidataId/Q60",en,city,alias,medium,"informal_alias,iso_code",benchmark
+extras_050,Bogotá,wikidataId/Q2841,en,city,canonical,easy,transliteration,benchmark
+extras_051,California,"geoId/06,wikidataId/Q99",en,admin1,canonical,easy,,curated-review
+extras_052,Texas,"geoId/48,wikidataId/Q1439",en,admin1,canonical,easy,,curated-review
+extras_053,New York State,"geoId/36,wikidataId/Q1384",en,admin1,canonical,easy,,curated-review
+extras_054,Bavaria,"nuts/DE2,wikidataId/Q980",en,admin1,canonical,easy,,curated-review
+extras_055,Catalonia,"nuts/ES51,wikidataId/Q5705",en,admin1,canonical,easy,,curated-review
+extras_056,Île-de-France,"nuts/FR1,wikidataId/Q13917",en,admin1,canonical,easy,transliteration,curated-review
+extras_057,Scotland,"nuts/UKM,wikidataId/Q22",en,admin1,canonical,easy,,curated-review
+extras_058,Lagos State,wikidataId/Q815913,en,admin1,canonical,easy,,curated-review
+extras_059,São Paulo State,wikidataId/Q175,en,admin1,canonical,easy,transliteration,curated-review
+extras_060,Quebec,wikidataId/Q176,en,admin1,canonical,easy,,curated-review
+extras_061,Punjab,wikidataId/Q22424,en,admin1,canonical,easy,,curated-review
+extras_062,Maharashtra,wikidataId/Q1191,en,admin1,canonical,easy,,curated-review
+extras_063,Lombardy,"nuts/ITC4,wikidataId/Q1210",en,admin1,canonical,easy,,curated-review
+extras_064,Andalusia,"nuts/ES61,wikidataId/Q5765",en,admin1,canonical,easy,,curated-review
+extras_065,Guangdong,wikidataId/Q15175,en,admin1,canonical,easy,,curated-review
+extras_081,the United States,"country/USA,wikidataId/Q30",en,country,alias,medium,informal_alias,benchmark
+extras_082,America,"country/USA,wikidataId/Q30",en,country,alias,medium,informal_alias,benchmark
+extras_083,Burma,"country/MMR,wikidataId/Q836",en,country,alias,medium,informal_alias,benchmark
+extras_084,North Macedonia,"country/MKD,wikidataId/Q221",en,country,alias,medium,informal_alias,benchmark
+extras_085,Macedonia,"country/MKD,wikidataId/Q221",en,country,canonical,hard,,benchmark
+extras_086,Vatican,"country/VAT,wikidataId/Q237",en,country,canonical,medium,,benchmark
+extras_087,the Vatican,"country/VAT,wikidataId/Q237",en,country,alias,medium,informal_alias,benchmark
+extras_088,PRC,"country/CHN,wikidataId/Q148",en,country,alias,medium,"informal_alias,iso_code",benchmark
+extras_089,DPRK,"country/PRK,wikidataId/Q423",en,country,alias,medium,"informal_alias,iso_code",benchmark
+extras_090,Britain,"country/GBR,wikidataId/Q145",en,country,alias,medium,informal_alias,benchmark
+extras_091,Georgia,"country/GEO,geoId/13,wikidataId/Q230",en,country,canonical,hard,,benchmark
+extras_092,Cambridge,"wikidataId/Q350,geoId/2511000",en,city,canonical,hard,,benchmark
+extras_093,Memphis,"geoId/4748000,wikidataId/Q49217",en,city,canonical,hard,,benchmark
+extras_094,Athens,"wikidataId/Q1524,geoId/1303440",en,city,canonical,hard,,curated-review
+extras_095,Naples,"wikidataId/Q2634,geoId/1247625",en,city,canonical,hard,,benchmark
+extras_096,Springfield,"geoId/2970000,geoId/2567000,geoId/1772000",en,city,canonical,hard,,benchmark
+extras_097,Barcelona,"wikidataId/Q1492,wikidataId/Q771345",en,city,canonical,hard,,benchmark
+extras_098,Santiago,"wikidataId/Q2887,wikidataId/Q45632",en,city,canonical,hard,,benchmark
+extras_099,Manchester,"wikidataId/Q21525592,geoId/3345140",en,city,canonical,hard,,benchmark
+extras_100,England,wikidataId/Q21,en,admin1,canonical,hard,,curated-review
+1d35114b8f34bf62,Africa,wikidataId/Q15,en,continent,canonical,easy,,curated
+576347ec826f3842,Europe,wikidataId/Q46,en,continent,canonical,easy,,curated
+a173e725607d0f98,Asia,wikidataId/Q48,en,continent,canonical,easy,,curated
+247ce5d5d9158a10,North America,wikidataId/Q49,en,continent,canonical,easy,,curated
+b1ffb4c07982ffdd,South America,wikidataId/Q18,en,continent,canonical,easy,,curated
+3642950c84185b95,Oceania,wikidataId/Q55643,en,continent,canonical,easy,,curated
+00f33fc530d3e011,Antarctica,wikidataId/Q51,en,continent,canonical,easy,,curated
+5e5e8878adfd1bc3,Americas,wikidataId/Q828,en,continent,canonical,medium,,curated
+d0e6bb6c5a19ee34,Antartica,wikidataId/Q51,en,continent,canonical,medium,,curated
+3e7efd1d4bcf17fe,the Dark Continent,wikidataId/Q15,en,continent,alias,hard,informal_alias,curated
+d5ab777bd31e8709,Sub-Saharan Africa,undata-geo/G01100220,en,world_region,alias,easy,informal_alias,curated
+65f084e84bd22236,Latin America and the Caribbean,undata-geo/G01100290,en,world_region,alias,easy,informal_alias,curated
+a3c72f9a63d40fc4,MENA,undata-geo/G00152000,en,world_region,alias,medium,"informal_alias,iso_code",curated
+e4e41f9be5a4b3c2,Middle East and North Africa,undata-geo/G00152000,en,world_region,canonical,easy,,curated
+f2a91c3d7b8e4f5a,Western Europe,undata-geo/G00130000,en,world_region,canonical,easy,,curated
+8b3d21c4e9f7a6b5,Northern Africa,undata-geo/G01100210,en,world_region,canonical,easy,,curated
+c7f4e2a1d9b35c8d,South Asia,undata-geo/G00158000,en,world_region,canonical,easy,,curated
+9a2d5e8f1c6b4a7e,LDCs,groups/UN.LDC,en,world_region,alias,medium,informal_alias,curated
+7c3f8b2d4e9a1c5f,Least Developed Countries,groups/UN.LDC,en,world_region,canonical,easy,,curated
+b4a7d2e9c1f8b3c6,SIDS,groups/UN.SIDS,en,world_region,alias,medium,"informal_alias,iso_code",curated
+2f9c4a7e1b5d8c3f,Sub Saharan Africa,undata-geo/G01100220,en,world_region,alias,medium,informal_alias,curated
+6d1a8e3f2b9c7f4a,Latin America,undata-geo/G00138200,en,world_region,alias,easy,informal_alias,curated
+1e9cb061f252587d,European Union,"EuropeanUnion,groups/EU27_2020",en,continental_union,canonical,easy,,curated
+4f2c7a9e1b8d5c3f,EU,"EuropeanUnion,groups/EU27_2020",en,continental_union,alias,medium,"informal_alias,iso_code",curated
+8a3e1d6c2f9b7a4e,African Union,groups/AU,en,continental_union,canonical,easy,,curated
+5c9f3b1a7d4e2c8f,AU,groups/AU,en,continental_union,alias,medium,"informal_alias,iso_code",curated
+3a7d9f2e5c1b8a4f,ASEAN,groups/ASEAN,en,continental_union,alias,easy,"informal_alias,iso_code",curated
+9e4b2f7a1c5d8f3e,NATO,groups/NATO,en,continental_union,alias,easy,"informal_alias,iso_code",curated
+2c8f5a3b9e1d7f4c,OPEC,groups/OPEC,en,continental_union,alias,easy,"informal_alias,iso_code",curated
+f7a2d4c9b3e6f1a8,BRICS,groups/BRICS,en,continental_union,alias,easy,"informal_alias,iso_code",curated
+1b5c8f3a9d2e7c4f,G7,groups/G7,en,continental_union,canonical,easy,,curated
+4d9a2e7f1b5c8a3d,G20,groups/G20,en,continental_union,canonical,easy,,curated
+a8f3b1d5c9e2f7a4,MERCOSUR,groups/MERCOSUR,en,continental_union,canonical,medium,,curated
+6e2f8a4c1b7d9f3e,Commonwealth,groups/Commonwealth,en,continental_union,canonical,medium,,curated
+c3b9f7a2e5d1f8c4,South Sudan,country/SSD,en,country,canonical,easy,,curated
+7f1d4a8e3c9b5f2d,Türkiye,"country/TUR,wikidataId/Q43",en,country,canonical,medium,transliteration,curated
+e5c2f9b8a4d1f7c3,Kosovo,"country/XKS,wikidataId/Q1246",en,country,canonical,medium,,curated
+2b8f5d3a9e1c7f4b,Western Sahara,country/ESH,en,country,canonical,medium,,curated
+4a1e7c9f3b5d2f8a,East Timor,"country/TLS,wikidataId/Q574",en,country,alias,medium,informal_alias,curated
+9d3c6f1a7e4b2f8c,Palestine,"country/PSE,wikidataId/Q219060",en,country,canonical,medium,,curated
+f4a8b2e7c1d5f9a3,Morocco,"country/MAR,wikidataId/Q1028",en,country,canonical,easy,,curated
+1c7f4a9e3b8d2f5c,Egypt,"country/EGY,wikidataId/Q79",en,country,canonical,easy,,curated
+8e3b9d4f2a7c1f6e,Pakistan,"country/PAK,wikidataId/Q843",en,country,canonical,easy,,curated
+5f2a8c1e4d9b7f3a,Bangladesh,"country/BGD,wikidataId/Q902",en,country,canonical,easy,,curated
+3c6b9f4a2e8d1f7c,Vietnam,"country/VNM,wikidataId/Q881",en,country,canonical,easy,,curated
+7d4f1a6e9c2b8f5d,Philippines,"country/PHL,wikidataId/Q928",en,country,canonical,easy,,curated
+a2c5e8f3b1d9a7f4,Ukraine,"country/UKR,wikidataId/Q212",en,country,canonical,easy,,curated
+6b1f8d3c9a4e2f7b,Venezuela,"country/VEN,wikidataId/Q717",en,country,canonical,easy,,curated
+d9f2a5c8e1b4f7d9,Peru,"country/PER,wikidataId/Q419",en,country,canonical,easy,,curated
+f1b7e4d2a9c6f3b1,Ivory Coast,"country/CIV,wikidataId/Q1008",en,country,alias,medium,informal_alias,curated
+3e9c2f6a1b8d4f3e,Côte d'Ivoire,"country/CIV,wikidataId/Q1008",en,country,alias,medium,"informal_alias,transliteration",curated
+8f4b1c7e3d9a2f8f,Myanmar,"country/MMR,wikidataId/Q836",en,country,alias,easy,informal_alias,curated
+2a9f6c4b1e7d3f2a,Türkei,country/TUR,de,country,canonical,hard,"multilingual,transliteration",curated
+b5d8f2a7e1c4b9f5,Allemagne,country/DEU,fr,country,canonical,medium,multilingual,curated
+7c4a1f9e2b6d8f7c,Brésil,country/BRA,fr,country,canonical,medium,"multilingual,transliteration",curated
+4f7b3e1c8a9d2f4f,Chine,country/CHN,fr,country,canonical,medium,multilingual,curated
+d2a8f5b9c1e4f2d2,Russland,country/RUS,de,country,canonical,medium,multilingual,curated
+a6f3c9e2b8d1f6a6,España (el país),country/ESP,es,country,canonical,hard,"multilingual,transliteration",curated
+9b1d7f4a3c8e2f9b,Rusia,"country/RUS,wikidataId/Q159",es,country,canonical,medium,multilingual,curated
+e4c7f2b1a9d6e4e4,nz,,en,country,no_match,medium,,curated
+1f5d9b2c6a3e8f1f,Washington,"geoId/53,wikidataId/Q1223",en,admin1,canonical,easy,,curated-review
+8c2f6a1e4b9d3f8c,Florida,"geoId/12,wikidataId/Q812",en,admin1,canonical,easy,,curated-review
+5a9e3f8b1c7d4f5a,Illinois,"geoId/17,wikidataId/Q1204",en,admin1,canonical,easy,,curated-review
+3d7f1a5c9b2e8f3d,Ohio,"geoId/39,wikidataId/Q1397",en,admin1,canonical,easy,,curated-review
+c1e8b4f7a2d6c1c1,Pennsylvania,"geoId/42,wikidataId/Q1400",en,admin1,canonical,easy,,curated-review
+f6a3d9e1c8b5f6f6,Georgia (US),"geoId/13,wikidataId/Q1428",en,admin1,canonical,hard,,curated-review
+7e2b5f8a3c1d9e7e,Ontario,wikidataId/Q1904,en,admin1,canonical,easy,,curated-review
+4b9f1d6e8a3c7f4b,British Columbia,wikidataId/Q1973,en,admin1,canonical,easy,,curated-review
+1a6c4f9e2b8d5c1a,Alberta,wikidataId/Q1951,en,admin1,canonical,easy,,curated-review
+9f3e7b2d5a1c8f9f,New South Wales,wikidataId/Q3224,en,admin1,canonical,easy,,curated-review
+6c1a8f4d9e2b7c6c,Queensland,wikidataId/Q36074,en,admin1,canonical,easy,,curated-review
+2e7f4b9c1a5d8e2e,South Australia,ausSA21/407,en,admin1,canonical,easy,,curated-review
+a4d1e6f9c2b8a4a4,Bavaria,nuts/DE2,en,admin1,canonical,easy,,curated-review
+d8b5f2a7c4e1d8d8,Bayern,nuts/DE2,en,admin1,canonical,medium,,curated-review
+5f2c9a4e1b7d6f5f,Nordrhein-Westfalen,nuts/DEA,en,admin1,canonical,medium,,curated-review
+b7e4a1f8d3c6b7b7,Saxony,nuts/DED,en,admin1,canonical,easy,,curated-review
+3c8f5b2e9a4d1c3c,Tuscany,nuts/ITI1,en,admin1,canonical,easy,,curated-review
+e1d4a7f3c9b2e1e1,Sicily,nuts/ITG1,en,admin1,canonical,easy,,curated-review
+8a6f2c5e1d9b4f8a,Veneto,nuts/ITH3,en,admin1,canonical,easy,,curated-review
+4e9b3f7a2c1d8e4e,Emilia-Romagna,nuts/ITH5,en,admin1,canonical,easy,,curated-review
+c2f7d1a8e5b4c2c2,Lazio,nuts/ITI4,en,admin1,canonical,easy,,curated-review
+7b4e9c3f1a6d2b7b,Wales,nuts/UKL,en,admin1,canonical,easy,,curated-review
+1d8f5a2e9c4b7d1d,Northern Ireland,nuts/UKN,en,admin1,canonical,easy,,curated-review
+9e3c7f1b4a8d6e9e,Hesse,nuts/DE7,en,admin1,canonical,easy,,curated-review
+6f1b8e4a7c2d5f6f,Piedmont,nuts/ITC1,en,admin1,canonical,easy,,curated-review
+2c5a9f3e1b6d8c2c,Brittany,nuts/FR52,en,admin1,canonical,easy,,curated-review
+a7d2e8b5f1c4a7a7,Provence-Alpes-Côte d'Azur,nuts/FR82,en,admin1,canonical,medium,transliteration,curated-review
+4f9c1a7e3b5d2f4f,Gauteng,wikidataId/Q133083,en,admin1,canonical,easy,,curated-review
+d3b6e2f9a1c8d3d3,Kaduna State,wikidataId/Q878284,en,admin1,canonical,easy,,curated-review
+8e1f4b7c3a9d6e8e,Kano State,wikidataId/Q682571,en,admin1,canonical,easy,,curated-review
+5a7c2e9f4b1d8a5a,Minas Gerais,wikidataId/Q39109,en,admin1,canonical,easy,,curated-review
+1b4f8d3e2c6a9b1b,Gujarat,wikidataId/Q1061,en,admin1,canonical,easy,,curated-review
+3d6b2e8f9a1c5d3d,Western Region,,en,admin1,no_match,hard,,curated-review
+e8a5f1c4b7d2e8e8,Northern Province,,en,admin1,no_match,hard,,curated-review
+c4f9b2e7a1d6c4c4,Central Region,,en,admin1,no_match,hard,,curated-review
+9b1e6f3a8c5d2b9b,Andalucía,"nuts/ES61,wikidataId/Q5765",es,admin1,canonical,medium,"multilingual,transliteration",curated-review
+2f8c4a9e1b7d5f2f,Bavière,nuts/DE2,fr,admin1,canonical,hard,"multilingual,transliteration",curated-review
+6d3a7f1e9c4b2d6d,NRW,nuts/DEA,en,admin1,alias,medium,"informal_alias,iso_code",curated-review
+f5b8e2c7a4d1f5f5,Ile-de-France,"nuts/FR1,wikidataId/Q13917",en,admin1,canonical,medium,,curated-review
+0a3d8f5e2b9c6a0a,Pays de la Loire,nuts/FR51,en,admin1,canonical,easy,,curated-review
+4b6f1c9e8a3d7b4b,Stuttgart,nuts/DE111,en,admin4,canonical,easy,,curated
+e7a2d8f4c1b6e7e7,Munich,"nuts/DE212,nuts/DE21H",en,admin4,canonical,easy,,curated
+2c5f9b3a8e1d4c2c,Frankfurt,nuts/DE712,en,admin4,canonical,easy,,curated
+9d1e6c4f7a2b8d9d,Nuremberg,nuts/DE254,en,admin4,canonical,easy,,curated
+a8f3b7e2d5c1a8a8,Düsseldorf (district),"wikidataId/Q1718,nuts/DEA11",en,admin4,canonical,medium,transliteration,curated
+5e2a9f6c4b1d7e5e,Cologne,"nuts/DEA23,wikidataId/Q365",en,admin4,canonical,easy,,curated
+1b8d4f7e3a6c2b1b,Edinburgh,"nuts/UKM25,wikidataId/Q23436",en,admin3,canonical,easy,,curated
+7f4c1a9e6b3d8f7f,Glasgow,"nuts/UKM34,wikidataId/Q4093",en,admin3,canonical,easy,,curated
+3a6e2f9b5c8d1a3a,Brussels,wikidataId/Q239,en,admin4,canonical,easy,,curated
+c9b4f8a1e7d3c9c9,Zurich,wikidataId/Q72,en,admin3,canonical,easy,,curated
+6e3d7b2f4a9c1e6e,Geneva,wikidataId/Q71,en,admin3,canonical,easy,,curated
+8f1a5c9e3b7d4f8f,Regensburg,nuts/DE232,en,admin4,canonical,easy,,curated
+d4c7e1f8b2a9d4d4,Ingolstadt,nuts/DE211,en,admin4,canonical,easy,,curated
+2b9f3a6c8e1d5b2b,West Berlin,nuts/DE301,en,admin3,canonical,medium,,curated
+5d8e2f1b4c7a9d5d,East Berlin,nuts/DE302,en,admin3,canonical,medium,,curated
+a1c6f4b9e2d8a1a1,Bamberg,nuts/DE241,en,admin4,canonical,easy,,curated
+7b3d9e5f1a4c6b7b,Bayreuth,nuts/DE242,en,admin4,canonical,easy,,curated
+4f7a2c8e6b1d9f4f,Sabon Birni (LGA),wikidataId/Q94746170,en,admin3,canonical,medium,,curated
+e2b5f1d8c4a7e2e2,Duho-dong (ward),wikidataId/Q12593707,en,admin3,canonical,medium,,curated
+9c4e8b2f7a1d5c9c,Kisaki (ward),wikidataId/Q1000024,en,admin3,canonical,medium,,curated
+1a7f3d6e9c2b8a1a,Szczawnica,wikidataId/Q1000438,en,admin3,canonical,easy,,curated
+6d2c5a9f4e1b3d6d,Abengourou,wikidataId/Q1044225,en,admin5,canonical,easy,,curated
+3f8b1e4c7d9a6f3f,Bertoua,wikidataId/Q673185,en,admin5,canonical,easy,,curated
+b5e9a3f2c8d1b5b5,Batouri,wikidataId/Q673185,en,admin5,canonical,medium,,curated
+8c1d6f9b4e2a7c8c,Campo (Cameroon),wikidataId/Q1100812,en,admin5,canonical,medium,,curated
+2e4b7a1f9c6d3e2e,Abidjan,wikidataId/Q1515,en,admin5,canonical,easy,,curated
+c7f3b8e2a5d9c7c7,Oumé,wikidataId/Q1102546,en,admin5,canonical,hard,transliteration,curated
+d6a4f1c8e9b2d6d6,San José,"wikidataId/Q3070,geoId/0668000",en,city,canonical,hard,transliteration,curated
+4c9e7b3f1a8d5c4c,La Paz,wikidataId/Q1491,en,city,canonical,hard,,curated
+1f6a3d8c2e9b4f1f,Birmingham,"wikidataId/Q2256,geoId/0107000",en,city,canonical,hard,,curated
+7a2e9f4b8c1d6a7a,San Juan,geoId/72127,en,city,canonical,medium,,curated
+e3c8b5f2a7d1e3e3,Lima (Peru),"wikidataId/Q2868,geoId/1743445",en,city,canonical,hard,,curated
+9f5d1a8e4c3b7f9f,Seville,"wikidataId/Q8717,geoId/0671078",en,city,canonical,hard,,curated
+2d7c4f9b1e6a3d2d,Lyon,wikidataId/Q456,en,city,canonical,easy,,curated
+5b1f8a3e9c7d2b5b,Marseille,wikidataId/Q23482,en,city,canonical,easy,,curated
+a9d4c7f1e3b8a9a9,Cologne (city),nuts/DEA23,en,city,canonical,easy,,curated
+6f3b9e2d5a1c8f6f,Valencia,"wikidataId/Q8818,geoId/0681596",en,city,canonical,hard,,curated
+4a8c2f5e1b7d9a4a,Dhaka,wikidataId/Q1354,en,city,canonical,easy,,curated
+b2e7f4a9c3d1b2b2,Karachi,wikidataId/Q8660,en,city,canonical,easy,,curated
+8d5a1f7c9e2b4d8d,Kolkata,wikidataId/Q1348,en,city,canonical,easy,,curated
+3e9b6f2d1c8a5e3e,Kinshasa,wikidataId/Q3561,en,city,canonical,easy,,curated
+7c4f8a3e2d1b9c7c,Addis Ababa,wikidataId/Q3782,en,city,canonical,easy,,curated
+1d6e9b4f7a2c5d1d,Dar es Salaam,wikidataId/Q1960,en,city,canonical,easy,,curated
+f8a3c7e1b4d9f8f8,Accra,wikidataId/Q3761,en,city,canonical,easy,,curated
+5c2d8f4a9e1b6c5c,Johannesburg,wikidataId/Q34647,en,city,canonical,easy,,curated
+9e7b1f5a3c8d2e9e,Kuala Lumpur,wikidataId/Q1865,en,city,canonical,easy,,curated
+2a5f9e3b7d4c1a2a,Ho Chi Minh City,wikidataId/Q1854,en,city,alias,easy,informal_alias,curated
+6d1c8f4a2e7b5d6d,Saigon,wikidataId/Q1854,en,city,alias,medium,informal_alias,curated
+c3b9e7f2a5d1c3c3,Casablanca,wikidataId/Q7903,en,city,canonical,easy,,curated
+f7e4b1a9c6d3f7f7,Riyadh,wikidataId/Q3692,en,city,canonical,easy,,curated
+4b8d3f6e1a9c7b4b,Amman,wikidataId/Q3805,en,city,canonical,easy,,curated
+8e6a2f9c4b1d7e8e,Brussels (city),wikidataId/Q239,en,city,canonical,easy,,curated
+a5d9b4e7f2c1a5a5,Vienna,nuts/AT13,en,city,canonical,easy,,curated
+1c8f2b5e9a4d6c1c,Warsaw,nuts/PL127,en,city,canonical,easy,,curated
+d4a7c1f8e3b9d4d4,San Francisco,"geoId/0667000,wikidataId/Q62",en,city,canonical,easy,,curated
+3f6b9e2d5a8c1f3f,Los Angeles,"geoId/0644000,wikidataId/Q65",en,city,canonical,easy,,curated
+7a3d1c6f8e9b4a7a,Chicago,"geoId/1714000,wikidataId/Q1297",en,city,canonical,easy,,curated
+e9c4f7b2a1d5e9e9,Houston,"geoId/4835000,wikidataId/Q16555",en,city,canonical,easy,,curated
+2f8a5e1c9b7d3f2f,Miami,"geoId/1245000,wikidataId/Q8691",en,city,canonical,easy,,curated
+9c3b6f4a8e2d7c9c,Washington D.C.,"geoId/1150000,wikidataId/Q61",en,city,canonical,easy,,curated
+3c7e4f2b9a1d6c3c,NaN,,en,country,no_match,easy,,curated
+8b2a9f5c1e4d7b8b,nan,,en,country,no_match,easy,,curated
+5f4d1b8e3a9c6f5f,n/a,,en,country,no_match,easy,,curated
+c1e8a4f7b3d2c1c1,unknown,,en,country,no_match,easy,,curated
+7a3f6c1e9b5d4a7a,test,,en,country,no_match,easy,,curated
+2d9b5f3a8c1e7d2d,us,,en,country,no_match,medium,,curated
+f4c7a2e1b9d6f4f4,no,,en,country,no_match,medium,,curated
+9e1f8b4c3d7a2e9e,NULL,,en,country,no_match,easy,"informal_alias,iso_code",curated
+4a6d3e9f1c8b5a4a,random unicode 测试,,en,country,no_match,hard,transliteration,curated
+703a1e131fe100ca,Quinzala,wikidataId/Q10356468,en,admin2,canonical,easy,,curated-review
+053580aba3088831,Kakhovka Raion,wikidataId/Q2639702,en,admin2,canonical,easy,,curated-review
+24db121811b6b2d1,Giżycko County,wikidataId/Q117563,en,admin2,canonical,easy,,curated-review
+a6cd186200684c4e,Ciuchici,wikidataId/Q12724645,en,admin2,canonical,easy,,curated-review
+7ad1dce9e24f4857,Villa Gesell Partido,wikidataId/Q2426312,en,admin2,canonical,easy,,curated-review
+806cb5d88768aba1,İslamköy,wikidataId/Q6448605,en,admin2,canonical,easy,,curated-review
+16fa00d825ab97c3,Certeze,wikidataId/Q5054880,en,admin2,canonical,easy,,curated-review
+dc17adeb86fe5306,Bogda,wikidataId/Q890405,en,admin2,canonical,easy,,curated-review
+6d6bfd8d59fd3c1b,Pongsan County,wikidataId/Q705524,en,admin2,canonical,easy,,curated-review
+a0e59d17aac9954c,Senekane,wikidataId/Q7450493,en,admin2,canonical,easy,,curated-review
+3073d877415f6fdb,Sommerein,wikidataId/Q21880376,en,admin2,canonical,easy,,curated-review
+1ee5625734fce739,Ludiano,wikidataId/Q660974,en,admin2,canonical,easy,,curated-review
+b318cb2c60e872b7,Boalemo,wikidataId/Q14508,en,admin2,canonical,easy,,curated-review
+1e1870aa0177f08b,Zaki,wikidataId/Q8065082,en,admin2,canonical,easy,,curated-review
+8612677425f58f28,Mbam,wikidataId/Q23671082,en,admin2,canonical,easy,,curated-review
+c9ac204ab68ef76a,Aslem District,wikidataId/Q4117502,en,admin2,canonical,easy,,curated-review
+549fafa018f87b0e,Markaz Bilbays,wikidataId/Q23952474,en,admin2,canonical,easy,,curated-review
+a4fc2535b19c7d61,Marin County,geoId/06041,en,admin2,canonical,easy,,curated-review
+903d935550d0453b,Villaflores,wikidataId/Q20735271,en,admin2,canonical,easy,,curated-review
+1d74eef3cbca563c,Onça de Pitangui,wikidataId/Q1755759,en,admin2,canonical,easy,,curated-review
+9a01e4018d4bdfc1,"Koloni, Cyprus",wikidataId/Q6427511,en,admin2,canonical,easy,,curated-review
+9e9acfc5330caff3,Viștea,wikidataId/Q4687189,en,admin2,canonical,easy,,curated-review
+2310f695fab5d533,Westenschouwen,wikidataId/Q254407,en,admin2,canonical,easy,,curated-review
+d66290da4d2231bd,Mont-sur-Rolle,wikidataId/Q68762,en,admin2,canonical,easy,,curated-review
+a13893e679429a80,Sibundoy,wikidataId/Q368507,en,admin2,canonical,easy,,curated-review
+8b43d9fd5254a3f4,Muriaux,wikidataId/Q68506,en,admin2,canonical,easy,,curated-review
+0190d4152bff36a9,Komo-Mondah Department,wikidataId/Q2736052,en,admin2,canonical,easy,,curated-review
+7577904849a8fcb2,Okhangaron District,wikidataId/Q3711285,en,admin2,canonical,easy,,curated-review
+0c8669bfa3b89024,Jebel,wikidataId/Q5062479,en,admin2,canonical,easy,,curated-review
+65f1ba4fde4f14af,Marrum,wikidataId/Q2304407,en,admin2,canonical,easy,,curated-review
+2152a06083337261,Staldenried,wikidataId/Q70349,en,admin2,canonical,easy,,curated-review
+bc37d90afce05a5a,Monte San Giovanni Campano,wikidataId/Q116952,en,admin3,canonical,easy,,curated-review
+463335e81f7ee2be,North Cimahi,wikidataId/Q1821668,en,admin3,canonical,easy,,curated-review
+21af35c41244c2f6,Dwarka Taluka,wikidataId/Q25565076,en,admin3,canonical,easy,,curated-review
+637cc03c0346e062,Govezhda,wikidataId/Q1087021,en,admin3,canonical,easy,,curated-review
+f6dcfce8bada2f57,Nounkounkan,wikidataId/Q18680893,en,admin3,canonical,easy,,curated-review
+ebe1947173930c2f,Khlong Kai Thuean,wikidataId/Q16833091,en,admin3,canonical,easy,,curated-review
+5003cae92ba06d43,Roza,wikidataId/Q1086845,en,admin3,canonical,easy,,curated-review
+cb69a4b1529bd9f1,Valbuena de Duero,wikidataId/Q749388,en,admin3,canonical,easy,,curated-review
+1569accbd07cdec7,Namhyeon-dong,wikidataId/Q12590107,en,admin3,canonical,easy,,curated-review
+8507e765dbc24af5,Kesiksu,wikidataId/Q6395084,en,admin3,canonical,easy,,curated-review
+c3ebc31276f2882c,Pho Sai,wikidataId/Q15989158,en,admin3,canonical,easy,,curated-review
+6714a20de2735892,Manoppello Scalo,wikidataId/Q1977592,en,admin3,canonical,easy,,curated-review
+6754c12d7b9870f8,Wannian County,wikidataId/Q1356540,en,admin3,canonical,easy,,curated-review
+0cdcca2eb661c7b7,Gmina Kazimierz Dolny,wikidataId/Q2605904,en,admin3,canonical,easy,,curated-review
+261caedd0f944134,Coreca,wikidataId/Q15220504,en,admin3,canonical,easy,,curated-review
+eb8e9fb345f28d7e,Älvsbacka,wikidataId/Q21704861,en,admin3,canonical,easy,,curated-review
+409668bae96b683f,Hieranionski Sieĺsaviet,wikidataId/Q4135944,en,admin3,canonical,easy,,curated-review
+b33fc26baa719e65,Kalimanah,wikidataId/Q4201040,en,admin3,canonical,easy,,curated-review
+941739c08ad58270,Peunaga Rayeuk,wikidataId/Q12700588,en,admin3,canonical,easy,,curated-review
+afe357761a43d35f,Iho-dong,wikidataId/Q12613192,en,admin3,canonical,easy,,curated-review
+2db01dc7358d822e,Rivoli,wikidataId/Q10231,en,admin3,canonical,easy,,curated-review
+00a98278f4e284d6,Rapatona Rural LLG,wikidataId/Q85795898,en,admin3,canonical,easy,,curated-review
+ef72141cada05d1f,Verdelhos,wikidataId/Q1023955,en,admin3,canonical,easy,,curated-review
+59030c7ba136a774,Erice,wikidataId/Q192917,en,admin3,canonical,easy,,curated-review
+a5a319f2d10025a8,Jagong Jeget,wikidataId/Q9633859,en,admin3,canonical,easy,,curated-review
+23852255af0c7ec4,San Cesario sul Panaro,wikidataId/Q100092,en,admin3,canonical,easy,,curated-review
+ec692572f1ad77ba,Phố Ràng,wikidataId/Q10807154,en,admin3,canonical,easy,,curated-review
+e80682dc14f325d8,Paya Meta,wikidataId/Q12699764,en,admin3,canonical,easy,,curated-review
+54021d1c8de88299,Egra I community development block,wikidataId/Q5348250,en,admin4,canonical,easy,,curated-review
+0752fe45719f3602,Szczepanki,wikidataId/Q7664306,en,admin4,canonical,easy,,curated-review
+e5164195371d44f5,Ignacewo,wikidataId/Q11711087,en,admin4,canonical,easy,,curated-review
+7285a12a55aee592,Fatukoa,wikidataId/Q24663956,en,admin4,canonical,easy,,curated-review
+cd628b7dfd887799,Borawskie-Awissa-Kolonia,wikidataId/Q4944327,en,admin4,canonical,easy,,curated-review
+d7ac6d8c0b28d453,Karatung Tengah,wikidataId/Q12489605,en,admin4,canonical,easy,,curated-review
+ba770db8130d74d8,Noagaon,wikidataId/Q60760463,en,admin4,canonical,easy,,curated-review
+5f56a58f2265f275,"Rostkowice, Masovian Voivodeship",wikidataId/Q7370039,en,admin4,canonical,easy,,curated-review
+dd265e3638ac44df,Sikabau,wikidataId/Q14724350,en,admin4,canonical,easy,,curated-review
+49ed9af1a1502454,Bełtno,wikidataId/Q637691,en,admin4,canonical,easy,,curated-review
+356193073156a5c5,Grainville-la-Teinturière,wikidataId/Q386227,en,admin4,canonical,easy,,curated-review
+a3294b9db3c8d93e,"Chmielewo, Gmina Stary Lubotyń",wikidataId/Q5103269,en,admin4,canonical,easy,,curated-review
+7f0854e76cf996f6,Karsibór,wikidataId/Q6373415,en,admin4,canonical,easy,,curated-review
+c71a66d98369baac,Huta Padang,wikidataId/Q12486087,en,admin4,canonical,easy,,curated-review
+d25e853d26a4e93d,Panaguri,wikidataId/Q60804538,en,admin4,canonical,easy,,curated-review
+d46a8023a47bbcf3,Lizant,wikidataId/Q1438757,en,admin4,canonical,easy,,curated-review
+7bfc8d3398da2c63,Czerwonka,wikidataId/Q137978,en,admin4,canonical,easy,,curated-review
+2fef7376b1260571,Pangsor,wikidataId/Q12502735,en,admin4,canonical,easy,,curated-review
+627e57b0db56075b,Long Peso,wikidataId/Q12495241,en,admin4,canonical,easy,,curated-review
+a987164a0890685f,Sungai Pangkalan II,wikidataId/Q19742228,en,admin4,canonical,easy,,curated-review
+e043779f90dcaaad,Iwon,wikidataId/Q12486892,en,admin4,canonical,easy,,curated-review
+bfd85bcf44089881,Chmialioŭka,wikidataId/Q6544662,en,admin4,canonical,easy,,curated-review
+d8f124e455e0d3cd,Sumbergayam,wikidataId/Q12517544,en,admin4,canonical,easy,,curated-review
+6c3d0f7b6b5e4449,Tengenawi,wikidataId/Q25906434,en,admin4,canonical,easy,,curated-review
+bf4a68125db1e737,Maron,wikidataId/Q4263643,en,admin4,canonical,easy,,curated-review
+68783a1f75834203,Mbingma,wikidataId/Q25343858,en,admin4,canonical,easy,,curated-review
+8f2bbcf3485c4f56,Pasuddzieva,wikidataId/Q6525291,en,admin4,canonical,easy,,curated-review
+f7d87e6b994f0039,Oreye,wikidataId/Q710409,en,admin4,canonical,easy,,curated-review
+fa2aa35885782eb2,Mondi,wikidataId/Q26324343,en,admin4,canonical,easy,,curated-review
+53a0f35a3d96a573,Tutkhan,wikidataId/Q60444234,en,admin4,canonical,easy,,curated-review
+9b05967fadde0fc4,Jinhua Town,wikidataId/Q13727534,en,admin4,canonical,easy,,curated-review
+6342501934ba7e79,"Commune of Messini, Messinia",wikidataId/Q125129200,en,admin5,canonical,easy,,curated-review
+1b9028248f32dc49,Manzanouan,wikidataId/Q3287158,en,admin5,canonical,easy,,curated-review
+9f3e6e025640bc14,"Commune of Kyparissia, Messinia",wikidataId/Q125129381,en,admin5,canonical,easy,,curated-review
+a018c55cad7cc593,Chengnan Community,wikidataId/Q102440802,en,admin5,canonical,easy,,curated-review
+d6dbe70233665e2a,"Commune of Aghios Georgios, Viotia",wikidataId/Q125126265,en,admin5,canonical,easy,,curated-review
+c0b4d3eb8916efc1,Commune of Argos,wikidataId/Q125128721,en,admin5,canonical,easy,,curated-review
+e229eeeb0e4450f7,Waza,wikidataId/Q23013165,en,admin5,canonical,easy,,curated-review
+0b647764c6c58186,Qishan Community,wikidataId/Q107646383,en,admin5,canonical,easy,,curated-review
+97ac716094285a0f,Martap,wikidataId/Q23013059,en,admin5,canonical,easy,,curated-review
+1b6b5554079cfaf0,Commune of Nea Messimvria,wikidataId/Q21422793,en,admin5,canonical,easy,,curated-review
+9eb09c6f7b95efdc,Kong,wikidataId/Q1781511,en,admin5,canonical,easy,,curated-review
+4e46770dee60d85e,Commune of Thermo,wikidataId/Q125127882,en,admin5,canonical,easy,,curated-review
+7b3b293c82b7ea50,Commune of Ovria,wikidataId/Q125127478,en,admin5,canonical,easy,,curated-review
+b7d3ba9e3416f2db,Commune of Agrinio,wikidataId/Q125127760,en,admin5,canonical,easy,,curated-review
+367cd798b2ee770a,Xuefu Community (Licheng County),wikidataId/Q114868132,en,admin5,canonical,easy,,curated-review
+6ba71361d05bca53,Commune of Ermakia,wikidataId/Q21461891,en,admin5,canonical,easy,,curated-review
+c5907b13f53723c9,Pinggu Zhongxin Community,wikidataId/Q126191866,en,admin5,canonical,easy,,curated-review
+0af3d1a35df12011,"Xincheng, Tongyang",wikidataId/Q14144939,en,admin5,canonical,easy,,curated-review
+dff24fd3cd840be6,Commune of Anatoliko,wikidataId/Q125125915,en,admin5,canonical,easy,,curated-review
+e1b7bd3eed3f6645,Rubino,wikidataId/Q2171641,en,admin5,canonical,easy,,curated-review
+011be1da64d4cf72,Commune of Zevgolatio,wikidataId/Q125128812,en,admin5,canonical,easy,,curated-review
+a5b1aa6c103350ab,Edéa,wikidataId/Q1002900,en,admin5,canonical,easy,,curated-review
+22055b3d51c1c002,"Commune of Antikyra, Viotia",wikidataId/Q125126298,en,admin5,canonical,easy,,curated-review
+17d33ff17fddfe82,Commune of Molos,wikidataId/Q125126149,en,admin5,canonical,easy,,curated-review
+80f71c0e22dbf8a0,Sangmélima,wikidataId/Q2708780,en,admin5,canonical,easy,,curated-review
+f51f3e0242517e74,Commune of Itea,wikidataId/Q125126671,en,admin5,canonical,easy,,curated-review
+a075a40497cb65f8,Commune of Asprovalta,wikidataId/Q125125910,en,admin5,canonical,easy,,curated-review
+fff01b7f18a7f3e8,Zhenxing Community,wikidataId/Q113634835,en,admin5,canonical,easy,,curated-review
+8072ee116563b003,Huaian Community,wikidataId/Q114766445,en,admin5,canonical,easy,,curated-review
+f1a600740efbe0d2,Beiqiaogou Community,wikidataId/Q114868173,en,admin5,canonical,easy,,curated-review
+ace2b9dca9a3f07b,Guiglo,wikidataId/Q1553776,en,admin5,canonical,easy,,curated-review
+4a9f1cee66efac54,"Commune of Sparti, Lakonia",wikidataId/Q125128943,en,admin5,canonical,easy,,curated-review
+84eecfe67d81d1c4,Commune of Chalastra,wikidataId/Q21422651,en,admin5,canonical,easy,,curated-review
+8aaa4e2f33b7daa3,Commune of Vrachati,wikidataId/Q125128814,en,admin5,canonical,easy,,curated-review
+40237a1a08eb64a8,Commune of Tagarades,wikidataId/Q21422675,en,admin5,canonical,easy,,curated-review
+fffb06712ced1f5e,Meri,wikidataId/Q23013064,en,admin5,canonical,easy,,curated-review

@@ -1,0 +1,44 @@
+{
+  "datapack_id": "org.data_sources-v2026.06",
+  "module_id": "org.data_sources",
+  "domain_pack_id": "org",
+  "module_dependencies": [],
+  "entity_schema_version": "1.0",
+  "feature_schema_version": "org.features.v1",
+  "normalizer_version": "casefold.1",
+  "index_versions": {
+    "fts": "fts5",
+    "symspell": "symspell.dict"
+  },
+  "build_timestamp": "2026-05-31T15:20:16.726854+00:00",
+  "source_datasets": [
+    "datacommons"
+  ],
+  "artifacts": {
+    "symspell": "symspell.dict"
+  },
+  "description": null,
+  "checksums": {
+    "sqlite": "d7a85eb76c6d13ec9884df5974d350196097cf0aaadcfc840c7676d08190eae7",
+    "symspell": "a1828131a4581bf52d99ec97791e3fb264c4a57de6bf8f9cd8c3c89cc9da27e6"
+  },
+  "distribution": "bundled",
+  "remote_artifacts": null,
+  "data_version": "2026.06",
+  "min_resolvekit_version": "0.1.0a1",
+  "pack_type": "base",
+  "store_type": "sqlite",
+  "store_file": "entities.sqlite",
+  "link_keys": null,
+  "base_module_ids": null,
+  "allow_new_entities": false,
+  "quality_metrics": {
+    "entity_count": 96,
+    "names_count": 96,
+    "codes_count": 96,
+    "relations_count": 0,
+    "names_coverage": 1.0,
+    "codes_coverage": 1.0,
+    "relations_density": 0.0
+  }
+}

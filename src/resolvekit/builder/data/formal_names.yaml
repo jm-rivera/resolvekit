@@ -1,0 +1,646 @@
+# Manual additions for countries whose pycountry official_name
+# is blank or differs from the formal designation most
+# commonly used in resolvers. Keyed by ISO 3166-1 alpha-3.
+overrides:
+  AUS:
+  - Commonwealth of Australia
+  RUS:
+  - Russian Federation
+  USA:
+  - United States of America
+  - United States
+  - U.S.A.
+  - USA
+  GBR:
+  - United Kingdom of Great Britain and Northern Ireland
+  - United Kingdom
+  - U.K.
+  ARE:
+  - United Arab Emirates
+  - U.A.E.
+  MEX:
+  - United Mexican States
+  - Mexican Republic
+  DEU:
+  - Federal Republic of Germany
+  CHE:
+  - Swiss Confederation
+  VEN:
+  - Bolivarian Republic of Venezuela
+  ETH:
+  - Federal Democratic Republic of Ethiopia
+  NPL:
+  - Federal Democratic Republic of Nepal
+  LKA:
+  - Democratic Socialist Republic of Sri Lanka
+  PNG:
+  - Independent State of Papua New Guinea
+  WSM:
+  - Independent State of Samoa
+  GUY:
+  - Co-operative Republic of Guyana
+  MMR:
+  - Republic of the Union of Myanmar
+  - Burma
+  COD:
+  - Democratic Republic of the Congo
+  - Democratic Republic of Congo
+  - DR Congo
+  - DRC
+  - Congo (Kinshasa)
+  - Congo-Kinshasa
+  - Congo
+  # Historical name for DRC (source: Wikidata CC0 skos:altLabel)
+  - Zaire
+  COG:
+  - Republic of the Congo
+  - Republic of Congo
+  - Congo (Brazzaville)
+  - Congo-Brazzaville
+  - Congo
+  CIV:
+  - Republic of Côte d'Ivoire
+  - Republic of Cote d'Ivoire
+  - Ivory Coast
+  - Republic of the Ivory Coast
+  - Republic of Ivory Coast
+  PHL:
+  - Republic of the Philippines
+  NLD:
+  - Holland
+  PRK:
+  - Democratic People's Republic of Korea
+  - DPRK
+  KOR:
+  - Republic of Korea
+  TZA:
+  - United Republic of Tanzania
+  MKD:
+  - Republic of North Macedonia
+  - Republic of Macedonia
+  - Macedonia
+  - FYROM
+  FSM:
+  - Federated States of Micronesia
+  MHL:
+  - Republic of the Marshall Islands
+  VAT:
+  - Vatican City State
+  - State of Vatican City
+  PSE:
+  - State of Palestine
+  DZA:
+  - People's Democratic Republic of Algeria
+  BGD:
+  - People's Republic of Bangladesh
+  CHN:
+  - People's Republic of China
+  - PR China
+  - PRC
+  VNM:
+  - Socialist Republic of Viet Nam
+  LAO:
+  - Lao People's Democratic Republic
+  - Lao PDR
+  STP:
+  - Democratic Republic of São Tomé and Príncipe
+  TLS:
+  - Democratic Republic of Timor-Leste
+  SLE:
+  - Republic of Sierra Leone
+  SDN:
+  - Republic of the Sudan
+  - Republic of Sudan
+  SSD:
+  - Republic of South Sudan
+  ZAF:
+  - Republic of South Africa
+  TTO:
+  - Republic of Trinidad and Tobago
+  KNA:
+  - Federation of Saint Kitts and Nevis
+  - Federation of Saint Christopher and Nevis
+  - Saint Christopher and Nevis
+  - St. Kitts and Nevis
+  - St Kitts and Nevis
+  BHS:
+  - Commonwealth of the Bahamas
+  - Commonwealth of The Bahamas
+  DMA:
+  - Commonwealth of Dominica
+  IRN:
+  - Islamic Republic of Iran
+  PAK:
+  - Islamic Republic of Pakistan
+  MRT:
+  - Islamic Republic of Mauritania
+  SVK:
+  - Slovak Republic
+  CZE:
+  - Czech Republic
+  ITA:
+  - Republic of Italy
+  - Italian Republic
+  FRA:
+  - French Republic
+  - Republic of France
+  HUN:
+  - Republic of Hungary
+  TUR:
+  - Republic of Turkey
+  - Republic of Türkiye
+  - Republic of Turkiye
+  ARG:
+  - Republic of Argentina
+  - Argentine Republic
+  BOL:
+  - Republic of Bolivia
+  - Plurinational State of Bolivia
+  LBN:
+  - Republic of Lebanon
+  - Lebanese Republic
+  - State of Lebanon
+  MNE:
+  - Republic of Montenegro
+  GMB:
+  - Republic of The Gambia
+  - Republic of Gambia
+  - Islamic Republic of The Gambia
+  EGY:
+  - Arab Republic of Egypt
+  JAM:
+  - Commonwealth of Jamaica
+  URY:
+  - Oriental Republic of Uruguay
+  PRI:
+  - Commonwealth of Puerto Rico
+  ZWE:
+  - Republic of Zimbabwe
+  # Historical name (source: Wikidata CC0 skos:altLabel)
+  - Rhodesia
+  KEN:
+  - Republic of Kenya
+  GHA:
+  - Republic of Ghana
+  IND:
+  - Republic of India
+  FJI:
+  - Republic of Fiji
+  - Republic of the Fiji Islands
+  MLI:
+  - Republic of Mali
+  GRC:
+  - Hellenic Republic
+  - Greek Republic
+  - Hellas
+  FIN:
+  - Republic of Finland
+  AUT:
+  - Republic of Austria
+  ALB:
+  - Republic of Albania
+  - People's Republic of Albania
+  - People's Socialist Republic of Albania
+  AGO:
+  - Republic of Angola
+  ARM:
+  - Republic of Armenia
+  AZE:
+  - Republic of Azerbaijan
+  BGR:
+  - Republic of Bulgaria
+  BHR:
+  - Kingdom of Bahrain
+  BDI:
+  - Republic of Burundi
+  BEN:
+  - Republic of Benin
+  BLR:
+  - Republic of Belarus
+  BWA:
+  - Republic of Botswana
+  CHL:
+  - Republic of Chile
+  CMR:
+  - Republic of Cameroon
+  COL:
+  - Republic of Colombia
+  CRI:
+  - Republic of Costa Rica
+  CUB:
+  - Republic of Cuba
+  CPV:
+  - Republic of Cabo Verde
+  - Republic of Cape Verde
+  CYP:
+  - Republic of Cyprus
+  DJI:
+  - Republic of Djibouti
+  DNK:
+  - Kingdom of Denmark
+  ECU:
+  - Republic of Ecuador
+  EST:
+  - Republic of Estonia
+  ERI:
+  - State of Eritrea
+  ESP:
+  - Kingdom of Spain
+  ISR:
+  - State of Israel
+  IRQ:
+  - Republic of Iraq
+  ISL:
+  - Republic of Iceland
+  JOR:
+  - Hashemite Kingdom of Jordan
+  - State of Jordan
+  KHM:
+  - Kingdom of Cambodia
+  - Democratic Kampuchea
+  - Democratic Cambodia
+  KAZ:
+  - Republic of Kazakhstan
+  - Republic of Qazaqstan
+  KIR:
+  - Republic of Kiribati
+  KWT:
+  - State of Kuwait
+  LIE:
+  - Principality of Liechtenstein
+  LBR:
+  - Republic of Liberia
+  LSO:
+  - Kingdom of Lesotho
+  LBY:
+  - State of Libya
+  LTU:
+  - Republic of Lithuania
+  LVA:
+  - Republic of Latvia
+  MDA:
+  - Republic of Moldova
+  MAR:
+  - Kingdom of Morocco
+  MCO:
+  - Principality of Monaco
+  MDG:
+  - Republic of Madagascar
+  MWI:
+  - Republic of Malawi
+  MLT:
+  - Republic of Malta
+  MUS:
+  - Republic of Mauritius
+  MDV:
+  - Republic of Maldives
+  MOZ:
+  - Republic of Mozambique
+  NAM:
+  - Republic of Namibia
+  NER:
+  - Republic of Niger
+  NIC:
+  - Republic of Nicaragua
+  NOR:
+  - Kingdom of Norway
+  NRU:
+  - Republic of Nauru
+  OMN:
+  - Sultanate of Oman
+  PAN:
+  - Republic of Panama
+  PER:
+  - Republic of Peru
+  POL:
+  - Republic of Poland
+  PRY:
+  - Republic of Paraguay
+  QAT:
+  - State of Qatar
+  RWA:
+  - Republic of Rwanda
+  SAU:
+  - Kingdom of Saudi Arabia
+  SWE:
+  - Kingdom of Sweden
+  SGP:
+  - Republic of Singapore
+  SVN:
+  - Republic of Slovenia
+  SEN:
+  - Republic of Senegal
+  SOM:
+  - Federal Republic of Somalia
+  SUR:
+  - Republic of Suriname
+  - Republic of Surinam
+  SLV:
+  - Republic of El Salvador
+  TCD:
+  - Republic of Chad
+  THA:
+  - Kingdom of Thailand
+  TJK:
+  - Republic of Tajikistan
+  UZB:
+  - Republic of Uzbekistan
+  VUT:
+  - Republic of Vanuatu
+  YEM:
+  - Republic of Yemen
+  ZMB:
+  - Republic of Zambia
+  TON:
+  - Kingdom of Tonga
+  GIN:
+  - Republic of Guinea
+  GNQ:
+  - Republic of Equatorial Guinea
+  GTM:
+  - Republic of Guatemala
+  GNB:
+  - Republic of Guinea-Bissau
+  HND:
+  - Republic of Honduras
+  HRV:
+  - Republic of Croatia
+  HTI:
+  - Republic of Haiti
+  IDN:
+  - Republic of Indonesia
+  IRL:
+  - Republic of Ireland
+  DOM:
+  - Dominican Republic
+  AND:
+  - Principality of Andorra
+  BRA:
+  - Federative Republic of Brazil
+  BTN:
+  - Kingdom of Bhutan
+  BIH:
+  - Bosnia and Herzegovina
+  BRN:
+  - Brunei Darussalam
+  - Nation of Brunei, the Abode of Peace
+  MNG:
+  - State of Mongolia
+  NGA:
+  - Federal Republic of Nigeria
+  PLW:
+  - Republic of Palau
+  SMR:
+  - Most Serene Republic of San Marino
+  - Republic of San Marino
+  SRB:
+  - Republic of Serbia
+  SWZ:
+  - Kingdom of Eswatini
+  - Kingdom of Swaziland
+  TUN:
+  - Republic of Tunisia
+  UGA:
+  - Republic of Uganda
+  SYC:
+  - Republic of Seychelles
+  GEO:
+  - Republic of Georgia
+  COM:
+  - Union of the Comoros
+  - Republic of the Comoros
+  JPN:
+  - State of Japan
+  MYS:
+  - Federation of Malaysia
+  TWN:
+  - Taiwan, Republic of China
+  - Republic of China (Taiwan)
+  # Historical names (source: Wikidata CC0 skos:altLabel)
+  - Formosa
+  - Republic of China
+  BFA:
+  - Republic of Burkina Faso
+  # Historical name (source: Wikidata CC0 skos:altLabel)
+  - Upper Volta
+  XKS:
+  - Republic of Kosovo
+  # Netherlands Antilles historical names (source: Wikidata CC0 skos:altLabel)
+  # GeoNames covers "Dutch Antilles" and "Netherlands Antilles"; short forms below.
+  ANT:
+  - Dutch Antilles
+  - Netherland Antilles
+
+multilingual_overrides:
+  ERI:
+    fr:
+      - État d'Érythrée
+  LKA:
+    fr:
+      - la République socialiste démocratique de Sri Lanka
+      - République socialiste démocratique de Sri Lanka
+  STP:
+    es:
+      - República Democrática de Santo Tomé y Príncipe
+  # Multilingual official / alias country names. Provenance (see
+  # src/resolvekit/NOTICE.md): unmarked lines are Wikidata CC0 labels/altLabels
+  # verified present upstream; lines marked '# UN-OCHA M49' are UN M49 official
+  # spellings sourced via hdx-python-country (MIT) that are not present verbatim
+  # in Wikidata or CLDR.
+  ATF:
+    es:
+      - Territorio de las Tierras Australes Francesas  # UN-OCHA M49 (hdx, MIT) — see NOTICE.md
+  BEN:
+    es:
+      - Benin  # UN-OCHA M49 (hdx, MIT) — see NOTICE.md
+  BES:
+    es:
+      - Bonaire, San Eustaquio y Saba  # UN-OCHA M49 (hdx, MIT) — see NOTICE.md
+    fr:
+      - Bonaire, Saint-Eustache et Saba
+  BHR:
+    es:
+      - Bahrein
+  BLM:
+    es:
+      - San Barthélemy  # UN-OCHA M49 (hdx, MIT) — see NOTICE.md
+  BLR:
+    es:
+      - Belarús
+  BMU:
+    es:
+      - Bermuda
+  BOL:
+    es:
+      - Bolivia (Estado Plurinacional de)  # UN-OCHA M49 (hdx, MIT) — see NOTICE.md
+    fr:
+      - Bolivie (État plurinational de)  # UN-OCHA M49 (hdx, MIT) — see NOTICE.md
+  BRN:
+    es:
+      - Brunei Darussalam
+  BTN:
+    es:
+      - Bhután
+  BWA:
+    es:
+      - Botswana  # UN-OCHA M49 (hdx, MIT) — see NOTICE.md
+  CUW:
+    fr:
+      - Curaçao
+  DJI:
+    es:
+      - Djibouti
+  FJI:
+    es:
+      - Fiji
+  FSM:
+    es:
+      - Micronesia (Estados Federados de)  # UN-OCHA M49 (hdx, MIT) — see NOTICE.md
+    fr:
+      - Micronésie (États fédérés de)  # UN-OCHA M49 (hdx, MIT) — see NOTICE.md
+  GBR:
+    es:
+      - Reino Unido de Gran Bretaña e Irlanda del Norte
+    fr:
+      - "Royaume-Uni de Grande-Bretagne et d'Irlande du Nord"
+  GGY:
+    es:
+      - Guernsey
+  GNB:
+    es:
+      - Guinea-Bissau
+  HKG:
+    es:
+      - China, región administrativa especial de Hong Kong  # UN-OCHA M49 (hdx, MIT) — see NOTICE.md
+    fr:
+      - Chine, région administrative spéciale de Hong Kong  # UN-OCHA M49 (hdx, MIT) — see NOTICE.md
+  IRN:
+    es:
+      - Irán (República Islámica del)  # UN-OCHA M49 (hdx, MIT) — see NOTICE.md
+    fr:
+      - "Iran (République islamique d')"  # UN-OCHA M49 (hdx, MIT) — see NOTICE.md
+  KEN:
+    es:
+      - Kenya
+  KNA:
+    es:
+      - Saint Kitts y Nevis  # UN-OCHA M49 (hdx, MIT) — see NOTICE.md
+  KOR:
+    fr:
+      - République de Corée
+  LAO:
+    es:
+      - República Democrática Popular Lao
+  MAC:
+    es:
+      - China, región administrativa especial de Macao  # UN-OCHA M49 (hdx, MIT) — see NOTICE.md
+    fr:
+      - Chine, région administrative spéciale de Macao  # UN-OCHA M49 (hdx, MIT) — see NOTICE.md
+  MAF:
+    es:
+      - San Martín (parte francesa)  # UN-OCHA M49 (hdx, MIT) — see NOTICE.md
+    fr:
+      - Saint-Martin (partie française)  # UN-OCHA M49 (hdx, MIT) — see NOTICE.md
+  MDA:
+    es:
+      - República de Moldova
+    fr:
+      - République de Moldova
+  MLI:
+    es:
+      - Malí
+  MNP:
+    es:
+      - Islas Marianas Septentrionales
+  MWI:
+    es:
+      - Malawi
+  NCL:
+    fr:
+      - Nouvelle-Calédonie
+  NLD:
+    es:
+      - Países Bajos (Reino de los)  # UN-OCHA M49 (hdx, MIT) — see NOTICE.md
+    fr:
+      - Pays-Bas (Royaume des)  # UN-OCHA M49 (hdx, MIT) — see NOTICE.md
+  NZL:
+    es:
+      - Nueva Zelandia
+  PLW:
+    es:
+      - Palau
+  PNG:
+    es:
+      - Papua Nueva Guinea
+  PYF:
+    fr:
+      - Polynésie française
+  QAT:
+    es:
+      - Qatar  # UN-OCHA M49 (hdx, MIT) — see NOTICE.md
+  RUS:
+    es:
+      - Federación de Rusia
+    fr:
+      - Fédération de Russie
+  RWA:
+    es:
+      - Rwanda
+  SJM:
+    es:
+      - Islas Svalbard y Jan Mayen  # UN-OCHA M49 (hdx, MIT) — see NOTICE.md
+    fr:
+      - Îles Svalbard-et-Jan Mayen  # UN-OCHA M49 (hdx, MIT) — see NOTICE.md
+  SPM:
+    fr:
+      - Saint-Pierre-et-Miquelon
+  SUR:
+    es:
+      - Suriname  # UN-OCHA M49 (hdx, MIT) — see NOTICE.md
+  SWZ:
+    es:
+      - Eswatini  # UN-OCHA M49 (hdx, MIT) — see NOTICE.md
+  SXM:
+    es:
+      - San Martín (parte Holandesa)  # UN-OCHA M49 (hdx, MIT) — see NOTICE.md
+  SYR:
+    es:
+      - República Árabe Siria
+  TTO:
+    es:
+      - Trinidad y Tabago
+  TUR:
+    es:
+      - Türkiye  # UN-OCHA M49 (hdx, MIT) — see NOTICE.md
+  TZA:
+    es:
+      - República Unida de Tanzanía
+    fr:
+      - République-Unie de Tanzanie
+  USA:
+    es:
+      - Estados Unidos de América
+    fr:
+      - "États-Unis d'Amérique"
+  VAT:
+    fr:
+      - Saint-Siège  # UN-OCHA M49 (hdx, MIT) — see NOTICE.md
+  VEN:
+    es:
+      - Venezuela (República Bolivariana de)  # UN-OCHA M49 (hdx, MIT) — see NOTICE.md
+    fr:
+      - Venezuela (République bolivarienne du)  # UN-OCHA M49 (hdx, MIT) — see NOTICE.md
+  VIR:
+    fr:
+      - Îles Vierges américaines
+  VNM:
+    es:
+      - Viet Nam
+  WLF:
+    es:
+      - Islas Wallis y Futuna
+    fr:
+      - Îles Wallis-et-Futuna  # UN-OCHA M49 (hdx, MIT) — see NOTICE.md
+  ZWE:
+    es:
+      - Zimbabwe

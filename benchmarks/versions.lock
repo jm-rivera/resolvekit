@@ -1,0 +1,10 @@
+country-converter==1.3.2
+countryguess==0.4.9
+datacommons-client==2.1.4
+geonamescache==3.0.1
+hdx-python-country==4.1.1
+polars==1.40.1
+psutil==7.2.2
+pycountry==26.2.16
+rapidfuzz==3.14.1
+resolvekit==0.0.1

@@ -1,0 +1,93 @@
+# src/resolvekit/builder/data/oecd_crosswalk.yaml
+#
+# Hand-maintained map from OECD codes to existing entity_ids in geo/org packs.
+# Add a row whenever an OECD code refers to an entity that already exists in
+# resolvekit (so we don't create a duplicate). Unknown codes are fine — the
+# enricher just creates a new entity for them.
+#
+# CONVENTION: values are entity_ids. Use YAML `null` for a code you've
+# identified as belonging to an existing entity but haven't yet located that
+# entity's id (a placeholder). `null` rows are skipped by the enricher and
+# by crosswalk validation — they're a marker for follow-up, not an error.
+#
+# WIRING DISCIPLINE
+# ─────────────────
+# Crosswalk targets are looked up in both geo and org DBs at validation time;
+# the enricher routes code/name writes to whichever DB the entity actually lives
+# in. `null` still means deferred-mapping (skip). A non-null entity_id that
+# exists in neither available DB raises ValueError.
+#
+version: 1
+providers:           # OECD provider code (multilateral, no iso3) -> entity_id
+  # World Bank Group
+  "901": undata-geo/G00700200  # International Bank for Reconstruction and Development (IBRD)
+  "902": null        # Multilateral Investment Guarantee Agency (MIGA) — no geo entity found
+  "903": undata-geo/G00600230  # International Finance Corporation (IFC)
+  "905": undata-geo/G00600220  # International Development Association (IDA)
+  # Caribbean / Central / South America MDBs
+  "906": undata-geo/G00700600  # Caribbean Development Bank (CDB)
+  "909": undata-geo/G00700700  # Inter-American Development Bank (IDB)
+  "910": null        # Central American Bank for Economic Integration (CABEI) — no geo entity found
+  # Global financial / monetary
+  "907": undata-geo/G00600900  # International Monetary Fund (IMF)
+  "956": null        # IMF Trust Fund — sub-entity of IMF; no distinct geo entry
+  "958": null        # IMF (Concessional Trust Funds) — sub-entity of IMF; no distinct geo entry
+  # African MDBs
+  "913": undata-geo/G00700400  # African Development Bank (AfDB)
+  "914": null        # African Development Fund (AfDF) — no distinct geo entity found
+  # Asian MDB
+  "915": undata-geo/G00700500  # Asian Development Bank (ADB)
+  # Asian Infrastructure Investment Bank (new; no geo entity yet)
+  "1024": null       # Asian Infrastructure Investment Bank (AIIB) — no geo entity found
+  # European institutions
+  "918": EuropeanUnion         # EU Institutions (geo.continental_union)
+  "926": null        # Council of Europe — no geo entity found
+  "990": null        # European Bank for Reconstruction and Development (EBRD) — no geo entity found
+  "1013": null       # Council of Europe Development Bank (CEB) — no geo entity found
+  # Arab / Islamic / regional funds
+  "921": null        # Arab Fund for Economic and Social Development (AFESD) — no geo entity found
+  "951": null        # OPEC Fund for International Development — no geo entity found
+  "953": null        # Arab Bank for Economic Development in Africa — no geo entity found
+  "976": null        # Islamic Development Bank (IsDB) — no geo entity found
+  # UN system agencies
+  "807": undata-geo/G00601800  # United Nations Environment Programme (UNEP)
+  "923": null        # UN Peacebuilding Fund — no geo entity found
+  "928": undata-geo/G00600400  # World Health Organisation (WHO)
+  "932": undata-geo/G00600100  # Food and Agriculture Organisation (FAO)
+  "940": undata-geo/G00600320  # International Labour Organisation (ILO)
+  "944": undata-geo/G00600200  # International Atomic Energy Agency (IAEA)
+  "948": undata-geo/G00600040  # UN Economic Commission for Europe (UNECE)
+  "959": undata-geo/G00601500  # United Nations Development Programme (UNDP)
+  "960": null        # UN Technical Assistance (UNTA) — sub-entity of UNDP; no distinct geo entry
+  "962": undata-geo/G00601400  # UN Conference on Trade and Development (UNCTAD)
+  "963": undata-geo/G00601300  # United Nations Children's Fund (UNICEF)
+  "964": undata-geo/G00602300  # UN Relief and Works Agency (UNRWA)
+  "966": undata-geo/G00600330  # World Food Programme (WFP)
+  "967": undata-geo/G00601900  # UN High Commissioner for Refugees (UNHCR)
+  "971": null        # UNAIDS — no geo entity found
+  "974": undata-geo/G00602200  # United Nations Population Fund (UNFPA)
+  "978": null        # OSCE (Organisation for Security and Co-operation in Europe) — no geo entity found
+  "988": undata-geo/G00600300  # International Fund for Agricultural Development (IFAD)
+  "992": null        # UN Agencies (aggregate) — no single geo entity
+  # Global environment / climate funds
+  "811": null        # Global Environment Facility (GEF) — no geo entity found
+  "812": null        # Montreal Protocol (Multilateral Fund) — no geo entity found
+  "1016": null       # Green Climate Fund (GCF) — no geo entity found
+  "1012": null       # Adaptation Fund — no geo entity found
+  # Global health / education funds
+  "1311": null       # Global Alliance for Vaccines and Immunization (GAVI) — no geo entity found
+  "1312": null       # Global Fund (HIV/TB/Malaria) — no geo entity found
+  "997": null        # Global Partnership for Education (GPE) — no geo entity found
+  # Nordic / other regional
+  "104": null        # Nordic Development Fund (NDF) — no geo entity found
+  "981": null        # Black Sea Trade & Development Bank — no geo entity found
+channels: {}         # OECD channel code -> entity_id
+                     # All key channel->org matches confirmed in geo_db but not yet wired.
+                     # See crosswalk header "CONFIRMED MATCHES" for full list.
+agencies: {}         # "<DONOR_ISO3>:<agency_code>" -> entity_id
+                     # No bilateral agency (USAID, GIZ, JICA, FCDO, AFD, KOICA, NORAD,
+                     # DANIDA, Sida, SDC, KfW, CIDA, etc.) has a prior entity in the geo DB.
+recipients: {}       # OECD recipient code -> entity_id
+                     # Countries get attached via iso3 automatically.
+                     # 26 region-type recipients (Africa regional, Caribbean regional, etc.)
+                     # have no matching entry in geo DB; they will be created as new entities.

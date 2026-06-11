@@ -1,0 +1,124 @@
+{
+  "datasets": {
+    "ambiguous": {
+      "dataset": "ambiguous",
+      "notes": null,
+      "row_count": 58,
+      "seed": 42,
+      "sha256": "a578ad16e956f46af5f769040302a8054b832dae739736207bbebffdc13e5fa7",
+      "sources": [
+        {
+          "notes": "hand-authored ambiguous",
+          "source": "curated"
+        }
+      ]
+    },
+    "geo_admin": {
+      "dataset": "geo_admin",
+      "notes": null,
+      "row_count": 2657,
+      "seed": 42,
+      "sha256": "c00b4865d2ce083cbbfb2b24290bfe9db7df0e86c008450f3312a498fb6a94ba",
+      "sources": [
+        {
+          "notes": "geo admin1/admin2 sampled from shared entity store",
+          "source": "shared_entities_sqlite"
+        },
+        {
+          "source": "synthetic",
+          "version": "gecko-0.6.4"
+        }
+      ]
+    },
+    "geo_cities": {
+      "dataset": "geo_cities",
+      "notes": null,
+      "row_count": 2148,
+      "seed": 42,
+      "sha256": "39d087a1af086e1c903ca1a8ce1fe93ae8281ee4eb0f48639dc64235fd69b60d",
+      "sources": [
+        {
+          "notes": "geo cities sampled from shared entity store",
+          "source": "shared_entities_sqlite"
+        },
+        {
+          "source": "synthetic",
+          "version": "gecko-0.6.4"
+        }
+      ]
+    },
+    "geo_countries_en": {
+      "dataset": "geo_countries_en",
+      "notes": null,
+      "row_count": 4155,
+      "seed": 42,
+      "sha256": "71453cc82206aad59c93fdc9b7187cc9958ca20e805ecd0b23ba98888e9cc85f",
+      "sources": [
+        {
+          "rows": "232",
+          "source": "cldr",
+          "url": "https://github.com/unicode-org/cldr-json/archive/refs/tags/46.0.0.zip",
+          "version": "46.0.0"
+        },
+        {
+          "rows": "502",
+          "source": "geonames",
+          "url": "https://download.geonames.org/export/dump/alternateNames.zip",
+          "version": "alternateNames-dump"
+        },
+        {
+          "rows": "1037",
+          "source": "wikidata",
+          "url": "https://query.wikidata.org/sparql",
+          "version": "sparql-2026-04"
+        },
+        {
+          "rows": "3000",
+          "source": "synthetic",
+          "version": "gecko-0.6.4"
+        }
+      ]
+    },
+    "geo_countries_multilingual": {
+      "dataset": "geo_countries_multilingual",
+      "notes": null,
+      "row_count": 2240,
+      "seed": 42,
+      "sha256": "0cdb932d48ce688b9b993c1496fb234d66aeb65a7a8948f7c80e770cd234720f",
+      "sources": [
+        {
+          "rows": "696",
+          "source": "cldr",
+          "url": "https://github.com/unicode-org/cldr-json/archive/refs/tags/46.0.0.zip",
+          "version": "46.0.0"
+        },
+        {
+          "rows": "1014",
+          "source": "geonames",
+          "url": "https://download.geonames.org/export/dump/alternateNames.zip",
+          "version": "alternateNames-dump"
+        },
+        {
+          "rows": "2016",
+          "source": "wikidata",
+          "url": "https://query.wikidata.org/sparql",
+          "version": "sparql-2026-04"
+        }
+      ]
+    },
+    "no_match": {
+      "dataset": "no_match",
+      "notes": null,
+      "row_count": 43,
+      "seed": 42,
+      "sha256": "58405a1893e1a77b52693a681b1e747259663dd5ae0bbb96e86d4e7135d65037",
+      "sources": [
+        {
+          "notes": "hand-authored no-match",
+          "source": "curated"
+        }
+      ]
+    }
+  },
+  "generated_at": "2026-06-10T14:52:54.941926+00:00"
+}

@@ -1,0 +1,26 @@
+{
+  "gazetteer": {
+    "precision": 0.6790123456790124,
+    "recall": 0.7971014492753623,
+    "f1": 0.7333333333333334,
+    "true_positives": 55,
+    "false_positives": 26,
+    "false_negatives": 14,
+    "nil_correct": 1,
+    "nil_total": 1,
+    "nil_correct_rate": 1.0,
+    "row_count": 50
+  },
+  "spacy_ner": {
+    "precision": 0.9661016949152542,
+    "recall": 0.8260869565217391,
+    "f1": 0.890625,
+    "true_positives": 57,
+    "false_positives": 2,
+    "false_negatives": 12,
+    "nil_correct": 1,
+    "nil_total": 1,
+    "nil_correct_rate": 1.0,
+    "row_count": 50
+  }
+}
