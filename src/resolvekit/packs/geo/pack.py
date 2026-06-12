@@ -92,6 +92,11 @@ def _build_symspell_pair(
     seeds the index; any remaining paths are loaded as additional dictionaries.
     The fuzzy-retrieval source shares the SymSpell index rather than loading its
     own copy.
+
+    ``use_compiled_cache`` is enabled only for the LARGE tier (admin2-5 / cities,
+    ~706k terms, ~6s text build).  The SMALL tier builds in ~0.15s and does not
+    justify the ~156MB pickle overhead.  The fuzzy-retrieval source shares the
+    provider's SymSpell instance and needs no separate flag.
     """
     symspell = GeoSymSpellSource(
         name=symspell_name,
@@ -99,6 +104,7 @@ def _build_symspell_pair(
         max_edit_distance=2,
         prefix_length=7,
         large_tier=large_tier,
+        use_compiled_cache=large_tier,
     )
     for extra_path in paths[1:]:
         symspell.load_additional_dictionary(extra_path)

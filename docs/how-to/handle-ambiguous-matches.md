@@ -48,6 +48,32 @@ entity_id = rk.resolve_id("Congo", on_ambiguous="best")
 
 `"best"` returns whichever candidate has the highest confidence score. When two candidates are tied — as `COD` and `COG` are — the tie is broken by internal ranking heuristics, not a guarantee. Use `"best"` only when a wrong answer is better than no answer (reporting, fuzzy deduplication), not when accuracy matters.
 
+## Reading the AMBIGUOUS repr
+
+*Added in v0.1.3.*
+
+When a result is `AMBIGUOUS`, its repr lists the top candidates with their containing region and ends with copy-pasteable resolution hints:
+
+```python
+r = rk.resolve("Congo")
+print(repr(r))
+# AMBIGUOUS — candidates:
+#   Congo [DRC], CD (conf=0.92)
+#   Congo [Republic], CG (conf=0.91)
+#   try:
+#     resolvekit.resolve(text='Congo [DRC]')
+#   resolvekit.resolve(text='Congo [Republic]')
+```
+
+For city-level ambiguity where candidates span multiple countries (requires remote geo data), the hint ends with a `context={'country': ...}` line you can paste directly into the next call.
+
+The `refinement_hints` tuple lists the context keys that could break the tie:
+
+```python
+r.refinement_hints
+# (RefinementHint.PARENT_IDS, RefinementHint.COUNTRY, RefinementHint.LANGUAGES)
+```
+
 ## Inspecting ambiguity without resolving
 
 `rk.resolve()` returns a `ResolutionResult` whether or not the input is ambiguous. Check `.is_ambiguous` before acting on the result:
@@ -101,14 +127,19 @@ This is useful interactively when building a correction map — you can see all 
 
 ## Narrowing with context
 
-`ResolutionContext` lets you constrain the candidate set before resolution. `entity_types` filters to a specific entity type, which prunes candidates that don't match — useful when a query like "Congo" could match both countries and sub-national regions depending on loaded packs:
+*Added in v0.1.3: `context=` now accepts a plain `dict` on every surface — no import needed.*
+
+Context lets you constrain the candidate set before resolution. `entity_types` filters to a specific entity type, which prunes candidates that don't match — useful when a query like "Congo" could match both countries and sub-national regions depending on loaded packs:
 
 ```python
 import resolvekit as rk
-from resolvekit import ResolutionContext
 
-ctx = ResolutionContext(entity_types=["geo.country"])
-r = rk.resolve("Congo", context=ctx)
+# Dict form — no import needed
+r = rk.resolve("Congo", context={"entity_types": {"geo.country"}})
+
+# ResolutionContext form — same result
+from resolvekit import ResolutionContext
+r = rk.resolve("Congo", context=ResolutionContext(entity_types=frozenset({"geo.country"})))
 
 r.status   # 'ambiguous'
 for c in r.candidates:
@@ -175,5 +206,6 @@ Switch to `on_ambiguous="raise"` if you want the job to fail fast on any ambiguo
 
 ## Next
 
+- [Refine resolution with context](refine-resolution-with-context.md) — the full context key vocabulary, country names in context, and per-row context for bulk operations.
 - [Resolver reference](../reference/resolver.md) — `ResolutionContext` fields and `on_ambiguous` across all resolver methods.
 - [How resolution works](../explanation/how-resolution-works.md) — why two candidates can score identically and how the pipeline decides what to surface as ambiguous versus resolved.

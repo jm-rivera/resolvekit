@@ -275,7 +275,7 @@ def test_rule_fires_when_unique_group_in_top_two() -> None:
     assert out.is_resolved
     assert out.entity_id == group.entity_id
     assert out.confidence == group.confidence
-    assert out.reasons == [ReasonCode.GROUP_PREFERENCE_TIEBREAK]
+    assert out.reasons == (ReasonCode.GROUP_PREFERENCE_TIEBREAK,)
     assert out.match_tier is None
     assert out.candidates == result.candidates  # original candidates preserved
 
@@ -293,7 +293,7 @@ def test_rule_fires_when_group_at_rank_two() -> None:
     assert out.entity_id == group.entity_id
     # Confidence must be the group's, NOT the rank-1 non-group's.
     assert out.confidence == group.confidence
-    assert out.reasons == [ReasonCode.GROUP_PREFERENCE_TIEBREAK]
+    assert out.reasons == (ReasonCode.GROUP_PREFERENCE_TIEBREAK,)
     assert out.match_tier is None
 
 

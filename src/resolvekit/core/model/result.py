@@ -107,7 +107,7 @@ class ReasonCode(StrEnum):
     They're invaluable for debugging and monitoring resolution quality.
 
     Note: ``ResolutionResult.reasons`` is currently always a single-element
-    list. Callers should treat the field as ``[reason]`` and avoid logic that
+    tuple. Callers should treat the field as ``(reason,)`` and avoid logic that
     assumes multiple codes per result; this invariant may relax in a future
     minor version, with notice.
     """
@@ -182,6 +182,12 @@ class CandidateSummary(BaseModel):
         confidence: Calibrated confidence score
         top_evidence: Key evidence (limited to top 3)
         key_features: Selected features for transparency (limited set)
+        parent_name: Human-readable name of the parent entity (e.g. country or
+            administrative container). Only populated for AMBIGUOUS results where
+            candidates share the same canonical name.
+        parent_country: ISO alpha-2 code of the country the entity belongs to.
+            Only populated for AMBIGUOUS results where candidates share the same
+            canonical name.
     """
 
     model_config = ConfigDict(frozen=True)
@@ -192,10 +198,10 @@ class CandidateSummary(BaseModel):
     entity_type: str | None = Field(default=None)
     pack_id: str | None = Field(default=None)
     match_tier: MatchTier | None = Field(default=None)
-    top_evidence: list[CandidateEvidenceSummary] = Field(
-        default_factory=list, max_length=3
-    )
+    top_evidence: tuple[CandidateEvidenceSummary, ...] = Field(default=(), max_length=3)
     key_features: dict[str, float | bool | None] = Field(default_factory=dict)
+    parent_name: str | None = Field(default=None)
+    parent_country: str | None = Field(default=None)
 
     def __repr__(self) -> str:  # explicit by design
         conf = f"{self.confidence:.2f}" if self.confidence is not None else "?"
@@ -241,9 +247,9 @@ class ResolutionResult(BaseModel):
     confidence: float | None = Field(default=None, ge=0.0, le=1.0)
     pack_id: str | None = Field(default=None)
     match_tier: MatchTier | None = Field(default=None)
-    candidates: list[CandidateSummary] = Field(default_factory=list, max_length=10)
-    reasons: list[ReasonCode] = Field(default_factory=list)
-    refinement_hints: list[RefinementHint] = Field(default_factory=list, max_length=4)
+    candidates: tuple[CandidateSummary, ...] = Field(default=(), max_length=10)
+    reasons: tuple[ReasonCode, ...] = Field(default=())
+    refinement_hints: tuple[RefinementHint, ...] = Field(default=(), max_length=4)
     query_text: str | None = Field(default=None)
     trace: Trace | None = Field(default=None)
 
@@ -257,6 +263,21 @@ class ResolutionResult(BaseModel):
     # None means "not set" (default options were used).
     _resolve_domain: str | list[str] | None = PrivateAttr(default=None)
     _resolve_context: ResolutionContext | None = PrivateAttr(default=None)
+
+    # ------------------------------------------------------------------
+    # Pickle support — drop the unpicklable weakref on serialization
+    # ------------------------------------------------------------------
+
+    def __getstate__(self) -> dict[str, Any]:
+        state = super().__getstate__()
+        # Null out the _explainer weakref; weakrefs are never valid cross-process.
+        # The unpickled result will use the existing graceful path in explain()
+        # (raises ExplainNotAvailableError when ref is None).
+        priv = state.get("__pydantic_private__")
+        if priv is not None and priv.get("_explainer") is not None:
+            state = dict(state)
+            state["__pydantic_private__"] = {**priv, "_explainer": None}
+        return state
 
     # ------------------------------------------------------------------
     # Proxy properties — delegate to self.entity when present
@@ -391,7 +412,7 @@ class ResolutionResult(BaseModel):
         """Return the highest-confidence candidate, or None."""
         return self.candidates[0] if self.candidates else None
 
-    def top_candidates(self, n: int = 3) -> list[CandidateSummary]:
+    def top_candidates(self, n: int = 3) -> tuple[CandidateSummary, ...]:
         """Return the top *n* candidates by confidence."""
         return self.candidates[:n]
 
@@ -438,9 +459,23 @@ class ResolutionResult(BaseModel):
                 f"confidence={self.confidence}, pack_id='{self.pack_id}')"
             )
         if self.status == ResolutionStatus.AMBIGUOUS:
+            lines: list[str] = []
+            for c in self.candidates[:3]:
+                label = c.canonical_name or c.entity_id
+                parts: list[str] = [label]
+                if c.parent_name:
+                    parts.append(c.parent_name)
+                elif c.parent_country:
+                    parts.append(c.parent_country)
+                description = ", ".join(parts)
+                conf = f" (conf={c.confidence:.2f})" if c.confidence is not None else ""
+                lines.append(f"  {description}{conf}")
             hint = disambiguate_hint(self)
-            if hint is not None:
-                return f"AMBIGUOUS — try:\n  {hint}"
+            if lines or hint:
+                header = "AMBIGUOUS — candidates:"
+                body = "\n".join(lines) if lines else "  (no candidate names available)"
+                tail = f"\n  try:\n    {hint}" if hint is not None else ""
+                return f"{header}\n{body}{tail}"
             n = len(self.candidates)
             return (
                 f"ResolutionResult(status='{s}', candidates={n}, "

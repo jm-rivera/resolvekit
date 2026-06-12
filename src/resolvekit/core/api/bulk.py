@@ -10,6 +10,8 @@ The public surface lives at :func:`resolvekit.bulk` (convenience layer) and
 
 from __future__ import annotations
 
+import difflib
+import math
 import warnings
 import weakref
 from typing import Any, Literal
@@ -37,20 +39,65 @@ from resolvekit.core.model.crosswalk import _MISSING, Crosswalk
 from resolvekit.core.model.entity_attributes import dispatch_pivot
 from resolvekit.core.model.result import ReasonCode
 
-# ---------------------------------------------------------------------------
-# Module-level sentinels for the crosswalk short-circuit
-# ---------------------------------------------------------------------------
 
-# _IGNORE_RESULT: placed in unique_results[i] for IGNORE entries so that
-# _assemble_output can bypass _apply_not_found unconditionally.
+def _closest_match(value: str, choices: tuple[str, ...]) -> str | None:
+    """Return the closest match to *value* from *choices*, or None."""
+    matches = difflib.get_close_matches(value, choices, n=1, cutoff=0.6)
+    return matches[0] if matches else None
+
+
+def _validate_domain_available(domain: str | list[str] | None, resolver: Any) -> None:
+    """Raise ``UnknownDomainError`` when *domain* names a pack the resolver lacks.
+
+    No-op when *domain* is None or the resolver reports no available packs.
+    """
+    from resolvekit.core.api.loading import _normalize_domain
+
+    norm_domain = _normalize_domain(domain)
+    if norm_domain is None:
+        return
+    available = resolver._runner.available_packs
+    if not available:
+        return
+    unknown = sorted(norm_domain - available)
+    if unknown:
+        raise UnknownDomainError(unknown, sorted(available))
+
+
+def _numeric_to_str(v: int | float) -> str:
+    """Coerce an ``int`` or ``float`` to its canonical string form.
+
+    Integral floats (``840.0``) produce the same string as the equivalent
+    integer (``"840"``), matching the numeric codes stored in data packs.
+    Non-integral floats (``840.5``) are left to plain ``str()`` — they will
+    not match any code, but the string is well-defined.
+
+    This is the shared coercion kernel used by both the scalar resolve path
+    and ``_flatten_input`` so the two can never diverge.
+    """
+    if isinstance(v, float) and math.isfinite(v) and v == int(v):
+        # Integral float — strip the decimal part.
+        return str(int(v))
+    return str(v)
+
+
+def _coerce_item_to_str(v: object) -> str:
+    """Coerce a non-null collection element to ``str``.
+
+    ``int`` and ``float`` values are passed through ``_numeric_to_str`` so
+    that integral floats (``840.0``) map to ``"840"`` rather than
+    ``"840.0"``.  All other types fall back to ``str()``.
+    """
+    if isinstance(v, (int, float)) and not isinstance(v, bool):
+        return _numeric_to_str(v)  # type: ignore[arg-type]
+    return str(v)
+
+
+# Sentinel for crosswalk IGNORE entries — bypasses _apply_not_found.
 _IGNORE_RESULT: ResolutionResult = ResolutionResult(
     status=ResolutionStatus.NO_MATCH,
-    reasons=[ReasonCode.SENTINEL_BLOCKED],
+    reasons=(ReasonCode.SENTINEL_BLOCKED,),
 )
-
-# ---------------------------------------------------------------------------
-# Input-kind detection
-# ---------------------------------------------------------------------------
 
 _InputKind = Literal["pandas", "polars", "numpy", "list", "tuple", "dict"]
 
@@ -103,15 +150,32 @@ def _detect_input_kind(values: Any) -> tuple[_InputKind, Any]:
         setattr(err, "hint", "materialize first: list(values)")  # noqa: B010
         raise err
 
-    raise TypeError(
-        f"bulk() values must be a list, tuple, numpy ndarray, pd.Series, or "
-        f"pl.Series; got {type(values).__name__!r}"
+    # Check if a DataFrame was passed — give a column-extraction hint.
+    _df_hint: str | None = None
+    try:
+        import pandas as pd
+
+        if isinstance(values, pd.DataFrame):
+            _df_hint = "extract one column first: values['col_name']"
+    except ImportError:
+        pass
+    if _df_hint is None:
+        try:
+            import polars as pl
+
+            if isinstance(values, pl.DataFrame):
+                _df_hint = (
+                    "extract one column first: "
+                    "values['col_name'] or values.get_column('col_name')"
+                )
+        except ImportError:
+            pass
+
+    _base_msg = (
+        f"bulk() values must be a list, tuple, dict, numpy ndarray, "
+        f"pd.Series, or pl.Series; got {type(values).__name__!r}"
     )
-
-
-# ---------------------------------------------------------------------------
-# Dedup helpers
-# ---------------------------------------------------------------------------
+    raise TypeError(_base_msg + (f"; {_df_hint}" if _df_hint else ""))
 
 
 def _dedup_list(
@@ -133,9 +197,155 @@ def _dedup_list(
     return uniques, indexer
 
 
-# ---------------------------------------------------------------------------
-# Null handling helpers
-# ---------------------------------------------------------------------------
+def _dedup_pairs(
+    items: list[str | None],
+    contexts: list[Any],
+) -> tuple[list[tuple[str, Any]], list[int | None]]:
+    """Return (unique_pairs, indexer) for per-row context resolution.
+
+    ``unique_pairs`` is a list of ``(text, context)`` tuples for distinct
+    non-null ``(text, context._cache_key())`` pairs.  ``indexer[i]`` is the
+    position of row ``i`` in ``unique_pairs``, or ``None`` when ``items[i]``
+    is null.
+
+    Uses ``context._cache_key()`` for identity so that structurally-equal
+    ``ResolutionContext`` objects deduplicate — the same guarantee provided by
+    ``_QueryCache`` and ``BatchResolver``.
+    """
+    # Compute (value, ctx_key, ctx) once per row — avoids calling ctx._cache_key() twice.
+    row_keys: list[tuple[str | None, tuple, Any]] = [
+        (v, (() if ctx is None else ctx._cache_key()), ctx)
+        for v, ctx in zip(items, contexts, strict=True)
+    ]
+    seen: dict[tuple, int] = {}
+    unique_pairs: list[tuple[str, Any]] = []
+    for v, ctx_key, ctx in row_keys:
+        if v is None:
+            continue
+        pair_key = (v, ctx_key)
+        if pair_key not in seen:
+            seen[pair_key] = len(unique_pairs)
+            unique_pairs.append((v, ctx))
+    indexer: list[int | None] = [
+        None if v is None else seen[(v, ctx_key)] for v, ctx_key, _ in row_keys
+    ]
+    return unique_pairs, indexer
+
+
+def _is_per_row_value(v: Any) -> bool:
+    """Return True when *v* is a Series, list, or numpy array (per-row context value)."""
+    if isinstance(v, list):
+        return True
+    try:
+        import pandas as pd
+
+        if isinstance(v, pd.Series):
+            return True
+    except ImportError:
+        pass
+    try:
+        import polars as pl
+
+        if isinstance(v, (pl.Series, pl.Expr)):
+            return True
+    except ImportError:
+        pass
+    try:
+        import numpy as np
+
+        if isinstance(v, np.ndarray):
+            return True
+    except ImportError:
+        pass
+    return False
+
+
+def _context_has_per_row_value(context: Any) -> bool:
+    """Return True when *context* is a dict carrying any per-row (Series/list/array) value.
+
+    Such a context bypasses eager coercion and the uniform-context dedup path,
+    routing through the per-row ``_dedup_pairs`` machinery instead.
+    """
+    return isinstance(context, dict) and any(
+        _is_per_row_value(v) for v in context.values()
+    )
+
+
+def _extract_scalar_list(v: Any, n: int, key: str) -> list[Any]:
+    """Extract a Python list of length *n* from a per-row context value *v*.
+
+    Raises ``ValueError`` when the length differs from *n*.
+    """
+    values = _to_plain_list(v)
+    if len(values) != n:
+        raise ValueError(f"context[{key!r}] length {len(values)} != {n}")
+    return values
+
+
+def _to_plain_list(v: Any) -> list[Any]:
+    """Materialize a per-row context value (list, Series, or ndarray) to a list."""
+    if isinstance(v, list):
+        return v
+    try:
+        import pandas as pd
+
+        if isinstance(v, pd.Series):
+            return v.tolist()
+    except ImportError:
+        pass
+    try:
+        import polars as pl
+
+        if isinstance(v, pl.Series):
+            return v.to_list()
+    except ImportError:
+        pass
+    try:
+        import numpy as np
+
+        if isinstance(v, np.ndarray):
+            return v.tolist()
+    except ImportError:
+        pass
+    return list(v)
+
+
+def _expand_per_row_contexts(
+    context_dict: dict[str, Any],
+    n: int,
+    *,
+    resolver: Any,
+) -> list[Any]:
+    """Expand a per-row context dict into a list of *n* ResolutionContext objects.
+
+    Validates lengths, broadcasts scalars to length-*n*, then deduplicates by
+    frozenset signature before construction — coercing each unique signature
+    once rather than once per row.
+
+    Country-name coercion happens inside ``coerce_context`` — once per unique
+    value, not per row.  Returns a ``list[ResolutionContext | None]`` of length *n*.
+    """
+    from resolvekit.core.api.context_input import coerce_context
+
+    # Validate lengths and convert per-row values to column lists.
+    columns: dict[str, list[Any]] = {}
+    for key, val in context_dict.items():
+        if _is_per_row_value(val):
+            columns[key] = _extract_scalar_list(val, n, key)
+        else:
+            columns[key] = [val] * n
+
+    # Dedup-before-construct — group rows by frozenset signature.
+    # Signature uses scalar values only; per-row country coercion handled in coerce_context.
+    sig_to_ctx: dict[frozenset, Any] = {}
+    result: list[Any] = []
+    for i in range(n):
+        row = {key: col[i] for key, col in columns.items()}
+        sig: frozenset = frozenset((k, str(v)) for k, v in row.items())
+        if sig not in sig_to_ctx:
+            sig_to_ctx[sig] = coerce_context(row, resolver=resolver)
+        result.append(sig_to_ctx[sig])
+    return result
 
 
 def _apply_not_found(
@@ -172,17 +382,12 @@ def _apply_not_found(
     if not_found == "raise":
         raise ResolutionError(
             status=result.status,
-            candidates=[],
+            candidates=(),
             message=f"no match for {original!r}",
         )
     if not_found == "null":
         return None
     return not_found  # literal sentinel string
-
-
-# ---------------------------------------------------------------------------
-# Pivot helper
-# ---------------------------------------------------------------------------
 
 
 def _pivot_result(
@@ -220,11 +425,6 @@ def _pivot_result(
         return None
 
 
-# ---------------------------------------------------------------------------
-# Flatten helper
-# ---------------------------------------------------------------------------
-
-
 def _flatten_input(
     kind: _InputKind,
     raw: Any,
@@ -249,32 +449,29 @@ def _flatten_input(
         orig_name = raw.name
         # Coerce to object before map so typed Series (Int64, categorical) don't reject ""
         items: list[str | None] = [
-            None if pd.isna(v) else str(v) for v in raw.astype(object)
+            None if pd.isna(v) else _coerce_item_to_str(v) for v in raw.astype(object)
         ]
     elif kind == "polars":
         orig_polars_name = raw.name
-        items = [None if v is None else str(v) for v in raw.to_list()]
+        items = [None if v is None else _coerce_item_to_str(v) for v in raw.to_list()]
     elif kind == "numpy":
         import numpy as np
 
         items = [
-            None if (v is None or (isinstance(v, float) and np.isnan(v))) else str(v)
+            None
+            if (v is None or (isinstance(v, float) and np.isnan(v)))
+            else _coerce_item_to_str(v)
             for v in raw.tolist()
         ]
     elif kind == "dict":
         orig_keys = list(raw.keys())
-        items = [None if v is None else str(v) for v in raw.values()]
+        items = [None if v is None else _coerce_item_to_str(v) for v in raw.values()]
     elif kind == "tuple":
-        items = [None if v is None else str(v) for v in raw]
+        items = [None if v is None else _coerce_item_to_str(v) for v in raw]
     else:  # list
-        items = [None if v is None else str(v) for v in raw]
+        items = [None if v is None else _coerce_item_to_str(v) for v in raw]
 
     return items, orig_index, orig_name, orig_polars_name, orig_keys
-
-
-# ---------------------------------------------------------------------------
-# Resolve-uniques helper
-# ---------------------------------------------------------------------------
 
 
 def _resolve_uniques(
@@ -291,17 +488,14 @@ def _resolve_uniques(
     """Resolve each unique value and return one ``ResolutionResult`` per unique.
 
     When *crosswalk* is provided, values present in it skip name resolution
-    entirely.  For a mapped value the synthetic RESOLVED result (or the
-    ``_IGNORE_RESULT`` sentinel for IGNORE entries) is placed directly in
-    ``unique_results`` so the broadcast in ``_assemble_output`` carries it
-    correctly without a second write.  Unknown entity-ids under ``strict=True``
-    raise ``CrosswalkError`` before the remainder is resolved.
+    entirely.  Synthetic RESOLVED results (or ``_IGNORE_RESULT`` for IGNORE entries)
+    are placed directly in ``unique_results`` for broadcast by ``_assemble_output``.
+    Unknown entity-ids under ``strict=True`` raise ``CrosswalkError`` before
+    the remainder is resolved.
 
-    Uses the code-input short-circuit when all *to-resolve* uniques look like
-    codes or ``from_system`` is set; otherwise dispatches to
-    ``_resolve_many_internal``.
+    Uses the code-input short-circuit when all uniques look like codes or
+    ``from_system`` is set; otherwise dispatches to ``_resolve_many_internal``.
     """
-    # --- crosswalk pre-filter -------------------------------------------------
     unique_results: list[ResolutionResult | None] = [None] * len(uniques)
     to_resolve_idx: list[int] = []
     offenders: list[str] = []
@@ -309,15 +503,12 @@ def _resolve_uniques(
     for i, u in enumerate(uniques):
         hit = crosswalk._get(u) if crosswalk is not None else _MISSING
         if hit is _MISSING:
-            # Not in the crosswalk — resolve normally.
             to_resolve_idx.append(i)
             continue
         if hit is None:
-            # IGNORE entry — place the sentinel; never reaches _apply_not_found.
             unique_results[i] = _IGNORE_RESULT
             continue
-        # Crosswalk hit: apply-time existence check via the runner (one read per unique).
-        # hit is str here (not _MISSING, not None) — ty doesn't narrow through `is`.
+        # Crosswalk hit: verify entity exists via the runner.
         eid: str = hit  # ty: ignore[invalid-assignment]  # type: ignore[assignment]
         entity = resolver._runner.get_entity(eid)  # type: ignore[union-attr]
         if entity is None:
@@ -325,7 +516,7 @@ def _resolve_uniques(
             unique_results[i] = ResolutionResult(
                 status=ResolutionStatus.NO_MATCH,
                 query_text=u,
-                reasons=[ReasonCode.SENTINEL_BLOCKED],
+                reasons=(ReasonCode.SENTINEL_BLOCKED,),
             )
             continue
         # Entity found — synthetic RESOLVED result with entity attached.
@@ -334,19 +525,17 @@ def _resolve_uniques(
             entity_id=eid,
             entity=entity,
             query_text=u,
-            reasons=[ReasonCode.EXACT_CODE_MATCH],
+            reasons=(ReasonCode.EXACT_CODE_MATCH,),
         )
 
     # Fail fast on unknown ids when strict mode is active.
     if crosswalk is not None and crosswalk.strict and offenders:
         raise CrosswalkError(offenders)
 
-    # --- resolve the non-crosswalked subset -----------------------------------
     to_resolve = [uniques[i] for i in to_resolve_idx]
 
-    # use_code_path detection runs over the to-resolve subset only — never
-    # the full uniques list, so a fully-crosswalked batch doesn't mis-route the
-    # empty remainder through the code path.
+    # Code-path detection runs over the to-resolve subset only (never the full
+    # uniques list) so a fully-crosswalked batch routes the empty remainder correctly.
     use_code_path = from_system is not None or (
         bool(to_resolve) and all(_looks_like_code(u) for u in to_resolve)
     )
@@ -371,28 +560,19 @@ def _resolve_uniques(
                 if on_error == "null":
                     r = ResolutionResult(
                         status=ResolutionStatus.ERROR,
-                        reasons=[ReasonCode.INTERNAL_ERROR],
+                        reasons=(ReasonCode.INTERNAL_ERROR,),
                     )
                 else:  # keep — pass through original input string as query_text
                     r = ResolutionResult(
                         status=ResolutionStatus.NO_MATCH,
-                        reasons=[ReasonCode.INTERNAL_ERROR],
+                        reasons=(ReasonCode.INTERNAL_ERROR,),
                         query_text=u,
                     )
             resolved_subset.append(r)
     elif to_resolve:
         # Batch resolve via resolve_many (with include_entity when pivoting).
         try:
-            from resolvekit.core.api.loading import _normalize_domain
-
-            norm_domain = _normalize_domain(domain)
-            if norm_domain is not None:
-                available = resolver._runner.available_packs
-                if available:
-                    unknown = sorted(norm_domain - available)
-                    if unknown:
-                        raise UnknownDomainError(unknown, sorted(available))
-
+            _validate_domain_available(domain, resolver)
             raw_results = resolver._resolve_many_internal(
                 to_resolve,
                 domain=domain,
@@ -405,23 +585,17 @@ def _resolve_uniques(
                 raise
             _batch_sentinel = ResolutionResult(
                 status=ResolutionStatus.ERROR,
-                reasons=[ReasonCode.INTERNAL_ERROR],
+                reasons=(ReasonCode.INTERNAL_ERROR,),
             )
             resolved_subset = [_batch_sentinel] * len(to_resolve)
     else:
         resolved_subset = []
 
-    # Scatter resolved results back at their original unique indices.
+    # Scatter resolved results back to their original unique indices.
     for list_pos, orig_idx in enumerate(to_resolve_idx):
         unique_results[orig_idx] = resolved_subset[list_pos]
 
-    # All slots must be filled now (None would only remain if there's a logic bug).
     return unique_results  # ty: ignore[invalid-return-type]  # type: ignore[return-value]
-
-
-# ---------------------------------------------------------------------------
-# Assemble-output helper
-# ---------------------------------------------------------------------------
 
 
 def _assemble_output(
@@ -438,37 +612,30 @@ def _assemble_output(
 ) -> tuple[list[Any], list[ResolutionResult]]:
     """Apply not_found / on_ambiguous contracts, pivot, and broadcast to original order.
 
-    Returns ``(out_values, out_source)``.  The lazy entity fetch for the
-    ``on_ambiguous="best"`` promoted path runs inside the per-unique loop —
-    not the broadcast loop — so each entity is fetched at most once.
+    Returns ``(out_values, out_source)``.  Entity fetches for ``on_ambiguous="best"``
+    happen per-unique (not per-broadcast), so each entity is fetched at most once.
 
     When ``spec`` is set, pivoting goes through ``apply_output`` (batch-safe:
-    per-entity misses return None, never raise — unless ``on_missing="raise"``
-    in the spec, which propagates on the first miss and aborts the batch).
-    When ``spec`` is None and ``to`` is not None, the explicit-``to`` path
-    uses ``dispatch_pivot`` with ``UnknownCodeSystemError`` re-raise.
+    per-entity misses return None unless ``on_missing="raise"`` in the spec).
+    Otherwise uses ``dispatch_pivot`` with ``UnknownCodeSystemError`` re-raise.
     """
-    # Shared sentinel for null-input rows — allocated once, reused for all nulls.
     _null_sentinel = ResolutionResult(
         status=ResolutionStatus.NO_MATCH,
-        reasons=[ReasonCode.INVALID_QUERY],
+        reasons=(ReasonCode.INVALID_QUERY,),
     )
 
-    # Whether pivoting is active on this call (either explicit to= or spec path).
     pivoting = spec is not None or to is not None
 
     unique_out: list[Any] = []  # pivot result per unique (len == len(uniques))
     for i, r in enumerate(unique_results):
         if r is _IGNORE_RESULT:
-            # IGNORE entry: unconditional None, bypassing _apply_not_found
-            # (so not_found="raise" never fires on a crosswalk IGNORE).
+            # IGNORE entry bypasses _apply_not_found, so not_found="raise" never fires.
             unique_out.append(None)
             continue
         coerced = _apply_not_found(r, uniques[i], not_found, on_ambiguous)
         if coerced is None or isinstance(coerced, str):
             unique_out.append(coerced)
         elif hasattr(coerced, "status"):
-            # Still a ResolutionResult (RESOLVED or "best" path).
             # When on_ambiguous="best" promotes an AMBIGUOUS result, the synthetic
             # RESOLVED result has entity_id set but entity=None.  Fetch the entity
             # lazily so that pivot dispatch works correctly.
@@ -483,7 +650,6 @@ def _assemble_output(
             unique_out.append(coerced)
 
     # Broadcast back to original order.
-    # indexer[i] is None iff items[i] is None, so the null check is sufficient.
     out_values: list[Any] = []
     out_source: list[ResolutionResult] = []
     for idx, item in enumerate(items):
@@ -491,17 +657,12 @@ def _assemble_output(
             out_values.append(None)
             out_source.append(_null_sentinel)
         else:
-            ui = indexer[idx]  # invariant: item is not None → ui is not None
+            ui = indexer[idx]
             if ui is not None:  # mypy narrowing
                 out_values.append(unique_out[ui])
                 out_source.append(unique_results[ui])
 
     return out_values, out_source
-
-
-# ---------------------------------------------------------------------------
-# Core dispatch — invoked by Resolver.bulk() and the convenience layer.
-# ---------------------------------------------------------------------------
 
 
 def _bulk_dispatch(
@@ -549,16 +710,34 @@ def _bulk_dispatch(
             f"output={output!r} is not valid; "
             "expected one of 'series', 'record', 'frame'"
         )
+    if on_error not in {"raise", "null", "keep"}:
+        _did_you_mean = _closest_match(on_error, ("raise", "null", "keep"))
+        raise ValueError(
+            f"on_error={on_error!r} is not valid; "
+            f"expected one of 'raise', 'null', 'keep'"
+            + (f"; did you mean {_did_you_mean!r}?" if _did_you_mean else "")
+        )
+    if on_ambiguous not in {"raise", "null", "best"}:
+        _did_you_mean = _closest_match(on_ambiguous, ("raise", "null", "best"))
+        raise ValueError(
+            f"on_ambiguous={on_ambiguous!r} is not valid; "
+            f"expected one of 'raise', 'null', 'best'"
+            + (f"; did you mean {_did_you_mean!r}?" if _did_you_mean else "")
+        )
+    if on_missing not in {"raise", "null", "auto"}:
+        _did_you_mean = _closest_match(on_missing, ("raise", "null", "auto"))
+        raise ValueError(
+            f"on_missing={on_missing!r} is not valid; "
+            f"expected one of 'raise', 'null', 'auto'"
+            + (f"; did you mean {_did_you_mean!r}?" if _did_you_mean else "")
+        )
 
     kind, raw = _detect_input_kind(values)
     items, orig_index, orig_name, orig_polars_name, orig_keys = _flatten_input(
         kind, raw
     )
-    uniques, indexer = _dedup_list(items)
 
-    # Effective-pivot detection:
-    #   has_pivot    — caller passed an explicit to= (not UNSET, not None)
-    #   spec_active  — to= was omitted (UNSET) and an output_spec is provided
+    # Pivot detection: explicit to= (not UNSET/None) vs. spec path (UNSET + output_spec).
     has_pivot = to is not _UNSET and to is not None
     spec_active = to is _UNSET and output_spec is not None
 
@@ -566,9 +745,8 @@ def _bulk_dispatch(
     include_entity_for_call = has_pivot or spec_active
 
     # Build the effective spec for this call.
-    # On the spec path, honour the per-call on_missing override.  The chain is
-    # already validated; construct a new frozen OutputSpec directly rather than
-    # re-running compile_output_spec (which would re-validate code systems).
+    # On the spec path, honour the per-call on_missing override. The chain is
+    # already validated; construct a new frozen OutputSpec directly.
     effective_spec: OutputSpec | None = None
     if spec_active and output_spec is not None:
         if on_missing != output_spec.on_missing:
@@ -579,31 +757,84 @@ def _bulk_dispatch(
         else:
             effective_spec = output_spec
 
-    unique_results = _resolve_uniques(
-        resolver=resolver,
-        uniques=uniques,
-        from_system=from_system,
-        domain=domain,
-        context=context,
-        include_entity=include_entity_for_call,
-        on_error=on_error,
-        crosswalk=crosswalk,
-    )
-    out_values, out_source = _assemble_output(
-        items=items,
-        indexer=indexer,
-        unique_results=unique_results,
-        uniques=uniques,
-        to=to if has_pivot else None,
-        spec=effective_spec,
-        not_found=not_found,
-        on_ambiguous=on_ambiguous,
-        resolver=resolver,
-    )
+    # Per-row context (Series/list values) uses _dedup_pairs instead of _dedup_list.
+    # Crosswalk is incompatible with per-row context.
+    _context_is_per_row = _context_has_per_row_value(context)
 
-    # ---------------------------------------------------------------------------
-    # Empty-column warning (spec path only)
-    # ---------------------------------------------------------------------------
+    if _context_is_per_row:
+        if crosswalk is not None:
+            raise ValueError(
+                "crosswalk= is not supported together with per-row context; "
+                "remove either crosswalk= or the per-row context column(s)"
+            )
+        # Expand per-row context into a list of ResolutionContext | None per row.
+        n = len(items)
+        row_contexts = _expand_per_row_contexts(context, n, resolver=resolver)
+
+        # Deduplicate by (text, ctx._cache_key()) to avoid redundant resolutions.
+        unique_pairs, pair_indexer = _dedup_pairs(items, row_contexts)
+
+        unique_texts = [p[0] for p in unique_pairs]
+        unique_ctxs = [p[1] for p in unique_pairs]
+
+        # Resolve the unique (text, context) pairs.
+        try:
+            _validate_domain_available(domain, resolver)
+            raw_results = resolver._resolve_many_internal(
+                unique_texts,
+                domain=domain,
+                context=unique_ctxs,
+                include_entity=include_entity_for_call,
+            )
+            unique_results: list[ResolutionResult] = list(raw_results)
+        except Exception:
+            if on_error == "raise":
+                raise
+            _batch_sentinel = ResolutionResult(
+                status=ResolutionStatus.ERROR,
+                reasons=(ReasonCode.INTERNAL_ERROR,),
+            )
+            unique_results = [_batch_sentinel] * len(unique_pairs)
+
+        # Re-use _assemble_output with the per-row indexer.
+        # ``uniques`` here are the unique texts (for not_found messages).
+        out_values, out_source = _assemble_output(
+            items=items,
+            indexer=pair_indexer,
+            unique_results=unique_results,
+            uniques=unique_texts,
+            to=to if has_pivot else None,
+            spec=effective_spec,
+            not_found=not_found,
+            on_ambiguous=on_ambiguous,
+            resolver=resolver,
+        )
+    else:
+        # Uniform (scalar or None) context.
+        uniques, indexer = _dedup_list(items)
+
+        unique_results = _resolve_uniques(
+            resolver=resolver,
+            uniques=uniques,
+            from_system=from_system,
+            domain=domain,
+            context=context,
+            include_entity=include_entity_for_call,
+            on_error=on_error,
+            crosswalk=crosswalk,
+        )
+        out_values, out_source = _assemble_output(
+            items=items,
+            indexer=indexer,
+            unique_results=unique_results,
+            uniques=uniques,
+            to=to if has_pivot else None,
+            spec=effective_spec,
+            not_found=not_found,
+            on_ambiguous=on_ambiguous,
+            resolver=resolver,
+        )
+
     # After assembling values, check whether every RESOLVED row came back None.
     # Warn only when the column is wholly empty among resolved rows — a partial
     # miss (some resolved rows have a value) is not warned.
@@ -624,9 +855,6 @@ def _bulk_dispatch(
                     stacklevel=4,
                 )
 
-    # ---------------------------------------------------------------------------
-    # Decide return shape
-    # ---------------------------------------------------------------------------
     # Return a native series (not BulkResult) when pivoting and output="series".
     scalar_to = (has_pivot or spec_active) and output == "series"
 
@@ -683,9 +911,19 @@ def _bulk_dispatch(
 
 
 def _record_from_result(result: ResolutionResult, pivot_value: Any) -> dict[str, Any]:
-    """Build the per-row record dict used by output='record' / 'frame'."""
+    """Build the per-row record dict used by output='record' / 'frame'.
+
+    When no pivot is active, ``pivot_value`` is the raw ``ResolutionResult``
+    object.  We extract ``entity_id`` as a primitive rather than embedding the
+    model — polars cannot store nested pydantic objects in a Struct Series.
+    """
+    if isinstance(pivot_value, ResolutionResult):
+        # No pivot was applied; use entity_id as the scalar "value".
+        value: Any = pivot_value.entity_id
+    else:
+        value = pivot_value
     return {
-        "value": pivot_value,
+        "value": value,
         "status": result.status.value,
         "entity_id": result.entity_id,
         "confidence": result.confidence,
@@ -711,9 +949,7 @@ def _build_records_native(
     if kind == "polars":
         import polars as pl
 
-        # Let polars infer the struct dtype from the records — passing
-        # bare `pl.Struct` (the dtype class, not a fully-specified
-        # `pl.Struct({...})` schema) raises in polars 0.20+.
+        # Let polars infer the struct dtype from records; bare pl.Struct raises.
         return pl.Series(name=orig_polars_name or "", values=records)
     if kind == "numpy":
         import numpy as np
@@ -751,11 +987,6 @@ def _build_frame_native(
     return records
 
 
-# ---------------------------------------------------------------------------
-# Native shape assembly
-# ---------------------------------------------------------------------------
-
-
 def _build_native(
     values: list[Any],
     kind: _InputKind,
@@ -769,11 +1000,11 @@ def _build_native(
     if kind == "pandas":
         import pandas as pd
 
-        return pd.Series(values, index=orig_index, name=orig_name)
+        return pd.Series(values, index=orig_index, name=orig_name, dtype=object)
     if kind == "polars":
         import polars as pl
 
-        return pl.Series(name=orig_polars_name or "", values=values)
+        return pl.Series(name=orig_polars_name or "", values=values, dtype=pl.Object)
     if kind == "numpy":
         import numpy as np
 

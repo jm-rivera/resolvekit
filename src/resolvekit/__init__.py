@@ -18,13 +18,9 @@ Quick start (instance-level)::
 
 With context hints::
 
-    from resolvekit import Resolver, ResolutionContext
-
     resolver = Resolver.from_modules(module_ids=["geo.countries"])
-    result = resolver.resolve(
-        "Paris",
-        context=ResolutionContext(country="FR"),
-    )
+    result = resolver.resolve("Paris", context={"country": "FR"})
+    # Typed alternative: context=ResolutionContext(country="FR")
 
 With explanation::
 
@@ -55,7 +51,9 @@ from resolvekit._convenience import (
     resolve,
     resolve_id,
     snap,
+    suggest,
     to,
+    warm,
 )
 
 # Re-exports excluded from __all__ — importable but not surfaced via star-import.
@@ -68,11 +66,19 @@ from resolvekit.core.api import Resolver
 from resolvekit.core.byod.result import AugmentResult
 from resolvekit.core.errors import (
     AmbiguousResolutionError,
+    CrosswalkError,
+    DataPackNotAvailableError,
     EntityNotFoundError,
     GroupNotFoundError,
+    NoModulesInstalledError,
+    OutputMissingError,
     ResolutionError,
+    UnknownCodeSystemError,
+    UnknownContextKeyError,
+    UnknownDomainError,
+    UnknownOutputError,
 )
-from resolvekit.core.errors_base import ResolverError
+from resolvekit.core.errors_base import ExplainNotAvailableError, ResolverError
 from resolvekit.core.model import (
     BulkResult,
     EntityRecord,
@@ -86,7 +92,6 @@ from resolvekit.core.parse import ParsedEntity as ParsedEntity
 from resolvekit.core.parse import ParseResult as ParseResult
 from resolvekit.core.util.sentinel import SentinelBlocklist as SentinelBlocklist
 
-# Exactly 28 public names (not counting __version__).
 # ``default``, ``download_all``, ``clear_cache``, and ``reset`` are importable
 # but excluded from star-imports.
 __all__ = [
@@ -95,10 +100,15 @@ __all__ = [
     "AugmentResult",
     "BulkResult",
     "Crosswalk",
+    "CrosswalkError",
+    "DataPackNotAvailableError",
     "DroppedSpan",
     "EntityNotFoundError",
     "EntityRecord",
+    "ExplainNotAvailableError",
     "GroupNotFoundError",
+    "NoModulesInstalledError",
+    "OutputMissingError",
     "ParseResult",
     "ParsedEntity",
     "ResolutionContext",
@@ -107,6 +117,10 @@ __all__ = [
     "ResolutionStatus",
     "Resolver",
     "ResolverError",
+    "UnknownCodeSystemError",
+    "UnknownContextKeyError",
+    "UnknownDomainError",
+    "UnknownOutputError",
     "bulk",
     "configure",
     "download",
@@ -117,5 +131,7 @@ __all__ = [
     "resolve",
     "resolve_id",
     "snap",
+    "suggest",
     "to",
+    "warm",
 ]

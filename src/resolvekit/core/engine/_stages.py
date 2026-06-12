@@ -335,15 +335,12 @@ def merge_candidates(
     candidates = []
 
     for entity_id, evidence_list in evidence_by_entity.items():
-        # Find best evidence
         best = max(evidence_list, key=lambda e: e.raw_score or 0)
 
-        # Aggregate signals from all evidence
         aggregated_signals: dict[str, float] = {}
         for ev in evidence_list:
             aggregated_signals.update(ev.signals)
 
-        # Create retrieval summary
         retrieval = RetrievalSummary(
             best_source=best.source_name,
             best_rank=best.rank,
@@ -351,7 +348,6 @@ def merge_candidates(
             signals=aggregated_signals,
         )
 
-        # Placeholder scores - will be overwritten during scoring step
         placeholder_score = best.raw_score or DEFAULT_FALLBACK_SCORE
 
         candidates.append(
@@ -467,9 +463,9 @@ def check_post_scoring_stop(
             status=ResolutionStatus.RESOLVED,
             entity_id=top.entity_id,
             confidence=top.scores.calibrated_score,
-            candidates=[
+            candidates=tuple(
                 build_candidate_summary(c) for c in candidates[:DEFAULT_TOP_K_RESULTS]
-            ],
-            reasons=[reason],
+            ),
+            reasons=(reason,),
         )
     return None

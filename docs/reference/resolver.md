@@ -98,6 +98,7 @@ Every constructor accepts these keyword arguments:
 | `sentinel_blocklist` | `SentinelBlocklist | None` | `DEFAULT_BLOCKLIST` | Junk-input blocklist. `None` disables it. |
 | `default_to` | `str | list[str] | None` | `None` | Default output code system or name variant applied to every `resolve()`, `bulk()`, and `snap()` call. A string (`"iso3"`) or a list for a fallback chain (`["iso3", "name"]`). `None` = return raw `ResolutionResult` (default behavior). |
 | `on_missing` | `Literal["raise", "null", "auto"]` | `"auto"` | Miss policy when the default output chain has no value for a resolved entity. `"auto"` = raise for scalar `resolve()`/`snap()`, null + `UserWarning` for `bulk()`; `"raise"` = always raise `OutputMissingError`; `"null"` = always return `None`. |
+| `warm` | `bool` | `True` | Start a background daemon thread during construction that pre-builds all lazily-constructed indexes (the SymSpell typo index). `False` keeps construction fully lazy; the index builds on the first query that reaches the fuzzy tier. See [`Resolver.warm()`](#resolverwarm). |
 
 !!! warning "Heads up"
     The LRU cache is not thread-safe. For concurrent workloads, either build one `Resolver` per worker thread or pass `cache_size=0`.
@@ -153,7 +154,7 @@ Resolves a single string.
 - **`to`** (`str | type[EntityRecord] | None`, default: `UNSET`) — Controls the return type. `UNSET` (omitted) activates the resolver's configured `default_to` spec when set, or returns a raw `ResolutionResult` when no default is configured. `None` (explicit) always returns a `ResolutionResult`. A code system name (`"iso3"`, `"dcid"`) returns that code string. An attribute name (`"flag"`, `"name"`) returns that attribute. `EntityRecord` returns the full entity object. A per-call `to=` overrides any configured `default_to`.
 - **`as_result`** (`bool`, default: `False`) — Return the full `ResolutionResult` even when a `default_to` is configured — equivalent to `to=None`. Raises `ValueError` when combined with an explicit non-`None` `to=`.
 - **`domain`** (`str | list[str] | None`, default: `None`) — Route to a specific domain (`"geo"`) or list of domains. Requires `routing_mode=RoutingMode.EXPLICIT`; with the default `AUTO` mode, passing `domain=` raises `ValueError`. To scope resolution without EXPLICIT routing, load fewer modules instead (`from_modules` / `auto(domains=...)`).
-- **`context`** (`ResolutionContext | None`, default: `None`) — Resolution context. When `as_of` is set inside it, acts as a hard point-in-time filter: entities outside their `[valid_from, valid_until)` window are dropped. With no `as_of` set, context is a no-op on temporal filtering.
+- **`context`** (`ResolutionContext | dict | None`, default: `None`) — Resolution hints. Accepts a [`ResolutionContext`](api.md#resolutioncontext) or a plain `dict` with shorthand keys (`country`, `entity_types`, `parent_ids`, `languages`, `attributes`, `as_of`). Unknown dict keys raise `UnknownContextKeyError`. When `as_of` is set, acts as a hard point-in-time filter: entities outside their `[valid_from, valid_until)` window are dropped.
 - **`from_system`** (`str | None`, default: `None`) — Treat the input as a code in this system. Accepts any system known to the loaded packs (`code_systems()` lists them); common ones are `"iso2"`, `"iso3"`, `"iso_numeric"`, `"dcid"`, `"wikidata"`. An unknown system raises `UnknownCodeSystemError`. Skips name resolution.
 - **`include_entity`** (`bool`, default: `False`) — Populate `result.entity` with the full `EntityRecord`. When `to=` is set or a default spec is active, this is forced `True` internally. Note: the module-level `rk.resolve()` defaults this to `True` for notebook ergonomics; `Resolver.resolve()` defaults to `False`.
 - **`timeout`** (`float | None`, default: `None`) — Per-call limit in seconds. Overrides `default_timeout`. Must be positive if set.
@@ -276,7 +277,7 @@ Resolves a collection of values.
 - **`on_missing`** (`"raise" | "null" | "auto" | UNSET`, default: `UNSET`) — Miss policy override for the output spec. `UNSET` inherits the spec's configured `on_missing` policy. `"raise"` aborts the batch on the first resolved-but-missing entity; `"null"` returns `None` per row silently; `"auto"` returns `None` with a `UserWarning`. Only relevant on the spec path.
 - **`output`** (`"series" | "record" | "frame"`, default: `"series"`) — Output shape when `to=None`. Ignored when `to=` is a scalar.
 - **`domain`** — Optional domain filter.
-- **`context`** (`ResolutionContext | None`) — Broadcast to every row.
+- **`context`** (`ResolutionContext | dict | None`) — Resolution hints, broadcast to every row. Dict shorthand keys: `country` (ISO alpha-2/alpha-3 or a country name), `entity_types`, `parent_ids`, `languages`, `attributes`, `as_of`. Dict values may be a `pd.Series` or `pl.Series` for per-row context. Unknown keys raise `UnknownContextKeyError`.
 - **`from_system`** — Force code-system interpretation for all inputs.
 - **`not_found`** (`"null" | "raise" | str`, default: `"null"`) — What to do when a value has no match. `"null"` → `None`. `"raise"` → `ValueError`. Any other string is used as a literal sentinel in the output.
 - **`on_error`** (`"raise" | "null" | "keep"`, default: `"raise"`) — What to do on pipeline errors.
@@ -329,9 +330,31 @@ r.snap(
 
 ---
 
+### `warm()` { #resolverwarm }
+
+```python
+r.warm() -> None
+```
+
+Build all lazily-constructed indexes now and block until they are ready. Idempotent — calling it again when indexes are already built returns immediately. Thread-safe.
+
+By default, `Resolver` construction starts a background daemon thread that pre-builds the SymSpell typo index (see the `warm=` [shared option](#shared-options)). Call `warm()` when you need the resolver to be fully ready before processing begins — for example, in server startup or before a batch pipeline runs.
+
+```python
+from resolvekit import Resolver
+
+r = Resolver.auto()
+r.warm()            # block here until all indexes are ready
+r.resolve("France")   # no index-build latency
+```
+
+To warm the module-level singleton, use [`rk.warm()`](api.md#warm).
+
+---
+
 ### `suggest(prefix, *, top_k=10, domain=None, entity_type=None, context=None, to=None, fuzzy="auto", timeout=None)` { #resolversuggest }
 
-Returns a ranked typeahead suggestion list for `prefix`. Built for per-keystroke autocomplete: it bypasses the resolve pipeline and the query cache, never raises a thresholded verdict, and returns `[]` for empty, whitespace-only, or below-floor prefixes. This method exists only on `Resolver` — there is no module-level `rk.suggest()`.
+Returns a ranked typeahead suggestion list for `prefix`. Built for per-keystroke autocomplete: it bypasses the resolve pipeline and the query cache, never raises a thresholded verdict, and returns `[]` for empty, whitespace-only, or below-floor prefixes. A module-level `rk.suggest()` wrapper is also available — see [`rk.suggest`](api.md#suggest).
 
 **Parameters**
 
@@ -660,7 +683,7 @@ Resolver.lite().domains   # ['geo']
 
 ```python
 r.info.data_version         # "2026.06"
-r.info.resolvekit_version   # "0.1.2"
+r.info.resolvekit_version   # "0.1.3"
 r.info.domains              # ("geo", "org")
 r.info.routing_mode         # "auto"
 r.info.closed               # False

@@ -6,6 +6,8 @@ and base-linked overlay (``Resolver.augment``) construction."""
 from __future__ import annotations
 
 import itertools
+import re
+import unicodedata
 from pathlib import Path
 from typing import Any, NamedTuple
 
@@ -19,6 +21,32 @@ from resolvekit.core.byod.cache import (
     write_tally,
 )
 from resolvekit.core.byod.intake import ByodRecord, RecordSchema
+
+# ---------------------------------------------------------------------------
+# Custom build-time normalizer
+# ---------------------------------------------------------------------------
+
+
+class _CustomBuildNormalizer:
+    """Build-time normalizer for the custom domain.
+
+    Applies NFC + casefold + whitespace collapse — matching the query-time
+    ``CUSTOM_NORMALIZATION_PROFILE`` in ``packs/custom/pack.py`` exactly.
+    Using NFKC here would decompose compatibility characters (™ → TM, ² → 2,
+    ℠ → SM, etc.) at build time while the query side preserves them, making
+    labels with those characters unreachable by their stored form.
+    """
+
+    _WHITESPACE = re.compile(r"\s+")
+
+    def normalize_name(self, value: str) -> str:
+        result = unicodedata.normalize("NFC", value)
+        result = self._WHITESPACE.sub(" ", result).strip()
+        return result.casefold()
+
+    def normalize_code(self, system: str, value: str) -> str:
+        return value.strip().casefold()
+
 
 # ---------------------------------------------------------------------------
 # Builder registry
@@ -58,9 +86,7 @@ def _domain_normalizer(domain: str) -> Any:
         from resolvekit.packs.org.normalizer import OrgNormalizer
 
         return OrgNormalizer()
-    from resolvekit.core.linking.base_normalizer import BaseNormalizer
-
-    return BaseNormalizer()
+    return _CustomBuildNormalizer()
 
 
 # ---------------------------------------------------------------------------
@@ -271,7 +297,7 @@ def _run_build(
     # Auto-sequence counter for rows without an id.
     counter = itertools.count()
 
-    for row in records:
+    for row_index, row in enumerate(records):
         record: ByodRecord = schema.row_to_record(row, normalizer=builder._normalizer)
 
         # Determine the entity_id seed.
@@ -282,8 +308,19 @@ def _run_build(
         )
         mint_entity_id = f"{namespace}/{seed}"
 
-        # Normalise canonical name for the "name" strategy.
+        # Guard: minting requires a non-empty name. Raise early so the error
+        # message names the row and column rather than surfacing an opaque
+        # RuntimeError from the builder internals.
         canonical_name = record.canonical_name
+        if canonical_name is None and not resolved_link_on:
+            name_cols = schema.names
+            col_hint = name_cols[0] if len(name_cols) == 1 else str(name_cols)
+            raise ValueError(
+                f"record {row_index}: {col_hint!r} is empty — "
+                "every record must have a non-empty name"
+            )
+
+        # Normalise canonical name for the "name" strategy.
         name_value_norm: str | None = None
         if canonical_name is not None:
             name_value_norm = builder._normalizer.normalize_name(canonical_name)

@@ -109,10 +109,12 @@ class EntityRecord(BaseModel):
         """All code records as a ``{system: value}`` mapping.
 
         When a system appears more than once, the first occurrence wins.
+        ``iso_numeric`` values are zero-padded to the canonical 3-digit form.
         """
         result: dict[str, str] = {}
         for cr in self.codes:
-            result.setdefault(cr.system, cr.value)
+            value = cr.value.zfill(3) if cr.system == "iso_numeric" else cr.value
+            result.setdefault(cr.system, value)
         return result
 
     @property
@@ -127,8 +129,8 @@ class EntityRecord(BaseModel):
 
     @property
     def numeric(self) -> str | None:
-        """ISO 3166-1 numeric code, or ``None`` if not available."""
-        return self.codes_dict.get("numeric")
+        """ISO 3166-1 numeric code, zero-padded to 3 digits, or ``None`` if not available."""
+        return self.codes_dict.get("iso_numeric")
 
     @property
     def name(self) -> str:
@@ -156,8 +158,20 @@ class EntityRecord(BaseModel):
 
     @property
     def aliases(self) -> list[str]:
-        """All non-canonical name values, in declaration order."""
-        return [nr.value for nr in self.names if not nr.is_preferred]
+        """All non-canonical name values, deduplicated and in declaration order.
+
+        Excludes the canonical name and any duplicate values.
+        """
+        seen: set[str] = {self.canonical_name}
+        result: list[str] = []
+        for nr in self.names:
+            if nr.is_preferred:
+                continue
+            if nr.value in seen:
+                continue
+            seen.add(nr.value)
+            result.append(nr.value)
+        return result
 
     # ------------------------------------------------------------------
     # Helper methods
@@ -239,7 +253,7 @@ class EntityRecord(BaseModel):
         if aliases_str:
             rows.append(("aliases", aliases_str))
         for key, val in self.codes_dict.items():
-            if key not in {"iso2", "iso3", "numeric"}:
+            if key not in {"iso2", "iso3", "iso_numeric"}:
                 rows.append((key, val))
 
         table_rows = "".join(

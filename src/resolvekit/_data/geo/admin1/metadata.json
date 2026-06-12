@@ -7,7 +7,8 @@
     "geo.admin3",
     "geo.cities",
     "geo.countries",
-    "geo.continental_unions"
+    "geo.continental_unions",
+    "geo.regions"
   ],
   "entity_schema_version": "1.0",
   "feature_schema_version": "geo.features.v1",
@@ -16,7 +17,7 @@
     "fts": "fts5",
     "symspell": "symspell.dict"
   },
-  "build_timestamp": "2026-05-31T15:26:15.400997+00:00",
+  "build_timestamp": "2026-06-12T05:45:26.185584+00:00",
   "source_datasets": [
     "datacommons"
   ],
@@ -29,15 +30,15 @@
   "remote_artifacts": {
     "sqlite": {
       "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.06/geo-admin1-entities.sqlite.gz",
-      "sha256": "8174d2fe365c4f5cd4971b2bb5495c31b4f9f5fbe2c1308a681c3638df9c17aa",
-      "gz_sha256": "956b54a116ae8655241f242b06c339fdc57246e182ef9db900cecaeecda7ae7d",
-      "size_mb": 11.45
+      "sha256": "74be1278d44329532c920a1e9e16d913a0b5390cb9c6a713322d7a34b5e3dd24",
+      "gz_sha256": "46d39fb8cb3f2d35c147f78e90c49fb6d14520f8454930db191ab8ec376efd41",
+      "size_mb": 11.55
     },
     "symspell": {
       "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.06/geo-admin1-symspell.dict.gz",
-      "sha256": "b7967ea6e710877e2ca06634e363405156071f2b6c18f179c0e3a16f68ff629b",
-      "gz_sha256": "f5829bca78f84a5a0e1a7b734eb87d4a8b403b1fe5156952da7f6eea73bd69c6",
-      "size_mb": 0.26
+      "sha256": "eb40c9f872c158e257c9f8acc4b4a1447f7af88790efd9f7600ee0494c2f7f80",
+      "gz_sha256": "91f3bacaa5d33ba8582e1edcb23e30d9e21cac0dbd6f7d89224d1a2923a266ad",
+      "size_mb": 0.27
     }
   },
   "data_version": "2026.06",
@@ -50,11 +51,11 @@
   "allow_new_entities": false,
   "quality_metrics": {
     "entity_count": 4795,
-    "names_count": 15109,
-    "codes_count": 36741,
-    "relations_count": 5002,
+    "names_count": 15472,
+    "codes_count": 37805,
+    "relations_count": 5013,
     "names_coverage": 1.0,
     "codes_coverage": 1.0,
-    "relations_density": 1.043169968717414
+    "relations_density": 1.0454640250260687
   }
 }

@@ -35,7 +35,12 @@ FTS_BONUS = 0.4
 FALLBACK_SCORE = 0.3
 CONSTRAINT_FAIL_PENALTY = 0.05
 HIERARCHY_TIEBREAK_FACTOR = 0.009  # must be < min inter-tier gap (0.01)
-PROMINENCE_TIEBREAK_FACTOR = 0.05  # bounded by inter-tier gap
+# Raised from 0.05 to let a dominant city/admin2 (prominence≈1.0) separate from
+# an obscure same-named peer when city_min_gap is applied.  Max score adjustment
+# is ±(PROMINENCE_TIEBREAK_FACTOR / 2) = ±0.06, which clears CITY_ADMIN_MIN_GAP
+# (0.06) only when the prominence delta is large (≈1.0).  Equal-prominence pairs
+# still produce zero net gap and stay AMBIGUOUS.
+PROMINENCE_TIEBREAK_FACTOR = 0.12
 
 # Acronym inputs (4-10 all-uppercase chars) route to geo so that group entities
 # like NATO/ASEAN/OPEC can resolve via the geo pack.  The routing boost is

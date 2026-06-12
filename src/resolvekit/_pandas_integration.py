@@ -11,6 +11,11 @@ Call site::
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from resolvekit.core.model import ResolutionContext
+
 _REGISTERED: bool = False
 
 
@@ -50,8 +55,10 @@ def register() -> None:
             *,
             to: str,
             domain: str | list[str] | None = None,
+            context: ResolutionContext | dict | None = None,
             from_system: str | None = None,
             not_found: str = "null",
+            on_error: str = "raise",
             on_ambiguous: str = "null",
         ) -> pd.Series:
             """Resolve the Series and pivot to a code or attribute.
@@ -62,18 +69,32 @@ def register() -> None:
             Args:
                 to: Target pivot (e.g. ``"iso3"``, ``"flag"``, ``"name"``).
                 domain: Optional domain filter.
+                context: Resolution hints, as a ``ResolutionContext`` or a plain ``dict``.
+                    Dict shorthand keys: ``country`` (ISO alpha-2/alpha-3 or a country
+                    name like ``"France"``), ``entity_types``, ``parent_ids``,
+                    ``languages``, ``attributes`` (pack-specific escape hatch), and
+                    ``as_of``. An empty dict is treated as no context. Unknown keys raise
+                    ``UnknownContextKeyError`` listing the valid keys.
+                    Dict values may be a ``pd.Series`` for per-row context.
                 from_system: Force code-system for lookup.
                 not_found: ``"null"`` (default), ``"raise"``, or sentinel string.
+                on_error: ``"raise"`` (default), ``"null"``, or ``"keep"``.
+                    Controls what happens when a per-row resolution raises an
+                    unexpected error.  ``"raise"`` propagates the exception;
+                    ``"null"`` silently returns ``None``; ``"keep"`` returns the
+                    original input string.
                 on_ambiguous: ``"null"`` (default), ``"raise"``, or ``"best"``.
 
             Returns:
                 ``pd.Series`` of pivot values, aligned to the input Series.
             """
-            return self.bulk(  # type: ignore[return-value]
+            return self.bulk(  # type: ignore[return-value]  # ty: ignore[invalid-return-type]
                 to=to,
                 domain=domain,
+                context=context,
                 from_system=from_system,
                 not_found=not_found,
+                on_error=on_error,
                 on_ambiguous=on_ambiguous,
             )
 
@@ -83,8 +104,10 @@ def register() -> None:
             to: str | None = None,
             output: str = "series",
             domain: str | list[str] | None = None,
+            context: ResolutionContext | dict | None = None,
             from_system: str | None = None,
             not_found: str = "null",
+            on_error: str = "raise",
             on_ambiguous: str = "null",
         ) -> object:
             """Run bulk resolution on the Series.
@@ -97,8 +120,20 @@ def register() -> None:
                     or ``"frame"`` (DataFrame).  Forwarded straight through to
                     the underlying dispatch.
                 domain: Optional domain filter.
+                context: Resolution hints, as a ``ResolutionContext`` or a plain ``dict``.
+                    Dict shorthand keys: ``country`` (ISO alpha-2/alpha-3 or a country
+                    name like ``"France"``), ``entity_types``, ``parent_ids``,
+                    ``languages``, ``attributes`` (pack-specific escape hatch), and
+                    ``as_of``. An empty dict is treated as no context. Unknown keys raise
+                    ``UnknownContextKeyError`` listing the valid keys.
+                    Dict values may be a ``pd.Series`` for per-row context.
                 from_system: Force code-system for lookup.
                 not_found: ``"null"`` (default), ``"raise"``, or sentinel.
+                on_error: ``"raise"`` (default), ``"null"``, or ``"keep"``.
+                    Controls what happens when a per-row resolution raises an
+                    unexpected error.  ``"raise"`` propagates the exception;
+                    ``"null"`` silently returns ``None``; ``"keep"`` returns the
+                    original input string.
                 on_ambiguous: ``"null"`` (default), ``"raise"``, or ``"best"``.
 
             Returns:
@@ -115,10 +150,10 @@ def register() -> None:
                 to=to,
                 output=output,
                 domain=domain,
-                context=None,
+                context=context,
                 from_system=from_system,
                 not_found=not_found,
-                on_error="null",
+                on_error=on_error,
                 on_ambiguous=on_ambiguous,
             )
 

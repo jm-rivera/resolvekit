@@ -21,10 +21,20 @@ A normalized span ``[ns, ne)`` recovers the raw surface as::
 
 This two-anchor design ensures that trailing dropped characters (e.g. closing
 ``**`` after an emphasis group) are absorbed into the *preceding* char's
-``ends`` value and do NOT bleed into the following span's ``starts``.  The
-round-trip invariant therefore holds exactly::
+``ends`` value and do NOT bleed into the following span's ``starts``.
 
-    normalize_aligned(raw[starts[ns]:ends[ne-1]], profile)[0] == normalized[ns:ne]
+Raw surface recovery is always clean: ``raw[starts[ns]:ends[ne-1]]`` never
+splits a raw codepoint even when a casefold expansion (e.g. ``ß`` → ``ss``)
+maps multiple normalized chars to the same raw position, because all expansion
+chars share the same ``ends`` value (the one-past position of that codepoint).
+
+Round-trip invariant: holds for spans whose boundary does not fall
+mid-expansion (i.e. ``ne`` does not land between two normalized chars that
+both originated from the same raw codepoint).  When a gazetteer pattern like
+``weis`` fires on raw ``Weiß``, the recovered surface ``Weiß`` re-normalizes
+to ``weiss``, not ``weis`` — the invariant breaks at ``ne``, but the raw
+slice itself is a valid token and ``link_span`` resolves through the full
+pipeline independently, so no offset corruption occurs in practice.
 
 Supported profile flags (geo and org today):
   - unicode_nfc
@@ -363,9 +373,12 @@ def normalize_aligned(
         raw_end   = ends[ne - 1]
         surface   = raw[raw_start:raw_end]
 
-    Round-trip invariant: for any span ``[ns, ne)`` produced by the automaton,
-    ``normalize_aligned(raw[starts[ns]:ends[ne-1]], profile)[0]`` equals
-    ``normalized[ns:ne]``.
+    Raw surface recovery is always clean: the slice ``raw[starts[ns]:ends[ne-1]]``
+    never splits a raw codepoint.  The round-trip invariant
+    ``normalize_aligned(raw[starts[ns]:ends[ne-1]], profile)[0] == normalized[ns:ne]``
+    holds for spans whose ``ne`` boundary does not fall between two normalized
+    chars produced by the same raw codepoint (e.g. mid-casefold-expansion of
+    ``ß`` → ``ss``).
 
     Supported flags: unicode_nfc, casefold, strip_whitespace,
     strip_punctuation, preserve_digits, decode_html_entities,

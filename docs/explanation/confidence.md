@@ -16,15 +16,15 @@ Match quality drives the score directly. An exact code or canonical-name match s
 import resolvekit as rk
 
 result_exact = rk.resolve("Germany")
-print(result_exact.confidence)  # ≈ 0.91
+print(result_exact.confidence)  # ≈ 0.93
 print(result_exact.match_tier)  # exact_name
 
 result_fuzzy = rk.resolve("Germny")   # one character missing
-print(result_fuzzy.confidence)  # ≈ 0.91
+print(result_fuzzy.confidence)  # ≈ 0.93
 print(result_fuzzy.match_tier)  # exact_name
 ```
 
-Both resolve to `country/DEU`. A canonical-name query like `"Germany"` hits `exact_name`; a code query like `"DEU"` or `"DE"` hits `exact_code` and scores slightly higher (≈ 0.95). The one-character typo in `"Germny"` goes through SymSpell correction first, so it also lands on `exact_name` at a similar confidence level.
+Both resolve to `country/DEU`. A canonical-name query like `"Germany"` hits `exact_name`; a code query like `"DEU"` or `"DE"` hits `exact_code` and scores slightly higher (≈ 0.96). The one-character typo in `"Germny"` goes through SymSpell correction first, so it also lands on `exact_name` at a similar confidence level.
 
 !!! note
     Exact confidence values shift slightly when the calibrator is retrained on new labeled data. Treat reported floats as approximate.
@@ -84,12 +84,12 @@ r = rk.Resolver.auto(confidence_threshold=0.99)
 result = r.resolve("Germny")
 
 print(result.status)       # no_match
-print(result.confidence)   # ≈ 0.91
+print(result.confidence)   # ≈ 0.93
 print(result.reasons)      # [<ReasonCode.BELOW_CONFIDENCE_THRESHOLD: 'below_confidence_threshold'>]
 r.close()
 ```
 
-Here `confidence ≈ 0.91` tells you there's a strong candidate (`country/DEU`) that just didn't clear the stricter threshold. A confidence of `None` on a `no_match` means no candidate reached the pipeline at all—nothing remotely matched.
+Here `confidence ≈ 0.93` tells you there's a strong candidate (`country/DEU`) that just didn't clear the stricter threshold. A confidence of `None` on a `no_match` means no candidate reached the pipeline at all—nothing remotely matched.
 
 ## Adjusting the threshold
 

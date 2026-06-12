@@ -41,7 +41,7 @@ from resolvekit.core.datapack import NORMALIZER_VERSION
 
 # Bump when the build logic or metadata schema changes in a way that
 # invalidates all existing cached BYOD packs.
-BYOD_CACHE_VERSION = "2"
+BYOD_CACHE_VERSION = "3"
 
 # Sub-directory inside the resolvekit cache dir for BYOD packs.
 _BYOD_SUBDIR = "byod"
@@ -171,11 +171,7 @@ def commit_build(build_dir: Path, final_dir: Path) -> None:
     """Atomically promote *build_dir* to *final_dir* and clean up.
 
     Uses ``os.replace(build_dir, final_dir)`` for an atomic last-writer-wins
-    swap.  On success removes the now-superseded temp dir with
-    ``shutil.rmtree(build_dir, ignore_errors=True)`` (mirrors
-    ``composed_sqlite.py:326``).
-
-    If the parent of *final_dir* does not exist it is created first.
+    swap.  If the parent of *final_dir* does not exist it is created first.
 
     Args:
         build_dir: Temp directory where the build was written.
@@ -183,12 +179,9 @@ def commit_build(build_dir: Path, final_dir: Path) -> None:
     """
     final_dir.parent.mkdir(parents=True, exist_ok=True)
     os.replace(build_dir, final_dir)
-    # build_dir is now the old location of the directory that was replaced;
-    # on success os.replace moves it entirely, so nothing remains there to clean.
-    # However, if this is a second concurrent write (final_dir already existed
-    # before replace), the "old" final_dir was atomically overwritten — nothing
-    # to clean in either case.  The rmtree below is a belt-and-suspenders guard
-    # matching composed_sqlite.py:326's pattern.
+    # Belt-and-suspenders cleanup: ``shutil.rmtree`` with ignore_errors=True
+    # handles both cases (build_dir doesn't exist after replace, or final_dir
+    # was clobbered by a concurrent write) without raising.
     shutil.rmtree(build_dir, ignore_errors=True)
 
 

@@ -34,7 +34,7 @@ SYMSPELL_EXACT_NAME_MIN_QUERY_LEN = 5
 # so a single-process LRU eliminates most repeat work for hot terms.
 _LOOKUP_CACHE_MAX = 8192
 
-# Main symspell evidence tier: FTS-level, not exact — loop-invariant constant.
+# Main symspell evidence tier: FTS-level, not exact.
 _SYMSPELL_TIER = REASON_TO_MATCH_TIER.get(ReasonCode.FTS_MATCH)
 
 # Entity-type prefixes that belong to the SMALL index group (countries, admin1,
@@ -119,6 +119,7 @@ class GeoSymSpellSource(SymSpellSource):
         discount_factor: float = 0.8,
         name: str = "geo_symspell",
         large_tier: bool = False,
+        use_compiled_cache: bool = False,
     ):
         super().__init__(
             name=name,
@@ -126,6 +127,7 @@ class GeoSymSpellSource(SymSpellSource):
             dictionary_path=dictionary_path,
             max_edit_distance=max_edit_distance,
             prefix_length=prefix_length,
+            use_compiled_cache=use_compiled_cache,
         )
         self._discount = discount_factor
         self._large_tier = large_tier

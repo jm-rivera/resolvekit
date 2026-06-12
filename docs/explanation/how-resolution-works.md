@@ -66,6 +66,8 @@ The pipeline runs several sources in order and merges the results before scoring
 
 **SymSpell typo correction** — generates spelling corrections for the input before re-running exact and name lookups. `"Germny"` → corrected to `"germany"` → hits exact_name for `country/DEU`. The corrected form still shows `exact_name` as the match tier because the corrected string matched the canonical name exactly; the SymSpell step is the source, not the tier.
 
+The SymSpell index is built lazily: it is constructed the first time a query reaches the fuzzy tier, not during `Resolver` construction. On installs with the remote data tiers (admin2–admin5, cities), the 706k-term dictionary takes ~6 seconds to build. By default, `Resolver` construction starts a background thread that pre-builds the index so this cost does not land on a query. Call [`rk.warm()`](../reference/api.md#warm) or [`Resolver.warm()`](../reference/resolver.md#resolverwarm) to build all indexes synchronously before processing begins. Pass `warm=False` to any constructor to keep the original fully-lazy behavior.
+
 When an exact-code or exact-name hit is found, the pipeline stops generating candidates — there's no point running fuzzy after a certain match.
 
 ## Point-in-time filter (as_of)
@@ -100,8 +102,8 @@ The confidence is meaningful in absolute terms — it's calibrated against real 
 
 | Match tier | Typical confidence |
 |---|---|
-| `exact_code` | ~0.95 |
-| `exact_name` | ~0.91 |
+| `exact_code` | ~0.96 |
+| `exact_name` | ~0.93 |
 | `fts` (accent-stripped or partial) | ~0.84 |
 | `fuzzy` | varies; often 0.70–0.88 |
 
@@ -130,7 +132,7 @@ import resolvekit as rk
 # Resolved: single clear winner
 rk.resolve("Germany").status       # resolved
 rk.resolve("Germany").match_tier   # exact_name  ("Germany" is a name, not a code)
-rk.resolve("Germany").confidence   # ≈ 0.91
+rk.resolve("Germany").confidence   # ≈ 0.93
 
 # Ambiguous: two Congos, similar confidence
 rk.resolve("Congo").status         # ambiguous
@@ -139,6 +141,20 @@ rk.resolve("Congo").is_ambiguous   # True
 # No match: unknown input
 rk.resolve("zzznotacountry").status  # no_match
 ```
+
+## Prominence-based tiebreaking
+
+*Added in v0.1.3.*
+
+When two candidates have similar feature scores, a prominence difference in the data can tip the decision toward resolved. "Paris" without context would otherwise tie or produce ambiguity between Paris, France and Paris, Texas; with the remote geo data loaded (admin1 through cities), the city-level prominence score — derived from Data Commons population counts — gives Paris, France a gap wide enough to resolve cleanly.
+
+This only affects cases where one candidate is substantially more prominent than the rest. Genuinely evenly-matched names — "Congo" (two countries of similar size), "Springfield" (many US cities with no dominant one) — stay `AMBIGUOUS` regardless. The behavior is:
+
+- **Dominant entity beats obscure peers** — bare "Paris" resolves to Paris, France with remote geo data; bare "Sudan" resolves to the country, not Sudan, Texas (even with bundled data).
+- **Genuinely ambiguous names stay `AMBIGUOUS`** — prominence doesn't force a wrong answer; it only resolves when the gap is real.
+
+!!! note
+    Prominence-based resolution of city names like "Paris" requires the remote geo data packs (`rk.download("geo.cities")`). Country-level prominence is part of the bundled data.
 
 ## The explain() scorecard
 
@@ -159,7 +175,7 @@ Query: "United States"
 Normalized: "united states"
 Status: RESOLVED
 Entity: country/USA
-Confidence: 90.8%
+Confidence: 93.3%
 Reasons: exact_name_match
 Pack: geo
 Match Tier: exact_name
@@ -182,7 +198,7 @@ Match Details:
     - very close edit-distance match
 ```
 
-`"United States"` resolves at 90.8% via `exact_name` rather than ~95% via `exact_code` because the input was matched against the canonical name index, not a code. The score is high but not as high as submitting `"USA"` directly.
+`"United States"` resolves at 93.3% via `exact_name` rather than ~96% via `exact_code` because the input was matched against the canonical name index, not a code. The score is high but not as high as submitting `"USA"` directly.
 
 Verbosity levels are `"minimal"` (status + entity_id + confidence), `"standard"` (adds sources, features, and alternatives), and `"full"` (adds trace events and timing).
 

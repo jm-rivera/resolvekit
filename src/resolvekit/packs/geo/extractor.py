@@ -54,7 +54,11 @@ class GeoFeatureExtractor(FeatureExtractor):
         query_text = query.normalized.original
         query_len = len(query_text)
         query_has_digits = any(c.isdigit() for c in query_text)
-        query_is_upper = query_text.isupper()
+        # ``query_is_upper`` gates the acronym/admin mismatch suppression in the
+        # scorer (NASA -> admin "Nasa").  Period-delimited abbreviations
+        # (U.S.A., D.C.) are not bare acronyms and legitimately alias geo
+        # entities, so they must not trip that gate.
+        query_is_upper = query_text.isupper() and "." not in query_text
 
         # Retrieval features from sources
         exact_code_hit = False

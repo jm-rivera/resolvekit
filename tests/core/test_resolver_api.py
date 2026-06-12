@@ -160,7 +160,7 @@ def test_resolved_result_includes_pack_and_match_tier():
     assert result.status == ResolutionStatus.RESOLVED
     assert result.pack_id == "geo"
     assert result.match_tier == MatchTier.EXACT_CODE
-    assert result.refinement_hints == []
+    assert result.refinement_hints == ()
 
 
 def test_blank_query_returns_explicit_no_match():
@@ -177,7 +177,7 @@ def test_blank_query_returns_explicit_no_match():
     result = resolver.resolve("   ")
 
     assert result.status == ResolutionStatus.NO_MATCH
-    assert result.reasons == [ReasonCode.INVALID_QUERY]
+    assert result.reasons == (ReasonCode.INVALID_QUERY,)
 
 
 def test_blank_query_with_explanation_returns_scorecard():
@@ -195,7 +195,7 @@ def test_blank_query_with_explanation_returns_scorecard():
     result, scorecard = explained.result, explained.scorecard
 
     assert result.status == ResolutionStatus.NO_MATCH
-    assert result.reasons == [ReasonCode.INVALID_QUERY]
+    assert result.reasons == (ReasonCode.INVALID_QUERY,)
     assert scorecard.status == ResolutionStatus.NO_MATCH
     assert scorecard.normalized_text == ""
 
@@ -284,7 +284,7 @@ def test_no_match_keeps_recovery_candidates_and_hints():
     assert result.status == ResolutionStatus.NO_MATCH
     assert result.pack_id == "geo"
     assert result.match_tier == MatchTier.FTS
-    assert result.reasons == [ReasonCode.BELOW_CONFIDENCE_THRESHOLD]
+    assert result.reasons == (ReasonCode.BELOW_CONFIDENCE_THRESHOLD,)
     assert [candidate.entity_id for candidate in result.candidates] == [
         "city/Springfield_US"
     ]
@@ -469,7 +469,7 @@ class TestResolverFromDatapacks:
             routing_mode=RoutingMode.AUTO,
         )
 
-        with pytest.raises(ValueError, match="Cannot specify domains with AUTO"):
+        with pytest.raises(ValueError, match="not supported under the default AUTO"):
             resolver.resolve("US", domain="geo")
 
     def test_auto_routing_with_domains_raises_with_explanation(self, geo_test_datapack):
@@ -484,7 +484,7 @@ class TestResolverFromDatapacks:
             routing_mode=RoutingMode.AUTO,
         )
 
-        with pytest.raises(ValueError, match="Cannot specify domains with AUTO"):
+        with pytest.raises(ValueError, match="not supported under the default AUTO"):
             resolver.resolve_explained("US", domain="geo")
 
     def test_query_length_guardrail_applied_to_raw_text(self, geo_test_datapack):
@@ -968,47 +968,58 @@ class TestEmptyInputGuard:
         resolver = _make_simple_resolver()
         result = resolver.resolve(None)  # type: ignore[arg-type]
         assert result.status == ResolutionStatus.NO_MATCH
-        assert result.reasons == [ReasonCode.INVALID_INPUT_TYPE]
+        assert result.reasons == (ReasonCode.INVALID_INPUT_TYPE,)
 
     def test_resolve_empty_string_returns_no_match(self):
         resolver = _make_simple_resolver()
         result = resolver.resolve("")
         assert result.status == ResolutionStatus.NO_MATCH
-        assert result.reasons == [ReasonCode.INVALID_QUERY]
+        assert result.reasons == (ReasonCode.INVALID_QUERY,)
 
     def test_resolve_whitespace_returns_no_match(self):
         resolver = _make_simple_resolver()
         result = resolver.resolve("   \t\n")
         assert result.status == ResolutionStatus.NO_MATCH
-        assert result.reasons == [ReasonCode.INVALID_QUERY]
+        assert result.reasons == (ReasonCode.INVALID_QUERY,)
 
     def test_resolve_explained_none_returns_no_match(self):
         resolver = _make_simple_resolver()
         explained = resolver.resolve_explained(None)  # type: ignore[arg-type]
         assert explained.result.status == ResolutionStatus.NO_MATCH
-        assert explained.result.reasons == [ReasonCode.INVALID_INPUT_TYPE]
+        assert explained.result.reasons == (ReasonCode.INVALID_INPUT_TYPE,)
 
     def test_resolve_explained_empty_returns_no_match(self):
         resolver = _make_simple_resolver()
         explained = resolver.resolve_explained("")
         assert explained.result.status == ResolutionStatus.NO_MATCH
-        assert explained.result.reasons == [ReasonCode.INVALID_QUERY]
+        assert explained.result.reasons == (ReasonCode.INVALID_QUERY,)
 
-    @pytest.mark.parametrize(
-        "value",
-        [float("nan"), b"United States", 840, 3.14, [], {}, object()],
-    )
-    def test_resolve_non_string_returns_no_match(self, value):
-        """bytes / int / float / NaN / arbitrary objects must not crash."""
+    @pytest.mark.parametrize("value", [float("nan"), 840, 3.14])
+    def test_resolve_numeric_coerces_to_no_match(self, value):
+        """int / float / NaN are coerced to string and resolved (not INVALID_INPUT_TYPE)."""
         resolver = _make_simple_resolver()
         result = resolver.resolve(value)  # type: ignore[arg-type]
         assert result.status == ResolutionStatus.NO_MATCH
-        assert result.reasons == [ReasonCode.INVALID_INPUT_TYPE]
+        assert ReasonCode.INVALID_INPUT_TYPE not in result.reasons
 
-    @pytest.mark.parametrize("value", [float("nan"), b"X", 840])
-    def test_resolve_id_non_string_returns_none(self, value):
+    @pytest.mark.parametrize("value", [b"United States", [], {}, object()])
+    def test_resolve_unsupported_types_raise(self, value):
+        """bytes / list / dict / arbitrary objects raise TypeError."""
+        resolver = _make_simple_resolver()
+        with pytest.raises(TypeError):
+            resolver.resolve(value)  # type: ignore[arg-type]
+
+    @pytest.mark.parametrize("value", [float("nan"), 840])
+    def test_resolve_id_numeric_coerces_to_none(self, value):
+        """int / float coerce to string; mock store has no match → returns None."""
         resolver = _make_simple_resolver()
         assert resolver.resolve_id(value) is None  # type: ignore[arg-type]
+
+    def test_resolve_id_bytes_raises(self):
+        """bytes raises TypeError (not silently None)."""
+        resolver = _make_simple_resolver()
+        with pytest.raises(TypeError):
+            resolver.resolve_id(b"X")  # type: ignore[arg-type]
 
 
 class TestResolveIdErrorRaise:

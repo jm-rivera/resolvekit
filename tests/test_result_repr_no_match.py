@@ -47,7 +47,7 @@ def test_no_match_with_country_hint_renders_runnable_line() -> None:
     r = repr(result)
     assert r.startswith("NO_MATCH — try:")
     assert "resolvekit.resolve(text='Paris'," in r
-    assert "context=ResolutionContext(country=" in r
+    assert "context={'country':" in r
 
 
 # ---------------------------------------------------------------------------
@@ -68,7 +68,8 @@ def test_no_match_with_entity_types_hint_renders_runnable_line() -> None:
     )
     r = repr(result)
     assert r.startswith("NO_MATCH — try:")
-    assert "entity_types={'geo.country'}" in r
+    assert "entity_types" in r
+    assert "geo.country" in r
 
 
 # ---------------------------------------------------------------------------
@@ -154,7 +155,7 @@ def test_resolved_repr_unchanged() -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_ambiguous_repr_unchanged() -> None:
+def test_ambiguous_repr_lists_candidates() -> None:
     result = ResolutionResult(
         status=ResolutionStatus.AMBIGUOUS,
         query_text="Paris",
@@ -165,8 +166,8 @@ def test_ambiguous_repr_unchanged() -> None:
     )
     r = repr(result)
     # Must use the AMBIGUOUS branch, not the NO_MATCH branch
-    assert r.startswith("AMBIGUOUS — try:")
-    assert "resolvekit.resolve(text='Paris, France')" in r
-    assert "resolvekit.resolve(text='Paris, TX')" in r
+    assert r.startswith("AMBIGUOUS — candidates:")
+    assert "Paris, France" in r
+    assert "Paris, TX" in r
     # Must NOT contain "NO_MATCH"
     assert "NO_MATCH" not in r

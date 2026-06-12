@@ -9,7 +9,7 @@ from typing import Literal
 
 
 class _Unset:
-    """Sentinel type distinguishing "on_missing not passed" from a valid value."""
+    """Sentinel type distinguishing "parameter not passed" from a valid value."""
 
     def __repr__(self) -> str:
         return "<unset>"
@@ -31,20 +31,27 @@ _config = _Config()
 
 def configure(
     *,
-    auto_download: bool | None = None,
-    cache_dir: str | Path | None = None,
-    default_to: str | list[str] | None = None,
+    auto_download: bool | None | _Unset = _UNSET,
+    cache_dir: str | Path | None | _Unset = _UNSET,
+    default_to: str | list[str] | None | _Unset = _UNSET,
     on_missing: Literal["raise", "null", "auto"] | object = _UNSET,
 ) -> None:
     """Configure resolvekit runtime behavior.
 
+    Omitting a parameter leaves any previously configured value unchanged.
+
     Args:
         auto_download: If True, remote packs are downloaded automatically
-            when needed. Default is False.
+            when needed. ``None`` resets to the default (disabled).
+            Omitting leaves the current setting unchanged.
         cache_dir: Custom cache directory for remote data packs.
+            ``None`` resets to the platform default (removes any custom path).
+            Omitting leaves the current setting unchanged.
         default_to: Default output code system or name variant for
             module-level resolve/bulk/snap (e.g. ``"iso3"``,
-            ``["iso3", "name"]``, ``"name:fr"``). ``None`` clears the default.
+            ``["iso3", "name"]``, ``"name:fr"``). ``None`` clears the default
+            so resolve() returns a raw ResolutionResult. Omitting leaves
+            the current setting unchanged.
         on_missing: Miss policy for the default output chain.
             ``"auto"`` (default) = raise for scalar resolve/snap, null +
             ``UserWarning`` for bulk; ``"raise"`` always raises
@@ -52,11 +59,18 @@ def configure(
             Omitting this argument leaves any previously configured policy
             unchanged.
     """
-    if auto_download is not None:
-        _config.auto_download = auto_download
-    if cache_dir is not None:
-        _config.cache_dir = Path(cache_dir)
-    _config.default_to = default_to
+    if auto_download is not _UNSET:
+        # None resets to the dataclass default (disabled).
+        _config.auto_download = (
+            bool(auto_download) if auto_download is not None else False
+        )
+    if cache_dir is not _UNSET:
+        # None resets to platform default (removes any custom path).
+        _config.cache_dir = (
+            Path(cache_dir) if cache_dir is not None else None  # type: ignore[arg-type]  # ty: ignore[invalid-argument-type]
+        )
+    if default_to is not _UNSET:
+        _config.default_to = default_to  # type: ignore[assignment]  # ty: ignore[invalid-assignment]
     if on_missing is not _UNSET:
         _config.on_missing = on_missing  # type: ignore[assignment]  # ty: ignore[invalid-assignment]
 

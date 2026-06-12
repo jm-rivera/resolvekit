@@ -101,6 +101,98 @@ detail = result.unnest()
 
 `result.failures` gives a sub-result containing only the non-resolved rows, so you can inspect or re-attempt just the misses.
 
+## Use the Series accessor
+
+Install the extras (`resolvekit[pandas]` or `resolvekit[polars]`) to get a `.resolvekit` accessor directly on Series and Expr objects:
+
+```python
+import pandas as pd
+import resolvekit.pandas          # registers the accessor
+
+df["iso3"] = df["country"].resolvekit.resolve(to="iso3")
+```
+
+```python
+import polars as pl
+import resolvekit.polars          # registers the namespace
+
+df = df.with_columns(
+    pl.col("country").resolvekit.resolve(to="iso3").alias("iso3")
+)
+```
+
+The accessor accepts the same parameters as `rk.bulk()`. By default, parameter mistakes (unknown `to=`, bad `domain=`, unknown `from_system=`) raise immediately rather than silently producing all-`None` output.
+
+### Control per-row errors with `on_error`
+
+`on_error` governs what happens when an individual row's resolution raises an unexpected error at runtime:
+
+| value | behaviour |
+|-------|-----------|
+| `"raise"` (default) | propagate the exception |
+| `"null"` | return `None` for that row |
+| `"keep"` | return the original input string |
+
+```python
+# Silently drop failed rows instead of raising
+df["iso3"] = df["country"].resolvekit.resolve(to="iso3", on_error="null")
+```
+
+Note: `not_found` (for rows that simply don't match any entity) is independent of `on_error` (for rows that hit an unexpected runtime error). The defaults — `not_found="null"`, `on_error="raise"` — match `rk.bulk()`.
+
+## Per-row context
+
+*Added in v0.1.3.*
+
+Pass a column as a context value to resolve each row under its own constraint. A common use: you have a city column and an ISO country column, and you want each city resolved against its own country rather than globally.
+
+```python
+import pandas as pd
+import resolvekit as rk
+
+df = pd.DataFrame({
+    "city":    ["Lyon", "Marseille", "Munich", "Hamburg"],
+    "country": ["FR",   "FR",        "DE",     "DE"],
+})
+
+df["city_id"] = rk.bulk(
+    values=df["city"],
+    context={"country": df["country"]},   # per-row country constraint
+    to=None,
+).values
+```
+
+!!! warning "Heads up"
+    City-level resolution requires the remote geo data packs. On a fresh install (bundled packs only), city names return `None`. Download the packs first: `rk.download("geo.cities")`. The API form above works regardless — the output is `None` until the data is available.
+
+The same form works with the pandas accessor and with polars:
+
+```python
+import resolvekit.pandas  # registers accessor
+
+df["city_id"] = df["city"].resolvekit.bulk(
+    context={"country": df["country"]},
+    to=None,
+).values
+```
+
+For polars, pass the Series directly to `rk.bulk()` — the Expr namespace exposes `resolve` but not `bulk`:
+
+```python
+import polars as pl
+import resolvekit as rk
+
+city_ids = rk.bulk(
+    values=df["city"],                         # polars Series
+    context={"country": df["country"]},        # per-row country constraint
+    to=None,
+).values
+```
+
+Any column-like value works for a context value: a pandas `Series`, a polars `Series` or `Expr`, or a plain Python `list`. The column must be the same length as the input values.
+
+**Deduplication still applies.** The work is deduplicated on unique `(text, context)` pairs, so a 50k-row frame with 4 distinct country codes and 200 city names costs roughly 200 unique lookups, not 50 000.
+
 ## Input code systems
 
 If your column already contains ISO 2-letter codes, skip fuzzy matching entirely:
@@ -115,6 +207,7 @@ Common `from_system` values: `"iso2"`, `"iso3"`, `"iso_numeric"`, `"dcid"`, `"wi
 ## Next
 
 - [**`bulk` reference**](../reference/api.md) — full parameter list, output shapes, and `BulkResult` API.
+- [**Refine resolution with context**](refine-resolution-with-context.md) — the full context key vocabulary, country name resolution, and point-in-time filtering.
 - [**Handle ambiguous matches**](handle-ambiguous-matches.md) — inspect candidates, override with context, and decide a tiebreak policy.
 - [**Convert between code systems**](convert-between-code-systems.md) — pivot between ISO 2, ISO 3, numeric, DCID, Wikidata, and other code systems.
 - [**Extract entities from free text**](extract-entities-from-text.md) — when your column contains running text rather than clean country names, use `parse()`/`parse_bulk()` to detect and link every entity mention with character offsets.

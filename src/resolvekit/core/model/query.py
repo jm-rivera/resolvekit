@@ -55,7 +55,7 @@ class ResolutionContext(BaseModel):
         as_of: Point-in-time for temporal validity checks
         entity_types: Entity type hints (e.g., {"geo.country", "geo.state"})
         parent_ids: Parent/container entity hints
-        country: ISO country code hint (useful for geo + org)
+        country: ISO 3166-1 country code hint — alpha-2 or alpha-3 (useful for geo + org)
         languages: Preferred languages for name matching
         attributes: Escape hatch for domain-specific attributes (use sparingly)
     """
@@ -70,7 +70,11 @@ class ResolutionContext(BaseModel):
         default=None, description="Parent/container entity hints"
     )
     country: str | None = Field(
-        default=None, max_length=2, description="ISO country code hint"
+        default=None,
+        description=(
+            "ISO 3166-1 country code hint — alpha-2 (e.g. 'US') or"
+            " alpha-3 (e.g. 'USA'). Stored uppercased; length disambiguates the form."
+        ),
     )
     languages: list[str] | None = Field(default=None, description="Preferred languages")
     attributes: dict[str, str | int | float | bool] = Field(
@@ -87,6 +91,45 @@ class ResolutionContext(BaseModel):
                 "entity_types must be a collection of strings, not a single string"
             )
         return value
+
+    @field_validator("country", mode="before")
+    @classmethod
+    def _validate_country(cls, value: Any) -> Any:
+        if value is None:
+            return value
+        if not isinstance(value, str):
+            raise ValueError("country must be a string")
+        if not value.isalpha():
+            raise ValueError(
+                f"country must be an ISO 3166-1 alpha-2 or alpha-3 code"
+                f" (two or three letters), got {value!r}"
+            )
+        if len(value) in (2, 3):
+            return value.upper()
+        raise ValueError(
+            f"country must be an ISO 3166-1 alpha-2 or alpha-3 code"
+            f" (two or three letters), got {value!r}"
+        )
+
+    def _cache_key(self) -> tuple:  # type: ignore[type-arg]
+        """Return a stable, content-based hashable key for dedup and cache keying.
+
+        Used by ``_QueryCache.get_or_call`` and ``BatchResolver.resolve_many_internal``
+        instead of ``id(self)`` so that two structurally-equal ``ResolutionContext``
+        objects share the same cache entry — which is required for per-row bulk
+        context where a fresh instance is constructed for each unique row signature.
+
+        Cost: O(|attributes|) — one ``sorted()`` on the small ``attributes`` dict.
+        All other fields are scalars or short frozensets already on the model.
+        """
+        return (
+            self.as_of,
+            self.entity_types,
+            tuple(self.parent_ids) if self.parent_ids is not None else (),
+            self.country,
+            tuple(self.languages) if self.languages is not None else (),
+            tuple(sorted(self.attributes.items())),
+        )
 
     def replace(self, **updates: Any) -> "ResolutionContext":
         """Return a new ResolutionContext with the specified fields replaced.

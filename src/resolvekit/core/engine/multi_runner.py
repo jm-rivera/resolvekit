@@ -38,7 +38,7 @@ from resolvekit.core.model import (
 from resolvekit.core.registry import DomainPack
 from resolvekit.core.store import EntityStore
 from resolvekit.core.store.store_view import StoreView
-from resolvekit.core.util.normalization import TextNormalizer
+from resolvekit.core.util.normalization import NormalizationError, TextNormalizer
 
 # Cross-pack ambiguity threshold - when top results from different packs
 # are within this gap, we return AMBIGUOUS
@@ -151,6 +151,11 @@ class MultiPackRunner:
             all_country_scoped_type_prefixes
         )
         self._view = StoreView(list(self._stores.items()))
+
+    def warm(self) -> None:
+        """Eagerly build all lazily-constructed source indexes across every pack runner."""
+        for runner in self._runners.values():
+            runner.warm()
 
     def close(self) -> None:
         """Close all stores owned by this runner."""
@@ -352,9 +357,15 @@ class MultiPackRunner:
                 # Re-normalize query for this pack if pack-specific normalizer exists
                 pack_query = query
                 if pack_id in self._pack_normalizers:
-                    normalized = self._pack_normalizers[
-                        pack_id
-                    ].normalize_with_original(query.raw_text)
+                    try:
+                        normalized = self._pack_normalizers[
+                            pack_id
+                        ].normalize_with_original(query.raw_text)
+                    except NormalizationError:
+                        # The pack's normalizer emptied the input (e.g. a
+                        # punctuation-only query like '.'): unmatchable in
+                        # this pack, not a pipeline error.
+                        continue
                     pack_query = Query(
                         raw_text=query.raw_text,
                         normalized=normalized,
@@ -398,7 +409,7 @@ class MultiPackRunner:
             )
             error_result = ResolutionResult(
                 status=ResolutionStatus.ERROR,
-                reasons=[ReasonCode.INTERNAL_ERROR],
+                reasons=(ReasonCode.INTERNAL_ERROR,),
             )
             return PipelineResult(result=error_result, candidates=None)
 
@@ -533,7 +544,7 @@ class MultiPackRunner:
             return (
                 ResolutionResult(
                     status=ResolutionStatus.NO_MATCH,
-                    reasons=[ReasonCode.NO_CANDIDATES],
+                    reasons=(ReasonCode.NO_CANDIDATES,),
                 ),
                 None,
             )
@@ -786,10 +797,10 @@ class MultiPackRunner:
 
         return ResolutionResult(
             status=ResolutionStatus.AMBIGUOUS,
-            candidates=interleaved,
+            candidates=tuple(interleaved),
             match_tier=top_tier,
-            reasons=[ReasonCode.AMBIGUOUS_DOMAIN_COLLISION],
-            refinement_hints=hints,
+            reasons=(ReasonCode.AMBIGUOUS_DOMAIN_COLLISION,),
+            refinement_hints=tuple(hints),
         )
 
     def _any_candidate_matches_country_scoped_prefix(

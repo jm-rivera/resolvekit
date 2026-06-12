@@ -32,7 +32,7 @@ rk.resolve("Germany", to="flag")   # "🇩🇪"
 rk.resolve("Tanzania", to="dcid")  # "country/TZA"
 ```
 
-The `to` parameter accepts any code system the loaded packs carry — the same open-ended set as `from_system`. Common values: `"iso3"`, `"iso2"`, `"name"`, `"flag"`, `"aliases"`, `"dcid"`, `"iso_numeric"`, `"wikidata"`. Pass an unknown one and it raises `UnknownCodeSystemError`.
+The `to` parameter accepts any code system the loaded packs carry — the same open-ended set as `from_system`. Common values: `"iso3"`, `"iso2"`, `"name"`, `"flag"`, `"aliases"`, `"dcid"`, `"iso_numeric"`, `"wikidata"`. Pass an unknown one and it raises `UnknownCodeSystemError`. (The same typo in `configure(default_to=...)` or `rk.to(...)` raises the sibling `UnknownOutputError` instead — those paths validate the whole output spec, not just a code system. Catch `ResolverError` to cover both.)
 
 `"aliases"` returns a list of multilingual names:
 
@@ -47,6 +47,13 @@ rk.resolve("Germany", to="aliases")
 By default resolvekit auto-detects whether the input is a name, ISO code, or
 other identifier. When your input column contains codes that could be ambiguous
 (two-letter codes especially), use `from_system` to pin the interpretation.
+
+Auto-detection is deliberately case-sensitive for codes: `"US"` resolves as an
+ISO code, but `"us"` does not — lowercase two- and three-letter strings are
+indistinguishable from ordinary words (`"in"`, `"it"`, `"no"`), so treating
+them as codes would mis-resolve real text. Once you declare intent with
+`from_system`, case no longer matters: `from_system="iso2"` accepts `"us"`,
+`"Us"`, and `"US"` alike.
 
 ```python
 rk.resolve("DE", from_system="iso2", to="iso3")  # "DEU"

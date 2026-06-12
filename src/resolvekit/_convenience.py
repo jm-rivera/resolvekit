@@ -15,7 +15,7 @@ import threading
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Literal
 
-from resolvekit.core.config import _UNSET as _ON_MISSING_UNSET
+from resolvekit.core.config import _UNSET as _CONFIG_UNSET
 
 if TYPE_CHECKING:
     from resolvekit.core.api.modules import ModuleInfo
@@ -93,10 +93,10 @@ def default() -> Resolver:
 
 def configure(
     *,
-    auto_download: bool | None = None,
-    cache_dir: str | Path | None = None,
-    default_to: str | list[str] | None = None,
-    on_missing: Literal["raise", "null", "auto"] = _ON_MISSING_UNSET,  # type: ignore[assignment]  # ty: ignore[invalid-parameter-default]
+    auto_download: bool | None | object = _CONFIG_UNSET,
+    cache_dir: str | Path | None | object = _CONFIG_UNSET,
+    default_to: str | list[str] | None | object = _CONFIG_UNSET,
+    on_missing: Literal["raise", "null", "auto"] | object = _CONFIG_UNSET,
 ) -> None:
     """Configure resolvekit runtime behavior and invalidate the singleton.
 
@@ -104,13 +104,20 @@ def configure(
     call to :func:`resolve` (or any module-level function) rebuilds it
     with the updated configuration.
 
+    Omitting a parameter leaves any previously configured value unchanged.
+
     Args:
         auto_download: If True, remote packs are downloaded automatically
-            when needed. Default is False.
+            when needed. ``None`` resets to the default (disabled).
+            Omitting leaves the current setting unchanged.
         cache_dir: Custom cache directory for remote data packs.
+            ``None`` resets to the platform default (removes any custom path).
+            Omitting leaves the current setting unchanged.
         default_to: Default output code system or name variant for
             module-level resolve/bulk/snap (e.g. ``"iso3"``,
-            ``["iso3", "name"]``, ``"name:fr"``). ``None`` clears the default.
+            ``["iso3", "name"]``, ``"name:fr"``). ``None`` clears the default
+            so resolve() returns a raw ResolutionResult. Omitting leaves
+            the current setting unchanged.
         on_missing: Miss policy for the default output chain.
             ``"auto"`` = raise for scalar resolve/snap, null +
             ``UserWarning`` for bulk; ``"raise"`` always raises
@@ -119,6 +126,8 @@ def configure(
             unchanged.
 
     Raises:
+        ValueError: When ``default_to`` is not a ``str``, ``list[str]``, or
+            ``None``.
         UnknownOutputError: Immediately when ``default_to`` contains a
             malformed ``name:`` grammar token, or — when a default resolver
             singleton already exists — when ``default_to`` names an unknown
@@ -128,25 +137,45 @@ def configure(
     from resolvekit.core.api.output_spec import _validate_grammar_only
     from resolvekit.core.config import configure as _configure_core
 
-    # Grammar-only validation is always eager to catch malformed name: tokens.
-    _validate_grammar_only(default_to)
+    if default_to is not _CONFIG_UNSET:
+        # Type validation: only str, list[str], or None are accepted at configure time.
+        if default_to is not None and not isinstance(default_to, (str, list)):
+            raise ValueError(
+                f"default_to must be a str, list of str, or None;"
+                f" got {type(default_to).__name__!r}"
+            )
+        if isinstance(default_to, list):
+            bad = [x for x in default_to if not isinstance(x, str)]
+            if bad:
+                raise ValueError(
+                    f"default_to list must contain only strings;"
+                    f" got {[type(x).__name__ for x in bad]}"
+                )
+        # Grammar-only validation is always eager to catch malformed name: tokens.
+        if default_to is not None:
+            _validate_grammar_only(default_to)  # type: ignore[arg-type]  # ty: ignore[invalid-argument-type]
 
-    # If a singleton exists, compile fully against its code_systems to surface
-    # typo'd code systems immediately rather than deferring. Fall back to "auto"
-    # for compile when on_missing was not explicitly passed.
-    compile_on_missing = "auto" if on_missing is _ON_MISSING_UNSET else on_missing
-    if _default is not None and default_to is not None:
+    # If a singleton exists and default_to is a non-None value, compile fully
+    # against its code_systems to surface typo'd code systems immediately.
+    compile_on_missing = "auto" if on_missing is _CONFIG_UNSET else on_missing
+    if (
+        _default is not None
+        and default_to is not _CONFIG_UNSET
+        and default_to is not None
+    ):
         from resolvekit.core.api.output_spec import compile_output_spec
 
         compile_output_spec(
-            default_to, compile_on_missing, known_systems=_default.code_systems()
+            default_to,  # type: ignore[arg-type]  # ty: ignore[invalid-argument-type]
+            compile_on_missing,  # type: ignore[arg-type]  # ty: ignore[invalid-argument-type]
+            known_systems=_default.code_systems(),
         )
 
     _configure_core(
-        auto_download=auto_download,
-        cache_dir=cache_dir,
-        default_to=default_to,
-        on_missing=on_missing,  # passes through _ON_MISSING_UNSET when not provided
+        auto_download=auto_download,  # type: ignore[arg-type]  # ty: ignore[invalid-argument-type]
+        cache_dir=cache_dir,  # type: ignore[arg-type]  # ty: ignore[invalid-argument-type]
+        default_to=default_to,  # type: ignore[arg-type]  # ty: ignore[invalid-argument-type]
+        on_missing=on_missing,
     )
     # Invalidate the singleton so the next call rebuilds with new config.
     reset()
@@ -197,7 +226,7 @@ def resolve(
     to: Any = ...,  # UNSET sentinel — actual type is str|None|_Unset; deferred import
     as_result: bool = False,
     domain: str | list[str] | None = None,
-    context: ResolutionContext | None = None,
+    context: ResolutionContext | dict | None = None,
     from_system: str | None = None,
     include_entity: bool = True,
     timeout: float | None = None,
@@ -209,7 +238,11 @@ def resolve(
     ``Resolver.resolve()`` (``include_entity=False`` default) for pipeline use.
 
     Args:
-        text: The text or code to resolve.
+        text: The text or code to resolve.  ``str`` is used as-is.
+            ``int`` and ``float`` are coerced to string (``840`` → ``"840"``;
+            ``840.0`` → ``"840"``), matching the behaviour of :func:`bulk`
+            on numeric columns.  ``None`` returns a NO_MATCH result silently.
+            ``bool`` and all other types raise ``TypeError``.
         to: Target representation pivot (e.g. ``"iso3"``, ``"name"``).
             Omit (default) to use the configured ``default_to`` spec, or
             returns a raw :class:`ResolutionResult` when no default is set.
@@ -249,13 +282,17 @@ def resolve_id(
     on_ambiguous: Literal["raise", "null", "best"] = "raise",
     from_system: str | None = None,
     domain: str | list[str] | None = None,
-    context: ResolutionContext | None = None,
+    context: ResolutionContext | dict | None = None,
     timeout: float | None = None,
 ) -> str | None:
     """Resolve text and return entity_id or None.
 
     Args:
-        text: Text to resolve.
+        text: Text to resolve.  ``str`` is used as-is.  ``int`` and
+            ``float`` are coerced to string (``840`` → ``"840"``;
+            ``840.0`` → ``"840"``), matching the behaviour of :func:`bulk`
+            on numeric columns.  ``None`` returns ``None`` silently.
+            ``bool`` and all other types raise ``TypeError``.
         on_ambiguous: Behavior when multiple entities match.
             - ``"raise"`` (default): raises :class:`AmbiguousResolutionError`.
             - ``"null"``: returns ``None`` on ambiguity.
@@ -270,6 +307,8 @@ def resolve_id(
         Entity ID string, or None if no match.
 
     Raises:
+        TypeError: If *text* is a ``bool``, ``bytes``, ``list``, or any
+            other unsupported type.
         AmbiguousResolutionError: If ``on_ambiguous="raise"`` and the
             resolution is ambiguous.
     """
@@ -289,7 +328,7 @@ def bulk(
     to: Any = ...,  # UNSET sentinel — actual type is str|None|_Unset; deferred import
     on_missing: Any = ...,  # UNSET sentinel — actual type is Literal[...] | _Unset
     domain: str | list[str] | None = None,
-    context: ResolutionContext | None = None,
+    context: ResolutionContext | dict | None = None,
     output: Literal["series", "record", "frame"] = "series",
     from_system: str | None = None,
     not_found: str = "null",
@@ -358,7 +397,7 @@ def snap(
     max_distance: float = 0.5,
     to: Any = ...,  # UNSET sentinel — actual type is str|None|_Unset; deferred import
     domain: str | list[str] | None = None,
-    context: ResolutionContext | None = None,
+    context: ResolutionContext | dict | None = None,
 ) -> Any:
     """Return the closest match from an explicit candidate list.
 
@@ -482,7 +521,7 @@ def parse(
     text: str,
     *,
     domain: str | list[str] | None = None,
-    context: ResolutionContext | None = None,
+    context: ResolutionContext | dict | None = None,
     to: str | list[str] | None = None,
     confidence_threshold: float | None = None,
     include_nil: bool = False,
@@ -542,11 +581,75 @@ def parse(
     )
 
 
+def suggest(
+    prefix: str,
+    *,
+    top_k: int = 10,
+    domain: str | list[str] | None = None,
+    entity_type: str | list[str] | None = None,
+    context: ResolutionContext | dict | None = None,
+    to: str | list[str] | None = None,
+    fuzzy: Literal["auto", "always", "never"] = "auto",
+    timeout: float | None = None,
+) -> list:
+    """Return a ranked typeahead suggestion list for *prefix*.
+
+    Module-level wrapper; delegates to the singleton default resolver's
+    :meth:`~resolvekit.core.api.resolver.Resolver.suggest`.
+
+    Args:
+        prefix: Partial query string (e.g. ``"unit"`` → United States, …).
+        top_k: Maximum suggestions to return; clamped to [1, 100]. Default 10.
+        domain: Domain pack filter (e.g. ``"geo"``).
+        entity_type: Sub-type filter within a domain (e.g. ``"geo.country"``).
+            Accepts a single string or list.
+        context: Resolution hints, as a ``ResolutionContext`` or a plain ``dict``.
+            Dict shorthand keys: ``country`` (ISO alpha-2/alpha-3 or a country
+            name like ``"France"``), ``entity_types``, ``parent_ids``,
+            ``languages``, ``attributes`` (pack-specific escape hatch), and
+            ``as_of``. An empty dict is treated as no context. Unknown keys raise
+            ``UnknownContextKeyError`` listing the valid keys.
+            context is validated for shape but does not yet affect suggest ranking.
+        to: Output code system or name variant for ``display`` (e.g. ``"iso3"``).
+            ``None`` (default) uses ``canonical_name`` as the display value.
+        fuzzy: Fuzzy-matching policy: ``"auto"`` (default), ``"always"``,
+            or ``"never"``.
+        timeout: Per-call time budget in seconds.
+
+    Returns:
+        ``list[SuggestionResult]``, sorted by match quality (best first),
+        length at most ``top_k``.
+    """
+    return _get_default().suggest(
+        prefix,
+        top_k=top_k,
+        domain=domain,
+        entity_type=entity_type,
+        context=context,
+        to=to,
+        fuzzy=fuzzy,
+        timeout=timeout,
+    )
+
+
+def warm() -> None:
+    """Pre-build all lazily-constructed indexes, blocking until complete.
+
+    Useful for servers and batch jobs that want to ensure full query
+    performance before handling the first real request.
+
+    Note: constructing the default resolver already starts a background
+    warm-up (``warm=True`` is the default); call this function when you
+    need to block until that warm-up is complete.
+    """
+    _get_default().warm()
+
+
 def parse_bulk(
     *,
     values: Any,
     domain: str | list[str] | None = None,
-    context: ResolutionContext | None = None,
+    context: ResolutionContext | dict | None = None,
     to: str | list[str] | None = None,
     confidence_threshold: float | None = None,
     include_nil: bool = False,

@@ -49,6 +49,12 @@ PROMINENCE_LIVE_TYPE_PREFIXES: Final[frozenset[str]] = frozenset(
         "geo.subregion",
         "geo.region",
         "geo.continental_union",
+        # City and admin2 tiers gain live Wikidata sitelink / DC population
+        # prominence once the full geo build includes those tiers.  The prefix
+        # is added here so ``ranking_quality`` reports ``"ranked"`` as soon as
+        # the data ships, without a follow-on code change.
+        "geo.city",
+        "geo.admin2",
     }
 )
 

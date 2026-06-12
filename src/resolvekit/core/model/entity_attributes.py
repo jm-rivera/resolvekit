@@ -71,22 +71,16 @@ def dispatch_pivot(
        (bare ``"name"`` → ``entity.canonical_name``).
     3. ``target.startswith("name:")`` → name-grammar branch via
        ``parse_name_grammar`` + ``apply_name``.  Malformed grammar raises
-       ``UnknownOutputError`` (loud — programming error).  A valid token that
-       the entity simply lacks returns ``None`` (quiet — per-entity miss).
+       ``UnknownOutputError`` (programming error).  Valid token the entity
+       lacks returns ``None`` (per-entity miss).
     4. ``target`` in ``entity.codes_dict`` → that code value.
-       Note: a *known-system* miss here raises ``UnknownCodeSystemError``
-       because ``dispatch_pivot`` has no ``known_systems`` set to distinguish
-       "unknown system" from "entity lacks a valid system".  The spec path
-       (``_resolve_target`` in ``output_spec.py``) uses ``codes_dict.get``
-       directly and never raises; that asymmetry is intentional and deferred.
     5. ``target`` in ``entity.attributes`` → that attribute value.
-    6. Raise ``UnknownCodeSystemError`` with a hint listing available options.
+    6. Raise ``UnknownCodeSystemError`` with did-you-mean suggestion.
 
     Args:
         entity: The resolved ``EntityRecord``.
-        target: A known pivot name, a code system name, an attribute key,
-            a name-grammar token (e.g. ``"name:fr"``),
-            or the ``EntityRecord`` type itself.
+        target: A known pivot name, code system name, attribute key,
+            name-grammar token (e.g. ``"name:fr"``), or ``EntityRecord`` type.
 
     Returns:
         The requested value, or the entity itself when ``target is EntityRecord``.
@@ -95,7 +89,6 @@ def dispatch_pivot(
         UnknownOutputError: When ``target`` is a malformed name-grammar token.
         UnknownCodeSystemError: When ``target`` doesn't match any routing branch.
         TypeError: When ``target`` is a list or other unsupported type.
-            Hint directs callers to ``rk.to([...])`` or ``default_to=[...]``.
     """
     from resolvekit.core.model.entity import EntityRecord as _EntityRecord
 
@@ -119,14 +112,10 @@ def dispatch_pivot(
         attrs = entity.attributes
         if (val := attrs.get(target)) is not None:
             return val
-        hint = (
-            f"available: codes={sorted(codes)} "
-            f"| attrs={sorted(str(k) for k in attrs)} "
-            f"| computed={sorted(KNOWN_PIVOTS)}"
-        )
-        raise UnknownCodeSystemError(
-            target, list(codes) + list(KNOWN_PIVOTS), hint=hint
-        )
+        # Let UnknownCodeSystemError build its own did-you-mean suggestion
+        # from the available list — no explicit hint override.
+        available = sorted(set(list(codes) + list(KNOWN_PIVOTS)))
+        raise UnknownCodeSystemError(target, available)
 
     if isinstance(target, list):
         err = TypeError(

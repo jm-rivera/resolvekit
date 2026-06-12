@@ -43,8 +43,7 @@ def did_you_mean_lines(result: ResolutionResult) -> str | None:
     """Build ``resolvekit.resolve(text=...)`` lines from candidate names.
 
     Returns one line per unique candidate canonical_name (excluding the
-    original query_text), joined with ``"\\n  "``.  Used by both the AMBIGUOUS
-    disambiguation path and the NO_MATCH DID_YOU_MEAN refinement path.
+    original query_text), joined with ``"\\n  "``.
     """
     names = [c.canonical_name for c in result.candidates if c.canonical_name]
     unique_names = [n for n in dict.fromkeys(names) if n != result.query_text]
@@ -54,7 +53,7 @@ def did_you_mean_lines(result: ResolutionResult) -> str | None:
     return "\n  ".join(lines)
 
 
-def render_refinement_hint(  # noqa: PLR0911 (per-hint dispatch is naturally branchy)
+def render_refinement_hint(  # noqa: PLR0911
     result: ResolutionResult, hint: RefinementHint
 ) -> str | None:
     """Map one RefinementHint value to a runnable resolve() argument string.
@@ -76,30 +75,35 @@ def render_refinement_hint(  # noqa: PLR0911 (per-hint dispatch is naturally bra
         )
         if entity_type is None:
             return None
-        return f"{prefix}context=ResolutionContext(entity_types={{{entity_type!r}}}))"
+        return f"{prefix}context={{'entity_types': {{{entity_type!r}}}}})"
 
     if hint == RefinementHint.COUNTRY:
-        # Infer ISO-2 from candidate entity_id / pack_id; placeholder when absent.
+        # Prefer parent_country from candidate summaries (populated for AMBIGUOUS);
+        # fall back to inferring ISO-2 from candidate entity_id / pack_id.
         country = next(
-            (
-                m.group(1)
-                for c in result.candidates
-                for field in (c.pack_id, c.entity_id)
-                if field
-                if (m := _COUNTRY_CODE_RE.search(field.upper()))
-            ),
-            None,
+            (c.parent_country for c in result.candidates if c.parent_country), None
         )
-        placeholder = country or "<your-iso2>"
-        return f'{prefix}context=ResolutionContext(country="{placeholder}"))'
+        if country is None:
+            country = next(
+                (
+                    m.group(1)
+                    for c in result.candidates
+                    for field in (c.pack_id, c.entity_id)
+                    if field
+                    if (m := _COUNTRY_CODE_RE.search(field.upper()))
+                ),
+                None,
+            )
+        placeholder = country or "<country-code>"
+        return f"{prefix}context={{'country': {placeholder!r}}})"
 
     if hint == RefinementHint.PARENT_IDS:
         entity_id = next((c.entity_id for c in result.candidates), None)
         placeholder = entity_id if entity_id else "<parent-entity-id>"
-        return f'{prefix}context=ResolutionContext(parent_ids=["{placeholder}"]))'
+        return f"{prefix}context={{'parent_ids': [{placeholder!r}]}})"
 
     if hint == RefinementHint.LANGUAGES:
-        return f'{prefix}context=ResolutionContext(languages=["<bcp47>"]))'
+        return f"{prefix}context={{'languages': ['<bcp47>']}})"
 
     if hint == RefinementHint.DID_YOU_MEAN:
         return did_you_mean_lines(result)
@@ -142,20 +146,29 @@ def disambiguate_hint(result: ResolutionResult) -> str | None:
     only suggest it if filtering by a single type would actually reduce
     the candidate set to one.
     """
+    from resolvekit.core.errors import _single_candidate_type
+
     if result.query_text is None:
         return None
     lines = did_you_mean_lines(result)
     if lines is not None:
         return lines
-    type_buckets: dict[str, int] = {}
-    for c in result.candidates:
-        if c.entity_type:
-            type_buckets[c.entity_type] = type_buckets.get(c.entity_type, 0) + 1
-    disambiguating_type = next((t for t, n in type_buckets.items() if n == 1), None)
+    disambiguating_type = _single_candidate_type(result.candidates)
     if disambiguating_type is not None:
         return (
             f"resolvekit.resolve(text={result.query_text!r}, "
-            f"context=ResolutionContext(entity_types={{{disambiguating_type!r}}}))"
+            f"context={{'entity_types': {{{disambiguating_type!r}}}}})"
+        )
+    # Same-name / same-type candidates: emit a country hint only when candidates
+    # span ≥2 distinct countries — if they all share the same country, the hint
+    # cannot disambiguate and would be useless/misleading.
+    countries = [
+        c.parent_country for c in result.candidates if c.parent_country is not None
+    ]
+    if len(set(countries)) >= 2:
+        qt = result.query_text
+        return (
+            f"resolvekit.resolve(text={qt!r}, context={{'country': {countries[0]!r}}})"
         )
     return None
 

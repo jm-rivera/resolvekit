@@ -120,6 +120,24 @@ class PipelineRunner:
             frozenset[str] | None, list[tuple[str, str, str, bool, str]]
         ] = {}
 
+    def warm(self) -> None:
+        """Eagerly build all lazily-constructed source indexes.
+
+        Calls ``warm()`` on every candidate source. A source that raises during
+        warm-up is silently skipped (debug-logged); it degrades to its normal
+        lazy-build path. Safe to call concurrently — per-source build locks
+        make the operation idempotent.
+        """
+        for source in self._sources:
+            try:
+                source.warm()
+            except Exception:
+                logger.debug(
+                    "warm() failed for source %r; source will build lazily",
+                    source.name,
+                    exc_info=True,
+                )
+
     def close(self) -> None:
         """Close the underlying store."""
         if self._store is not None:
@@ -703,7 +721,7 @@ class PipelineRunner:
                 return _make_result(
                     ResolutionResult(
                         status=ResolutionStatus.NO_MATCH,
-                        reasons=[ReasonCode.NO_CANDIDATES],
+                        reasons=(ReasonCode.NO_CANDIDATES,),
                     )
                 )
 
@@ -741,7 +759,7 @@ class PipelineRunner:
                 return _make_result(
                     ResolutionResult(
                         status=ResolutionStatus.NO_MATCH,
-                        reasons=[ReasonCode.FILTERED_BY_CONSTRAINT],
+                        reasons=(ReasonCode.FILTERED_BY_CONSTRAINT,),
                     )
                 )
 
@@ -813,7 +831,7 @@ class PipelineRunner:
             return _make_result(
                 ResolutionResult(
                     status=ResolutionStatus.ERROR,
-                    reasons=[ReasonCode.INTERNAL_ERROR],
+                    reasons=(ReasonCode.INTERNAL_ERROR,),
                 )
             )
 

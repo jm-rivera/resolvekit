@@ -59,9 +59,8 @@ _SOURCE_TIER_TOKENS: tuple[tuple[str, MatchTier], ...] = (
 def _source_name_tier_fallback(source_name: str) -> MatchTier | None:
     """Infer tier from source_name substring — fallback for evidence without match_tier.
 
-    Used only when ``CandidateEvidence.match_tier`` is None (e.g. legacy mocks or
-    sources not yet migrated to stamp match_tier at emission).  New sources should
-    stamp ``match_tier`` directly; this fallback is not part of the public API.
+    Used only when ``CandidateEvidence.match_tier`` is None (e.g. for backward
+    compatibility with sources that predate explicit tier stamping).
     """
     for token, tier in _SOURCE_TIER_TOKENS:
         if token in source_name:
@@ -121,7 +120,7 @@ def build_candidate_summary(
         entity_id=candidate.entity_id,
         confidence=candidate.scores.calibrated_score,
         match_tier=derive_candidate_match_tier(candidate),
-        top_evidence=top_evidence,
+        top_evidence=tuple(top_evidence),
         key_features=key_features,
     )
 

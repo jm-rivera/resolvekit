@@ -1,11 +1,11 @@
 """Query-level LRU cache for ``Resolver.resolve()``.
 
 Thin wrapper over :func:`functools.lru_cache`.  Each ``_QueryCache`` instance
-owns a per-instance cached lookup keyed by ``(raw_text, id(context), domains)``.
-Two structurally-equal but distinct ``ResolutionContext`` objects produce
-distinct cache entries — this is intentional.  The ``auto()`` use-case (one
-long-lived resolver, a small number of reused context objects) benefits from
-O(1) key construction without paying for structural comparison.
+owns a per-instance cached lookup keyed by ``(raw_text, context_key, domains)``
+where ``context_key`` is ``context._cache_key()`` (a stable content-based
+tuple) rather than ``id(context)``.  Two structurally-equal ``ResolutionContext``
+objects therefore share the same cache entry — this is required for per-row
+bulk context where a fresh instance is constructed per unique row signature.
 
 The key uses the *case-preserving* raw text (whitespace-trimmed) rather than
 the casefolded normalized form because some pack sources (e.g. the geo
@@ -48,6 +48,19 @@ class CacheInfo(NamedTuple):
     currsize: int
 
 
+def _detach_mutables(result: ResolutionResult) -> ResolutionResult:
+    """Return a shallow copy of *result*, preserving the ``_explainer`` back-reference.
+
+    ``candidates``, ``reasons``, and ``refinement_hints`` are now tuple-typed
+    (immutable), so no container copying is required.  ``model_copy`` is still
+    called to give each caller a distinct identity, and the ``_explainer``
+    weakref is re-attached because ``model_copy`` does not carry private attrs.
+    """
+    copy = result.model_copy()
+    copy._explainer = result._explainer
+    return copy
+
+
 class _QueryCache:
     """Per-instance LRU wrapping ``functools.lru_cache``.
 
@@ -62,7 +75,7 @@ class _QueryCache:
         self._pending: Callable[[], ResolutionResult] | None = None
 
         @functools.lru_cache(maxsize=maxsize)
-        def lookup(_key: tuple[str, int, frozenset[str]]) -> ResolutionResult:
+        def lookup(_key: tuple) -> ResolutionResult:  # type: ignore[type-arg]
             assert self._pending is not None  # set by get_or_call
             return self._pending()
 
@@ -88,9 +101,10 @@ class _QueryCache:
         """
         self._pending = inner
         domain_key = frozenset(domains) if domains else frozenset()
-        key = (raw_text, 0 if context is None else id(context), domain_key)
+        ctx_key: tuple = () if context is None else context._cache_key()  # type: ignore[union-attr]  # ty: ignore[unresolved-attribute]
+        key = (raw_text, ctx_key, domain_key)
         try:
-            return self._lookup(key)
+            return _detach_mutables(self._lookup(key))
         finally:
             self._pending = None
 

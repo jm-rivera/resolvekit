@@ -383,3 +383,74 @@ def test_org_punctuation_strip() -> None:
         spans=[(0, 3, "AT&T")],
         profile=ORG_NORMALIZATION_PROFILE,
     )
+
+
+# ---------------------------------------------------------------------------
+# Casefold-expansion mid-split: raw surface recovery is clean even when
+# the round-trip invariant breaks (ß→ss, span ends between the two s chars).
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("profile", PROFILES)
+def test_casefold_expansion_raw_surface_always_clean(
+    profile: NormalizationProfile,
+) -> None:
+    """raw[starts[ns]:ends[ne-1]] never splits a raw codepoint for ß expansions.
+
+    Pattern 'weis' (4 normalized chars) fires on 'Weiß' (raw length 4).
+    After casefold: normalized='weiss', starts=[0,1,2,3,3], ends=[1,2,3,4,4].
+    Span [0,4) ends between the two 's' chars that both map to raw ß (index 3).
+
+    Raw surface recovery: raw[starts[0]:ends[3]] = raw[0:4] = 'Weiß' — clean,
+    because both expansion chars share ends[*]=4 (one-past ß).
+
+    Round-trip: normalize_aligned('Weiß')[0] = 'weiss', not 'weis' — the
+    invariant does NOT hold for this mid-expansion split, which is expected
+    and documented in the module docstring.
+    """
+    raw = "Weiß"
+    normalized, starts, ends = normalize_aligned(raw, profile)
+    assert normalized == "weiss", f"Expected 'weiss', got {normalized!r}"
+    assert len(starts) == len(ends) == 5
+
+    # Both 's' chars from ß share the same raw position (index 3, ends=4).
+    assert starts[3] == 3
+    assert starts[4] == 3
+    assert ends[3] == 4
+    assert ends[4] == 4
+
+    # Span [0,4) = 'weis' — raw surface recovery is always clean.
+    ns, ne = 0, 4
+    raw_surface = raw[starts[ns] : ends[ne - 1]]
+    assert raw_surface == "Weiß", (
+        f"Surface recovery must not split ß: got {raw_surface!r}"
+    )
+
+    # Documented exception: round-trip does not hold for mid-expansion spans.
+    renorm = normalize_aligned(raw_surface, profile)[0]
+    assert renorm == "weiss"  # re-normalizes the full ß to ss
+    assert normalized[ns:ne] == "weis"  # matched pattern was only 4 chars
+    # These differ: invariant violation is expected for this span boundary.
+    assert renorm != normalized[ns:ne], (
+        "Round-trip invariant should NOT hold for mid-casefold-expansion span — "
+        "if this assertion fails the invariant is now fixed, update this test."
+    )
+
+
+@pytest.mark.parametrize("profile", PROFILES)
+def test_casefold_expansion_whole_token_round_trips(
+    profile: NormalizationProfile,
+) -> None:
+    """Whole-token spans that include the full casefold expansion do round-trip."""
+    raw = "Weiß"
+    normalized, starts, ends = normalize_aligned(raw, profile)
+    assert normalized == "weiss"
+
+    # Span [0,5) covers all of 'weiss' — round-trip holds.
+    ns, ne = 0, 5
+    raw_surface = raw[starts[ns] : ends[ne - 1]]
+    assert raw_surface == "Weiß"
+    renorm = normalize_aligned(raw_surface, profile)[0]
+    assert renorm == normalized[ns:ne], (
+        f"Whole-token round-trip failed: {renorm!r} != {normalized[ns:ne]!r}"
+    )

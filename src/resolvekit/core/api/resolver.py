@@ -1,9 +1,10 @@
 """Public API facade for resolution."""
 
 import logging
+import threading
 import weakref
 from collections.abc import Sequence
-from datetime import date
+from datetime import date, datetime
 from functools import cached_property
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Literal, cast, overload
@@ -25,6 +26,7 @@ from resolvekit.core.api.batch import BatchResolver
 from resolvekit.core.api.cache import _QueryCache
 from resolvekit.core.api.code_lookup import CodeLookup
 from resolvekit.core.api.containment_api import ContainmentAPI
+from resolvekit.core.api.context_input import coerce_context
 from resolvekit.core.api.group_api import GroupAPI
 from resolvekit.core.api.loading import (
     _build_resolver_from_paths,
@@ -82,6 +84,72 @@ logger = logging.getLogger(__name__)
 
 # Default maximum query length for safety
 DEFAULT_MAX_QUERY_LENGTH = 1000
+
+# Accepted on_ambiguous policy values for resolve_id().
+_ON_AMBIGUOUS_VALUES = ("raise", "null", "best")
+
+
+def _on_ambiguous_error(value: object) -> str:
+    """Build the ValueError message for an invalid on_ambiguous value."""
+    import difflib
+
+    msg = (
+        f"on_ambiguous={value!r} is not valid; "
+        f"expected one of {', '.join(repr(v) for v in _ON_AMBIGUOUS_VALUES)}"
+    )
+    if isinstance(value, str):
+        close = difflib.get_close_matches(
+            value.lower(), _ON_AMBIGUOUS_VALUES, n=1, cutoff=0.5
+        )
+        if close:
+            msg += f"; did you mean {close[0]!r}?"
+    return msg
+
+
+def _validate_confidence_threshold(value: object) -> None:
+    """Eagerly validate a ``confidence_threshold`` argument.
+
+    Mirrors the eager, named validation ``timeout=`` gets: a non-numeric or
+    out-of-range value raises at the call boundary instead of crashing deep in
+    the parse/link pipeline only when a span happens to resolve.
+    """
+    if value is None:
+        return
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise ValueError(
+            f"confidence_threshold={value!r} is not valid; "
+            "expected a number in [0.0, 1.0] or None"
+        )
+    if not 0.0 <= value <= 1.0:
+        raise ValueError(
+            f"confidence_threshold={value!r} is out of range; "
+            "expected a number in [0.0, 1.0] or None"
+        )
+
+
+def _coerce_as_of(value: "date | str | None") -> "date | None":
+    """Coerce an ``as_of`` argument to ``datetime.date``.
+
+    Mirrors ``ResolutionContext(as_of=...)``: ISO date strings
+    (``"2020-01-01"``) are accepted and coerced, ``datetime``/``date`` pass
+    through, and anything else raises a clear ``ValueError`` / ``TypeError``
+    at the call boundary rather than crashing deep in the store layer.
+    """
+    if isinstance(value, datetime):
+        return value.date()
+    if value is None or isinstance(value, date):
+        return value
+    if isinstance(value, str):
+        try:
+            return date.fromisoformat(value)
+        except ValueError as e:
+            raise ValueError(
+                f"as_of={value!r} is not a valid ISO date; "
+                "expected a datetime.date or an ISO-8601 string like '2020-01-01'"
+            ) from e
+    raise TypeError(
+        f"as_of must be a datetime.date or ISO-8601 string, got {type(value).__name__}"
+    )
 
 
 # Shared singleton used when callers pass context=None.  Reusing the same
@@ -144,6 +212,7 @@ class Resolver:
         sentinel_blocklist: SentinelBlocklist | None = DEFAULT_BLOCKLIST,
         default_to: str | list[str] | None = None,
         on_missing: "Literal['raise','null','auto']" = "auto",
+        warm: bool = True,
     ) -> None:
         """Initialize Resolver.
 
@@ -211,6 +280,14 @@ class Resolver:
                 null + ``UserWarning`` for ``bulk()``.
                 ``"raise"`` = always raise ``OutputMissingError`` on miss.
                 ``"null"`` = always return ``None`` on miss.
+            warm: When ``True`` (default), start a background daemon thread
+                immediately after construction that calls the runner's
+                ``warm()`` to pre-build any lazily-constructed indexes (e.g.
+                the geo large-tier SymSpell index on remote-data installs,
+                which can take ~6 s).  Queries that arrive mid-build simply
+                block on the per-source build lock for the remainder of the
+                build.  Pass ``False`` to restore the previous fully-lazy
+                behaviour.
         """
         self._runner = runner
         self._normalizer = normalizer or TextNormalizer()
@@ -285,6 +362,29 @@ class Resolver:
             default_output_spec=self._output_spec,
         )
 
+        # Background warm-up: pre-build lazily-constructed source indexes so
+        # the first fuzzy/symspell query does not pay the build cost inline.
+        if warm:
+            runner_warm = getattr(self._runner, "warm", None)
+            if callable(runner_warm):
+
+                def _warm_runner() -> None:
+                    try:
+                        runner_warm()
+                    except Exception:
+                        logger.debug(
+                            "Background warm-up raised an exception; "
+                            "sources will build lazily on first use.",
+                            exc_info=True,
+                        )
+
+                t = threading.Thread(
+                    target=_warm_runner,
+                    name="resolvekit-warm",
+                    daemon=True,
+                )
+                t.start()
+
     def _apply_confidence_threshold_override(self, value: float) -> None:
         """Set confidence_threshold on every pack's decision policy.
 
@@ -327,6 +427,24 @@ class Resolver:
             with contextlib.suppress(ValueError, AttributeError):
                 _invalidate_automaton(self._runner.store_for_domain(pack_id))
         self._runner.close()
+
+    def warm(self) -> None:
+        """Build all lazily-constructed indexes now, synchronously.
+
+        Blocks until every source's internal index (e.g. the SymSpell
+        dictionary) has been built.  Safe to call concurrently with the
+        background warm-up thread started by ``__init__`` — per-source build
+        locks make the operation idempotent.  Useful for servers and batch
+        jobs that want to ensure full performance before handling the first
+        real request.
+
+        Note: constructing a Resolver with the default ``warm=True`` already
+        starts a background warm-up; call this method when you need to block
+        until that warm-up is complete.
+        """
+        runner_warm = getattr(self._runner, "warm", None)
+        if callable(runner_warm):
+            runner_warm()
 
     def __enter__(self) -> "Resolver":
         return self
@@ -465,12 +583,70 @@ class Resolver:
         )
 
     def available_entity_types(self) -> frozenset[str]:
-        """Return all entity type prefixes declared by loaded packs."""
-        return self._runner.available_entity_types
+        """Return the fine-grained entity types declared by loaded packs.
+
+        Returns dotted types such as ``"geo.country"`` — the same granularity
+        ``ResolutionContext(entity_types=...)`` accepts and that
+        :func:`resolvekit.modules` reports — so callers can feed the result
+        straight into a refinement query.
+
+        Resolvers built from the bundled catalog (``lite()``, ``auto()``,
+        ``from_modules()``) report full types from the module manifest. A
+        resolver built from raw datapack paths that are absent from the
+        manifest falls back to the coarse domain prefixes the runner declares
+        (e.g. ``"geo"``).
+        """
+        full = self._full_entity_types()
+        return full if full is not None else self._runner.available_entity_types
+
+    def _full_entity_types(self) -> frozenset[str] | None:
+        """Map every loaded module to its manifest entity types.
+
+        Returns ``None`` when any loaded module is missing from the manifest
+        (e.g. raw ``from_datapacks`` paths), signalling the caller to fall back
+        to the runner's coarse prefixes rather than report mixed granularity.
+        """
+        from resolvekit.core.api.modules import modules as _list_modules
+
+        loaded_ids = {
+            module.metadata.module_id
+            for modules in self._loaded_modules.values()
+            for module in modules
+        }
+        if not loaded_ids:
+            return None
+        by_id = {info.module_id: info.entity_types for info in _list_modules()}
+        if not loaded_ids <= by_id.keys():
+            return None
+        types: set[str] = set()
+        for module_id in loaded_ids:
+            types.update(by_id[module_id])
+        return frozenset(types) if types else None
 
     def code_systems(self) -> frozenset[str]:
         """Return all code system names known to loaded packs."""
         return self._runner.available_code_systems
+
+    def _validate_parse_domain(self, domain: str | list[str] | None) -> None:
+        """Reject unknown ``domain`` names for parse(), mirroring resolve().
+
+        ``parse()`` detects over every loaded pack regardless of routing mode,
+        so an unknown name is always a caller typo. The parse engine silently
+        intersects requested domains with the available packs; validating here
+        surfaces a typo as ``UnknownDomainError`` instead of an empty result
+        indistinguishable from "no entities found".
+        """
+        if domain is None:
+            return
+        requested = _normalize_domain(domain)
+        if not requested:
+            return
+        available = self._runner.available_packs
+        if not available:
+            return
+        unknown = sorted(requested - available)
+        if unknown:
+            raise UnknownDomainError(unknown, sorted(available))
 
     # ------------------------------------------------------------------
     # Group / membership surface — thin delegations to GroupAPI
@@ -480,7 +656,7 @@ class Resolver:
         self,
         group: str,
         *,
-        as_of: date | None = None,
+        as_of: date | str | None = None,
         as_codes: str | None = None,
     ) -> list[str]:
         """Return entity IDs (or codes) of all members of the given group.
@@ -490,6 +666,8 @@ class Resolver:
                 Examples: "EU", "European Union", "country/EuropeanUnion", "NATO",
                 "EU27", "G8".
             as_of: Reference date for membership lookup. Defaults to today.
+                Accepts a ``datetime.date`` or an ISO-8601 string
+                (``"2020-01-01"``); an invalid string raises ``ValueError``.
                 **Warning:** For snapshot entities (frozen membership, e.g.
                 "EU27", "EU28", "G8", "BRIC"), as_of has no effect — passing one
                 emits a UserWarning so callers iterating future-state scenarios
@@ -519,7 +697,7 @@ class Resolver:
             raise RuntimeError("Resolver has been closed")
         return self._group_api.members_of(
             group,
-            as_of=as_of,
+            as_of=_coerce_as_of(as_of),
             as_codes=as_codes,
             resolve_fn=self.resolve,  # type: ignore[arg-type]  # ty: ignore[invalid-argument-type]
         )
@@ -529,14 +707,15 @@ class Resolver:
         country: str,
         group: str,
         *,
-        as_of: date | None = None,
+        as_of: date | str | None = None,
     ) -> bool:
         """Check whether a country is a member of a group on the given date.
 
         Args:
             country: Country name, code, or entity ID (same forms as resolve()).
             group: Group name, abbreviation, or entity ID.
-            as_of: Reference date. Defaults to today.
+            as_of: Reference date. Defaults to today.  Accepts a
+                ``datetime.date`` or an ISO-8601 string (``"2020-01-01"``).
                 **Warning:** For snapshot groups, as_of has no effect; passing
                 one emits a UserWarning.
 
@@ -557,7 +736,7 @@ class Resolver:
         return self._group_api.is_member(
             country,
             group,
-            as_of=as_of,
+            as_of=_coerce_as_of(as_of),
             resolve_fn=self.resolve,  # type: ignore[arg-type]  # ty: ignore[invalid-argument-type]
         )
 
@@ -630,6 +809,7 @@ class Resolver:
         sentinel_blocklist: SentinelBlocklist | None = DEFAULT_BLOCKLIST,
         default_to: str | list[str] | None = None,
         on_missing: "Literal['raise','null','auto']" = "auto",
+        warm: bool = True,
     ) -> "Resolver":
         """Create resolver from one or more explicit datapack filesystem paths.
 
@@ -655,6 +835,8 @@ class Resolver:
                 ``Resolver.__init__`` for full docs).
             on_missing: Miss policy for the default output chain (see
                 ``Resolver.__init__`` for full docs).
+            warm: Start a background index warm-up on construction (see
+                ``Resolver.__init__`` for full docs).
 
         Returns:
             Configured Resolver instance
@@ -674,6 +856,7 @@ class Resolver:
             sentinel_blocklist=sentinel_blocklist,
             default_to=default_to,
             on_missing=on_missing,
+            warm=warm,
         )
 
     @classmethod
@@ -693,6 +876,7 @@ class Resolver:
         sentinel_blocklist: SentinelBlocklist | None = DEFAULT_BLOCKLIST,
         default_to: str | list[str] | None = None,
         on_missing: "Literal['raise','null','auto']" = "auto",
+        warm: bool = True,
     ) -> "Resolver":
         """Create resolver from installed or explicitly registered modules.
 
@@ -718,6 +902,8 @@ class Resolver:
                 ``Resolver.__init__`` for full docs).
             on_missing: Miss policy for the default output chain (see
                 ``Resolver.__init__`` for full docs).
+            warm: Start a background index warm-up on construction (see
+                ``Resolver.__init__`` for full docs).
 
         Returns:
             Configured Resolver instance
@@ -738,6 +924,7 @@ class Resolver:
             sentinel_blocklist=sentinel_blocklist,
             default_to=default_to,
             on_missing=on_missing,
+            warm=warm,
         )
 
     @classmethod
@@ -756,6 +943,7 @@ class Resolver:
         sentinel_blocklist: SentinelBlocklist | None = DEFAULT_BLOCKLIST,
         default_to: str | list[str] | None = None,
         on_missing: "Literal['raise','null','auto']" = "auto",
+        warm: bool = True,
     ) -> "Resolver":
         """Create resolver from all installed modules.
 
@@ -783,6 +971,8 @@ class Resolver:
             default_to: Default output code system or name variant (see
                 ``Resolver.__init__`` for full docs).
             on_missing: Miss policy for the default output chain (see
+                ``Resolver.__init__`` for full docs).
+            warm: Start a background index warm-up on construction (see
                 ``Resolver.__init__`` for full docs).
 
         Returns:
@@ -824,6 +1014,7 @@ class Resolver:
                 sentinel_blocklist=sentinel_blocklist,
                 default_to=default_to,
                 on_missing=on_missing,
+                warm=warm,
             )
         return cls.from_modules(
             routing_mode=routing_mode,
@@ -837,6 +1028,7 @@ class Resolver:
             sentinel_blocklist=sentinel_blocklist,
             default_to=default_to,
             on_missing=on_missing,
+            warm=warm,
         )
 
     # -- Country-level geo module IDs for the lite preset --
@@ -866,6 +1058,7 @@ class Resolver:
         sentinel_blocklist: SentinelBlocklist | None = DEFAULT_BLOCKLIST,
         default_to: str | list[str] | None = None,
         on_missing: "Literal['raise','null','auto']" = "auto",
+        warm: bool = True,
     ) -> "Resolver":
         """Create a footprint-optimised resolver from a curated small module set.
 
@@ -912,6 +1105,8 @@ class Resolver:
                 ``Resolver.__init__`` for full docs).
             on_missing: Miss policy for the default output chain (see
                 ``Resolver.__init__`` for full docs).
+            warm: Start a background index warm-up on construction (see
+                ``Resolver.__init__`` for full docs).
 
         Returns:
             Configured Resolver instance
@@ -934,6 +1129,7 @@ class Resolver:
             sentinel_blocklist=sentinel_blocklist,
             default_to=default_to,
             on_missing=on_missing,
+            warm=warm,
         )
 
     def entity(
@@ -1066,7 +1262,7 @@ class Resolver:
         entity_or_id: "str | EntityRecord",
         *,
         relation: str | None = None,
-        as_of: date | None = None,
+        as_of: date | str | None = None,
         to: str | None = None,
     ) -> "list[EntityRecord] | list[str | None]":
         """Return resolved related entities for *entity_or_id*, deduped, in edge order.
@@ -1091,7 +1287,8 @@ class Resolver:
                 ``"contained_in"``).  ``None`` follows all edge types.
             as_of: When given, only edges whose validity window includes this
                 date are considered (half-open ``[valid_from, valid_until)``).
-                ``None`` returns all edges regardless of date.
+                ``None`` returns all edges regardless of date.  Accepts a
+                ``datetime.date`` or an ISO-8601 string (``"2020-01-01"``).
             to: When given, pivot each resolved entity via
                 ``EntityRecord.to(to)`` and return code/attribute strings
                 instead of EntityRecord objects.  Must be a scalar code system
@@ -1136,8 +1333,9 @@ class Resolver:
 
         entity = self._resolve_entity_arg(entity_or_id)
 
+        as_of_date = _coerce_as_of(as_of)
         effective_as_of_str: str | None = (
-            as_of.isoformat() if as_of is not None else None
+            as_of_date.isoformat() if as_of_date is not None else None
         )
         seen: set[str] = set()
         out: list[EntityRecord] = []
@@ -1254,7 +1452,7 @@ class Resolver:
         entity_type: str | list[str] | None = None,
         recursive: bool = True,
         max_depth: int | None = None,
-        as_of: date | None = None,
+        as_of: date | str | None = None,
         to: str | None = None,
     ) -> "list[EntityRecord] | list[str | None]":
         """Return entities geographically contained in *container*, recursively.
@@ -1303,6 +1501,8 @@ class Resolver:
             max_depth: Bound the descent in hops (1 = direct children). None =
                 unbounded.
             as_of: Half-open [valid_from, valid_until) filter. None = all edges.
+                Accepts a ``datetime.date`` or an ISO-8601 string
+                (``"2020-01-01"``).
             to: Scalar pivot (e.g. "iso3"); returns code strings (None where
                 absent) instead of EntityRecords.
 
@@ -1331,6 +1531,7 @@ class Resolver:
                 to, available_code_systems=self._runner.available_code_systems
             )
 
+        as_of = _coerce_as_of(as_of)
         container_entity = self._resolve_container(container)
 
         # Normalize entity_type to frozenset for the collaborator.
@@ -1413,7 +1614,7 @@ class Resolver:
         ):
             return ResolutionResult(
                 status=ResolutionStatus.NO_MATCH,
-                reasons=[ReasonCode.SENTINEL_BLOCKED],
+                reasons=(ReasonCode.SENTINEL_BLOCKED,),
                 query_text=text,
             )
         ref: weakref.ref[Explainer] = (
@@ -1436,7 +1637,7 @@ class Resolver:
         to: _Unset = ...,
         as_result: Literal[True],
         domain: str | list[str] | None = None,
-        context: ResolutionContext | None = None,
+        context: ResolutionContext | dict[str, Any] | None = None,
         from_system: str | None = None,
         include_entity: bool = False,
         timeout: float | None = None,
@@ -1449,7 +1650,7 @@ class Resolver:
         to: _Unset = ...,
         as_result: bool = False,
         domain: str | list[str] | None = None,
-        context: ResolutionContext | None = None,
+        context: ResolutionContext | dict[str, Any] | None = None,
         from_system: str | None = None,
         include_entity: bool = False,
         timeout: float | None = None,
@@ -1462,7 +1663,7 @@ class Resolver:
         to: None,
         as_result: bool = False,
         domain: str | list[str] | None = None,
-        context: ResolutionContext | None = None,
+        context: ResolutionContext | dict[str, Any] | None = None,
         from_system: str | None = None,
         include_entity: bool = False,
         timeout: float | None = None,
@@ -1475,7 +1676,7 @@ class Resolver:
         to: type[EntityRecord],
         as_result: bool = False,
         domain: str | list[str] | None = None,
-        context: ResolutionContext | None = None,
+        context: ResolutionContext | dict[str, Any] | None = None,
         from_system: str | None = None,
         include_entity: bool = False,
         timeout: float | None = None,
@@ -1489,7 +1690,7 @@ class Resolver:
         | str,
         as_result: bool = False,
         domain: str | list[str] | None = None,
-        context: ResolutionContext | None = None,
+        context: ResolutionContext | dict[str, Any] | None = None,
         from_system: str | None = None,
         include_entity: bool = False,
         timeout: float | None = None,
@@ -1501,7 +1702,7 @@ class Resolver:
         to: "Literal['iso3','iso2','numeric','name','flag','continent','aliases'] | str | type[EntityRecord] | None | _Unset" = UNSET,
         as_result: bool = False,
         domain: str | list[str] | None = None,
-        context: ResolutionContext | None = None,
+        context: ResolutionContext | dict[str, Any] | None = None,
         from_system: str | None = None,
         include_entity: bool = False,
         timeout: float | None = None,
@@ -1509,7 +1710,12 @@ class Resolver:
         """Resolve a single text string, optionally pivoting to a code or attribute.
 
         Args:
-            text: The text or code to resolve.
+            text: The text or code to resolve.  ``str`` is used as-is.
+                ``int`` and ``float`` are coerced to string (``840`` →
+                ``"840"``; ``840.0`` → ``"840"``), matching the behaviour of
+                :meth:`bulk` on numeric columns.  ``None`` returns a
+                NO_MATCH result silently.  ``bool`` and all other types raise
+                ``TypeError``.
             to: Target representation.  ``UNSET`` (default) uses the resolver's
                 configured ``default_to`` spec when set, or returns a raw
                 :class:`ResolutionResult` when no spec is configured.
@@ -1547,7 +1753,9 @@ class Resolver:
         Raises:
             ValueError: If ``as_result=True`` combined with an explicit ``to=``
                 (other than ``UNSET``/``None``), or if ``timeout <= 0``.
-            TypeError: If *text* is not a ``str`` (with ``.hint`` to ``bulk()``).
+            TypeError: If *text* is a ``bool``, ``bytes``, ``list``, ``tuple``,
+                or any other unsupported type.  ``int`` and ``float`` are
+                accepted (coerced); ``None`` is accepted (soft NO_MATCH).
             AmbiguousResolutionError: When pivoting and the result is ambiguous.
             OutputMissingError: When a spec is active and the entity lacks the
                 requested output and ``on_missing="raise"`` (or ``"auto"`` scalar).
@@ -1555,6 +1763,8 @@ class Resolver:
         """
         if self._closed:
             raise RuntimeError("Resolver has been closed")
+
+        context = coerce_context(context, resolver=self)
 
         # as_result + explicit non-None to= is contradictory.
         if as_result and to is not UNSET and to is not None:
@@ -1570,9 +1780,26 @@ class Resolver:
                 )
                 setattr(err, "hint", "rk.bulk(values=[...])")  # noqa: B010
                 raise err
-            # All other non-strings (None, bytes, int, float, empty collections)
-            # soft-return NO_MATCH — resolve_id() and bulk() depend on this.
-            return self._invalid_query_result(ReasonCode.INVALID_INPUT_TYPE)
+            # None → silent NO_MATCH (unchanged).
+            if text is None:
+                return self._invalid_query_result(ReasonCode.INVALID_INPUT_TYPE)
+            # bool is an int subclass — reject before the int check to avoid
+            # True→"1" / False→"0" mapping to real entities.
+            if isinstance(text, bool):
+                raise TypeError(
+                    f"resolve() text must be a str, int, or float; got {type(text).__name__!r}"
+                )
+            # int / float → coerce to canonical string via the shared helper so
+            # scalar and bulk can never diverge.
+            if isinstance(text, (int, float)):
+                from resolvekit.core.api.bulk import _numeric_to_str
+
+                text = _numeric_to_str(text)  # type: ignore[assignment]
+            else:
+                # bytes, empty list/tuple, arbitrary objects → TypeError.
+                raise TypeError(
+                    f"resolve() text must be a str, int, or float; got {type(text).__name__!r}"
+                )
         effective_timeout = timeout if timeout is not None else self._default_timeout
         if effective_timeout is not None and effective_timeout <= 0:
             raise ValueError("timeout must be positive")
@@ -1651,7 +1878,7 @@ class Resolver:
         on_ambiguous: "Literal['raise', 'null', 'best']" = "raise",
         from_system: str | None = None,
         domain: str | list[str] | None = None,
-        context: ResolutionContext | None = None,
+        context: ResolutionContext | dict[str, Any] | None = None,
         timeout: float | None = None,
     ) -> str | None:
         """Resolve text and return entity_id or None.
@@ -1660,7 +1887,11 @@ class Resolver:
         and handles AMBIGUOUS per ``on_ambiguous``.
 
         Args:
-            text: Text to resolve.
+            text: Text to resolve.  ``str`` is used as-is.  ``int`` and
+                ``float`` are coerced to string (``840`` → ``"840"``;
+                ``840.0`` → ``"840"``), matching the behaviour of
+                :meth:`bulk` on numeric columns.  ``None`` returns ``None``
+                silently.  ``bool`` and all other types raise ``TypeError``.
             on_ambiguous: Behavior when multiple entities match.
                 - ``"raise"`` (default): preserves the existing contract;
                   raises :class:`AmbiguousResolutionError` with candidates.
@@ -1678,10 +1909,16 @@ class Resolver:
             Entity ID string, or None if no match.
 
         Raises:
+            TypeError: If *text* is a ``bool``, ``bytes``, ``list``, or any
+                other unsupported type.
             AmbiguousResolutionError: If ``on_ambiguous="raise"`` and the
                 resolution is ambiguous.
             ResolutionError: If the resolution pipeline errored.
+            ValueError: If ``on_ambiguous`` is not one of
+                ``"raise"``, ``"null"``, or ``"best"``.
         """
+        if on_ambiguous not in _ON_AMBIGUOUS_VALUES:
+            raise ValueError(_on_ambiguous_error(on_ambiguous))
         # Pass to=None explicitly so a bound default_to spec does NOT pivot here.
         # resolve_id always returns entity_id regardless of any configured default output.
         result = self.resolve(
@@ -1710,7 +1947,7 @@ class Resolver:
         text: str,
         *,
         domain: str | list[str] | None = None,
-        context: ResolutionContext | None = None,
+        context: ResolutionContext | dict[str, Any] | None = None,
     ) -> str:
         """Resolve text and return entity_id, or raise on failure.
 
@@ -1741,7 +1978,7 @@ class Resolver:
         top_k: int = 10,
         domain: str | list[str] | None = None,
         entity_type: str | list[str] | None = None,
-        context: ResolutionContext | None = None,
+        context: ResolutionContext | dict[str, Any] | None = None,
         to: str | list[str] | None = None,
         fuzzy: "Literal['auto', 'always', 'never']" = "auto",
         timeout: float | None = None,
@@ -1776,7 +2013,13 @@ class Resolver:
                 :meth:`resolve`.
             entity_type: Sub-type filter within a domain (e.g.
                 ``"geo.country"``).  Accepts a single string or list.
-            context: Reserved for future caller hints; currently ignored.
+            context: Resolution hints, as a ``ResolutionContext`` or a plain ``dict``.
+                Dict shorthand keys: ``country`` (ISO alpha-2/alpha-3 or a country
+                name like ``"France"``), ``entity_types``, ``parent_ids``,
+                ``languages``, ``attributes`` (pack-specific escape hatch), and
+                ``as_of``. An empty dict is treated as no context. Unknown keys raise
+                ``UnknownContextKeyError`` listing the valid keys.
+                context is validated for shape but does not yet affect suggest ranking.
             to: Output code system or name variant for ``display`` (e.g.
                 ``"iso3"``, ``"name"``).  Overrides ``default_to`` for this
                 call.  ``None`` (default) uses ``canonical_name`` as the
@@ -1795,17 +2038,21 @@ class Resolver:
 
         Raises:
             RuntimeError: If the resolver has been closed.
+            UnknownContextKeyError: If *context* is a dict with unrecognised keys.
             ValueError: If *domain* contains dotted names (use *entity_type*
                 instead) or *to* references an unknown code system.
         """
         if self._closed:
             raise RuntimeError("Resolver has been closed")
+        # Key validation only — context is inert for suggest ranking but a
+        # typo'd key should raise consistently across all surfaces.
+        coerced_context = coerce_context(context, resolver=self)
         return self._suggest_flow.suggest(
             prefix,
             top_k=top_k,
             domain=domain,
             entity_type=entity_type,
-            context=context,
+            context=coerced_context,
             to=to,
             fuzzy=fuzzy,
             timeout=timeout,
@@ -1845,7 +2092,7 @@ class Resolver:
         on_missing: Any = UNSET,
         output: "Literal['series', 'record', 'frame']" = "series",
         domain: str | list[str] | None = None,
-        context: ResolutionContext | None = None,
+        context: ResolutionContext | dict[str, Any] | None = None,
         from_system: str | None = None,
         not_found: str = "null",
         on_error: "Literal['raise', 'null', 'keep']" = "raise",
@@ -1894,6 +2141,13 @@ class Resolver:
         """
         if self._closed:
             raise RuntimeError("Resolver has been closed")
+        # Skip eager coercion when the dict contains per-row (Series/list/array)
+        # values — pydantic would raise on those.  _bulk_dispatch → _expand_per_row_contexts
+        # handles coercion row-by-row via coerce_context internally.
+        from resolvekit.core.api.bulk import _context_has_per_row_value
+
+        if not _context_has_per_row_value(context):
+            context = coerce_context(context, resolver=self)
         return self._bulk_with_spec(
             values=values,
             spec=self._output_spec if to is UNSET else None,
@@ -1914,7 +2168,7 @@ class Resolver:
         text: str,
         *,
         domain: str | list[str] | None = None,
-        context: ResolutionContext | None = None,
+        context: ResolutionContext | dict[str, Any] | None = None,
         to: str | list[str] | None = None,
         confidence_threshold: float | None = None,
         include_nil: bool = False,
@@ -1967,9 +2221,15 @@ class Resolver:
             RuntimeError: If the resolver has been closed.
             ImportError: If ``ahocorasick_rs`` is not installed; install with
                 ``pip install 'resolvekit[parsing]'``.
+            ValueError: If ``confidence_threshold`` is not a number in
+                ``[0.0, 1.0]``.
+            UnknownDomainError: If ``domain`` names an unavailable pack.
         """
         if self._closed:
             raise RuntimeError("Resolver has been closed")
+        context = coerce_context(context, resolver=self)
+        _validate_confidence_threshold(confidence_threshold)
+        self._validate_parse_domain(domain)
 
         from resolvekit.core.parse._pivot import apply_to_pivot
         from resolvekit.core.parse.engine import parse_one
@@ -1993,7 +2253,7 @@ class Resolver:
         *,
         values: Any,
         domain: str | list[str] | None = None,
-        context: ResolutionContext | None = None,
+        context: ResolutionContext | dict[str, Any] | None = None,
         to: str | list[str] | None = None,
         confidence_threshold: float | None = None,
         include_nil: bool = False,
@@ -2041,9 +2301,15 @@ class Resolver:
             TypeError: If ``values`` is an unsupported type.
             ImportError: If ``ahocorasick_rs`` is not installed; install with
                 ``pip install 'resolvekit[parsing]'``.
+            ValueError: If ``confidence_threshold`` is not a number in
+                ``[0.0, 1.0]``.
+            UnknownDomainError: If ``domain`` names an unavailable pack.
         """
         if self._closed:
             raise RuntimeError("Resolver has been closed")
+        context = coerce_context(context, resolver=self)
+        _validate_confidence_threshold(confidence_threshold)
+        self._validate_parse_domain(domain)
 
         from resolvekit.core.api.bulk import _detect_input_kind
         from resolvekit.core.parse._pivot import apply_to_pivot, coerce_to_str_list
@@ -2074,7 +2340,7 @@ class Resolver:
         max_distance: float = 0.5,
         to: Any = UNSET,
         domain: str | list[str] | None = None,
-        context: ResolutionContext | None = None,
+        context: ResolutionContext | dict[str, Any] | None = None,
     ) -> Any:
         """Return the closest match among *candidates*.
 
@@ -2091,7 +2357,12 @@ class Resolver:
                 resolver's configured ``default_to`` spec when set.  ``None``
                 (explicit) forces entity_id (pre-spec behavior).
             domain: Optional domain filter.
-            context: Optional resolution context.
+            context: Resolution hints, as a ``ResolutionContext`` or a plain ``dict``.
+                Dict shorthand keys: ``country`` (ISO alpha-2/alpha-3 or a country
+                name like ``"France"``), ``entity_types``, ``parent_ids``,
+                ``languages``, ``attributes`` (pack-specific escape hatch), and
+                ``as_of``. An empty dict is treated as no context. Unknown keys raise
+                ``UnknownContextKeyError`` listing the valid keys.
 
         Returns:
             The closest matching candidate, pivoted per the active output path,
@@ -2099,6 +2370,7 @@ class Resolver:
         """
         if self._closed:
             raise RuntimeError("Resolver has been closed")
+        context = coerce_context(context, resolver=self)
         return self._snap_with_spec(
             query=query,
             candidates=candidates,
@@ -2194,7 +2466,7 @@ class Resolver:
         to: Any = UNSET,
         output: str = "series",
         domain: str | list[str] | None = None,
-        context: "ResolutionContext | None" = None,
+        context: "ResolutionContext | dict | None" = None,
         from_system: str | None = None,
         not_found: str = "null",
         on_error: str = "raise",
@@ -2452,6 +2724,7 @@ class Resolver:
         attrs: "list[str] | Literal['rest'] | None" = None,
         entity_type: str | None = None,
         cache: bool = True,
+        warm: bool = True,
         **resolver_kwargs: Any,
     ) -> "Resolver":
         """Stand up a standalone resolver from user-supplied records.
@@ -2491,6 +2764,8 @@ class Resolver:
             cache: Cache the built pack on disk under the configured cache
                 directory.  ``True`` (default) reuses an identical-input build on
                 subsequent calls; ``False`` always rebuilds to a fresh temp dir.
+            warm: Start a background index warm-up on construction (see
+                ``Resolver.__init__`` for full docs).
             **resolver_kwargs: Forwarded verbatim to
                 :meth:`from_datapacks` (e.g. ``routing_mode``,
                 ``confidence_threshold``).
@@ -2528,6 +2803,7 @@ class Resolver:
         return cls.from_datapacks(
             datapack_paths=[outcome.pack_dir],
             domains=[domain],
+            warm=warm,
             **resolver_kwargs,
         )
 

@@ -152,7 +152,7 @@ aomen	1
 aotearoa	1
 aotearoa new zealand	1
 ar	1
-arab	10
+arab	12
 arab republic of egypt	1
 arabe	2
 arabes	2
@@ -325,7 +325,7 @@ bolivarienne	1
 bolivia	8
 bolivia (estado plurinacional de)	1
 bolivia (plurinational state of)	1
-bolivia,	1
+bolivia,	2
 bolivia, plurinational state of	1
 bolivie	1
 bolivie (état plurinational de)	1
@@ -481,12 +481,13 @@ chili	1
 china	34
 china (people's republic of)	1
 china pr	1
-china,	5
+china,	7
 china, hong kong special administrative region	1
 china, macao special administrative region	1
 china, región administrativa especial de hong kong	1
 china, región administrativa especial de macao	1
 china, republic of	1
+china, taiwan province of	1
 chine	3
 chine (république populaire de)	1
 chine,	2
@@ -576,7 +577,9 @@ congo [republic]	1
 congo belge	1
 congo democrático	1
 congo republic	1
-congo,	1
+congo,	5
+congo, dem. rep.	1
+congo, democratic republic of the	1
 congo, the democratic republic of	1
 congo-brazzaville	3
 congo-kinshasa	2
@@ -662,7 +665,8 @@ de)	9
 del	28
 del)	1
 della	1
-democratic	32
+dem.	4
+democratic	34
 democratic cambodia	1
 democratic federal macedonia	1
 democratic kampuchea	1
@@ -765,6 +769,8 @@ egipto	1
 egito	1
 egitto	1
 egypt	3
+egypt,	2
+egypt, arab rep.	1
 egypte	1
 ehemalige	1
 ehemalige jugoslawische republik mazedonien	1
@@ -1168,7 +1174,7 @@ iran (islamic republic of)	1
 iran (islamische republik)	1
 iran (république islamique d')	1
 iran (république islamique de)	1
-iran,	1
+iran,	2
 iran, islamic republic of	1
 iraq	5
 iraque	1
@@ -1192,7 +1198,7 @@ isla de san martín	1
 isla juana	1
 isla niue	1
 isla trapobana	1
-islamic	12
+islamic	13
 islamic republic of afghanistan	1
 islamic republic of iran	1
 islamic republic of mauritania	1
@@ -1372,8 +1378,11 @@ korea (demokratische volksrepublik, nordkorea)	1
 korea (republik korea, südkorea)	1
 korea (south)	1
 korea republic	1
-korea,	3
+korea,	9
+korea, dem. people's rep.	1
 korea, democratic people’s republic of	1
+korea, north	1
+korea, rep.	1
 korea, republic of	1
 kosova	1
 kosovo	7
@@ -1678,6 +1687,8 @@ myanmar (birmania)	2
 myanmar (birmanie)	1
 myanmar (burma)	1
 myanmar (union de)	1
+myanmar,	2
+myanmar, republic of the union of	1
 mys	1
 mzanzi	1
 méjico	1
@@ -1771,7 +1782,7 @@ nordkorea)	1
 nordmazedonien	1
 nordrhodesien	1
 norte	8
-north	6
+north	8
 north korea	2
 north macedonia	1
 north sudan	1
@@ -1815,7 +1826,7 @@ occupied	1
 occupied palestinian territory	1
 oceania	3
 ocidental	1
-of	515
+of	527
 of)	6
 og	1
 olandesi	1
@@ -1900,7 +1911,7 @@ peeloo	1
 pelew	1
 pelew islands	1
 pellew	1
-people's	17
+people's	19
 people's democratic republic of algeria	1
 people's republic of albania	1
 people's republic of bangladesh	1
@@ -1931,7 +1942,7 @@ pl	1
 pleasant	1
 pleasant island	1
 plurinacional	2
-plurinational	4
+plurinational	5
 plurinational state of bolivia	1
 pm	1
 png	1
@@ -1985,7 +1996,7 @@ prinçipatu	1
 prinçipatu de mùnegu	1
 prk	1
 proper	1
-province	3
+province	5
 province of sahara	1
 provinces	1
 provincia	3
@@ -2017,6 +2028,7 @@ ras	1
 ras di macao	1
 ratcha-anachak	1
 ratcha-anachak thai	1
+rb	2
 rdc	2
 red	1
 red china	1
@@ -2031,10 +2043,11 @@ reino de españa	1
 reino de marruecos	1
 reino unido	2
 reino unido de gran bretaña e irlanda del norte	1
+rep.	8
 repubblica	2
 repubblica centrafricana	1
 repubblica dominicana	1
-republic	398
+republic	405
 republic niger	1
 republic of albania	1
 republic of angola	1
@@ -2607,7 +2620,7 @@ staat der vatikanstadt	1
 staat libyen	1
 staat palästina	1
 staaten	3
-state	38
+state	39
 state of eritrea	1
 state of israel	1
 state of japan	1
@@ -2780,16 +2793,18 @@ thai	2
 thailand	3
 thailandia	1
 thaïlande	1
-the	352
+the	368
 the arab republic of egypt	1
 the argentine republic	1
 the bahamas	1
 the bolivarian republic of venezuela	1
+the bolivia, plurinational state of	1
 the bonaire, sint eustatius and saba	1
 the bosnia and herzegovina	1
 the british virgin islands	1
 the brunei darussalam	1
 the burma	1
+the china, taiwan province of	1
 the co-operative republic of guyana	1
 the commonwealth of australia	1
 the commonwealth of dominica	1
@@ -2801,6 +2816,8 @@ the comoros	1
 the congo	2
 the congo (brazzaville)	1
 the congo (kinshasa)	1
+the congo, dem. rep.	1
+the congo, democratic republic of the	1
 the congo-brazzaville	1
 the congo-kinshasa	1
 the curaçao	1
@@ -2821,6 +2838,7 @@ the drc	1
 the dutch antilles	1
 the eastern republic of uruguay	1
 the ecuadorian state	1
+the egypt, arab rep.	1
 the emirates	1
 the federal democratic republic of ethiopia	1
 the federal democratic republic of nepal	1
@@ -2848,6 +2866,7 @@ the hong kong special administrative region of china	1
 the hungary	1
 the independent state of papua new guinea	1
 the independent state of samoa	1
+the iran, islamic republic of	1
 the islamic republic of afghanistan	1
 the islamic republic of iran	1
 the islamic republic of mauritania	1
@@ -2873,6 +2892,9 @@ the kingdom of sweden	1
 the kingdom of thailand	1
 the kingdom of the netherlands	1
 the kingdom of tonga	1
+the korea, dem. people's rep.	1
+the korea, north	1
+the korea, rep.	1
 the kyrgyz republic	1
 the land of a thousand hills	1
 the lao pdr	1
@@ -2885,6 +2907,7 @@ the mexican republic	1
 the montenegro	1
 the most serene republic of san marino	1
 the mountain kingdom	1
+the myanmar, republic of the union of	1
 the nation of brunei, the abode of peace	1
 the netherland antilles	1
 the netherlands	1
@@ -3078,7 +3101,9 @@ the us of america	1
 the usa	1
 the vatican	1
 the vatican city state	1
+the venezuela, rb	1
 the virgin islands of the united states	1
+the yemen, republic of	1
 the zaire	1
 the)	1
 thousand	2
@@ -3197,7 +3222,7 @@ ungheria	1
 unida	1
 unido	3
 unidos	7
-union	9
+union	11
 union des comores	2
 union islands	1
 union of burma	1
@@ -3258,8 +3283,9 @@ venezuela	11
 venezuela (bolivarian republic of)	1
 venezuela (república bolivariana de)	1
 venezuela (république bolivarienne du)	1
-venezuela,	1
+venezuela,	3
 venezuela, bolivarian republic of	1
+venezuela, rb	1
 verde	14
 vereinigte	3
 vereinigte arabische emirate	1
@@ -3336,6 +3362,8 @@ ya	1
 yarden	1
 ye	1
 yemen	4
+yemen,	2
+yemen, republic of	1
 yibuti	1
 yisrael	1
 yougoslave	1

@@ -75,11 +75,12 @@ class GeoContainmentConstraint(Constraint):
         parent_ids = set(context.parent_ids or [])
 
         # Treat country hint as a shorthand containment parent.
-        # Example: country="GT" -> add country entity IDs for iso2=gt.
+        # Length distinguishes alpha-2 ("GT") from alpha-3 ("GTM").
         if context.country:
-            iso2 = context.country.strip().lower()
-            if iso2:
-                parent_ids.update(store.lookup_code("iso2", iso2))
+            code = context.country.strip().lower()
+            if code:
+                system = "iso3" if len(code) == 3 else "iso2"
+                parent_ids.update(store.lookup_code(system, code))
 
         return parent_ids
 

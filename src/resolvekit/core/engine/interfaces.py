@@ -57,7 +57,7 @@ class PipelineResult:
 
 _TIMEOUT_RESULT = ResolutionResult(
     status=ResolutionStatus.ERROR,
-    reasons=[ReasonCode.TIMEOUT],
+    reasons=(ReasonCode.TIMEOUT,),
 )
 
 
@@ -339,6 +339,14 @@ class CandidateSource(ABC):
     def requires_existing_candidates(self) -> bool:
         """Whether this source needs existing candidates (e.g., fuzzy rerankers)."""
         return False
+
+    def warm(self) -> None:  # noqa: B027 — intentional no-op default; subclasses override to build indexes
+        """Eagerly build any lazily-constructed internal index.
+
+        Default is a no-op. Sources with expensive lazy initialization
+        (e.g. SymSpell dictionary indexes) override this to build now,
+        idempotently and thread-safely.
+        """
 
     @abstractmethod
     def generate(self, ctx: GenerationContext) -> list[CandidateEvidence]:

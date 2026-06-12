@@ -16,8 +16,9 @@ class GenericDataPackBuilder(BaseDataPackBuilder):
     - ``DOMAIN_PACK_ID = "custom"``
     - ``FEATURE_SCHEMA_VERSION = "custom.features.v1"``
 
-    ``set_base_modules`` wires ``BaseLinker`` + ``BaseNormalizer`` so that
-    build-time and query-time normalization agree for custom packs.
+    ``set_base_modules`` wires ``BaseLinker`` + ``_CustomBuildNormalizer`` so
+    that build-time and query-time normalization agree for custom packs (both
+    use NFC + casefold, not NFKC).
     """
 
     DOMAIN_PACK_ID = "custom"
@@ -29,9 +30,9 @@ class GenericDataPackBuilder(BaseDataPackBuilder):
         Args:
             base_paths: Paths to datapack directories in the base composition.
         """
+        from resolvekit.core.byod.build import _CustomBuildNormalizer
         from resolvekit.core.linking.base_linker import BaseLinker
-        from resolvekit.core.linking.base_normalizer import BaseNormalizer
 
         self._open_base_stores(base_paths)
         self._linker = BaseLinker()
-        self._normalizer = BaseNormalizer()
+        self._normalizer = _CustomBuildNormalizer()

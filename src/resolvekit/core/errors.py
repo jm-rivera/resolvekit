@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import difflib
+from collections.abc import Sequence
 from typing import Any
 
 from resolvekit.core.errors_base import ExplainNotAvailableError, ResolverError
@@ -11,6 +12,7 @@ from resolvekit.core.model.result import CandidateSummary, ResolutionStatus
 __all__ = [
     "ExplainNotAvailableError",
     "ResolverError",
+    "UnknownContextKeyError",
 ]
 
 
@@ -359,7 +361,7 @@ class ResolutionError(ResolverError):
     def __init__(
         self,
         status: ResolutionStatus,
-        candidates: list[CandidateSummary] | None = None,
+        candidates: Sequence[CandidateSummary] | None = None,
         message: str | None = None,
         *,
         hint: str | None = None,
@@ -373,6 +375,81 @@ class ResolutionError(ResolverError):
         super().__init__(msg, hint=hint)
 
 
+def _single_candidate_type(
+    candidates: Sequence[CandidateSummary] | None,
+) -> str | None:
+    """Return an entity type carried by exactly one candidate, else ``None``.
+
+    Such a type uniquely identifies one candidate, so narrowing to it reduces
+    the set to that single entry — the precise condition under which an
+    ``entity_types`` filter is a proven fix. Shared by the HTML disambiguation
+    hint (``explain.result_html``) and reused for candidate-aware error advice.
+    """
+    if not candidates:
+        return None
+    type_counts: dict[str, int] = {}
+    for c in candidates:
+        if c.entity_type:
+            type_counts[c.entity_type] = type_counts.get(c.entity_type, 0) + 1
+    return next((t for t, n in type_counts.items() if n == 1), None)
+
+
+def entity_types_would_disambiguate(
+    candidates: Sequence[CandidateSummary] | None,
+) -> bool:
+    """True when an ``entity_types`` filter could break the *contended* tie.
+
+    The ambiguity is driven by the two highest-ranked, near-tied candidates,
+    not the long tail. A type filter only helps when those finalists carry
+    different entity types. When they share a type (e.g. ``country/COD`` vs
+    ``country/COG`` for ``"Congo"``, both ``geo.country``) the filter provably
+    cannot separate them — even if a lower-ranked outlier carries a different
+    type — so we report ``False``.
+
+    Candidates are assumed confidence-ordered, which the pipeline guarantees.
+    """
+    if not candidates or len(candidates) < 2:
+        return False
+    first, second = candidates[0], candidates[1]
+    if first.entity_type is None or second.entity_type is None:
+        return False
+    return first.entity_type != second.entity_type
+
+
+def _ambiguous_resolution_hint(
+    candidates: Sequence[CandidateSummary] | None,
+) -> str:
+    """Candidate-aware disambiguation advice for ``AmbiguousResolutionError``.
+
+    Suggests ``entity_types`` only when a single-type filter would actually
+    reduce the candidate set (see :func:`entity_types_would_disambiguate`).
+    For same-type ambiguity it points callers at the candidate set itself
+    instead of steering them to a filter that cannot help.
+    """
+    if entity_types_would_disambiguate(candidates):
+        return (
+            "use context={'entity_types': {...}} to keep the matching type, "
+            "or inspect .candidates and pass on_ambiguous='best' to take the top match"
+        )
+    return (
+        "the candidates share one entity type, so entity_types cannot separate them; "
+        "inspect .candidates and select an entity_id, refine the query text, or pass "
+        "on_ambiguous='best' to take the top match"
+    )
+
+
+def _candidate_preview(
+    candidates: Sequence[CandidateSummary], *, limit: int = 3
+) -> str:
+    """Render ``entity_id (conf)`` for the top *limit* candidates."""
+    parts: list[str] = []
+    for c in candidates[:limit]:
+        conf = f" ({c.confidence:.2f})" if c.confidence is not None else ""
+        parts.append(f"{c.entity_id}{conf}")
+    suffix = ", ..." if len(candidates) > limit else ""
+    return ", ".join(parts) + suffix
+
+
 class AmbiguousResolutionError(ResolutionError):
     """Multiple plausible entities matched the query.
 
@@ -382,17 +459,24 @@ class AmbiguousResolutionError(ResolutionError):
 
     def __init__(
         self,
-        candidates: list[CandidateSummary] | None = None,
+        candidates: Sequence[CandidateSummary] | None = None,
         *,
         hint: str | None = None,
     ) -> None:
         n = len(candidates) if candidates else 0
+        if candidates:
+            preview = _candidate_preview(candidates)
+            message = (
+                f"ambiguous resolution: {n} candidates [{preview}]; "
+                "see .candidates for the full set"
+            )
+        else:
+            message = f"ambiguous resolution: {n} candidates"
         super().__init__(
             status=ResolutionStatus.AMBIGUOUS,
             candidates=candidates,
-            message=f"ambiguous resolution: {n} candidates",
-            hint=hint
-            or "use ResolutionContext(entity_types=...) or ResolutionContext(parent_ids=...) to disambiguate",
+            message=message,
+            hint=hint or _ambiguous_resolution_hint(candidates),
         )
 
 
@@ -444,6 +528,38 @@ class UnknownDomainError(ValueError, ResolverError):
         ResolverError.__init__(
             self,
             f"unknown domain(s): {unknown_str}",
+            hint=hint,
+        )
+
+
+class UnknownContextKeyError(ValueError, ResolverError):
+    """A context dict contains one or more unrecognised keys.
+
+    Raised when a ``dict`` passed as ``context=`` carries keys that are not
+    fields of :class:`~resolvekit.core.model.ResolutionContext`.
+
+    Attributes:
+        unknown: The unrecognised key names.
+        valid: The full sorted list of valid keys.
+    """
+
+    def __init__(self, unknown: list[str], valid: list[str]) -> None:
+        self.unknown = unknown
+        self.valid = valid
+        close_matches = []
+        for name in unknown:
+            close = difflib.get_close_matches(name, valid, n=1, cutoff=0.5)
+            if close:
+                close_matches.append(f"'{name}' → did you mean '{close[0]}'?")
+        unknown_str = ", ".join(f"'{u}'" for u in unknown)
+        hint = (
+            "; ".join(close_matches) + f"; valid keys: {valid}"
+            if close_matches
+            else f"valid keys: {valid}"
+        )
+        ResolverError.__init__(
+            self,
+            f"unknown context key(s): {unknown_str}",
             hint=hint,
         )
 

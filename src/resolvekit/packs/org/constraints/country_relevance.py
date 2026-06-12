@@ -11,6 +11,7 @@ from resolvekit.core.model import (
     Severity,
 )
 from resolvekit.core.store import EntityStore
+from resolvekit.core.util.iso_codes import iso3_to_iso2
 
 
 class CountryRelevanceConstraint(Constraint):
@@ -38,7 +39,10 @@ class CountryRelevanceConstraint(Constraint):
         if not context.country:
             return candidates
 
-        hint_countries = {context.country.upper()}
+        hint_code = context.country.upper()
+        if len(hint_code) == 3:
+            hint_code = iso3_to_iso2(hint_code) or hint_code
+        hint_countries = {hint_code}
         entity_ids = [c.entity_id for c in candidates]
         entities = store.bulk_get_entities(entity_ids)
 

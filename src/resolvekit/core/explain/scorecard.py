@@ -5,6 +5,7 @@ This module provides human-readable explanation capabilities for resolution resu
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from datetime import datetime
 from enum import StrEnum
 from typing import TYPE_CHECKING, Any
@@ -419,7 +420,7 @@ class ScorecardBuilder:
         return next((c for c in candidates if c.entity_id == entity_id), None)
 
     def _find_summary(
-        self, summaries: list[CandidateSummary] | None, entity_id: str
+        self, summaries: Sequence[CandidateSummary] | None, entity_id: str
     ) -> CandidateSummary | None:
         """Find a candidate summary by entity_id."""
         if not summaries:

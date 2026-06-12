@@ -17,6 +17,7 @@ from collections.abc import Callable, Sequence
 from typing import TYPE_CHECKING
 
 from resolvekit.core.api.loading import _normalize_domain
+from resolvekit.core.api.query_prep import _auto_routing_domain_error
 from resolvekit.core.engine import RoutingMode
 from resolvekit.core.model import (
     ReasonCode,
@@ -102,10 +103,13 @@ class BatchResolver:
         # One weakref reused across all results in the batch — avoids per-result allocation.
         _self_ref: weakref.ref[Explainer] = explainer_ref_factory()
 
-        dedup_cache: dict[tuple[str, int], ResolutionResult] = {}
+        dedup_cache: dict[tuple[str, tuple], ResolutionResult] = {}  # type: ignore[type-arg]
         results: list[ResolutionResult] = []
         for text, ctx in zip(texts, contexts, strict=True):
-            cache_key = (text, id(ctx)) if isinstance(text, str) else None
+            ctx_part: tuple = () if ctx is None else ctx._cache_key()  # type: ignore[union-attr]
+            cache_key: tuple[str, tuple] | None = (
+                (text, ctx_part) if isinstance(text, str) else None
+            )  # type: ignore[type-arg]
             if cache_key is not None and cache_key in dedup_cache:
                 results.append(dedup_cache[cache_key])
                 continue
@@ -137,11 +141,7 @@ class BatchResolver:
         import pandas as pd
 
         if domain is not None and self._routing_mode == RoutingMode.AUTO:
-            raise ValueError(
-                "Cannot specify domains with AUTO routing mode. "
-                "Use RoutingMode.EXPLICIT for caller-controlled pack selection, "
-                "or remove domain to let AUTO mode decide."
-            )
+            raise ValueError(_auto_routing_domain_error())
 
         mask_na_arr = series.isna().to_numpy()
         # Cast to object before filling: typed (e.g. Int64, categorical) Series
