@@ -359,7 +359,7 @@ def test_all_batches_empty_raises() -> None:
             "resolvekit.builder.sources.wikidata.aliases.sparql_request",
             return_value=[],
         ),
-        pytest.raises(RuntimeError, match="all.*batches.*no bindings"),
+        pytest.raises(RuntimeError, match=r"all .* batches returned no bindings"),
     ):
         fetch_wikidata_en_aliases(
             codes_by_entity=codes_by_entity,

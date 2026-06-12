@@ -39,6 +39,7 @@ from resolvekit.core.model.crosswalk import _MISSING, Crosswalk
 from resolvekit.core.model.entity_attributes import dispatch_pivot
 from resolvekit.core.model.result import ReasonCode
 
+
 def _closest_match(value: str, choices: tuple[str, ...]) -> str | None:
     """Return the closest match to *value* from *choices*, or None."""
     matches = difflib.get_close_matches(value, choices, n=1, cutoff=0.6)
