@@ -34,6 +34,13 @@ SYMSPELL_BASE_SCORE = 0.9
 SYMSPELL_DISTANCE_PENALTY = 0.15
 SYMSPELL_MIN_SCORE = 0.5
 
+# Queries this short get a tighter edit-distance bound: two edits in a ≤6-char
+# string rewrite a third of it, which surfaces unrelated short names as
+# candidates ("paris" → "moris"/Mauritius at distance 2) rather than fixing
+# typos. Longer queries keep the source's configured max distance.
+SYMSPELL_SHORT_QUERY_MAX_LENGTH = 6
+SYMSPELL_SHORT_QUERY_MAX_DISTANCE = 1
+
 # Temp cache files older than this are presumed leaked by a crashed writer and
 # safe to reap; live builds finish in seconds.
 _STALE_TMP_AGE_SECONDS = 3600.0
@@ -644,6 +651,11 @@ class SymSpellSource(CandidateSource):
             corrected = suggestion.term
             edit_distance = suggestion.distance
             if corrected == text_norm:
+                continue
+            if (
+                len(text_norm) <= SYMSPELL_SHORT_QUERY_MAX_LENGTH
+                and edit_distance > SYMSPELL_SHORT_QUERY_MAX_DISTANCE
+            ):
                 continue
             entity_ids = store.lookup_name_exact(corrected, name_kinds=self._name_kinds)
             for entity_id in entity_ids:

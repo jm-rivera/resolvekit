@@ -1,6 +1,6 @@
 [project]
 name = "resolvekit"
-version = "0.1.3"
+version = "0.1.4"
 description = "Entity and place resolution system that maps messy place/entity strings and codes to canonical entities"
 requires-python = ">=3.12"
 

@@ -4,7 +4,7 @@ resolvekit is an offline-first library for resolving messy place and organizatio
 
 Buckets are versions, not dates. Items move between buckets as beta feedback comes in — [issues](https://github.com/jm-rivera/resolvekit/issues) are the right place to push on priorities.
 
-*Last updated alongside the 0.1.0 release (June 2026).*
+*Last updated alongside the 0.1.4 release (June 2026).*
 
 ## Now (0.1)
 
@@ -68,6 +68,7 @@ Multilingual country names:
 
 Highest-leverage deferred items:
 
+- Alias hygiene at data build — drop code-shaped aliases that upstream sources file as English names (ISO 3166-2 strings like `FR-MF`, duplicates of an entity's own ISO/IOC codes; ~4% of bundled country name rows) and re-tag endonyms mislabeled as English (`Moris` for Mauritius). Needs a shared filter at the builder's ingest choke point, with care to keep typed acronyms (`UK`, `USA`) in the `suggest()` surface.
 - ISO 3166-3 historic countries — add the 25 missing dissolved states (USSR, East Germany, Zaire, Czechoslovakia, South Yemen, …); the validity schema and as-of filter already exist, so this is data, not engineering. Alpha-4 code lookup follows once the entities land.
 - Surface centroid lat/lon as typed fields and a `to=centroid` pivot — the coordinates are already stored on every geo entity.
 - `AugmentResult.errors` — populate the list; the on_miss='error' path documents collected errors but never appends to it.
