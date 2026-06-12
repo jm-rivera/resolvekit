@@ -540,7 +540,9 @@ def _external_shipped_ids(
             continue
         try:
             with sqlite3.connect(f"file:{db_path}?mode=ro", uri=True) as conn:
-                ids.update(row[0] for row in conn.execute("SELECT entity_id FROM entities"))
+                ids.update(
+                    row[0] for row in conn.execute("SELECT entity_id FROM entities")
+                )
         except sqlite3.OperationalError:
             # File exists but has no entities table (e.g. 0-byte placeholder
             # written by a prior interrupted build). Skip it — this pack has

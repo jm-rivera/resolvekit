@@ -162,12 +162,13 @@ def disambiguate_hint(result: ResolutionResult) -> str | None:
     # Same-name / same-type candidates: emit a country hint only when candidates
     # span ≥2 distinct countries — if they all share the same country, the hint
     # cannot disambiguate and would be useless/misleading.
-    countries = [c.parent_country for c in result.candidates if c.parent_country is not None]
+    countries = [
+        c.parent_country for c in result.candidates if c.parent_country is not None
+    ]
     if len(set(countries)) >= 2:
         qt = result.query_text
         return (
-            f"resolvekit.resolve(text={qt!r}, "
-            f"context={{'country': {countries[0]!r}}})"
+            f"resolvekit.resolve(text={qt!r}, context={{'country': {countries[0]!r}}})"
         )
     return None
 

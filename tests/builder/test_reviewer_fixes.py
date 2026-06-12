@@ -329,14 +329,14 @@ def test_external_shipped_ids_tolerates_zero_byte_sqlite(tmp_path: Path) -> None
     pack_dir.mkdir(parents=True)
     # metadata.json so iter_datapack_dirs picks this directory up as a pack.
     (pack_dir / "metadata.json").write_text(
-        json.dumps({"datapack_id": "geo.countries-v0.0.0", "module_id": "geo.countries"})
+        json.dumps(
+            {"datapack_id": "geo.countries-v0.0.0", "module_id": "geo.countries"}
+        )
     )
     # 0-byte placeholder — no SQLite header, no tables.
     (pack_dir / "entities.sqlite").write_bytes(b"")
 
-    result = _external_shipped_ids(
-        datapacks_root=tmp_path, exclude_module_ids=set()
-    )
+    result = _external_shipped_ids(datapacks_root=tmp_path, exclude_module_ids=set())
 
     assert result == set(), (
         "A 0-byte entities.sqlite should yield an empty id set, not raise"

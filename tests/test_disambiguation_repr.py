@@ -508,6 +508,7 @@ class TestTwoLevelEnrichmentParentName:
     def test_two_level_parent_name_is_region_not_country(self) -> None:
         from resolvekit.core.engine.enrichment import ResultEnricher
         from resolvekit.core.model.result import CandidateSummary
+
         texas = self._make_mock_entity(
             iso2=None,
             canonical_name="Texas",

@@ -287,7 +287,9 @@ def test_precision_filter_applied_per_entity() -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_empty_batch_logs_warning_and_continues(caplog: pytest.LogCaptureFixture) -> None:
+def test_empty_batch_logs_warning_and_continues(
+    caplog: pytest.LogCaptureFixture,
+) -> None:
     """Empty single-batch response is logged as warning; treated as "no aliases".
 
     A single empty batch after internal retries is plausibly "no aliases"; multi-batch
@@ -302,7 +304,9 @@ def test_empty_batch_logs_warning_and_continues(caplog: pytest.LogCaptureFixture
             "resolvekit.builder.sources.wikidata.aliases.sparql_request",
             return_value=[],
         ),
-        caplog.at_level(logging.WARNING, logger="resolvekit.builder.sources.wikidata.aliases"),
+        caplog.at_level(
+            logging.WARNING, logger="resolvekit.builder.sources.wikidata.aliases"
+        ),
     ):
         result = fetch_wikidata_en_aliases(
             codes_by_entity=codes_by_entity,
@@ -327,7 +331,9 @@ def test_empty_batch_with_cache_dir_logs_warning(
             "resolvekit.builder.sources.wikidata.aliases.sparql_request",
             return_value=[],
         ),
-        caplog.at_level(logging.WARNING, logger="resolvekit.builder.sources.wikidata.aliases"),
+        caplog.at_level(
+            logging.WARNING, logger="resolvekit.builder.sources.wikidata.aliases"
+        ),
     ):
         result = fetch_wikidata_en_aliases(
             codes_by_entity=codes_by_entity,

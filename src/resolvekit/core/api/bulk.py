@@ -227,8 +227,7 @@ def _dedup_pairs(
             seen[pair_key] = len(unique_pairs)
             unique_pairs.append((v, ctx))
     indexer: list[int | None] = [
-        None if v is None else seen[(v, ctx_key)]
-        for v, ctx_key, _ in row_keys
+        None if v is None else seen[(v, ctx_key)] for v, ctx_key, _ in row_keys
     ]
     return unique_pairs, indexer
 
