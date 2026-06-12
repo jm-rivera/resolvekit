@@ -118,6 +118,7 @@ class TestGenericPackProtocol:
             "custom_exact_code",
             "custom_exact_name",
             "custom_fts",
+            "custom_fuzzy_retrieval",
             "custom_fuzzy",
         ]
 

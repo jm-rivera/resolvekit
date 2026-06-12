@@ -236,6 +236,7 @@ def fuzzy_candidates(
     names: list[tuple[str, str, str, bool, str]],
     *,
     top_k: int,
+    choices: list[str] | None = None,
 ) -> list[SuggestCandidate]:
     """Run brute-force RapidFuzz over a pre-materialized name list.
 
@@ -252,6 +253,12 @@ def fuzzy_candidates(
             value)`` 5-tuples — typically the memoized output of
             ``store.iter_suggest_names()``.
         top_k: Number of results the caller ultimately wants.
+        choices: Optional pre-extracted list of ``value_norm`` strings
+            (``[row[0] for row in names]``).  When provided, the per-call
+            list comprehension is skipped — callers that memoize the name list
+            should also memoize and pass ``choices`` to avoid a 25k-string
+            rebuild on every query.  When ``None`` (default), the list is
+            built from ``names`` as before (backward-compatible).
 
     Returns:
         List of ``SuggestCandidate`` objects (one per distinct matched name row,
@@ -268,8 +275,9 @@ def fuzzy_candidates(
 
     fuzzy_pool = min(max(top_k * 5, 50), 500)
 
-    # Extract just the value_norm strings for RapidFuzz.
-    choices = [row[0] for row in names]
+    # Use caller-supplied choices when available to avoid a per-call rebuild.
+    if choices is None:
+        choices = [row[0] for row in names]
 
     raw_hits = process.extract(
         query_norm,
