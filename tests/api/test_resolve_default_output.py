@@ -1,6 +1,9 @@
 """Integration tests for Resolver default-output wiring.
 
-Tests use ``Resolver.from_modules(module_ids=["geo.countries"])`` unless noted.
+Tests use ``Resolver.from_modules(module_ids=["geo.countries",
+"geo.continental_unions"])`` unless noted — the continental-unions module is
+named explicitly because "European Union" (the canonical iso3-less example) is a
+continental union, and module selection is authoritative (no transitive load).
 
 Coverage:
 - Return-type matrix for resolve()
@@ -36,15 +39,19 @@ def r_geo() -> Resolver:
 
 @pytest.fixture(scope="module")
 def r_iso3() -> Resolver:
-    """Resolver over geo.countries with default_to='iso3'."""
-    return Resolver.from_modules(module_ids=["geo.countries"], default_to="iso3")
+    """Resolver over geo countries + continental unions with default_to='iso3'."""
+    return Resolver.from_modules(
+        module_ids=["geo.countries", "geo.continental_unions"], default_to="iso3"
+    )
 
 
 @pytest.fixture(scope="module")
 def r_null() -> Resolver:
     """Resolver with default_to='iso3', on_missing='null'."""
     return Resolver.from_modules(
-        module_ids=["geo.countries"], default_to="iso3", on_missing="null"
+        module_ids=["geo.countries", "geo.continental_unions"],
+        default_to="iso3",
+        on_missing="null",
     )
 
 
@@ -52,7 +59,9 @@ def r_null() -> Resolver:
 def r_raise() -> Resolver:
     """Resolver with default_to='iso3', on_missing='raise'."""
     return Resolver.from_modules(
-        module_ids=["geo.countries"], default_to="iso3", on_missing="raise"
+        module_ids=["geo.countries", "geo.continental_unions"],
+        default_to="iso3",
+        on_missing="raise",
     )
 
 
@@ -60,7 +69,8 @@ def r_raise() -> Resolver:
 def r_chain() -> Resolver:
     """Resolver with fallback chain ['iso3', 'name']."""
     return Resolver.from_modules(
-        module_ids=["geo.countries"], default_to=["iso3", "name"]
+        module_ids=["geo.countries", "geo.continental_unions"],
+        default_to=["iso3", "name"],
     )
 
 

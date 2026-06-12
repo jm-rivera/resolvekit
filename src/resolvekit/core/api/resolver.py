@@ -882,7 +882,16 @@ class Resolver:
 
         Args:
             module_ids: Specific module IDs to load (e.g. ``["geo.countries"]``).
-                Pass ``None`` to load all installed modules (same as ``auto()``).
+                Authoritative: the load set is exactly these modules. Declared
+                ``module_dependencies`` are advisory cross-references and are
+                NOT auto-loaded — name every module you want (e.g.
+                ``["geo.cities", "geo.countries"]`` for city resolution backed
+                by country context). The load set therefore depends only on this
+                argument, never on which packs happen to be cached or shipped,
+                so resolution is identical on a dev box and a lean deployment.
+                Overlay base modules are the one exception (an overlay is not a
+                standalone dataset, so its base is always pulled in). Pass
+                ``None`` to load all installed modules (same as ``auto()``).
             domains: Which domain packs to enable (default: all in modules).
             routing_mode: How to route queries (see ``Resolver.__init__`` for full docs).
             trace: Whether to collect trace events.
@@ -1032,8 +1041,9 @@ class Resolver:
         )
 
     # -- Country-level geo module IDs for the lite preset --
-    # Deliberately excludes geo.admin1 and deeper tiers whose dependency
-    # chains (admin2, admin3, cities …) trigger heavy SQLite composition.
+    # Deliberately excludes geo.admin1 and the deeper admin / cities tiers to
+    # keep cold-start time and resident memory small. Selection is authoritative,
+    # so the load set is exactly these IDs — naming a tier loads only that tier.
     # To add admin-1 coverage, pass module_ids=["geo.countries", "geo.admin1"].
     _LITE_GEO_MODULE_IDS: tuple[str, ...] = (
         "geo.countries",

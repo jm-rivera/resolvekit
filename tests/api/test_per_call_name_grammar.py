@@ -246,7 +246,8 @@ class TestRegressionViewPathUnchanged:
     def test_default_to_chain_iso3_name_works(self) -> None:
         """Resolver.from_modules(default_to=['iso3','name']) still works."""
         r = Resolver.from_modules(
-            module_ids=["geo.countries"], default_to=["iso3", "name"]
+            module_ids=["geo.countries", "geo.continental_unions"],
+            default_to=["iso3", "name"],
         )
         assert r.resolve("Germany") == "DEU"
         # European Union has no iso3, falls through to name.

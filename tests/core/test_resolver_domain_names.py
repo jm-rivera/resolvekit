@@ -190,7 +190,13 @@ class TestResolverFromModules:
                 resolver.resolve("European Union", domain="org").entity_id == "org/EU"
             )
 
-    def test_from_modules_pulls_declared_dependencies(self, tmp_path: Path):
+    def test_from_modules_does_not_auto_load_declared_dependencies(
+        self, tmp_path: Path
+    ):
+        # Authoritative selection: naming geo.admin1 loads exactly geo.admin1.
+        # geo.countries is a declared dependency but was not named, so it is NOT
+        # auto-loaded — the load set is a pure function of module_ids, never of
+        # which sibling packs happen to be present.
         from resolvekit import Resolver
 
         countries_dir = _make_full_datapack(
@@ -210,9 +216,12 @@ class TestResolverFromModules:
 
         with Resolver.from_modules(module_ids=["geo.admin1"]) as resolver:
             assert resolver.resolve("California").entity_id == "admin1/US-CA"
-            assert resolver.resolve("United States").entity_id == "country/USA"
+            assert resolver.resolve("United States").entity_id is None
 
-    def test_from_modules_pulls_geo_regions_when_declared(self, tmp_path: Path):
+    def test_from_modules_loads_exactly_the_named_modules(self, tmp_path: Path):
+        # Naming both modules opts in to both — the caller controls the load set
+        # explicitly. (Contrast with the test above, where the unnamed dependency
+        # stays out.)
         from resolvekit import Resolver
 
         regions_dir = _make_full_datapack(
@@ -230,11 +239,22 @@ class TestResolverFromModules:
         register_module("geo.regions", regions_dir)
         register_module("geo.countries", countries_dir)
 
+        # countries alone: regions (a declared dependency) is not auto-loaded.
         with Resolver.from_modules(module_ids=["geo.countries"]) as resolver:
+            assert resolver.resolve("United States").entity_id == "country/USA"
+            assert resolver.resolve("North America").entity_id is None
+
+        # Naming both loads both.
+        with Resolver.from_modules(
+            module_ids=["geo.countries", "geo.regions"]
+        ) as resolver:
             assert resolver.resolve("United States").entity_id == "country/USA"
             assert resolver.resolve("North America").entity_id == "region/NAM"
 
-    def test_missing_dependency_raises_module_not_found(self, tmp_path: Path):
+    def test_unnamed_dependency_does_not_raise_module_not_found(self, tmp_path: Path):
+        # A declared dependency that is not installed at all is fine when it was
+        # not requested: the dependency is advisory, so the named module loads
+        # alone rather than raising DataModuleNotFoundError.
         from resolvekit import Resolver
 
         admin1_dir = _make_full_datapack(
@@ -245,12 +265,28 @@ class TestResolverFromModules:
         )
         register_module("geo.admin1", admin1_dir)
 
+        with Resolver.from_modules(module_ids=["geo.admin1"]) as resolver:
+            assert resolver.resolve("California").entity_id == "admin1/US-CA"
+
+    def test_requesting_unknown_module_raises_module_not_found(self, tmp_path: Path):
+        # Authoritative selection is literal about what it CAN'T provide too:
+        # naming a module the registry doesn't know is a hard error (distinct
+        # from an unnamed advisory dependency, which is silently honored).
+        from resolvekit import Resolver
+
+        admin1_dir = _make_full_datapack(
+            tmp_path / "geo_admin1",
+            module_id="geo.admin1",
+            entity_rows=[("admin1/US-CA", "geo.admin1", "California")],
+        )
+        register_module("geo.admin1", admin1_dir)
+
         with pytest.raises(DataModuleNotFoundError) as exc_info:
-            Resolver.from_modules(module_ids=["geo.admin1"])
+            Resolver.from_modules(module_ids=["geo.admin1", "geo.bogus"])
 
-        assert exc_info.value.module_id == "geo.countries"
+        assert exc_info.value.module_id == "geo.bogus"
 
-    def test_same_domain_modules_compose(self, tmp_path: Path):
+    def test_same_domain_modules_compose_when_both_named(self, tmp_path: Path):
         from resolvekit import Resolver
 
         countries_dir = _make_full_datapack(
@@ -268,7 +304,9 @@ class TestResolverFromModules:
         register_module("geo.countries", countries_dir)
         register_module("geo.cities", cities_dir)
 
-        with Resolver.from_modules(module_ids=["geo.cities"]) as resolver:
+        with Resolver.from_modules(
+            module_ids=["geo.cities", "geo.countries"]
+        ) as resolver:
             assert resolver.resolve("Paris").entity_id == "city/PAR"
             assert resolver.resolve("France").entity_id == "country/FRA"
 
