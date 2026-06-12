@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.1.4 (2026-06-12)
+
+**Fixed.** Two ranking quirks on installs with remote geo data:
+`suggest("germ")` returned Germ — an obscure French commune whose full name
+happened to match — over Germany; the exact-match lift now requires minimum
+prominence on prominence-ranked tiers, while org acronyms ("UN", "NATO")
+keep it. And `resolve("Paris")` on bundled-only installs listed Mauritius as
+a sub-threshold candidate via the alias "Moris" at edit distance 2; typo
+corrections on queries of six characters or fewer now accept a single edit
+only. Both eval gates pass, with overall accuracy improving to 0.8638.
+
 ## 0.1.3 (2026-06-12)
 
 Disambiguation release: context hints as plain dicts, per-row context in bulk
