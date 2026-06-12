@@ -283,12 +283,18 @@ def test_precision_filter_applied_per_entity() -> None:
 
 
 # ---------------------------------------------------------------------------
-# Fail-loud: network failure (empty return) for non-empty QID list
+# Warn-and-continue: empty batch → warning logged, no raise, entity gets no aliases
 # ---------------------------------------------------------------------------
 
 
-def test_fail_loud_empty_return_for_nonempty_qid_list() -> None:
-    """sparql_request returns [] for a non-empty QID list → RuntimeError."""
+def test_empty_batch_logs_warning_and_continues(caplog: pytest.LogCaptureFixture) -> None:
+    """Empty single-batch response is logged as warning; treated as "no aliases".
+
+    A single empty batch after internal retries is plausibly "no aliases"; multi-batch
+    all-empty responses trigger RuntimeError (likely WDQS outage).
+    """
+    import logging
+
     codes_by_entity = dict([_codes_entry("Q30", "country/USA")])
 
     with (
@@ -296,16 +302,24 @@ def test_fail_loud_empty_return_for_nonempty_qid_list() -> None:
             "resolvekit.builder.sources.wikidata.aliases.sparql_request",
             return_value=[],
         ),
-        pytest.raises(RuntimeError, match="no bindings"),
+        caplog.at_level(logging.WARNING, logger="resolvekit.builder.sources.wikidata.aliases"),
     ):
-        fetch_wikidata_en_aliases(
+        result = fetch_wikidata_en_aliases(
             codes_by_entity=codes_by_entity,
             cache_dir=None,
         )
 
+    # No aliases for the entity — not an error
+    assert result == {}
+    assert any("no bindings" in r.message for r in caplog.records)
 
-def test_fail_loud_with_cache_dir_but_no_cache_file(tmp_path: Path) -> None:
-    """cache_dir given but no cache file + empty return → RuntimeError."""
+
+def test_empty_batch_with_cache_dir_logs_warning(
+    tmp_path: Path, caplog: pytest.LogCaptureFixture
+) -> None:
+    """cache_dir given but no cache file + empty WDQS return → warning, no raise."""
+    import logging
+
     codes_by_entity = dict([_codes_entry("Q142", "country/FRA")])
 
     with (
@@ -313,11 +327,44 @@ def test_fail_loud_with_cache_dir_but_no_cache_file(tmp_path: Path) -> None:
             "resolvekit.builder.sources.wikidata.aliases.sparql_request",
             return_value=[],
         ),
-        pytest.raises(RuntimeError),
+        caplog.at_level(logging.WARNING, logger="resolvekit.builder.sources.wikidata.aliases"),
+    ):
+        result = fetch_wikidata_en_aliases(
+            codes_by_entity=codes_by_entity,
+            cache_dir=tmp_path,
+        )
+
+    assert result == {}
+    assert any("no bindings" in r.message for r in caplog.records)
+
+
+def test_all_batches_empty_raises() -> None:
+    """All batches returning empty for a multi-batch fetch → RuntimeError.
+
+    A single empty batch is plausibly "no aliases"; every batch in a multi-batch
+    chunk returning empty is more consistent with a WDQS outage than with every
+    entity being alias-less, so we fail loud.
+    """
+    # 3 QIDs with batch_size=1 → 3 batches, all returning []
+    codes_by_entity = dict(
+        [
+            _codes_entry("Q1", "country/AA"),
+            _codes_entry("Q2", "country/BB"),
+            _codes_entry("Q3", "country/CC"),
+        ]
+    )
+
+    with (
+        patch(
+            "resolvekit.builder.sources.wikidata.aliases.sparql_request",
+            return_value=[],
+        ),
+        pytest.raises(RuntimeError, match="all.*batches.*no bindings"),
     ):
         fetch_wikidata_en_aliases(
             codes_by_entity=codes_by_entity,
-            cache_dir=tmp_path,
+            cache_dir=None,
+            batch_size=1,
         )
 
 

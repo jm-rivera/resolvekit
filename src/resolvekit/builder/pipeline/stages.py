@@ -538,6 +538,12 @@ def _external_shipped_ids(
         db_path = pack_dir / "entities.sqlite"
         if not db_path.exists():
             continue
-        with sqlite3.connect(f"file:{db_path}?mode=ro", uri=True) as conn:
-            ids.update(row[0] for row in conn.execute("SELECT entity_id FROM entities"))
+        try:
+            with sqlite3.connect(f"file:{db_path}?mode=ro", uri=True) as conn:
+                ids.update(row[0] for row in conn.execute("SELECT entity_id FROM entities"))
+        except sqlite3.OperationalError:
+            # File exists but has no entities table (e.g. 0-byte placeholder
+            # written by a prior interrupted build). Skip it — this pack has
+            # no shipped ids to preserve.
+            pass
     return ids

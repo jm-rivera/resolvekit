@@ -72,7 +72,10 @@ class TestAmbiguousResolutionErrorHint:
         ]
         err = AmbiguousResolutionError(candidates=candidates)
         assert err.hint is not None
-        assert "entity_types=" in err.hint
+        # Hint now uses dict form (context={'entity_types': ...}) rather than
+        # the old ResolutionContext(entity_types=...) constructor form.
+        assert "entity_types" in err.hint
+        assert "context=" in err.hint
 
     def test_no_candidates_hint_omits_entity_types(self) -> None:
         err = AmbiguousResolutionError(candidates=None)

@@ -227,7 +227,7 @@ class TestGeoScorer:
         scorer = GeoScorer(model=_MockModel())
         t = scorer.decision_thresholds
         assert t.confidence_threshold == 0.70
-        assert t.min_gap == 0.08
+        assert t.min_gap == 0.07
         assert t.exact_code_min_score == 0.75
 
     def test_decision_thresholds_calibrator(self):
@@ -240,7 +240,7 @@ class TestGeoScorer:
         scorer = GeoScorer(calibrator=_MockCalibrator())
         t = scorer.decision_thresholds
         assert t.confidence_threshold == 0.70
-        assert t.min_gap == 0.08
+        assert t.min_gap == 0.07
         assert t.exact_code_min_score == 0.75
 
     def test_prominence_none_is_no_op(self):

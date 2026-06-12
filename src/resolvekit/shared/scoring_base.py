@@ -22,10 +22,12 @@ if TYPE_CHECKING:
     from resolvekit.calibration.models import Calibrator
 
 # Shared threshold constants — identical in both geo and org packs.
+# min_gap of 0.07 from Platt calibration fit on full geo-tier mix.
+# Calibrated-probability gaps scale with slope ratio ≈ 0.62 from the fit (a=-8.50).
 _HEURISTIC_THRESHOLDS = DecisionThresholds()
 _MODEL_THRESHOLDS = DecisionThresholds(
     confidence_threshold=0.70,
-    min_gap=0.08,
+    min_gap=0.07,
     exact_code_min_score=0.75,
 )
 

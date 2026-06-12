@@ -16,7 +16,7 @@
     "fts": "fts5",
     "symspell": "symspell.dict"
   },
-  "build_timestamp": "2026-05-31T15:26:36.251620+00:00",
+  "build_timestamp": "2026-06-12T05:45:47.295017+00:00",
   "source_datasets": [
     "datacommons"
   ],
@@ -29,14 +29,14 @@
   "remote_artifacts": {
     "sqlite": {
       "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.06/geo-admin4-entities.sqlite.gz",
-      "sha256": "0ebb77d0859d3b334c499fb5cd4e3e73d581a76c41dc9df9b2c3ab468fc12eca",
-      "gz_sha256": "b7a07b82691d1ef3432e2020457202737c2701361fd9b8b0c3ef8d745c4d0551",
-      "size_mb": 374.84
+      "sha256": "2c4f59eee7e7ba5c411bc929e134529170378be07dee2f0ea8a5a36ced802bfb",
+      "gz_sha256": "a8e61c14881f4e346eaf084b05c9af7684c86acde7fa6e31f911fdcbc8931e40",
+      "size_mb": 374.34
     },
     "symspell": {
       "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.06/geo-admin4-symspell.dict.gz",
-      "sha256": "196e17aa697340a47648ce52eab5edd335e87baefe7f5a95e9e7794da1e0702f",
-      "gz_sha256": "55156293cf68ad14884242d561699abe4933734a976949367e8e5231d26a6aff",
+      "sha256": "ed6ea61439dddf62dcbfb00745c2ac5bb55cf897f1f801dc079b767bd36b3e5f",
+      "gz_sha256": "d97fa637bcf123960c4daeb15b739ec8907256bf1b44d204057036884503b285",
       "size_mb": 4.65
     }
   },
@@ -50,11 +50,11 @@
   "allow_new_entities": false,
   "quality_metrics": {
     "entity_count": 292451,
-    "names_count": 353990,
+    "names_count": 352684,
     "codes_count": 739522,
-    "relations_count": 342326,
+    "relations_count": 340404,
     "names_coverage": 1.0,
     "codes_coverage": 1.0,
-    "relations_density": 1.1705413898396655
+    "relations_density": 1.163969348711408
   }
 }

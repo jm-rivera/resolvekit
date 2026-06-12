@@ -26,6 +26,7 @@ from resolvekit.core.api.batch import BatchResolver
 from resolvekit.core.api.cache import _QueryCache
 from resolvekit.core.api.code_lookup import CodeLookup
 from resolvekit.core.api.containment_api import ContainmentAPI
+from resolvekit.core.api.context_input import coerce_context
 from resolvekit.core.api.group_api import GroupAPI
 from resolvekit.core.api.loading import (
     _build_resolver_from_paths,
@@ -1636,7 +1637,7 @@ class Resolver:
         to: _Unset = ...,
         as_result: Literal[True],
         domain: str | list[str] | None = None,
-        context: ResolutionContext | None = None,
+        context: ResolutionContext | dict[str, Any] | None = None,
         from_system: str | None = None,
         include_entity: bool = False,
         timeout: float | None = None,
@@ -1649,7 +1650,7 @@ class Resolver:
         to: _Unset = ...,
         as_result: bool = False,
         domain: str | list[str] | None = None,
-        context: ResolutionContext | None = None,
+        context: ResolutionContext | dict[str, Any] | None = None,
         from_system: str | None = None,
         include_entity: bool = False,
         timeout: float | None = None,
@@ -1662,7 +1663,7 @@ class Resolver:
         to: None,
         as_result: bool = False,
         domain: str | list[str] | None = None,
-        context: ResolutionContext | None = None,
+        context: ResolutionContext | dict[str, Any] | None = None,
         from_system: str | None = None,
         include_entity: bool = False,
         timeout: float | None = None,
@@ -1675,7 +1676,7 @@ class Resolver:
         to: type[EntityRecord],
         as_result: bool = False,
         domain: str | list[str] | None = None,
-        context: ResolutionContext | None = None,
+        context: ResolutionContext | dict[str, Any] | None = None,
         from_system: str | None = None,
         include_entity: bool = False,
         timeout: float | None = None,
@@ -1689,7 +1690,7 @@ class Resolver:
         | str,
         as_result: bool = False,
         domain: str | list[str] | None = None,
-        context: ResolutionContext | None = None,
+        context: ResolutionContext | dict[str, Any] | None = None,
         from_system: str | None = None,
         include_entity: bool = False,
         timeout: float | None = None,
@@ -1701,7 +1702,7 @@ class Resolver:
         to: "Literal['iso3','iso2','numeric','name','flag','continent','aliases'] | str | type[EntityRecord] | None | _Unset" = UNSET,
         as_result: bool = False,
         domain: str | list[str] | None = None,
-        context: ResolutionContext | None = None,
+        context: ResolutionContext | dict[str, Any] | None = None,
         from_system: str | None = None,
         include_entity: bool = False,
         timeout: float | None = None,
@@ -1762,6 +1763,8 @@ class Resolver:
         """
         if self._closed:
             raise RuntimeError("Resolver has been closed")
+
+        context = coerce_context(context, resolver=self)
 
         # as_result + explicit non-None to= is contradictory.
         if as_result and to is not UNSET and to is not None:
@@ -1875,7 +1878,7 @@ class Resolver:
         on_ambiguous: "Literal['raise', 'null', 'best']" = "raise",
         from_system: str | None = None,
         domain: str | list[str] | None = None,
-        context: ResolutionContext | None = None,
+        context: ResolutionContext | dict[str, Any] | None = None,
         timeout: float | None = None,
     ) -> str | None:
         """Resolve text and return entity_id or None.
@@ -1944,7 +1947,7 @@ class Resolver:
         text: str,
         *,
         domain: str | list[str] | None = None,
-        context: ResolutionContext | None = None,
+        context: ResolutionContext | dict[str, Any] | None = None,
     ) -> str:
         """Resolve text and return entity_id, or raise on failure.
 
@@ -1975,7 +1978,7 @@ class Resolver:
         top_k: int = 10,
         domain: str | list[str] | None = None,
         entity_type: str | list[str] | None = None,
-        context: ResolutionContext | None = None,
+        context: ResolutionContext | dict[str, Any] | None = None,
         to: str | list[str] | None = None,
         fuzzy: "Literal['auto', 'always', 'never']" = "auto",
         timeout: float | None = None,
@@ -2010,7 +2013,13 @@ class Resolver:
                 :meth:`resolve`.
             entity_type: Sub-type filter within a domain (e.g.
                 ``"geo.country"``).  Accepts a single string or list.
-            context: Reserved for future caller hints; currently ignored.
+            context: Resolution hints, as a ``ResolutionContext`` or a plain ``dict``.
+                Dict shorthand keys: ``country`` (ISO alpha-2/alpha-3 or a country
+                name like ``"France"``), ``entity_types``, ``parent_ids``,
+                ``languages``, ``attributes`` (pack-specific escape hatch), and
+                ``as_of``. An empty dict is treated as no context. Unknown keys raise
+                ``UnknownContextKeyError`` listing the valid keys.
+                context is validated for shape but does not yet affect suggest ranking.
             to: Output code system or name variant for ``display`` (e.g.
                 ``"iso3"``, ``"name"``).  Overrides ``default_to`` for this
                 call.  ``None`` (default) uses ``canonical_name`` as the
@@ -2029,17 +2038,21 @@ class Resolver:
 
         Raises:
             RuntimeError: If the resolver has been closed.
+            UnknownContextKeyError: If *context* is a dict with unrecognised keys.
             ValueError: If *domain* contains dotted names (use *entity_type*
                 instead) or *to* references an unknown code system.
         """
         if self._closed:
             raise RuntimeError("Resolver has been closed")
+        # Key validation only — context is inert for suggest ranking but a
+        # typo'd key should raise consistently across all surfaces.
+        coerced_context = coerce_context(context, resolver=self)
         return self._suggest_flow.suggest(
             prefix,
             top_k=top_k,
             domain=domain,
             entity_type=entity_type,
-            context=context,
+            context=coerced_context,
             to=to,
             fuzzy=fuzzy,
             timeout=timeout,
@@ -2079,7 +2092,7 @@ class Resolver:
         on_missing: Any = UNSET,
         output: "Literal['series', 'record', 'frame']" = "series",
         domain: str | list[str] | None = None,
-        context: ResolutionContext | None = None,
+        context: ResolutionContext | dict[str, Any] | None = None,
         from_system: str | None = None,
         not_found: str = "null",
         on_error: "Literal['raise', 'null', 'keep']" = "raise",
@@ -2128,6 +2141,13 @@ class Resolver:
         """
         if self._closed:
             raise RuntimeError("Resolver has been closed")
+        # Skip eager coercion when the dict contains per-row (Series/list/array)
+        # values — pydantic would raise on those.  _bulk_dispatch → _expand_per_row_contexts
+        # handles coercion row-by-row via coerce_context internally.
+        from resolvekit.core.api.bulk import _context_has_per_row_value
+
+        if not _context_has_per_row_value(context):
+            context = coerce_context(context, resolver=self)
         return self._bulk_with_spec(
             values=values,
             spec=self._output_spec if to is UNSET else None,
@@ -2148,7 +2168,7 @@ class Resolver:
         text: str,
         *,
         domain: str | list[str] | None = None,
-        context: ResolutionContext | None = None,
+        context: ResolutionContext | dict[str, Any] | None = None,
         to: str | list[str] | None = None,
         confidence_threshold: float | None = None,
         include_nil: bool = False,
@@ -2207,6 +2227,7 @@ class Resolver:
         """
         if self._closed:
             raise RuntimeError("Resolver has been closed")
+        context = coerce_context(context, resolver=self)
         _validate_confidence_threshold(confidence_threshold)
         self._validate_parse_domain(domain)
 
@@ -2232,7 +2253,7 @@ class Resolver:
         *,
         values: Any,
         domain: str | list[str] | None = None,
-        context: ResolutionContext | None = None,
+        context: ResolutionContext | dict[str, Any] | None = None,
         to: str | list[str] | None = None,
         confidence_threshold: float | None = None,
         include_nil: bool = False,
@@ -2286,6 +2307,7 @@ class Resolver:
         """
         if self._closed:
             raise RuntimeError("Resolver has been closed")
+        context = coerce_context(context, resolver=self)
         _validate_confidence_threshold(confidence_threshold)
         self._validate_parse_domain(domain)
 
@@ -2318,7 +2340,7 @@ class Resolver:
         max_distance: float = 0.5,
         to: Any = UNSET,
         domain: str | list[str] | None = None,
-        context: ResolutionContext | None = None,
+        context: ResolutionContext | dict[str, Any] | None = None,
     ) -> Any:
         """Return the closest match among *candidates*.
 
@@ -2335,7 +2357,12 @@ class Resolver:
                 resolver's configured ``default_to`` spec when set.  ``None``
                 (explicit) forces entity_id (pre-spec behavior).
             domain: Optional domain filter.
-            context: Optional resolution context.
+            context: Resolution hints, as a ``ResolutionContext`` or a plain ``dict``.
+                Dict shorthand keys: ``country`` (ISO alpha-2/alpha-3 or a country
+                name like ``"France"``), ``entity_types``, ``parent_ids``,
+                ``languages``, ``attributes`` (pack-specific escape hatch), and
+                ``as_of``. An empty dict is treated as no context. Unknown keys raise
+                ``UnknownContextKeyError`` listing the valid keys.
 
         Returns:
             The closest matching candidate, pivoted per the active output path,
@@ -2343,6 +2370,7 @@ class Resolver:
         """
         if self._closed:
             raise RuntimeError("Resolver has been closed")
+        context = coerce_context(context, resolver=self)
         return self._snap_with_spec(
             query=query,
             candidates=candidates,
@@ -2438,7 +2466,7 @@ class Resolver:
         to: Any = UNSET,
         output: str = "series",
         domain: str | list[str] | None = None,
-        context: "ResolutionContext | None" = None,
+        context: "ResolutionContext | dict | None" = None,
         from_system: str | None = None,
         not_found: str = "null",
         on_error: str = "raise",

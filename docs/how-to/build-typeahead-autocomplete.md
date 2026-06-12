@@ -1,11 +1,25 @@
 # How to build typeahead autocomplete
 
 Turn a partial query into a ranked list of entity suggestions with
-`Resolver.suggest()` — exact, prefix, infix, and typo-tolerant matches, ready to
+`suggest()` — exact, prefix, infix, and typo-tolerant matches, ready to
 wire into a search box.
 
-`suggest()` lives on the `Resolver` class only; there is no `rk.suggest()`.
-Construct a resolver once and reuse it across keystrokes:
+`suggest()` is available as `rk.suggest()` at module level (added in v0.1.3)
+and as `Resolver.suggest()` on any resolver instance. For scripts and notebooks,
+the module-level form is the shortest path:
+
+```python
+import resolvekit as rk
+
+for s in rk.suggest("germ", top_k=3):
+    print(s.canonical_name, s.entity_id)
+# Germany       country/DEU
+# German Dem Rep  German_Dem_Rep
+```
+
+For production services that need fine-grained control (a specific module set,
+`warm=False` for lazy startup, custom `Resolver.lite()` footprint), build a
+resolver and call suggest on it directly:
 
 ```python
 from resolvekit import Resolver
@@ -20,15 +34,17 @@ caches per-prefix state. Empty, whitespace-only, or below-floor prefixes return
 
 ## Quick reference table
 
+`rk.suggest()` and `r.suggest()` accept the same parameters:
+
 | You pass | You get back |
 |---|---|
-| `r.suggest("unit")` | up to 10 `SuggestionResult`, ranked best-first |
-| `r.suggest("germny")` | typo-tolerant fuzzy matches (Germany, …) |
-| `r.suggest("united", entity_type="geo.country")` | countries only |
-| `r.suggest("united", domain="geo")` | geo packs only (simple domain name) |
-| `r.suggest("germ", to="iso3")` | each suggestion's `display` rendered as ISO-3 |
-| `r.suggest("germny", fuzzy="never")` | prefix/infix only, no fuzzy |
-| `r.suggest("")` | `[]` |
+| `rk.suggest("unit")` | up to 10 `SuggestionResult`, ranked best-first |
+| `rk.suggest("germny")` | typo-tolerant fuzzy matches (Germany, …) |
+| `rk.suggest("united", entity_type="geo.country")` | countries only |
+| `rk.suggest("united", domain="geo")` | geo packs only (simple domain name) |
+| `rk.suggest("germ", to="iso3")` | each suggestion's `display` rendered as ISO-3 |
+| `rk.suggest("germny", fuzzy="never")` | prefix/infix only, no fuzzy |
+| `rk.suggest("")` | `[]` |
 
 ## A basic call
 

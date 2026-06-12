@@ -1,19 +1,8 @@
 {
-  "allow_new_entities": false,
-  "artifacts": {
-    "symspell": "symspell.dict"
-  },
-  "base_module_ids": null,
-  "build_timestamp": "2026-06-07T17:57:36.514718+00:00",
-  "checksums": {
-    "sqlite": "3e5efd12f749319d61cdd7554733bee76117176d46fd88ac2523fad938c5c3ec",
-    "symspell": "d61c6ea1750ca00fb06efeb2a40b9b0030562ef6c02f1f23d9277c44e9f569db"
-  },
-  "data_version": "2026.06",
   "datapack_id": "geo.continents-v2026.06",
-  "description": null,
-  "distribution": "bundled",
+  "module_id": "geo.continents",
   "domain_pack_id": "geo",
+  "module_dependencies": [],
   "entity_schema_version": "1.0",
   "feature_schema_version": "geo.features.v1",
   "normalizer_version": "casefold.1",
@@ -21,11 +10,28 @@
     "fts": "fts5",
     "symspell": "symspell.dict"
   },
-  "link_keys": null,
+  "build_timestamp": "2026-06-07T17:57:36.514718+00:00",
+  "source_datasets": [
+    "seed"
+  ],
+  "artifacts": {
+    "symspell": "symspell.dict"
+  },
+  "description": null,
+  "checksums": {
+    "sqlite": "3e5efd12f749319d61cdd7554733bee76117176d46fd88ac2523fad938c5c3ec",
+    "symspell": "d61c6ea1750ca00fb06efeb2a40b9b0030562ef6c02f1f23d9277c44e9f569db"
+  },
+  "distribution": "bundled",
+  "remote_artifacts": null,
+  "data_version": "2026.06",
   "min_resolvekit_version": null,
-  "module_dependencies": [],
-  "module_id": "geo.continents",
   "pack_type": "base",
+  "store_type": "sqlite",
+  "store_file": "entities.sqlite",
+  "link_keys": null,
+  "base_module_ids": null,
+  "allow_new_entities": false,
   "quality_metrics": {
     "codes_count": 16,
     "codes_coverage": 1.0,
@@ -34,11 +40,5 @@
     "names_coverage": 1.0,
     "relations_count": 2,
     "relations_density": 0.25
-  },
-  "remote_artifacts": null,
-  "source_datasets": [
-    "seed"
-  ],
-  "store_file": "entities.sqlite",
-  "store_type": "sqlite"
+  }
 }

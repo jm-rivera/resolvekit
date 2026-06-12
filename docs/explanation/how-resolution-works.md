@@ -142,6 +142,20 @@ rk.resolve("Congo").is_ambiguous   # True
 rk.resolve("zzznotacountry").status  # no_match
 ```
 
+## Prominence-based tiebreaking
+
+*Added in v0.1.3.*
+
+When two candidates have similar feature scores, a prominence difference in the data can tip the decision toward resolved. "Paris" without context would otherwise tie or produce ambiguity between Paris, France and Paris, Texas; with the remote geo data loaded (admin1 through cities), the city-level prominence score — derived from Data Commons population counts — gives Paris, France a gap wide enough to resolve cleanly.
+
+This only affects cases where one candidate is substantially more prominent than the rest. Genuinely evenly-matched names — "Congo" (two countries of similar size), "Springfield" (many US cities with no dominant one) — stay `AMBIGUOUS` regardless. The behavior is:
+
+- **Dominant entity beats obscure peers** — bare "Paris" resolves to Paris, France with remote geo data; bare "Sudan" resolves to the country, not Sudan, Texas (even with bundled data).
+- **Genuinely ambiguous names stay `AMBIGUOUS`** — prominence doesn't force a wrong answer; it only resolves when the gap is real.
+
+!!! note
+    Prominence-based resolution of city names like "Paris" requires the remote geo data packs (`rk.download("geo.cities")`). Country-level prominence is part of the bundled data.
+
 ## The explain() scorecard
 
 `result.explain(verbosity="full")` returns a `Scorecard` you can render as text. It shows the normalized query, the match tier, confidence, reason codes, and which sources contributed:

@@ -111,13 +111,26 @@ class TestCacheOn:
         assert info.hits == 1
         assert info.misses == 1
 
-    def test_cache_keyed_by_context(self) -> None:
+    def test_cache_equal_contexts_share_entry(self) -> None:
+        # Content-based keying: two structurally-equal contexts share one cache entry.
         resolver, backend = _make_resolver(cache_size=128)
-        ctx1 = ResolutionContext()
-        ctx2 = ResolutionContext()
+        ctx1 = ResolutionContext(country="FR")
+        ctx2 = ResolutionContext(country="FR")
         resolver.resolve("hello", context=ctx1)
         resolver.resolve("hello", context=ctx2)
-        # Two distinct context objects → two misses
+        assert backend.call_count == 1
+        info = resolver.diagnostics.cache.info()
+        assert info is not None
+        assert info.misses == 1
+        assert info.hits == 1
+
+    def test_cache_different_contexts_produce_distinct_entries(self) -> None:
+        # Content-based keying: structurally different contexts produce distinct entries.
+        resolver, backend = _make_resolver(cache_size=128)
+        ctx_fr = ResolutionContext(country="FR")
+        ctx_de = ResolutionContext(country="DE")
+        resolver.resolve("hello", context=ctx_fr)
+        resolver.resolve("hello", context=ctx_de)
         assert backend.call_count == 2
         info = resolver.diagnostics.cache.info()
         assert info is not None
@@ -320,14 +333,13 @@ class TestResolveManyInternalDedup:
 
     def test_repeat_text_distinct_context_resolves_twice(self) -> None:
         resolver, backend = _make_resolver(cache_size=0)
-        ctx_a = ResolutionContext()
-        ctx_b = ResolutionContext()
+        ctx_a = ResolutionContext(country="FR")
+        ctx_b = ResolutionContext(country="DE")
         resolver._resolve_many_internal(["Italy", "Italy"], context=[ctx_a, ctx_b])
         assert backend.call_count == 2
 
     def test_none_context_dedup_uses_shared_default(self) -> None:
-        """context=None expands to [None]*N — all entries share id(None),
-        so repeats dedup just like an explicit shared context."""
+        """None context distributes to all rows and deduplicates as a shared default."""
         resolver, backend = _make_resolver(cache_size=0)
         resolver._resolve_many_internal(["Italy", "Italy", "Italy"], context=None)
         assert backend.call_count == 1

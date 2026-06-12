@@ -316,6 +316,33 @@ def test_load_release_candidates_prefers_in_memory(tmp_path: Path) -> None:
 # ---------------------------------------------------------------------------
 
 
+# ---------------------------------------------------------------------------
+# _external_shipped_ids — 0-byte placeholder guard
+# ---------------------------------------------------------------------------
+
+
+def test_external_shipped_ids_tolerates_zero_byte_sqlite(tmp_path: Path) -> None:
+    """A 0-byte entities.sqlite must not raise; the pack is treated as not-shipped."""
+    from resolvekit.builder.pipeline.stages import _external_shipped_ids
+
+    pack_dir = tmp_path / "geo" / "countries"
+    pack_dir.mkdir(parents=True)
+    # metadata.json so iter_datapack_dirs picks this directory up as a pack.
+    (pack_dir / "metadata.json").write_text(
+        json.dumps({"datapack_id": "geo.countries-v0.0.0", "module_id": "geo.countries"})
+    )
+    # 0-byte placeholder — no SQLite header, no tables.
+    (pack_dir / "entities.sqlite").write_bytes(b"")
+
+    result = _external_shipped_ids(
+        datapacks_root=tmp_path, exclude_module_ids=set()
+    )
+
+    assert result == set(), (
+        "A 0-byte entities.sqlite should yield an empty id set, not raise"
+    )
+
+
 def test_resolve_datapacks_resolves_from_disk_with_empty_ledger(
     tmp_path: Path,
 ) -> None:

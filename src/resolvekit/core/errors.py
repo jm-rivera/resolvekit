@@ -12,6 +12,7 @@ from resolvekit.core.model.result import CandidateSummary, ResolutionStatus
 __all__ = [
     "ExplainNotAvailableError",
     "ResolverError",
+    "UnknownContextKeyError",
 ]
 
 
@@ -427,7 +428,7 @@ def _ambiguous_resolution_hint(
     """
     if entity_types_would_disambiguate(candidates):
         return (
-            "use ResolutionContext(entity_types=...) to keep the matching type, "
+            "use context={'entity_types': {...}} to keep the matching type, "
             "or inspect .candidates and pass on_ambiguous='best' to take the top match"
         )
     return (
@@ -527,6 +528,38 @@ class UnknownDomainError(ValueError, ResolverError):
         ResolverError.__init__(
             self,
             f"unknown domain(s): {unknown_str}",
+            hint=hint,
+        )
+
+
+class UnknownContextKeyError(ValueError, ResolverError):
+    """A context dict contains one or more unrecognised keys.
+
+    Raised when a ``dict`` passed as ``context=`` carries keys that are not
+    fields of :class:`~resolvekit.core.model.ResolutionContext`.
+
+    Attributes:
+        unknown: The unrecognised key names.
+        valid: The full sorted list of valid keys.
+    """
+
+    def __init__(self, unknown: list[str], valid: list[str]) -> None:
+        self.unknown = unknown
+        self.valid = valid
+        close_matches = []
+        for name in unknown:
+            close = difflib.get_close_matches(name, valid, n=1, cutoff=0.5)
+            if close:
+                close_matches.append(f"'{name}' → did you mean '{close[0]}'?")
+        unknown_str = ", ".join(f"'{u}'" for u in unknown)
+        hint = (
+            "; ".join(close_matches) + f"; valid keys: {valid}"
+            if close_matches
+            else f"valid keys: {valid}"
+        )
+        ResolverError.__init__(
+            self,
+            f"unknown context key(s): {unknown_str}",
             hint=hint,
         )
 

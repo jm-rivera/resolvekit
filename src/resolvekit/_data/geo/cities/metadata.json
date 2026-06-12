@@ -17,7 +17,7 @@
     "fts": "fts5",
     "symspell": "symspell.dict"
   },
-  "build_timestamp": "2026-05-31T15:26:43.708515+00:00",
+  "build_timestamp": "2026-06-12T05:45:54.981831+00:00",
   "source_datasets": [
     "datacommons"
   ],
@@ -30,15 +30,15 @@
   "remote_artifacts": {
     "sqlite": {
       "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.06/geo-cities-entities.sqlite.gz",
-      "sha256": "f99b2a2fdcc0f4bc44fa024e9a0852a3c013a61cb438825c7e0ce1476586e918",
-      "gz_sha256": "8819f578d017d5b90437e2e5c093090aef9f3c11572fcb6a7d8a42139b9c9caf",
-      "size_mb": 151.61
+      "sha256": "06e3a01b92d5f7a90f3e926a0779f77ec4bca1517eb39a0f3353840ed466767a",
+      "gz_sha256": "c7aa08a48bf46b8b603e04a8f96f9afa7578dc6f7f149ff1171d3976c7f7790e",
+      "size_mb": 152.21
     },
     "symspell": {
       "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.06/geo-cities-symspell.dict.gz",
-      "sha256": "ff96a9a5d3a7bced178ca74d416e7de85aca931b4337d83f279fe4bb28a4ff5e",
-      "gz_sha256": "f6fb9fb323bd781d100d67527ab270ecc8d5bd35ea14a45d438d845c023fa759",
-      "size_mb": 2.61
+      "sha256": "bdfbc85e011729e35268d5c799bbc7a5da5fca0b5fb591b069af6ace1975ca32",
+      "gz_sha256": "a5caf0b166d6b4f294608791ed81d16dbd38234b825034da695d77ba169b39a6",
+      "size_mb": 2.67
     }
   },
   "data_version": "2026.06",
@@ -51,11 +51,11 @@
   "allow_new_entities": false,
   "quality_metrics": {
     "entity_count": 105509,
-    "names_count": 159153,
-    "codes_count": 350828,
-    "relations_count": 146300,
+    "names_count": 161423,
+    "codes_count": 351511,
+    "relations_count": 146295,
     "names_coverage": 1.0,
     "codes_coverage": 1.0,
-    "relations_density": 1.3866115686813447
+    "relations_density": 1.3865641793591068
   }
 }

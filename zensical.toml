@@ -24,6 +24,7 @@ nav = [
         { "Clean a DataFrame column" = "how-to/clean-a-dataframe-column.md" },
         { "Reconcile a column with a review" = "how-to/reconcile-a-column-with-review.md" },
         { "Handle ambiguous matches" = "how-to/handle-ambiguous-matches.md" },
+        { "Refine resolution with context" = "how-to/refine-resolution-with-context.md" },
         { "Convert between code systems" = "how-to/convert-between-code-systems.md" },
         { "Resolve group membership" = "how-to/resolve-group-membership.md" },
         { "List the entities in a region" = "how-to/list-entities-in-a-region.md" },

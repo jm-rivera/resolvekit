@@ -1,10 +1,20 @@
 """Populate per-entity prominence scores into the geo-shared staging store.
 
-Fetches Wikidata sitelink counts (primary signal, queried straight from WDQS
-via :mod:`resolvekit.builder.sources.wikidata.sitelinks`) and DC population
-observations (fallback) for every entity in the shared geo store, then
-normalizes per entity-type bucket to [0, 1] and writes
-``attrs_json["prominence"]`` via the ``apply_contribution`` path.
+Signal strategy is per entity-type bucket (see ``EnrichProminenceSettings``):
+
+- **Country/region tiers** (geo.country, geo.continent, geo.region, …): Wikidata
+  sitelink counts are the primary signal (WDQS via
+  :mod:`resolvekit.builder.sources.wikidata.sitelinks`); DC population is the
+  fallback for entities with no sitelinks.
+
+- **City/admin tiers** (geo.city, geo.admin1-5): DC population (``Count_Person``)
+  is the primary signal; Wikidata sitelinks are used only as a fallback for
+  population-less entities.  This avoids a full WDQS sweep over 100k+ city QIDs,
+  which is the main build failure path (transient WDQS rate-limiting).
+
+Each bucket is normalized to [0, 1] independently, so mixed signals across
+tiers do not interfere.  Results are written to ``attrs_json["prominence"]``
+via the ``apply_contribution`` path.
 
 Sitelinks comes from Wikidata directly because the ONE-hosted DC instance does
 not import ``wikidataSitelinkCount``; the local ``codes`` table already stores
@@ -76,6 +86,15 @@ class EnrichProminenceSettings:
     # bucket finishes so reruns after a WDQS hiccup don't re-fetch what
     # already succeeded. Delete this file to force a full refetch.
     prominence_cache_path: Path = _SHARED_GEO_ROOT / "prominence_cache.json"
+    # Entity-type buckets for which DC population is the PRIMARY signal and
+    # Wikidata sitelinks are used only as a fallback for population-less entities.
+    # City and sub-country admin tiers use population-primary because: (a) DC has
+    # near-complete Count_Person coverage for these tiers and (b) avoiding a full
+    # WDQS sitelink sweep over 100k+ cities eliminates the main build failure
+    # path (transient WDQS rate-limiting on large batches).
+    population_primary_buckets: frozenset[str] = frozenset(
+        {"geo.city", "geo.admin1", "geo.admin2", "geo.admin3", "geo.admin4", "geo.admin5"}
+    )
 
 
 def _fetch_bucket(
@@ -88,8 +107,17 @@ def _fetch_bucket(
     wikidata_user_agent: str,
     wikidata_batch_size: int,
     wikidata_request_delay: float,
+    population_primary: bool = False,
 ) -> dict[str, float]:
     """Fetch sitelinks + population for one entity-type bucket and compute prominences.
+
+    When ``population_primary=False`` (default): sitelinks are fetched first;
+    population is the fallback for entities with no sitelinks.
+
+    When ``population_primary=True``: DC population is fetched first; Wikidata
+    sitelinks are only fetched for entities that have no population data.  This
+    avoids a full WDQS sweep for large city/admin2 buckets (100k+ QIDs) where
+    WDQS rate-limiting is the primary build failure path.
 
     Raises ``BuildExecutionError`` if >``failure_threshold`` of entities produce
     neither signal (network error / malformed payload on both fetches). Entities
@@ -98,40 +126,77 @@ def _fetch_bucket(
     """
     total = len(entity_ids)
 
-    bucket_qids = {entity_to_qid[eid] for eid in entity_ids if eid in entity_to_qid}
     sitelinks_by_entity: dict[str, int] = {}
-    if bucket_qids:
-        try:
-            sitelinks_by_qid = wd_sitelinks.fetch_sitelinks_by_qid(
-                qids=bucket_qids,
-                user_agent=wikidata_user_agent,
-                batch_size=wikidata_batch_size,
-                request_delay=wikidata_request_delay,
-            )
-        except Exception as exc:
-            logger.warning(
-                "bucket %s: sitelinks fetch failed (%s); falling back to population for all entities",
-                entity_type,
-                exc,
-            )
-        else:
-            for eid in entity_ids:
-                qid = entity_to_qid.get(eid)
-                if qid is not None and qid in sitelinks_by_qid:
-                    sitelinks_by_entity[eid] = sitelinks_by_qid[qid]
-
-    missing_sitelinks = [eid for eid in entity_ids if eid not in sitelinks_by_entity]
-
     populations: dict[str, float] = {}
-    if missing_sitelinks:
+    # Used for the qid_rate metric regardless of which branch runs.
+    bucket_qids: set[str] = {entity_to_qid[eid] for eid in entity_ids if eid in entity_to_qid}
+
+    if population_primary:
+        # Population-primary: fetch DC population for all entities first.
         try:
-            populations = fetch_population(dc=dc, entity_ids=missing_sitelinks)
+            populations = fetch_population(dc=dc, entity_ids=entity_ids)
         except Exception as exc:
             logger.warning(
-                "bucket %s: population fetch failed (%s); proceeding with sitelinks only",
+                "bucket %s: population fetch failed (%s); falling back to sitelinks for all entities",
                 entity_type,
                 exc,
             )
+
+        # Sitelinks only for entities that produced no population.
+        missing_population = [eid for eid in entity_ids if eid not in populations]
+        if missing_population:
+            missing_qids = {entity_to_qid[eid] for eid in missing_population if eid in entity_to_qid}
+            if missing_qids:
+                try:
+                    sitelinks_by_qid = wd_sitelinks.fetch_sitelinks_by_qid(
+                        qids=missing_qids,
+                        user_agent=wikidata_user_agent,
+                        batch_size=wikidata_batch_size,
+                        request_delay=wikidata_request_delay,
+                    )
+                except Exception as exc:
+                    logger.warning(
+                        "bucket %s: sitelinks fallback fetch failed (%s); proceeding with population only",
+                        entity_type,
+                        exc,
+                    )
+                else:
+                    for eid in missing_population:
+                        qid = entity_to_qid.get(eid)
+                        if qid is not None and qid in sitelinks_by_qid:
+                            sitelinks_by_entity[eid] = sitelinks_by_qid[qid]
+    else:
+        # Sitelinks-primary: fetch WDQS sitelinks first.
+        if bucket_qids:
+            try:
+                sitelinks_by_qid = wd_sitelinks.fetch_sitelinks_by_qid(
+                    qids=bucket_qids,
+                    user_agent=wikidata_user_agent,
+                    batch_size=wikidata_batch_size,
+                    request_delay=wikidata_request_delay,
+                )
+            except Exception as exc:
+                logger.warning(
+                    "bucket %s: sitelinks fetch failed (%s); falling back to population for all entities",
+                    entity_type,
+                    exc,
+                )
+            else:
+                for eid in entity_ids:
+                    qid = entity_to_qid.get(eid)
+                    if qid is not None and qid in sitelinks_by_qid:
+                        sitelinks_by_entity[eid] = sitelinks_by_qid[qid]
+
+        missing_sitelinks = [eid for eid in entity_ids if eid not in sitelinks_by_entity]
+        if missing_sitelinks:
+            try:
+                populations = fetch_population(dc=dc, entity_ids=missing_sitelinks)
+            except Exception as exc:
+                logger.warning(
+                    "bucket %s: population fetch failed (%s); proceeding with sitelinks only",
+                    entity_type,
+                    exc,
+                )
 
     missing_any = [
         eid
@@ -346,6 +411,7 @@ def run(*, settings: EnrichProminenceSettings) -> None:
                 wikidata_user_agent=settings.wikidata_user_agent,
                 wikidata_batch_size=settings.wikidata_batch_size,
                 wikidata_request_delay=settings.wikidata_request_delay,
+                population_primary=entity_type in settings.population_primary_buckets,
             )
             _checkpoint(entity_type, result)
     elif pending:
@@ -361,6 +427,7 @@ def run(*, settings: EnrichProminenceSettings) -> None:
                     wikidata_user_agent=settings.wikidata_user_agent,
                     wikidata_batch_size=settings.wikidata_batch_size,
                     wikidata_request_delay=settings.wikidata_request_delay,
+                    population_primary=entity_type in settings.population_primary_buckets,
                 ): entity_type
                 for entity_type, entity_ids in pending
             }

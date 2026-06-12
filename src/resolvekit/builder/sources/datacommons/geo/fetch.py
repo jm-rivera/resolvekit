@@ -65,6 +65,7 @@ def fetch_raw_chunk(
         codes_by_entity=codes,
         foreign_names_by_entity=_foreign_names_from_aliases(aliases),
         cache_dir=wikidata_cache_dir,
+        batch_size=200,
     )
     aliases = merge_alias_rows(aliases, en_aliases)
 

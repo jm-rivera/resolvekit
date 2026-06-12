@@ -219,6 +219,14 @@ class ResultEnricher:
         if not result.candidates:
             return result
 
+        # For AMBIGUOUS results, resolve parent names for distinguishable display.
+        # Guard here so the hot RESOLVED path pays zero extra lookups.
+        parent_context: dict[str, tuple[str | None, str | None]] = {}
+        if result.status == ResolutionStatus.AMBIGUOUS:
+            parent_context = self._resolve_parent_context(
+                result.candidates[:3], entities
+            )
+
         enriched = []
         for summary in result.candidates:
             entity = entities.get(summary.entity_id)
@@ -226,6 +234,9 @@ class ResultEnricher:
             match_tier = summary.match_tier
             if match_tier is None and candidate is not None:
                 match_tier = derive_candidate_match_tier(candidate)
+            parent_name, parent_country = parent_context.get(
+                summary.entity_id, (None, None)
+            )
             enriched.append(
                 summary.model_copy(
                     update={
@@ -237,6 +248,8 @@ class ResultEnricher:
                         else None,
                         "pack_id": summary.pack_id or self._pack_id,
                         "match_tier": match_tier,
+                        "parent_name": parent_name,
+                        "parent_country": parent_country,
                     }
                 )
             )
@@ -260,6 +273,76 @@ class ResultEnricher:
                 )
 
         return result.model_copy(update={"candidates": tuple(enriched)})
+
+    def _resolve_parent_context(
+        self,
+        summaries: tuple[CandidateSummary, ...],
+        entities: dict[str, EntityRecord],
+    ) -> dict[str, tuple[str | None, str | None]]:
+        """Derive (parent_name, parent_country) for each candidate in *summaries*.
+
+        Only called for AMBIGUOUS results (top-3 candidates), so extra point
+        reads here are on the cold path.  Returns a mapping from entity_id to a
+        ``(parent_name, parent_country)`` pair; absent entities produce
+        ``(None, None)``.
+        """
+        result: dict[str, tuple[str | None, str | None]] = {}
+        store = self._store
+        for summary in summaries:
+            entity = entities.get(summary.entity_id)
+            if entity is None:
+                result[summary.entity_id] = (None, None)
+                continue
+
+            # Country: if the entity itself carries an ISO alpha-2 code it IS the
+            # country-level entity (country records have iso2; cities/regions do not —
+            # their country affiliation lives in a 'country_code' attribute instead).
+            # Fall back to the attribute, then to relation traversal below.
+            #
+            # Normalize subdivision codes (e.g. "US-VT") to their country prefix
+            # ("US") — data-derived check only (string shape), no domain strings.
+            if entity.iso2 is not None:
+                raw = entity.iso2
+                parent_country: str | None = raw.split("-", 1)[0] if "-" in raw else raw
+            else:
+                attr_val = entity.attributes.get("country_code")
+                if isinstance(attr_val, str):
+                    parent_country = (
+                        attr_val.split("-", 1)[0] if "-" in attr_val else attr_val
+                    )
+                else:
+                    parent_country = None
+            parent_name: str | None = None
+
+            if parent_country is None and store is not None:
+                # Follow the first contained_in / part_of relation to a country parent.
+                for relation in entity.relations:
+                    if relation.relation_type not in PARENT_RELATION_TYPES:
+                        continue
+                    parent_entity = store.get_entity(relation.target_id)
+                    if parent_entity is None:
+                        continue
+                    iso2 = parent_entity.iso2
+                    if iso2 is not None:
+                        raw = iso2
+                        parent_country = raw.split("-", 1)[0] if "-" in raw else raw
+                        parent_name = parent_entity.canonical_name
+                        break
+                    # Not a country itself; keep looking one more level (city → region → country)
+                    for rel2 in parent_entity.relations:
+                        if rel2.relation_type not in PARENT_RELATION_TYPES:
+                            continue
+                        grandparent = store.get_entity(rel2.target_id)
+                        if grandparent is not None and grandparent.iso2 is not None:
+                            raw = grandparent.iso2
+                            parent_country = raw.split("-", 1)[0] if "-" in raw else raw
+                            parent_name = parent_entity.canonical_name
+                            break
+                    if parent_country is not None:
+                        break
+
+            result[summary.entity_id] = (parent_name, parent_country)
+        return result
 
     def _derive_result_match_tier(
         self,

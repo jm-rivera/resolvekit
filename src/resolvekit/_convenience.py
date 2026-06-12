@@ -226,7 +226,7 @@ def resolve(
     to: Any = ...,  # UNSET sentinel — actual type is str|None|_Unset; deferred import
     as_result: bool = False,
     domain: str | list[str] | None = None,
-    context: ResolutionContext | None = None,
+    context: ResolutionContext | dict | None = None,
     from_system: str | None = None,
     include_entity: bool = True,
     timeout: float | None = None,
@@ -282,7 +282,7 @@ def resolve_id(
     on_ambiguous: Literal["raise", "null", "best"] = "raise",
     from_system: str | None = None,
     domain: str | list[str] | None = None,
-    context: ResolutionContext | None = None,
+    context: ResolutionContext | dict | None = None,
     timeout: float | None = None,
 ) -> str | None:
     """Resolve text and return entity_id or None.
@@ -328,7 +328,7 @@ def bulk(
     to: Any = ...,  # UNSET sentinel — actual type is str|None|_Unset; deferred import
     on_missing: Any = ...,  # UNSET sentinel — actual type is Literal[...] | _Unset
     domain: str | list[str] | None = None,
-    context: ResolutionContext | None = None,
+    context: ResolutionContext | dict | None = None,
     output: Literal["series", "record", "frame"] = "series",
     from_system: str | None = None,
     not_found: str = "null",
@@ -397,7 +397,7 @@ def snap(
     max_distance: float = 0.5,
     to: Any = ...,  # UNSET sentinel — actual type is str|None|_Unset; deferred import
     domain: str | list[str] | None = None,
-    context: ResolutionContext | None = None,
+    context: ResolutionContext | dict | None = None,
 ) -> Any:
     """Return the closest match from an explicit candidate list.
 
@@ -521,7 +521,7 @@ def parse(
     text: str,
     *,
     domain: str | list[str] | None = None,
-    context: ResolutionContext | None = None,
+    context: ResolutionContext | dict | None = None,
     to: str | list[str] | None = None,
     confidence_threshold: float | None = None,
     include_nil: bool = False,
@@ -581,6 +581,57 @@ def parse(
     )
 
 
+def suggest(
+    prefix: str,
+    *,
+    top_k: int = 10,
+    domain: str | list[str] | None = None,
+    entity_type: str | list[str] | None = None,
+    context: ResolutionContext | dict | None = None,
+    to: str | list[str] | None = None,
+    fuzzy: Literal["auto", "always", "never"] = "auto",
+    timeout: float | None = None,
+) -> list:
+    """Return a ranked typeahead suggestion list for *prefix*.
+
+    Module-level wrapper; delegates to the singleton default resolver's
+    :meth:`~resolvekit.core.api.resolver.Resolver.suggest`.
+
+    Args:
+        prefix: Partial query string (e.g. ``"unit"`` → United States, …).
+        top_k: Maximum suggestions to return; clamped to [1, 100]. Default 10.
+        domain: Domain pack filter (e.g. ``"geo"``).
+        entity_type: Sub-type filter within a domain (e.g. ``"geo.country"``).
+            Accepts a single string or list.
+        context: Resolution hints, as a ``ResolutionContext`` or a plain ``dict``.
+            Dict shorthand keys: ``country`` (ISO alpha-2/alpha-3 or a country
+            name like ``"France"``), ``entity_types``, ``parent_ids``,
+            ``languages``, ``attributes`` (pack-specific escape hatch), and
+            ``as_of``. An empty dict is treated as no context. Unknown keys raise
+            ``UnknownContextKeyError`` listing the valid keys.
+            context is validated for shape but does not yet affect suggest ranking.
+        to: Output code system or name variant for ``display`` (e.g. ``"iso3"``).
+            ``None`` (default) uses ``canonical_name`` as the display value.
+        fuzzy: Fuzzy-matching policy: ``"auto"`` (default), ``"always"``,
+            or ``"never"``.
+        timeout: Per-call time budget in seconds.
+
+    Returns:
+        ``list[SuggestionResult]``, sorted by match quality (best first),
+        length at most ``top_k``.
+    """
+    return _get_default().suggest(
+        prefix,
+        top_k=top_k,
+        domain=domain,
+        entity_type=entity_type,
+        context=context,
+        to=to,
+        fuzzy=fuzzy,
+        timeout=timeout,
+    )
+
+
 def warm() -> None:
     """Pre-build all lazily-constructed indexes, blocking until complete.
 
@@ -598,7 +649,7 @@ def parse_bulk(
     *,
     values: Any,
     domain: str | list[str] | None = None,
-    context: ResolutionContext | None = None,
+    context: ResolutionContext | dict | None = None,
     to: str | list[str] | None = None,
     confidence_threshold: float | None = None,
     include_nil: bool = False,

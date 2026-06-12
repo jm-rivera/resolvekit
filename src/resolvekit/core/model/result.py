@@ -182,6 +182,12 @@ class CandidateSummary(BaseModel):
         confidence: Calibrated confidence score
         top_evidence: Key evidence (limited to top 3)
         key_features: Selected features for transparency (limited set)
+        parent_name: Human-readable name of the parent entity (e.g. country or
+            administrative container). Only populated for AMBIGUOUS results where
+            candidates share the same canonical name.
+        parent_country: ISO alpha-2 code of the country the entity belongs to.
+            Only populated for AMBIGUOUS results where candidates share the same
+            canonical name.
     """
 
     model_config = ConfigDict(frozen=True)
@@ -194,6 +200,8 @@ class CandidateSummary(BaseModel):
     match_tier: MatchTier | None = Field(default=None)
     top_evidence: tuple[CandidateEvidenceSummary, ...] = Field(default=(), max_length=3)
     key_features: dict[str, float | bool | None] = Field(default_factory=dict)
+    parent_name: str | None = Field(default=None)
+    parent_country: str | None = Field(default=None)
 
     def __repr__(self) -> str:  # explicit by design
         conf = f"{self.confidence:.2f}" if self.confidence is not None else "?"
@@ -451,9 +459,23 @@ class ResolutionResult(BaseModel):
                 f"confidence={self.confidence}, pack_id='{self.pack_id}')"
             )
         if self.status == ResolutionStatus.AMBIGUOUS:
+            lines: list[str] = []
+            for c in self.candidates[:3]:
+                label = c.canonical_name or c.entity_id
+                parts: list[str] = [label]
+                if c.parent_name:
+                    parts.append(c.parent_name)
+                elif c.parent_country:
+                    parts.append(c.parent_country)
+                description = ", ".join(parts)
+                conf = f" (conf={c.confidence:.2f})" if c.confidence is not None else ""
+                lines.append(f"  {description}{conf}")
             hint = disambiguate_hint(self)
-            if hint is not None:
-                return f"AMBIGUOUS — try:\n  {hint}"
+            if lines or hint:
+                header = "AMBIGUOUS — candidates:"
+                body = "\n".join(lines) if lines else "  (no candidate names available)"
+                tail = f"\n  try:\n    {hint}" if hint is not None else ""
+                return f"{header}\n{body}{tail}"
             n = len(self.candidates)
             return (
                 f"ResolutionResult(status='{s}', candidates={n}, "

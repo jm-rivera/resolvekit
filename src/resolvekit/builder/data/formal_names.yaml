@@ -27,6 +27,8 @@ overrides:
   - Swiss Confederation
   VEN:
   - Bolivarian Republic of Venezuela
+  # World Bank / IMF-style comma alias
+  - Venezuela, RB
   ETH:
   - Federal Democratic Republic of Ethiopia
   NPL:
@@ -42,6 +44,8 @@ overrides:
   MMR:
   - Republic of the Union of Myanmar
   - Burma
+  # World Bank / IMF-style comma alias (WB uses "Myanmar" with no suffix, but some datasets use this form)
+  - Myanmar, Republic of the Union of
   COD:
   - Democratic Republic of the Congo
   - Democratic Republic of Congo
@@ -52,6 +56,9 @@ overrides:
   - Congo
   # Historical name for DRC (source: Wikidata CC0 skos:altLabel)
   - Zaire
+  # World Bank / IMF-style comma aliases
+  - Congo, Dem. Rep.
+  - Congo, Democratic Republic of the
   COG:
   - Republic of the Congo
   - Republic of Congo
@@ -71,8 +78,13 @@ overrides:
   PRK:
   - Democratic People's Republic of Korea
   - DPRK
+  # World Bank / IMF-style comma alias
+  - Korea, Dem. People's Rep.
+  - Korea, North
   KOR:
   - Republic of Korea
+  # World Bank / IMF-style comma alias
+  - Korea, Rep.
   TZA:
   - United Republic of Tanzania
   MKD:
@@ -130,6 +142,8 @@ overrides:
   - Commonwealth of Dominica
   IRN:
   - Islamic Republic of Iran
+  # World Bank / IMF-style comma alias
+  - Iran, Islamic Republic of
   PAK:
   - Islamic Republic of Pakistan
   MRT:
@@ -156,6 +170,8 @@ overrides:
   BOL:
   - Republic of Bolivia
   - Plurinational State of Bolivia
+  # World Bank / IMF-style comma alias
+  - Bolivia, Plurinational State of
   LBN:
   - Republic of Lebanon
   - Lebanese Republic
@@ -168,6 +184,8 @@ overrides:
   - Islamic Republic of The Gambia
   EGY:
   - Arab Republic of Egypt
+  # World Bank / IMF-style comma alias
+  - Egypt, Arab Rep.
   JAM:
   - Commonwealth of Jamaica
   URY:
@@ -349,6 +367,8 @@ overrides:
   - Republic of Vanuatu
   YEM:
   - Republic of Yemen
+  # World Bank / IMF-style comma alias
+  - Yemen, Republic of
   ZMB:
   - Republic of Zambia
   TON:
@@ -419,6 +439,8 @@ overrides:
   # Historical names (source: Wikidata CC0 skos:altLabel)
   - Formosa
   - Republic of China
+  # World Bank / IMF-style comma alias
+  - China, Taiwan Province of
   BFA:
   - Republic of Burkina Faso
   # Historical name (source: Wikidata CC0 skos:altLabel)

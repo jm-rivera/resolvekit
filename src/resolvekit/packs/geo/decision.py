@@ -3,11 +3,14 @@
 from typing import override
 
 from resolvekit.core.engine.decision import ThresholdDecisionPolicy
+from resolvekit.core.explain import TraceSink
 from resolvekit.core.model import (
     Candidate,
     MatchTier,
+    Query,
     ReasonCode,
     ResolutionContext,
+    ResolutionResult,
 )
 
 
@@ -19,11 +22,26 @@ def _hierarchy_rank(candidate: Candidate) -> float | None:
 
 # Decision policy defaults
 DEFAULT_CONFIDENCE_THRESHOLD = 0.7
-DEFAULT_MIN_GAP = 0.1
+# min_gap of 0.07 from Platt calibration fit on full geo-tier mix.
+# Calibrated-probability gaps scale with slope ratio ≈ 0.62 from the fit (a=-8.50).
+# Empirical validation: South Sudan (country/SSD, fts-match rival of Sudan/SDN) sits
+# at calibrated gap ≈0.074 — within this threshold — which produces the expected
+# Sudan→country/SDN resolution.
+DEFAULT_MIN_GAP = 0.07
 DEFAULT_MAX_CANDIDATES = 5
 
 # Strong early accept threshold for exact code matches
 EXACT_CODE_MIN_SCORE = 0.9
+
+# Hierarchy rank thresholds (mirrors scoring.py constants)
+_CITY_RANK = 0.70
+_ADMIN2_RANK = 0.60
+
+# Lower min_gap for city/admin2 ties: with live prominence data, a dominant city
+# (prom=1.0) produces a calibrated gap of ≈0.034 vs an obscure same-named peer (prom=0.0).
+# Setting this to 0.03 allows such dominant cities to resolve while equal-prominence
+# pairs (gap≈0) and near-equal cities (gap≈0.004) stay AMBIGUOUS.
+CITY_ADMIN_MIN_GAP = 0.03
 
 
 class GeoDecisionPolicy(ThresholdDecisionPolicy):
@@ -37,6 +55,10 @@ class GeoDecisionPolicy(ThresholdDecisionPolicy):
     - Accept if confidence >= threshold and gap to runner-up >= min_gap
     - AMBIGUOUS if gap to runner-up < min_gap (e.g., "Springfield")
     - NO_MATCH if confidence < threshold
+
+    City/admin2 ties use ``city_admin_min_gap`` (lower than ``min_gap``) so that
+    a genuinely dominant city (high prominence) can resolve over an obscure
+    same-named peer while equal-prominence pairs still stay AMBIGUOUS.
     """
 
     def __init__(
@@ -45,6 +67,7 @@ class GeoDecisionPolicy(ThresholdDecisionPolicy):
         min_gap: float = DEFAULT_MIN_GAP,
         max_candidates: int = DEFAULT_MAX_CANDIDATES,
         exact_code_min_score: float = EXACT_CODE_MIN_SCORE,
+        city_admin_min_gap: float = CITY_ADMIN_MIN_GAP,
     ) -> None:
         super().__init__(
             confidence_threshold=confidence_threshold,
@@ -53,7 +76,40 @@ class GeoDecisionPolicy(ThresholdDecisionPolicy):
             max_candidates=max_candidates,
         )
         self._exact_code_min_score = exact_code_min_score
+        self._city_admin_min_gap = city_admin_min_gap
         self._tiebreak_winner_id: str | None = None
+
+    @override
+    def decide(
+        self,
+        query: Query,
+        context: ResolutionContext,
+        candidates: list[Candidate],
+        trace: TraceSink,
+    ) -> ResolutionResult:
+        """Resolve with a per-tier gap: city/admin2 ties use a lower min_gap.
+
+        When the top candidates are all city or admin2 entities, substitutes
+        ``city_admin_min_gap`` for the default ``min_gap`` so that a genuinely
+        dominant city (high prominence) can clear the gap while equal-prominence
+        pairs still stay AMBIGUOUS.  All other cases use the parent logic unchanged.
+        """
+        if candidates and self._all_city_admin(candidates):
+            original_min_gap = self._min_gap
+            self._min_gap = self._city_admin_min_gap
+            try:
+                return super().decide(query, context, candidates, trace)
+            finally:
+                self._min_gap = original_min_gap
+        return super().decide(query, context, candidates, trace)
+
+    def _all_city_admin(self, candidates: list[Candidate]) -> bool:
+        """Return True when every candidate is a city or admin2-and-below entity."""
+        for c in candidates:
+            rank = _hierarchy_rank(c)
+            if rank is None or rank > _CITY_RANK:
+                return False
+        return True
 
     @override
     def _early_accept(

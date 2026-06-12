@@ -147,22 +147,38 @@ def _fetch_batched(
     canonical = [q.upper() for q in qids]
 
     out: list[dict[str, Any]] = []
+    n_batches = 0
+    n_empty_batches = 0
     for i in range(0, len(canonical), batch_size):
         batch = canonical[i : i + batch_size]
         values = " ".join(f"wd:{q}" for q in batch)
         query = _ALIASES_TEMPLATE.format(values=values)
 
         bindings = sparql_request(query=query, user_agent=user_agent, timeout=60)
+        n_batches += 1
         if not bindings:
-            raise RuntimeError(
-                f"Wikidata alias fetch: batch {i // batch_size + 1} "
-                f"({len(batch)} QIDs) returned no bindings — a partial failure "
-                "would silently drop aliases, so fail loud instead."
+            # Empty response after internal retries: either no English altLabels exist
+            # or WDQS returned empty. Treat as "no aliases" for this batch.
+            logger.warning(
+                "Wikidata alias fetch: batch %d (%d QIDs) returned no bindings",
+                i // batch_size + 1,
+                len(batch),
             )
+            n_empty_batches += 1
+            continue
         out.extend(bindings)
 
         if request_delay > 0 and i + batch_size < len(canonical):
             time.sleep(request_delay)
+
+    # Multi-batch fetch with all-empty response: raise loud so the chunk is retried.
+    # A single empty batch plausibly means "no aliases"; every batch returning empty
+    # is more consistent with a WDQS outage than with every entity being alias-less.
+    if n_empty_batches == n_batches and n_batches > 1:
+        raise RuntimeError(
+            f"Wikidata alias fetch: all {n_batches} batches returned no bindings "
+            "— likely a WDQS outage rather than genuinely alias-less entities."
+        )
 
     logger.info("Wikidata alias fetch: %d bindings for %d QIDs", len(out), len(qids))
     return out

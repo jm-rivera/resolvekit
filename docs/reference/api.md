@@ -33,7 +33,7 @@ rk.resolve(
     to: str | None = UNSET,
     as_result: bool = False,
     domain: str | list[str] | None = None,
-    context: ResolutionContext | None = None,
+    context: ResolutionContext | dict | None = None,
     from_system: str | None = None,
     include_entity: bool = True,
     timeout: float | None = None,
@@ -50,7 +50,7 @@ Resolve a text string or code against all loaded modules.
 | `to` | Pivot the resolved entity to a specific representation. Omit (default) to use the `default_to` configured via [`configure()`](#configure), or return a raw `ResolutionResult` when no default is set. Pass `None` to always return a `ResolutionResult`. When set to a code system name (`"iso3"`, `"iso2"`, `"name"`, `"flag"`, `"aliases"`, `"dcid"`, etc.), returns the pivot value directly. A per-call `to=` overrides the configured default. |
 | `as_result` | Return the full `ResolutionResult` even when a `default_to` is configured — equivalent to passing `to=None`. Cannot be combined with an explicit `to=`. |
 | `domain` | Restrict resolution to one or more domains (`"geo"`, `"org"`, or a list). |
-| `context` | A [`ResolutionContext`](#resolutioncontext) with hints (entity type, parent, country, language). |
+| `context` | Resolution hints as a [`ResolutionContext`](#resolutioncontext) or a plain `dict`. Dict shorthand keys: `country` (ISO alpha-2/alpha-3 or a country name like `"France"`), `entity_types`, `parent_ids`, `languages`, `attributes`, `as_of`. Unknown keys raise [`UnknownContextKeyError`](#unknowncontextkeyerror). |
 | `from_system` | Treat `text` as a code in this system (e.g. `"iso2"`, `"iso3"`, `"dcid"`, `"wikidata"`). Skips name-matching. |
 | `include_entity` | Populate `result.entity`. Defaults to `True` at the module level for notebook ergonomics. Set to `False` in pipelines where you don't need the full entity. |
 | `timeout` | Maximum seconds before the pipeline is cut short. `None` = no limit. |
@@ -85,7 +85,7 @@ rk.resolve_id(
     on_ambiguous: Literal["raise", "null", "best"] = "raise",
     from_system: str | None = None,
     domain: str | list[str] | None = None,
-    context: ResolutionContext | None = None,
+    context: ResolutionContext | dict | None = None,
     timeout: float | None = None,
 ) -> str | None
 ```
@@ -131,7 +131,7 @@ rk.bulk(
     to: str | None = UNSET,
     on_missing: Literal["raise", "null", "auto"] = UNSET,
     domain: str | list[str] | None = None,
-    context: ResolutionContext | None = None,
+    context: ResolutionContext | dict | None = None,
     output: Literal["series", "record", "frame"] = "series",
     from_system: str | None = None,
     not_found: str = "null",
@@ -153,7 +153,7 @@ See [how to clean a DataFrame column](../how-to/clean-a-dataframe-column.md) for
 | `to` | Pivot each resolved entity. Omit to use the `default_to` configured via [`configure()`](#configure). Pass `None` to always return a [`BulkResult`](#bulkresult). When set to a code system name, returns the native input shape (e.g. `pd.Series`) of pivot values; unresolved rows become `None`. |
 | `on_missing` | Miss policy override for the configured output chain. Omit to inherit the resolver's `on_missing` policy. `"auto"` = null per row with `UserWarning` for bulk; `"raise"` = raises [`OutputMissingError`](#outputmissingerror) on the first resolved-but-missing entity; `"null"` = returns `None` per row silently. Only relevant when `to` is omitted and a `default_to` is configured. |
 | `domain` | Domain filter, broadcast to every row. |
-| `context` | Context hints, broadcast to every row. |
+| `context` | Resolution hints as a [`ResolutionContext`](#resolutioncontext) or a plain `dict`, broadcast to every row. Dict values may be a `pd.Series` or `pl.Series` for per-row context. Dict shorthand keys: `country`, `entity_types`, `parent_ids`, `languages`, `attributes`, `as_of`. Unknown keys raise [`UnknownContextKeyError`](#unknowncontextkeyerror). |
 | `output` | Shape of the returned object when `to=None`: `"series"` (default) — series of values; `"record"` — series of structs; `"frame"` — DataFrame. Ignored when `to` is set. |
 | `from_system` | Treat every value as a code in this system. |
 | `not_found` | What fills unresolved rows in the output. `"null"` (default) → `None`; `"raise"` → raises; any other string → used as a literal sentinel value. |
@@ -220,7 +220,7 @@ rk.snap(
     max_distance: float = 0.5,
     to: Any = None,
     domain: str | list[str] | None = None,
-    context: ResolutionContext | None = None,
+    context: ResolutionContext | dict | None = None,
 ) -> Any
 ```
 
@@ -547,6 +547,50 @@ Return the singleton [`Resolver`](resolver.md) instance, creating it on first ca
 
 ---
 
+### `suggest` { #suggest }
+
+```python
+rk.suggest(
+    prefix: str,
+    *,
+    top_k: int = 10,
+    domain: str | list[str] | None = None,
+    entity_type: str | list[str] | None = None,
+    context: ResolutionContext | dict | None = None,
+    to: str | list[str] | None = None,
+    fuzzy: Literal["auto", "always", "never"] = "auto",
+    timeout: float | None = None,
+) -> list[SuggestionResult]
+```
+
+Return a ranked typeahead suggestion list for `prefix`. Delegates to [`Resolver.suggest`](resolver.md#resolversuggest) on the singleton resolver.
+
+**Parameters**
+
+| Name | Meaning |
+|---|---|
+| `prefix` | Partial query string. Required. |
+| `top_k` | Maximum suggestions to return. Clamped to `[1, 100]`. Default `10`. |
+| `domain` | Pack filter by simple domain name (`"geo"`, `"org"`). A dotted name raises `ValueError` — pass it via `entity_type=` instead. |
+| `entity_type` | Entity-type prefix filter (`"geo.country"`, `["geo.country", "geo.region"]`). |
+| `context` | Accepted and key-validated, but does not yet affect ranking. Dict shorthand keys accepted (same as `resolve`). Unknown keys raise [`UnknownContextKeyError`](#unknowncontextkeyerror). |
+| `to` | Output code system or name variant for the `display` field (`"iso3"`, `"name:fr"`). `None` renders `display` from `canonical_name`. |
+| `fuzzy` | `"auto"` (default), `"always"`, or `"never"`. |
+| `timeout` | Per-call time budget in seconds. `None` = no limit. |
+
+**Returns** — `list[SuggestionResult]`, sorted best-first, length at most `top_k`. Never raises a verdict; an empty list means no suggestions.
+
+**Example**
+
+```python
+import resolvekit as rk
+
+for s in rk.suggest("unit", top_k=3):
+    print(s.canonical_name, s.entity_id)
+```
+
+---
+
 ### `parse` { #parse }
 
 ```python
@@ -556,7 +600,7 @@ rk.parse(
     to: str | list[str] | None = None,
     include_nil: bool = False,
     domain: str | list[str] | None = None,
-    context: ResolutionContext | None = None,
+    context: ResolutionContext | dict | None = None,
     confidence_threshold: float | None = None,
     timeout: float | None = None,
 ) -> ParseResult
@@ -615,7 +659,7 @@ rk.parse_bulk(
     to: str | list[str] | None = None,
     include_nil: bool = False,
     domain: str | list[str] | None = None,
-    context: ResolutionContext | None = None,
+    context: ResolutionContext | dict | None = None,
     confidence_threshold: float | None = None,
     timeout: float | None = None,
 ) -> ParseResult
@@ -1239,6 +1283,7 @@ from resolvekit import (
     NoModulesInstalledError,
     OutputMissingError,
     UnknownCodeSystemError,
+    UnknownContextKeyError,
     UnknownDomainError,
     UnknownOutputError,
 )
@@ -1342,6 +1387,35 @@ from resolvekit import OutputMissingError  # or: from resolvekit.errors import O
 | `.available_codes` | `list[str]` | Code systems the entity does carry. |
 
 Carries `.hint` listing the available codes.
+
+### `UnknownContextKeyError(ValueError, ResolverError)` { #unknowncontextkeyerror }
+
+*Added in v0.1.3.*
+
+Raised when a `context=` dict contains a key that is not a valid `ResolutionContext` field.
+
+```python
+from resolvekit.errors import UnknownContextKeyError
+```
+
+| Attribute | Type | Meaning |
+|---|---|---|
+| `.unknown` | `list[str]` | The unrecognised key(s). |
+| `.valid` | `list[str]` | Valid context keys: `['as_of', 'attributes', 'country', 'entity_types', 'languages', 'parent_ids']`. |
+
+Carries `.hint` listing the valid keys.
+
+**Example**
+
+```python
+try:
+    rk.resolve("Germany", context={"region": "Europe"})
+except UnknownContextKeyError as e:
+    print(e.unknown)   # ['region']
+    print(e.valid)     # ['as_of', 'attributes', 'country', 'entity_types', 'languages', 'parent_ids']
+```
+
+---
 
 ### `CrosswalkError(ResolverError)` { #crosswalkerror }
 

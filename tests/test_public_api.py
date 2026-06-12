@@ -40,6 +40,7 @@ _EXPECTED: dict[str, tuple[str, ...]] = {
         "Resolver",
         "ResolverError",
         "UnknownCodeSystemError",
+        "UnknownContextKeyError",
         "UnknownDomainError",
         "UnknownOutputError",
         "bulk",
@@ -52,6 +53,7 @@ _EXPECTED: dict[str, tuple[str, ...]] = {
         "resolve",
         "resolve_id",
         "snap",
+        "suggest",
         "to",
         "warm",
     ),
@@ -102,6 +104,7 @@ _EXPECTED: dict[str, tuple[str, ...]] = {
         "ResolutionError",
         "ResolverError",
         "UnknownCodeSystemError",
+        "UnknownContextKeyError",
         "UnknownDomainError",
         "UnknownOutputError",
         "UnsupportedStoreError",
@@ -249,7 +252,7 @@ def test_resolvekit_all() -> None:
 
 
 def test_resolvekit_all_count() -> None:
-    assert len(resolvekit.__all__) == 37
+    assert len(resolvekit.__all__) == 39
 
 
 def test_resolvekit_all_excludes_removed_names() -> None:

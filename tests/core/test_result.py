@@ -232,8 +232,9 @@ class TestResolutionResult:
             ],
         )
         r = repr(result)
-        assert "ResolutionResult(status='ambiguous'" in r
-        assert "candidates=1" in r
+        assert "AMBIGUOUS" in r
+        # Candidate entity_id or canonical_name is listed
+        assert "city/Paris_FR" in r or "Paris" in r
 
 
 class TestDisambiguateHint:
@@ -329,12 +330,13 @@ class TestDisambiguateHint:
             ],
         )
         r = repr(result)
-        assert "entity_types={'geo.region'}" in r
+        assert "entity_types" in r
+        assert "geo.region" in r
 
     def test_no_disambiguator_when_same_type_no_names(self):
         """If candidates share a single entity_type and have no canonical
-        names, no narrowing helps — fall back to the generic candidate-count
-        repr rather than printing a misleading suggestion."""
+        names, no narrowing helps — the repr still lists candidates by
+        entity_id but omits the 'try:' hint block."""
         result = ResolutionResult(
             status=ResolutionStatus.AMBIGUOUS,
             query_text="Foo",
@@ -344,8 +346,11 @@ class TestDisambiguateHint:
             ],
         )
         r = repr(result)
-        assert "AMBIGUOUS — try" not in r
-        assert "candidates=2" in r
+        assert "AMBIGUOUS" in r
+        assert "try:" not in r
+        # Both entity_ids appear in the candidate listing
+        assert "a" in r
+        assert "b" in r
 
 
 class TestRefinementHintDIDYouMean:

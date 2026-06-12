@@ -18,13 +18,9 @@ Quick start (instance-level)::
 
 With context hints::
 
-    from resolvekit import Resolver, ResolutionContext
-
     resolver = Resolver.from_modules(module_ids=["geo.countries"])
-    result = resolver.resolve(
-        "Paris",
-        context=ResolutionContext(country="FR"),
-    )
+    result = resolver.resolve("Paris", context={"country": "FR"})
+    # Typed alternative: context=ResolutionContext(country="FR")
 
 With explanation::
 
@@ -55,6 +51,7 @@ from resolvekit._convenience import (
     resolve,
     resolve_id,
     snap,
+    suggest,
     to,
     warm,
 )
@@ -77,6 +74,7 @@ from resolvekit.core.errors import (
     OutputMissingError,
     ResolutionError,
     UnknownCodeSystemError,
+    UnknownContextKeyError,
     UnknownDomainError,
     UnknownOutputError,
 )
@@ -120,6 +118,7 @@ __all__ = [
     "Resolver",
     "ResolverError",
     "UnknownCodeSystemError",
+    "UnknownContextKeyError",
     "UnknownDomainError",
     "UnknownOutputError",
     "bulk",
@@ -132,6 +131,7 @@ __all__ = [
     "resolve",
     "resolve_id",
     "snap",
+    "suggest",
     "to",
     "warm",
 ]
