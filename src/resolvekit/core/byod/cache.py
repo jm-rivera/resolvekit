@@ -19,11 +19,11 @@ A cache hit is ``dir.exists() and (dir / "metadata.json").exists()``.
 Atomicity and cleanup
 ---------------------
 On a cache miss the build writes to a sibling ``<key>.tmp`` directory, then
-``os.replace(tmp, dir)`` atomically moves it. The superseded temp dir is
-removed with ``shutil.rmtree(tmp, ignore_errors=True)`` (matching the pattern
-in ``composed_sqlite.py:326``).  When ``cache=False``, the build writes to a
-fresh temp directory that is NOT moved into the cache — it is kept for the
-resolver's lifetime.
+``commit_build`` promotes it to the final location (first-writer-wins: if a
+valid pack already exists at the target it is kept and the redundant build is
+discarded; a corrupt leftover without ``metadata.json`` is cleared first).
+When ``cache=False``, the build writes to a fresh temp directory that is NOT
+moved into the cache — it is kept for the resolver's lifetime.
 """
 
 from __future__ import annotations
@@ -168,20 +168,46 @@ def prepare_build_dir(key: str, *, cache: bool) -> tuple[Path, Path | None]:
 
 
 def commit_build(build_dir: Path, final_dir: Path) -> None:
-    """Atomically promote *build_dir* to *final_dir* and clean up.
+    """Promote *build_dir* into *final_dir*, tolerating an existing pack.
 
-    Uses ``os.replace(build_dir, final_dir)`` for an atomic last-writer-wins
-    swap.  If the parent of *final_dir* does not exist it is created first.
+    The cache key is a content hash, so a pack already present at *final_dir* —
+    left by a concurrent build, a retry, or a re-submit of identical content —
+    is equivalent to the one just built. First writer wins: an existing valid
+    pack is kept and *build_dir* is discarded. A corrupt leftover (a directory
+    without ``metadata.json``) is cleared and replaced.
+
+    ``os.replace`` cannot rename a directory onto a non-empty one (POSIX raises
+    ENOTEMPTY / EEXIST), so the swap is attempted optimistically and the
+    populated-target case is recovered below. An ``OSError`` that does not
+    correspond to a populated *final_dir* (e.g. ENOSPC, a permission error) is
+    re-raised rather than silently swallowed.
 
     Args:
         build_dir: Temp directory where the build was written.
         final_dir: Target cache directory (``cached_pack_dir(key)``).
     """
     final_dir.parent.mkdir(parents=True, exist_ok=True)
-    os.replace(build_dir, final_dir)
-    # Belt-and-suspenders cleanup: ``shutil.rmtree`` with ignore_errors=True
-    # handles both cases (build_dir doesn't exist after replace, or final_dir
-    # was clobbered by a concurrent write) without raising.
+    try:
+        os.replace(build_dir, final_dir)
+    except OSError:
+        if is_cache_hit(final_dir):
+            # A concurrent build, retry, or re-submit already committed an
+            # equivalent pack; keep it and drop our redundant build below.
+            pass
+        elif final_dir.exists():
+            # Corrupt/incomplete leftover (no metadata.json): clear it and move
+            # our build in. If another writer races a valid pack into the slot
+            # first, accept that pack rather than surfacing the error.
+            shutil.rmtree(final_dir, ignore_errors=True)
+            try:
+                os.replace(build_dir, final_dir)
+            except OSError:
+                if not is_cache_hit(final_dir):
+                    raise
+        else:
+            # final_dir is absent, so the failure was not "target populated"
+            # (e.g. ENOSPC, EACCES). Surface it instead of hiding it.
+            raise
     shutil.rmtree(build_dir, ignore_errors=True)
 
 

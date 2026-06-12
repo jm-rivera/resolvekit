@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.1.7 (2026-06-12)
+
+**Fixed.** Re-submitting a bring-your-own-data pack that was already cached crashed
+with `OSError: [Errno 39] Directory not empty`. A built pack is committed into a
+content-hash-keyed cache directory with `os.replace(build_dir, final_dir)`, but on
+POSIX `os.replace` cannot rename a directory onto an existing non-empty one. So
+whenever a pack with the same content hash was already present — the same CSV built
+twice, a retry, or two concurrent builds racing — the commit raised instead of
+reusing the cached pack. The commit now tolerates an already-populated target:
+because the cache key is a content hash, an existing valid pack is identical to the
+one just built, so it is kept and the rebuild discarded (first writer wins). A
+corrupt leftover directory with no `metadata.json` is cleared and replaced, and any
+other write failure (a full disk, a permission error) still surfaces rather than
+being masked.
+
 ## 0.1.6 (2026-06-12)
 
 **Fixed.** `Resolver.from_modules(module_ids=[...])` loaded modules you did not
