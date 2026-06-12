@@ -134,41 +134,26 @@ def _load_and_separate_datapacks(
     return base_packs, overlay_packs
 
 
-def _remote_dependency_uncached(
-    module_id: str,
-    available: dict[str, Path],
-    manifest_overrides: dict[str, dict[str, object]],
-) -> bool:
-    """Return True if ``module_id`` is a remote-distribution module whose data
-    is not in the local cache.
-
-    Such a dependency may be absent from a load set without error: remote
-    packs the user hasn't downloaded are not hard errors (partial caches are
-    first-class, and ``Resolver.auto()`` never triggers a network fetch).
-    Bundled dependencies and unknown module ids stay hard errors.
-    """
-    from resolvekit.core.module_registry import load_module_metadata
-    from resolvekit.core.remote import is_cached
-
-    if module_id not in available:
-        return False
-    path = available[module_id]
-    if not (path / "metadata.json").exists():
-        return False
-    metadata = load_module_metadata(module_id, path, overrides=manifest_overrides)
-    return metadata.distribution == "remote" and not is_cached(metadata)
-
-
 def _validate_module_dependencies(
     base_packs: dict[str, LoadedDataPack],
     overlay_packs: dict[str, LoadedDataPack],
     pack_filter: set[str],
 ) -> None:
-    from resolvekit.core.module_registry import get_manifest_overrides
+    """Log any declared ``module_dependencies`` absent from the load set.
 
+    ``module_dependencies`` are advisory cross-reference links, not hard load
+    requirements. An explicit selection is authoritative and ``auto()`` loads
+    whatever is locally available, so a declared dependency not being in the
+    load set is expected — partial loads are first-class, a deployed image may
+    ship a subset, and a dependency may simply not be installed in this
+    environment. None of that is an error here; it is logged for diagnostics.
+
+    (Naming an unknown module in the *request* is a different matter — that
+    raises ``DataModuleNotFoundError`` from :func:`_resolve_requested_module_paths`.
+    Hard structural requirements, overlay → base, are enforced separately by
+    :func:`_validate_overlay_relationships`.)
+    """
     available_module_ids = set(base_packs) | set(overlay_packs)
-    registry: dict[str, Path] | None = None
-    manifest_overrides: dict[str, dict[str, object]] | None = None
     for loaded in [*base_packs.values(), *overlay_packs.values()]:
         if pack_filter and loaded.pack_id not in pack_filter:
             continue
@@ -179,23 +164,12 @@ def _validate_module_dependencies(
             if module_id not in available_module_ids
         ]
         if missing:
-            # An absent dependency is only a hard error when its data could
-            # have been loaded — a declared dep on a remote pack the user
-            # hasn't downloaded is skipped, mirroring the auto-mode intent in
-            # _resolve_requested_module_paths.
-            if registry is None:
-                registry = list_available_modules()
-                manifest_overrides = get_manifest_overrides()
-            assert manifest_overrides is not None
-            missing = [
-                module_id
-                for module_id in missing
-                if not _remote_dependency_uncached(
-                    module_id, registry, manifest_overrides
-                )
-            ]
-        if missing:
-            raise MissingModuleDependencyError(loaded.module_id, missing)
+            logger.debug(
+                "Module %s declares dependencies absent from the load set: %s "
+                "(advisory; honoring authoritative selection)",
+                loaded.module_id,
+                ", ".join(sorted(missing)),
+            )
 
 
 def _validate_overlay_relationships(
@@ -290,29 +264,23 @@ def _resolve_requested_module_paths(
         resolved[module_id] = path
 
         metadata = load_module_metadata(module_id, path, overrides=manifest_overrides)
-        for dependency in metadata.module_dependencies:
-            if dependency in resolved:
-                continue
-            # In auto mode, silently skip dependencies whose data isn't
-            # locally available (remote packs the user hasn't downloaded
-            # are not hard errors — see v1-scope §225). In explicit mode,
-            # likewise skip remote-uncached dependencies so requesting one
-            # module never transitively forces sibling downloads; unknown
-            # module ids are still queued so the queue-loop's own
-            # ``module_id not in available`` check raises
-            # ``DataModuleNotFoundError``.
-            if auto_mode and (
-                dependency not in available
-                or not _module_data_locally_available(
+        # ``module_dependencies`` are advisory cross-reference links, not load
+        # requirements. Expand them only in auto() mode, where the load set is
+        # "everything locally available" anyway (silently skipping remote packs
+        # the user hasn't downloaded — see v1-scope §225). Explicit ``module_ids``
+        # are AUTHORITATIVE: the load set is exactly what the caller named (plus
+        # overlay bases, which are structural), independent of cache or on-disk
+        # state — so resolution is identical on a dev box with extra packs
+        # downloaded and on a lean deployment that bakes only the named modules.
+        if auto_mode:
+            for dependency in metadata.module_dependencies:
+                if dependency in resolved:
+                    continue
+                if dependency not in available or not _module_data_locally_available(
                     dependency, available[dependency], manifest_overrides
-                )
-            ):
-                continue
-            if not auto_mode and _remote_dependency_uncached(
-                dependency, available, manifest_overrides
-            ):
-                continue
-            queue.append(dependency)
+                ):
+                    continue
+                queue.append(dependency)
         if metadata.is_overlay:
             for dependency in metadata.base_module_ids or []:
                 if dependency in resolved:

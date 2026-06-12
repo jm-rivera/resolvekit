@@ -23,8 +23,11 @@ from resolvekit.core.model.bulk_result import BulkResult
 
 @pytest.fixture(scope="module")
 def r_geo() -> Resolver:
-    """Resolver over geo.countries — fast, shared across tests in this module."""
-    return Resolver.from_modules(module_ids=["geo.countries"])
+    """Resolver over geo countries + continental unions — fast, shared across
+    tests in this module. Both are named explicitly: module selection is
+    authoritative, so "European Union" (a continental union) only resolves when
+    geo.continental_unions is in the list."""
+    return Resolver.from_modules(module_ids=["geo.countries", "geo.continental_unions"])
 
 
 @pytest.fixture(scope="module")

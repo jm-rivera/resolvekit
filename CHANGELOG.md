@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.1.6 (2026-06-12)
+
+**Fixed.** `Resolver.from_modules(module_ids=[...])` loaded modules you did not
+name. Each geo module's metadata declares cross-references to its siblings
+(`geo.cities` points at `geo.admin1`–`geo.admin5` and `geo.countries`), and the
+loader treated those as dependencies to pull in transitively — but only when
+they were already cached. So a machine that had run `download_all()` resolved
+against the full geo hierarchy, while a deployment that baked only `geo.cities`
+and `geo.admin1` resolved against a smaller set. The same `module_ids` gave
+different answers on different machines: `resolve("Paris")` returned the French
+city where `geo.admin2` happened to be on disk and stayed ambiguous where it
+was not.
+
+An explicit module selection is now authoritative. `from_modules(module_ids=[...])`
+loads exactly the modules you name, independent of what is cached or shipped, so
+resolution is identical across machines. Declared `module_dependencies` are
+advisory — name every module you want (`["geo.cities", "geo.countries"]` for
+city resolution with country context). The convenience presets are unchanged:
+`auto()` still loads every locally available module, and `lite()` still loads
+its curated country-level set. Overlays are the one exception — an overlay is a
+patch on a base module, not a standalone dataset, so its base is still loaded
+with it.
+
 ## 0.1.5 (2026-06-12)
 
 **Fixed.** Typo'd queries no longer abstain on bring-your-own-data packs.

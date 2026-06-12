@@ -1,11 +1,19 @@
-"""Partial remote caches are first-class: a module whose declared dependency
-is a remote pack the user hasn't downloaded must load without error, and an
-explicit request for one module must not transitively queue (or download) its
-remote siblings.
+"""An explicit module selection is authoritative and independent of cache or
+on-disk state: ``from_modules(module_ids=[...])`` loads exactly the named set.
+Declared ``module_dependencies`` are advisory cross-references — never
+auto-loaded — so naming one module never transitively queues (or downloads) its
+siblings, even ones already sitting in the local cache. ``auto()`` separately
+loads whatever is locally available.
 
-Regression tests for the 0.1.0 failure where ``download("geo.admin1")``
-followed by ``Resolver.auto()`` raised ``MissingModuleDependencyError``
-demanding geo.admin2/geo.admin3/geo.cities.
+This guards two failures:
+
+* The 0.1.0 failure where ``download("geo.admin1")`` followed by
+  ``Resolver.auto()`` raised ``MissingModuleDependencyError`` demanding
+  geo.admin2/geo.admin3/geo.cities.
+* The "locally right, deployed wrong" failure where a remote sibling cached on
+  a dev box (e.g. geo.admin2) silently joined an explicit selection that didn't
+  name it, changing resolution versus a lean deployment that bakes only the
+  named modules.
 """
 
 from __future__ import annotations
@@ -16,7 +24,6 @@ import pytest
 
 from resolvekit.core.api.loading import module_catalog
 from resolvekit.core.datapack import DataPackMetadata, LoadedDataPack
-from resolvekit.core.errors import MissingModuleDependencyError
 
 
 def _metadata(
@@ -135,7 +142,7 @@ class TestValidateModuleDependencies:
         # geo.admin2 is declared but remote-and-uncached: no error.
         module_catalog._validate_module_dependencies(base_packs, {}, set())
 
-    def test_remote_cached_dependency_still_hard(self, fake_registry, tmp_path):
+    def test_remote_cached_dependency_is_soft(self, fake_registry, tmp_path):
         meta = fake_registry(
             "geo.admin1",
             distribution="remote",
@@ -145,12 +152,13 @@ class TestValidateModuleDependencies:
         fake_registry("geo.admin2", distribution="remote", is_cached=True)
 
         base_packs = {"geo.admin1": _loaded_pack(meta, tmp_path / "geo_admin1")}
-        # geo.admin2 is cached, so its absence from the load set is a real
-        # loading bug and must still raise.
-        with pytest.raises(MissingModuleDependencyError):
-            module_catalog._validate_module_dependencies(base_packs, {}, set())
+        # geo.admin2 is remote: it is never silently auto-loaded, so its
+        # absence is soft regardless of cache state. Whether or not admin2
+        # happens to be cached must not change the load set — otherwise
+        # resolution diverges between a dev box and a lean deployment.
+        module_catalog._validate_module_dependencies(base_packs, {}, set())
 
-    def test_bundled_missing_dependency_still_hard(self, fake_registry, tmp_path):
+    def test_bundled_dependency_not_loaded_is_soft(self, fake_registry, tmp_path):
         meta = fake_registry(
             "org.governments",
             module_dependencies=["org.providers"],
@@ -160,10 +168,13 @@ class TestValidateModuleDependencies:
         base_packs = {
             "org.governments": _loaded_pack(meta, tmp_path / "org_governments")
         }
-        with pytest.raises(MissingModuleDependencyError):
-            module_catalog._validate_module_dependencies(base_packs, {}, set())
+        # module_dependencies are advisory: an authoritative selection that names
+        # org.governments but not its declared org.providers is honored, not
+        # rejected. (org.providers exists in the registry — it simply wasn't
+        # requested.)
+        module_catalog._validate_module_dependencies(base_packs, {}, set())
 
-    def test_unknown_dependency_still_hard(self, fake_registry, tmp_path):
+    def test_uninstalled_dependency_is_soft(self, fake_registry, tmp_path):
         meta = fake_registry(
             "geo.admin1",
             distribution="remote",
@@ -171,12 +182,20 @@ class TestValidateModuleDependencies:
             is_cached=True,
         )
         base_packs = {"geo.admin1": _loaded_pack(meta, tmp_path / "geo_admin1")}
-        with pytest.raises(MissingModuleDependencyError):
-            module_catalog._validate_module_dependencies(base_packs, {}, set())
+        # A declared dependency that isn't installed at all is advisory like any
+        # other: an uninstalled real dependency and a typo are indistinguishable
+        # from the registry's view, and partial installs are first-class, so
+        # neither blocks loading the named module. (Build-time pack integrity is
+        # checked in the release pipeline, not at every resolver construction.)
+        module_catalog._validate_module_dependencies(base_packs, {}, set())
 
 
 class TestResolveRequestedModulePaths:
-    def test_explicit_request_skips_remote_uncached_deps(self, fake_registry):
+    def test_explicit_request_is_exactly_the_named_set(self, fake_registry):
+        # Authoritative selection: naming geo.admin1 loads exactly geo.admin1.
+        # Declared module_dependencies are advisory and never auto-expanded —
+        # not the remote siblings (admin2, cities) and not even the bundled
+        # geo.countries. The load set is a pure function of the argument.
         fake_registry(
             "geo.admin1",
             distribution="remote",
@@ -188,9 +207,14 @@ class TestResolveRequestedModulePaths:
         fake_registry("geo.countries")
 
         resolved = module_catalog._resolve_requested_module_paths(["geo.admin1"])
-        assert set(resolved) == {"geo.admin1", "geo.countries"}
+        assert set(resolved) == {"geo.admin1"}
 
-    def test_explicit_request_queues_cached_remote_deps(self, fake_registry):
+    def test_explicit_request_excludes_cached_remote_deps(self, fake_registry):
+        # The "locally right, deployed wrong" bug: a remote sibling sitting in
+        # the dev box's cache must NOT join an explicit selection that didn't
+        # name it. Naming geo.admin2 loads exactly geo.admin2, even though its
+        # declared dependency geo.admin1 is a cached remote pack — so a lean
+        # deployment (admin1 absent) resolves identically.
         fake_registry(
             "geo.admin2",
             distribution="remote",
@@ -200,7 +224,25 @@ class TestResolveRequestedModulePaths:
         fake_registry("geo.admin1", distribution="remote", is_cached=True)
 
         resolved = module_catalog._resolve_requested_module_paths(["geo.admin2"])
-        assert set(resolved) == {"geo.admin2", "geo.admin1"}
+        assert set(resolved) == {"geo.admin2"}
+
+    def test_explicit_request_of_multiple_loads_exactly_those(self, fake_registry):
+        # Naming several modules loads exactly that set — the caller opts in to
+        # each one explicitly (e.g. cities + countries for city resolution
+        # backed by country context).
+        fake_registry(
+            "geo.cities",
+            distribution="remote",
+            module_dependencies=["geo.admin1", "geo.countries"],
+            is_cached=True,
+        )
+        fake_registry("geo.admin1", distribution="remote", is_cached=True)
+        fake_registry("geo.countries")
+
+        resolved = module_catalog._resolve_requested_module_paths(
+            ["geo.cities", "geo.countries"]
+        )
+        assert set(resolved) == {"geo.cities", "geo.countries"}
 
     def test_auto_mode_skips_uncached_remote_modules(self, fake_registry):
         fake_registry(
