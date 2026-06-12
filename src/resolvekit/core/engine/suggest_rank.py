@@ -49,14 +49,25 @@ PROMINENCE_LIVE_TYPE_PREFIXES: Final[frozenset[str]] = frozenset(
         "geo.subregion",
         "geo.region",
         "geo.continental_union",
-        # City and admin2 tiers gain live Wikidata sitelink / DC population
-        # prominence once the full geo build includes those tiers.  The prefix
-        # is added here so ``ranking_quality`` reports ``"ranked"`` as soon as
-        # the data ships, without a follow-on code change.
+        # City and all sub-country admin tiers carry live prominence in the
+        # shipped remote packs (Wikidata sitelinks with DC population
+        # fallback for admin3/admin4).
         "geo.city",
+        "geo.admin1",
         "geo.admin2",
+        "geo.admin3",
+        "geo.admin4",
+        "geo.admin5",
     }
 )
+
+# Prominence floor for the exact-match lift on prominence-ranked tiers. An
+# exact full-name hit from a ranked tier below this floor loses its lift: an
+# obscure place whose name merely coincides with the prefix ("Germ", a French
+# commune) must not outrank a famous completion ("Germany"). Unranked tiers
+# (orgs — no prominence data) always keep the lift, so typed acronyms ("UN",
+# "NATO") still surface first.
+EXACT_MATCH_MIN_PROMINENCE: Final[float] = 0.3
 
 # Numeric rank for each MatchClass (lower = better).
 MATCH_CLASS_RANK: Final[dict[MatchClass, int]] = {
@@ -143,15 +154,22 @@ def sort_key(
     ``exact_match_rank`` is 0 when the user's query equals the matched name in
     full (``exact_match=True``) and 1 otherwise.  This lifts entities whose
     complete short name was typed (e.g. "EU", "NATO") above longer-named
-    entities that merely *start with* those letters, even when those entities
-    carry higher prominence scores.
+    entities that merely *start with* those letters — with one exception:
+    a candidate from a prominence-ranked tier whose prominence falls below
+    ``EXACT_MATCH_MIN_PROMINENCE`` loses the lift, so an obscure place whose
+    full name coincides with the prefix ("Germ") cannot outrank a famous
+    completion ("Germany"). Unranked tiers always keep the lift.
 
     The final ``entity_id`` field gives a total order so that equal inputs
     always produce the same sequence.
     """
+    exact_lift = c.exact_match and (
+        ranking_quality(c.entity_type) == "unranked"
+        or c.prominence >= EXACT_MATCH_MIN_PROMINENCE
+    )
     return (
         MATCH_CLASS_RANK[c.match_class],
-        0 if c.exact_match else 1,
+        0 if exact_lift else 1,
         c.typo_count,
         -c.prominence,
         c.name_kind_rank,

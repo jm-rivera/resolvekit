@@ -238,10 +238,12 @@ class TestSortKey:
         *,
         entity_id: str = "x",
         match_class=None,
+        exact_match: bool = False,
         typo_count: int = 0,
         prominence: float = 0.0,
         name_kind_rank: int = 0,
         matched_value_norm: str = "abc",
+        entity_type: str = "geo.country",
     ):
         from resolvekit.core.engine.suggest_rank import MatchClass, SuggestCandidate
 
@@ -250,14 +252,14 @@ class TestSortKey:
         return SuggestCandidate(
             entity_id=entity_id,
             match_class=match_class,
-            exact_match=False,
+            exact_match=exact_match,
             typo_count=typo_count,
             prominence=prominence,
             name_kind_rank=name_kind_rank,
             matched_value_norm=matched_value_norm,
             match_score=None,
             pack_id="geo",
-            entity_type="geo.country",
+            entity_type=entity_type,
             canonical_name="Test",
             matched_value="Test",
         )
@@ -286,6 +288,63 @@ class TestSortKey:
             match_class=MatchClass.EXACT_PREFIX, prominence=0.0
         )
         assert sort_key(with_prom) < sort_key(no_prom)
+
+    def test_obscure_ranked_exact_match_loses_to_famous_prefix(self) -> None:
+        """A low-prominence ranked-tier exact match ('Germ', a French commune)
+        must not outrank a maximally prominent prefix completion ('Germany')."""
+        from resolvekit.core.engine.suggest_rank import MatchClass, sort_key
+
+        obscure_exact = self._make_candidate(
+            match_class=MatchClass.EXACT_PREFIX,
+            exact_match=True,
+            prominence=0.02,
+            entity_type="geo.admin4",
+        )
+        famous_prefix = self._make_candidate(
+            match_class=MatchClass.EXACT_PREFIX,
+            exact_match=False,
+            prominence=0.95,
+            entity_type="geo.country",
+        )
+        assert sort_key(famous_prefix) < sort_key(obscure_exact)
+
+    def test_prominent_ranked_exact_match_keeps_lift(self) -> None:
+        """A prominent ranked-tier exact match ('EU') keeps its lift over an
+        even more prominent prefix completion."""
+        from resolvekit.core.engine.suggest_rank import MatchClass, sort_key
+
+        prominent_exact = self._make_candidate(
+            match_class=MatchClass.EXACT_PREFIX,
+            exact_match=True,
+            prominence=0.8,
+            entity_type="geo.continental_union",
+        )
+        more_prominent_prefix = self._make_candidate(
+            match_class=MatchClass.EXACT_PREFIX,
+            exact_match=False,
+            prominence=1.0,
+            entity_type="geo.country",
+        )
+        assert sort_key(prominent_exact) < sort_key(more_prominent_prefix)
+
+    def test_unranked_exact_match_always_keeps_lift(self) -> None:
+        """An exact match from an unranked tier (orgs carry no prominence
+        data) keeps its lift regardless of its zero prominence."""
+        from resolvekit.core.engine.suggest_rank import MatchClass, sort_key
+
+        org_exact = self._make_candidate(
+            match_class=MatchClass.EXACT_PREFIX,
+            exact_match=True,
+            prominence=0.0,
+            entity_type="org.igo",
+        )
+        famous_prefix = self._make_candidate(
+            match_class=MatchClass.EXACT_PREFIX,
+            exact_match=False,
+            prominence=0.99,
+            entity_type="geo.country",
+        )
+        assert sort_key(org_exact) < sort_key(famous_prefix)
 
     def test_preferred_name_before_alias(self) -> None:
         from resolvekit.core.engine.suggest_rank import MatchClass, sort_key
@@ -346,10 +405,12 @@ class TestRankingQuality:
         # Continents have no prominence data and are unranked.
         assert ranking_quality("geo.continent") == "unranked"
 
-    def test_geo_admin1_is_unranked(self) -> None:
+    def test_geo_admin_tiers_are_ranked(self) -> None:
+        """All sub-country admin tiers carry live prominence in the shipped packs."""
         from resolvekit.core.engine.suggest_rank import ranking_quality
 
-        assert ranking_quality("geo.admin1") == "unranked"
+        for tier in ("geo.admin1", "geo.admin3", "geo.admin4", "geo.admin5"):
+            assert ranking_quality(tier) == "ranked"
 
     def test_org_is_unranked(self) -> None:
         from resolvekit.core.engine.suggest_rank import ranking_quality
