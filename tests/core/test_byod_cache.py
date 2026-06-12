@@ -6,6 +6,8 @@ import json
 import sqlite3
 from pathlib import Path
 
+import pytest
+
 from resolvekit.core.byod.cache import (
     BYOD_CACHE_VERSION,
     byod_cache_key,
@@ -400,6 +402,92 @@ class TestAtomicWrite:
         assert (final_dir / "metadata.json").is_file()
         # build_dir is gone after replace (it became final_dir)
         assert not build_dir.exists()
+
+
+# ---------------------------------------------------------------------------
+# Tests: commit_build idempotency
+# ---------------------------------------------------------------------------
+
+
+class TestCommitBuildIdempotency:
+    def test_commit_into_absent_final_dir(self, tmp_path: Path) -> None:
+        """commit_build into a fresh slot creates final_dir and removes build_dir."""
+        build_dir = tmp_path / "build"
+        _make_minimal_pack(build_dir)
+        final_dir = tmp_path / "final"
+
+        commit_build(build_dir, final_dir)
+
+        assert final_dir.is_dir()
+        assert (final_dir / "metadata.json").is_file()
+        assert not build_dir.exists()
+
+    def test_commit_when_final_dir_already_valid(self, tmp_path: Path) -> None:
+        """commit_build keeps the existing valid pack (first-writer-wins)."""
+        final_dir = tmp_path / "final"
+        _make_minimal_pack(final_dir)
+        # Mark the existing pack so the assertion can tell it apart from the
+        # build_dir pack (_make_minimal_pack writes identical content otherwise).
+        (final_dir / "metadata.json").write_text(
+            '{"datapack_id": "original"}\n', encoding="utf-8"
+        )
+        original_text = (final_dir / "metadata.json").read_text(encoding="utf-8")
+
+        build_dir = tmp_path / "build"
+        _make_minimal_pack(build_dir)
+
+        commit_build(build_dir, final_dir)  # must not raise
+
+        assert final_dir.is_dir()
+        assert (final_dir / "metadata.json").read_text(
+            encoding="utf-8"
+        ) == original_text
+        assert not build_dir.exists()
+
+    def test_commit_replaces_corrupt_leftover(self, tmp_path: Path) -> None:
+        """commit_build replaces a directory that has no metadata.json."""
+        final_dir = tmp_path / "final"
+        final_dir.mkdir()
+        (final_dir / "junk.txt").write_text("corrupt", encoding="utf-8")
+
+        build_dir = tmp_path / "build"
+        _make_minimal_pack(build_dir)
+
+        commit_build(build_dir, final_dir)
+
+        assert (final_dir / "metadata.json").is_file()
+        assert not (final_dir / "junk.txt").exists()
+        assert not build_dir.exists()
+
+    def test_build_dir_cleaned_up_when_discarded(self, tmp_path: Path) -> None:
+        """build_dir is removed even when commit_build discards it (valid pack wins)."""
+        final_dir = tmp_path / "final"
+        _make_minimal_pack(final_dir)
+
+        build_dir = tmp_path / "build"
+        _make_minimal_pack(build_dir)
+
+        commit_build(build_dir, final_dir)
+
+        assert not build_dir.exists()
+
+    def test_non_populated_oserror_is_reraised(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """An OSError unrelated to a populated target is re-raised."""
+        import resolvekit.core.byod.cache as cache_mod
+
+        build_dir = tmp_path / "build"
+        _make_minimal_pack(build_dir)
+        final_dir = tmp_path / "final"  # absent — not a populated-target case
+
+        def _no_space(src: object, dst: object) -> None:
+            raise OSError(28, "No space left on device")
+
+        monkeypatch.setattr(cache_mod.os, "replace", _no_space)
+
+        with pytest.raises(OSError):
+            commit_build(build_dir, final_dir)
 
 
 # ---------------------------------------------------------------------------
