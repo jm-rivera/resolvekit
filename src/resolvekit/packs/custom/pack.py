@@ -21,6 +21,7 @@ from resolvekit.packs.custom.sources import (
     CustomExactCodeSource,
     CustomExactNameSource,
     CustomFTSSource,
+    CustomFuzzyRetrievalSource,
     CustomFuzzySource,
 )
 
@@ -44,13 +45,22 @@ class GenericPack:
     custom entities, etc.).
 
     Sources (in pipeline order):
-    1. CustomExactCodeSource  — catch-all ``lookup_code_any``; raw 1.0
-    2. CustomExactNameSource  — canonical raw 1.0, alias raw 0.95
-    3. CustomFTSSource        — BM25 ranked FTS
-    4. CustomFuzzySource      — reranks existing candidates (requires_existing_candidates)
-
-    No SymSpell source: custom packs are built programmatically; the fuzzy
-    reranking over FTS/exact candidates serves as the fuzzy story.
+    1. CustomExactCodeSource        — catch-all ``lookup_code_any``; raw 1.0
+    2. CustomExactNameSource        — canonical raw 1.0, alias raw 0.95
+    3. CustomFTSSource              — BM25 ranked FTS
+    4. CustomFuzzyRetrievalSource   — generating brute-force RapidFuzz over the
+                                      store's materialized name list; emits
+                                      FUZZY-tier evidence so typo'd queries that
+                                      FTS cannot tokenize-match still produce
+                                      candidates.  Free on exact-name queries
+                                      (engine fuzzy-skip guard bypasses it when
+                                      a confident EXACT_NAME candidate is present).
+                                      Callers needing stricter precision can raise
+                                      ``confidence_threshold`` above the 0.89 FUZZY
+                                      cap to suppress fuzzy-tier results.
+    5. CustomFuzzySource            — reranks existing candidates with
+                                      ``fuzzy_edit_sim`` / ``fuzzy_token_sim``
+                                      signals (requires_existing_candidates)
 
     Args:
         symspell_dict_path: Accepted but ignored to satisfy factory introspection.
@@ -70,6 +80,7 @@ class GenericPack:
             CustomExactCodeSource(),
             CustomExactNameSource(),
             CustomFTSSource(),
+            CustomFuzzyRetrievalSource(),
             CustomFuzzySource(),
         ]
 

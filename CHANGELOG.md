@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.1.5 (2026-06-12)
+
+**Fixed.** Typo'd queries no longer abstain on bring-your-own-data packs.
+`Resolver.from_records(...)` (the `custom` domain) had a fuzzy *reranker* but
+no fuzzy *generator*, so a query with a within-token typo or an extra junk
+token — `resolve("Andean Watr Trust")` against "Andean Water Trust" — produced
+no candidates and returned NO_MATCH, even though `suggest()` corrected the same
+typo. A new store-backed generating fuzzy-retrieval source now matches over the
+pack's own names on the fuzzy tier, so these queries resolve (here at
+confidence 0.89) the way the bundled geo/org packs already did. It is always on
+and automatic: the engine's existing skip guard keeps it free on clean
+exact-name queries, a 25k-name cap and a memoized name list bound the cost, and
+exact-code and exact-name matches are never displaced. The capability lives in
+shared infrastructure, so any programmatically-built pack inherits it.
+
 ## 0.1.4 (2026-06-12)
 
 **Fixed.** Two ranking quirks on installs with remote geo data:
