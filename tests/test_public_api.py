@@ -7,8 +7,18 @@ Tests intentionally fail loudly on drift.
 from __future__ import annotations
 
 import importlib
+import importlib.util
+
+import pytest
 
 import resolvekit
+
+# resolvekit.builder pulls gecko-syndata (calibration extra), whose lxml<6 pin
+# has no Python 3.14 wheel; skip the builder __all__ freezes when it's absent.
+_requires_gecko = pytest.mark.skipif(
+    importlib.util.find_spec("gecko") is None,
+    reason="requires the calibration extra (gecko-syndata)",
+)
 
 
 def _all(module_name: str) -> tuple[str, ...]:
@@ -276,6 +286,7 @@ def test_resolvekit_core_all() -> None:
     assert _all("resolvekit.core") == _EXPECTED["resolvekit.core"]
 
 
+@_requires_gecko
 def test_resolvekit_builder_all() -> None:
     assert _all("resolvekit.builder") == _EXPECTED["resolvekit.builder"]
 
@@ -284,15 +295,18 @@ def test_resolvekit_extensions_all() -> None:
     assert _all("resolvekit.extensions") == _EXPECTED["resolvekit.extensions"]
 
 
+@_requires_gecko
 def test_resolvekit_builder_pipeline_all() -> None:
     assert (
         _all("resolvekit.builder.pipeline") == _EXPECTED["resolvekit.builder.pipeline"]
     )
 
 
+@_requires_gecko
 def test_resolvekit_builder_sources_all() -> None:
     assert _all("resolvekit.builder.sources") == _EXPECTED["resolvekit.builder.sources"]
 
 
+@_requires_gecko
 def test_resolvekit_builder_sqlite_all() -> None:
     assert _all("resolvekit.builder.sqlite") == _EXPECTED["resolvekit.builder.sqlite"]
