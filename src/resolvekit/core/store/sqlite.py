@@ -494,6 +494,17 @@ class SQLiteEntityStore(EntityStore):
             rows = conn.execute("SELECT DISTINCT system FROM codes").fetchall()
             return frozenset(r["system"] for r in rows)
 
+    @override
+    def relation_types(self) -> frozenset[str]:
+        with self._connection() as conn:
+            try:
+                rows = conn.execute(
+                    "SELECT DISTINCT relation_type FROM relations"
+                ).fetchall()
+            except sqlite3.OperationalError:
+                return frozenset()  # legacy DB with no relations table
+            return frozenset(r["relation_type"] for r in rows)
+
     def lookup_name_exact(
         self, value_norm: str, name_kinds: set[str] | None = None
     ) -> list[str]:

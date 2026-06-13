@@ -91,10 +91,12 @@ class ContainmentAPI:
                 break
             frontier = next_frontier
 
-        # Hydrate — drop entities the store can't resolve.
+        # Hydrate in one batch — bulk bypasses the per-entity SQLite LRU cache, which is
+        # acceptable here: within()'s result set is not reused across calls.
+        hydrated = self._runner.bulk_get_entities(result_ids)
         records: list[EntityRecord] = []
-        for eid in result_ids:
-            entity = self._runner.get_entity(eid)
+        for eid in result_ids:  # preserve BFS-collected order pre-sort
+            entity = hydrated.get(eid)  # None-on-missing: absent IDs skipped
             if entity is None:
                 continue
             if entity_type is not None and entity.entity_type not in entity_type:

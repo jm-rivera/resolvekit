@@ -489,3 +489,107 @@ class TestSQLiteEntityStore:
         # Single word that doesn't exist at all — no fallback should inflate results
         results = store.search_fulltext("zzznomatch")
         assert results == []
+
+    def test_relation_types_returns_distinct_set(self, tmp_path):
+        """relation_types() returns the frozenset of DISTINCT relation_type values present."""
+        import sqlite3
+
+        from resolvekit.core.store.sqlite import SQLiteEntityStore
+
+        db_path = tmp_path / "rel_types.db"
+        conn = sqlite3.connect(db_path)
+        conn.executescript("""
+            CREATE TABLE entities (
+                entity_id TEXT PRIMARY KEY,
+                entity_type TEXT NOT NULL,
+                canonical_name TEXT NOT NULL,
+                canonical_name_norm TEXT NOT NULL,
+                valid_from TEXT,
+                valid_until TEXT
+            );
+            CREATE TABLE names (
+                entity_id TEXT NOT NULL,
+                name_kind TEXT NOT NULL,
+                value TEXT NOT NULL,
+                value_norm TEXT NOT NULL,
+                lang TEXT,
+                is_preferred INTEGER DEFAULT 0
+            );
+            CREATE TABLE codes (
+                entity_id TEXT NOT NULL,
+                system TEXT NOT NULL,
+                value TEXT NOT NULL,
+                value_norm TEXT NOT NULL,
+                PRIMARY KEY (entity_id, system)
+            );
+            CREATE TABLE relations (
+                entity_id TEXT NOT NULL,
+                relation_type TEXT NOT NULL,
+                target_id TEXT NOT NULL
+            );
+            CREATE VIRTUAL TABLE names_fts USING fts5(entity_id, value_norm);
+            INSERT INTO entities VALUES
+                ('country/A', 'geo.country', 'A', 'a', NULL, NULL),
+                ('country/B', 'geo.country', 'B', 'b', NULL, NULL),
+                ('region/R', 'geo.region', 'R', 'r', NULL, NULL);
+        """)
+        conn.executemany(
+            "INSERT INTO relations (entity_id, relation_type, target_id) VALUES (?, ?, ?)",
+            [
+                ("country/A", "contained_in", "region/R"),
+                ("country/B", "contained_in", "region/R"),
+                ("country/A", "member_of", "region/R"),
+            ],
+        )
+        conn.commit()
+        conn.close()
+
+        store = SQLiteEntityStore(db_path)
+        result = store.relation_types()
+        assert isinstance(result, frozenset)
+        assert result == frozenset({"contained_in", "member_of"})
+
+    def test_relation_types_returns_empty_frozenset_when_table_absent(self, tmp_path):
+        """relation_types() returns frozenset() for a DB with no relations table."""
+        import sqlite3
+
+        from resolvekit.core.store.sqlite import SQLiteEntityStore
+
+        db_path = tmp_path / "no_relations.db"
+        conn = sqlite3.connect(db_path)
+        # Minimal schema without a relations table; migration will fail gracefully
+        # because the DB is written before SQLiteEntityStore opens it.
+        conn.executescript("""
+            CREATE TABLE entities (
+                entity_id TEXT PRIMARY KEY,
+                entity_type TEXT NOT NULL,
+                canonical_name TEXT NOT NULL,
+                canonical_name_norm TEXT NOT NULL,
+                valid_from TEXT,
+                valid_until TEXT
+            );
+            CREATE TABLE names (
+                entity_id TEXT NOT NULL,
+                name_kind TEXT NOT NULL,
+                value TEXT NOT NULL,
+                value_norm TEXT NOT NULL,
+                lang TEXT,
+                is_preferred INTEGER DEFAULT 0
+            );
+            CREATE TABLE codes (
+                entity_id TEXT NOT NULL,
+                system TEXT NOT NULL,
+                value TEXT NOT NULL,
+                value_norm TEXT NOT NULL,
+                PRIMARY KEY (entity_id, system)
+            );
+            CREATE VIRTUAL TABLE names_fts USING fts5(entity_id, value_norm);
+            INSERT INTO entities VALUES
+                ('country/USA', 'geo.country', 'United States', 'united states', NULL, NULL);
+        """)
+        conn.commit()
+        conn.close()
+
+        store = SQLiteEntityStore(db_path)
+        result = store.relation_types()
+        assert result == frozenset()
