@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.1.8 (2026-06-13)
+
+**Performance.** Containment lookups (`within()`) do less redundant work, with
+results unchanged. After a traversal, the matched entities are now hydrated in a
+single batched fetch across the store stack instead of one lookup per result. And
+reverse-relation queries skip any store that provably holds no relations of the
+requested type: each store reports the relation types it carries once, at
+construction, and a query consults only the stores that can contribute. A store
+that cannot characterize its relation types is always queried, so nothing is
+pruned by mistake. Single-pack resolvers pay one set-membership check per query;
+multi-pack resolvers skip whole stores.
+
 ## 0.1.7 (2026-06-12)
 
 **Fixed.** Re-submitting a bring-your-own-data pack that was already cached crashed

@@ -23,6 +23,9 @@ class StoreView:
 
     def __init__(self, stores: list[tuple[str | None, EntityStore]]) -> None:
         self._stores = stores
+        self._relation_type_index: list[frozenset[str] | None] = [
+            store.relation_types() for _, store in self._stores
+        ]
 
     # ------------------------------------------------------------------
     # Entity fetch — first non-None wins; no dedup needed
@@ -35,6 +38,18 @@ class StoreView:
             if entity is not None:
                 return entity
         return None
+
+    def bulk_get_entities(self, entity_ids: list[str]) -> dict[str, EntityRecord]:
+        """Return entities for *entity_ids*, first store wins per ID; missing IDs omitted."""
+        result: dict[str, EntityRecord] = {}
+        remaining = list(entity_ids)
+        for _, store in self._stores:
+            if not remaining:
+                break
+            found = store.bulk_get_entities(remaining)
+            result.update(found)
+            remaining = [eid for eid in remaining if eid not in result]
+        return result
 
     # ------------------------------------------------------------------
     # Lookups — dedup by entity_id, preserve first-seen order
@@ -118,7 +133,10 @@ class StoreView:
         """
         seen: set[str] = set()
         result: list[str] = []
-        for _, store in self._stores:
+        for i, (_, store) in enumerate(self._stores):
+            rv = self._relation_type_index[i]
+            if rv is not None and relation_type not in rv:
+                continue
             for eid in store.get_reverse_relations(
                 entity_id, relation_type, as_of=as_of
             ):
@@ -136,7 +154,10 @@ class StoreView:
     ) -> frozenset[str]:
         """Return target entity IDs for relations active on *as_of*, unioned."""
         result: set[str] = set()
-        for _, store in self._stores:
+        for i, (_, store) in enumerate(self._stores):
+            rv = self._relation_type_index[i]
+            if rv is not None and relation_type not in rv:
+                continue
             result.update(store.get_relations_as_of(entity_id, relation_type, as_of))
         return frozenset(result)
 

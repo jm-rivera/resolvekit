@@ -176,6 +176,15 @@ class EntityStore(ABC):
         """
         return frozenset()
 
+    def relation_types(self) -> frozenset[str] | None:
+        """Return the distinct relation types stored, or None if unknown.
+
+        None means "this store cannot characterize its relation types, so callers
+        must not prune it" — the default. SQL backends override with a concrete set
+        (possibly empty, meaning known to hold no relations).
+        """
+        return None
+
     def close(self) -> None:  # noqa: B027
         """Release resources held by this store.
 

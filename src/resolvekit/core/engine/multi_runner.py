@@ -192,6 +192,10 @@ class MultiPackRunner:
         """Fetch a fully hydrated entity record from any backing store."""
         return self._view.get_entity(entity_id)
 
+    def bulk_get_entities(self, entity_ids: list[str]) -> dict[str, EntityRecord]:
+        """Fetch multiple entities by ID; missing IDs are omitted from the result."""
+        return self._view.bulk_get_entities(entity_ids)
+
     def normalize_code_value(
         self, system: str, value: str, *, pack_filter: frozenset[str] | None = None
     ) -> str:

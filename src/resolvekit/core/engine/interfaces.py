@@ -132,6 +132,10 @@ class ResolverBackend(Protocol):
         """Look up a fully hydrated entity by ID."""
         ...
 
+    def bulk_get_entities(self, entity_ids: list[str]) -> dict[str, EntityRecord]:
+        """Fetch multiple entities by ID; missing IDs are omitted from the result."""
+        ...
+
     def lookup_code(
         self,
         system: str,
