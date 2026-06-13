@@ -1,5 +1,13 @@
 # resolvekit
 
+[![PyPI version](https://img.shields.io/pypi/v/resolvekit.svg)](https://pypi.org/project/resolvekit/)
+[![Python versions](https://img.shields.io/pypi/pyversions/resolvekit.svg)](https://pypi.org/project/resolvekit/)
+[![License: MIT](https://img.shields.io/pypi/l/resolvekit.svg)](https://github.com/jm-rivera/resolvekit/blob/main/LICENSE)
+[![Tests](https://github.com/jm-rivera/resolvekit/actions/workflows/test.yml/badge.svg)](https://github.com/jm-rivera/resolvekit/actions/workflows/test.yml)
+[![Docs](https://img.shields.io/badge/docs-jm--rivera.github.io-blue.svg)](https://jm-rivera.github.io/resolvekit/)
+[![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+
 Resolve messy place and entity strings — and codes — to canonical entity IDs, offline and deterministically. Feed it `"Brasil"`, `"Cote dIvoire"`, or `"Republic of Korea"` and get back `country/BRA`, `country/CIV`, `country/KOR`.
 
 - **Offline and deterministic.** No network call, no LLM, no external service at resolution time. The same input gives the same output, today and next year.
