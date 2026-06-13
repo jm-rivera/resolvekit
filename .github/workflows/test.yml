@@ -30,14 +30,19 @@ jobs:
     # sets encoding explicitly and does not rely on this.
     env:
       PYTHONUTF8: "1"
-      # Single version: the `requires-python` floor. Testing the minimum
-      # supported version guards against accidentally using newer-only syntax.
-      PYTHON_VERSION: "3.12"
 
     strategy:
       fail-fast: false
       matrix:
+        # Floor version runs on all three OS; ceiling version (3.14) runs on
+        # Linux only to guard the upper bound without tripling CI cost.
         os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ["3.12", "3.14"]
+        exclude:
+          - os: macos-latest
+            python-version: "3.14"
+          - os: windows-latest
+            python-version: "3.14"
 
     steps:
       - name: Checkout code
@@ -46,10 +51,18 @@ jobs:
       - name: Set up uv
         uses: astral-sh/setup-uv@v8.1.0
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
+          python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
+        if: matrix.python-version != '3.14'
         run: uv sync --all-groups --all-extras
+
+      # The `baselines` extra (spacy) has no 3.14 wheel yet, so install every
+      # other extra explicitly on the ceiling leg. baselines-dependent tests
+      # skip gracefully when spacy is absent.
+      - name: Install dependencies (3.14, without baselines extra)
+        if: matrix.python-version == '3.14'
+        run: uv sync --all-groups --extra calibration --extra data --extra pandas --extra polars --extra parsing
 
       - name: Run Ruff
         if: matrix.os == 'ubuntu-latest'

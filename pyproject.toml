@@ -19,6 +19,7 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Programming Language :: Python :: 3 :: Only",
     "Topic :: Scientific/Engineering :: GIS",
     "Topic :: Scientific/Engineering :: Information Analysis",
@@ -158,6 +159,8 @@ dev = [
     "ruff>=0.15.12",
     "ty>=0.0.32",
     "pandas-stubs>=3.0.0.260204",
+    "pandas>=2.0",
+    "polars>=1.40.1",
 ]
 test = [
     "pytest>=9.0.3",

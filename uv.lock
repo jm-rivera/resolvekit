@@ -1753,7 +1753,9 @@ data = [
     { name = "pyyaml" },
 ]
 dev = [
+    { name = "pandas" },
     { name = "pandas-stubs" },
+    { name = "polars" },
     { name = "pre-commit" },
     { name = "ruff" },
     { name = "ty" },
@@ -1805,7 +1807,9 @@ data = [
     { name = "pyyaml", specifier = ">=6.0" },
 ]
 dev = [
+    { name = "pandas", specifier = ">=2.0" },
     { name = "pandas-stubs", specifier = ">=3.0.0.260204" },
+    { name = "polars", specifier = ">=1.40.1" },
     { name = "pre-commit", specifier = ">=4.6.0" },
     { name = "ruff", specifier = ">=0.15.12" },
     { name = "ty", specifier = ">=0.0.32" },
