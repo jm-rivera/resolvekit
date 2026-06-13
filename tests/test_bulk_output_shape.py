@@ -1,8 +1,7 @@
-"""Pin output='frame' column names, order, dtypes, and index after column-oriented rewrite.
+"""Pin output='frame' column names, order, dtypes, and index.
 
 These assertions guard the _build_frame_native / _frame_columns_from_output
-refactor (Sites 1 & 2) so that behaviour-equivalence is machine-checked,
-not just eyeballed.
+implementation so that behaviour-equivalence is machine-checked.
 """
 
 from __future__ import annotations
@@ -215,7 +214,7 @@ def test_frame_list_kind_returns_list_of_dicts():
 
 
 # ---------------------------------------------------------------------------
-# Site 1: single-pass counter — warn fires when all resolved rows are None
+# single-pass counter — warn fires when all resolved rows are None
 # ---------------------------------------------------------------------------
 
 

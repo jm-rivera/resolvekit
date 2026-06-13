@@ -1,23 +1,21 @@
 #!/usr/bin/env python3
 """Measure the peak-RAM cost of building the LARGE geo SymSpell index.
 
-Audit finding #1/#2: ``GeoSymSpellSource`` never overrides ``warm()``, so the
-background warm thread started by ``Resolver(warm=True)`` builds the LARGE
-(admin2-5 / cities, ~764k terms) SymSpell index unconditionally — even when
-every query is typed to country/admin1/region tiers and the LARGE
-``generate()`` guard would return ``[]`` immediately. The LARGE index is
-otherwise lazy-by-design ("often never built"); ``warm=True`` defeats that.
+The LARGE tier (admin2-5 / cities, ~764k terms) SymSpell index is designed to
+be lazy: built only on first use for workloads that need it. However, when the
+background warm thread (enabled by ``Resolver(warm=True)``) starts, it
+unconditionally builds the LARGE index even for country/admin1-only workloads
+that would return ``[]`` immediately from the LARGE ``generate()`` guard.
 
-The cities/admin LARGE modules are ``distribution: "remote"`` (not cached on a
-fresh box), so this script measures the exact object the finding is about — the
-SymSpell index — by building it directly from the bundled ``_data`` dict files,
-bypassing the remote-download gate. SMALL vs LARGE are built in isolated
-subprocesses (``ru_maxrss`` is a monotonic high-water mark, so per-index deltas
-are only trustworthy across process boundaries).
-
-Each index is built from text on a FRESH compiled-cache dir (the cold path the
-warm thread takes on first construction), reporting peak RSS and the
-tracemalloc Python-heap peak.
+This script measures the memory cost of that eager construction against the
+SMALL baseline (countries, admin1, regions, continents, continental unions).
+The LARGE modules are ``distribution: "remote"`` so this script builds directly
+from bundled ``_data`` dict files, bypassing the remote-download gate. SMALL vs
+LARGE are built in isolated subprocesses (``ru_maxrss`` is a monotonic
+high-water mark, so per-index deltas are only trustworthy across process
+boundaries). Each index is built from text on a FRESH compiled-cache dir (the
+cold path the warm thread takes on first construction), reporting peak RSS and
+the tracemalloc Python-heap peak.
 
 Usage:
     uv run python -m scripts.benchmark.measure_warm_memory
