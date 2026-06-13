@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.1.9 (2026-06-13)
+
+**Added.** Python 3.14 support. 3.14 is now a classified and tested target; CI
+runs the floor (3.12, all OSes) and the ceiling (3.14, Linux). `requires-python`
+stays `>=3.12`.
+
+**Performance.** Lower memory, with all results unchanged. Eagerly warming a
+resolver (`Resolver(..., warm=True)` or `warm()`) no longer builds the LARGE
+fuzzy index (admin2–admin5 / cities) up front. That tier added roughly 800 MB of
+sustained memory and a transient peak near 2 GB even for workloads that only ever
+query the country/region tier. It is now built lazily on the first city/admin
+query — exactly as it already was without `warm=True` — while the small
+country/region index still warms eagerly. Separately, bulk frame and series
+output (`bulk(..., output="frame")` / `"series"`) is assembled column by column
+instead of materializing a per-row dict for every input, so its memory now scales
+with the result rather than with intermediate copies. And the per-resolver
+suggest-name cache, previously unbounded, is now a bounded LRU.
+
 ## 0.1.8 (2026-06-13)
 
 **Performance.** Containment lookups (`within()`) do less redundant work, with
