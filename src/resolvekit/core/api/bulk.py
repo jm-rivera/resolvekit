@@ -856,7 +856,6 @@ def _bulk_dispatch(
                 stacklevel=4,
             )
 
-    # Return a native series (not BulkResult) when pivoting and output="series".
     scalar_to = (has_pivot or spec_active) and output == "series"
 
     if scalar_to:

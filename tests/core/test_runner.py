@@ -407,7 +407,6 @@ class TestSuggestNamesCacheBound:
                 self, *, entity_type_prefixes=None, entity_type_exclude_prefixes=None
             ):
                 calls.append(entity_type_prefixes)
-                # Return two dummy rows so the list isn't empty.
                 yield ("usa", "country/US", "name", True, "USA")
                 yield ("france", "country/FR", "name", True, "France")
 
