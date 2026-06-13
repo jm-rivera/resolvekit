@@ -839,21 +839,22 @@ def _bulk_dispatch(
     # Warn only when the column is wholly empty among resolved rows — a partial
     # miss (some resolved rows have a value) is not warned.
     if spec_active and effective_spec is not None:
-        resolved_indices = [
-            i for i, r in enumerate(out_source) if r.status == ResolutionStatus.RESOLVED
-        ]
-        if resolved_indices:
-            n_missing = sum(1 for i in resolved_indices if out_values[i] is None)
-            if n_missing > 0 and n_missing == len(resolved_indices):
-                chain_repr = [t.raw for t in effective_spec.chain]
-                # stacklevel=4 points at Resolver.bulk for the direct path;
-                # the module-level resolvekit.bulk convenience adds one more frame.
-                warnings.warn(
-                    f"default output {chain_repr!r}: {n_missing} resolved value(s) "
-                    f"had no output (column wholly empty among resolved rows)",
-                    UserWarning,
-                    stacklevel=4,
-                )
+        n_resolved = n_missing = 0
+        for r, v in zip(out_source, out_values, strict=True):
+            if r.status == ResolutionStatus.RESOLVED:
+                n_resolved += 1
+                if v is None:
+                    n_missing += 1
+        if n_resolved > 0 and n_missing == n_resolved:
+            chain_repr = [t.raw for t in effective_spec.chain]
+            # stacklevel=4 points at Resolver.bulk for the direct path;
+            # the module-level resolvekit.bulk convenience adds one more frame.
+            warnings.warn(
+                f"default output {chain_repr!r}: {n_missing} resolved value(s) "
+                f"had no output (column wholly empty among resolved rows)",
+                UserWarning,
+                stacklevel=4,
+            )
 
     # Return a native series (not BulkResult) when pivoting and output="series".
     scalar_to = (has_pivot or spec_active) and output == "series"
@@ -886,12 +887,9 @@ def _bulk_dispatch(
         return BulkResult(values=native, source=out_source, kind=kind)
 
     if output == "frame":
-        # Flat DataFrame: one column per record field.
-        records = [
-            _record_from_result(r, v)
-            for r, v in zip(out_source, out_values, strict=True)
-        ]
-        native = _build_frame_native(records, kind, orig_index=orig_index)
+        # Flat DataFrame: one column per record field, built column-oriented.
+        frame_cols = _frame_columns_from_output(out_source, out_values)
+        native = _build_frame_native(frame_cols, kind, orig_index=orig_index)
         return BulkResult(values=native, source=out_source, kind=kind)
 
     # Default: wrap the native series of pivot/result values in BulkResult.
@@ -964,27 +962,65 @@ def _build_records_native(
     return records
 
 
+def _frame_columns_from_output(
+    out_source: list[ResolutionResult],
+    out_values: list[Any],
+) -> dict[str, list[Any]]:
+    """Build column-oriented data for ``output='frame'`` without a N-dict intermediate."""
+    col_value: list[Any] = []
+    col_status: list[Any] = []
+    col_entity_id: list[Any] = []
+    col_confidence: list[Any] = []
+    col_pack_id: list[Any] = []
+    col_query_text: list[Any] = []
+    for r, v in zip(out_source, out_values, strict=True):
+        if isinstance(v, ResolutionResult):
+            col_value.append(v.entity_id)
+        else:
+            col_value.append(v)
+        col_status.append(r.status.value)
+        col_entity_id.append(r.entity_id)
+        col_confidence.append(r.confidence)
+        col_pack_id.append(r.pack_id)
+        col_query_text.append(r.query_text)
+    return {
+        "value": col_value,
+        "status": col_status,
+        "entity_id": col_entity_id,
+        "confidence": col_confidence,
+        "pack_id": col_pack_id,
+        "query_text": col_query_text,
+    }
+
+
 def _build_frame_native(
-    records: list[dict[str, Any]],
+    columns: dict[str, list[Any]],
     kind: _InputKind,
     *,
     orig_index: Any,
 ) -> Any:
     """DataFrame assembly for ``output='frame'``.
 
+    Accepts column-oriented data (dict of column-name → value list) rather than
+    a list-of-dicts, so no N-dict intermediate is ever allocated.
+
     For pandas/polars, returns a DataFrame.  For non-DataFrame inputs (list,
-    tuple, numpy), falls back to the same list-of-dicts representation as
-    ``output='record'``.
+    tuple, numpy), falls back to a list-of-dicts to preserve existing behaviour.
     """
     if kind == "pandas":
         import pandas as pd
 
-        return pd.DataFrame.from_records(records, index=orig_index)
+        return pd.DataFrame(columns, index=orig_index)
     if kind == "polars":
         import polars as pl
 
-        return pl.DataFrame(records)
-    return records
+        return pl.DataFrame(columns)
+    # Non-DataFrame kinds: reconstruct list-of-dicts for backward compatibility.
+    col_names = list(columns)
+    col_lists = [columns[k] for k in col_names]
+    return [
+        dict(zip(col_names, row, strict=True)) for row in zip(*col_lists, strict=True)
+    ]
 
 
 def _build_native(
