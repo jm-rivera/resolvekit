@@ -203,14 +203,14 @@ def register() -> None:
             struct_expr = pl.struct([self._expr.alias("__value__"), *ctx_exprs])
 
             def _apply_struct(struct_series: pl.Series) -> pl.Series:
-                # Unpack struct fields back into individual Series.
-                rows = struct_series.to_list()  # list[dict]
-                value_list = [r["__value__"] for r in rows]
+                # Unpack struct fields column-oriented; avoids materialising N dicts.
+                unpacked = struct_series.to_frame("__s").unnest("__s")
+                value_list = unpacked["__value__"].to_list()
 
                 # Build a per-row context dict where per-row keys map to lists.
                 per_row_ctx: dict[str, object] = dict(_scalar_ctx)
                 for k in ctx_field_names:
-                    per_row_ctx[k] = [r[f"__ctx_{k}"] for r in rows]
+                    per_row_ctx[k] = unpacked[f"__ctx_{k}"].to_list()
 
                 result = _bulk_dispatch(
                     resolver=resolver,
