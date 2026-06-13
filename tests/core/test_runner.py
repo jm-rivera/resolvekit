@@ -356,6 +356,127 @@ class TestPipelineRunner:
         assert elapsed < 0.3, f"Took {elapsed:.3f}s"
 
 
+class TestSuggestNamesCacheBound:
+    """_suggest_names_cache must stay bounded regardless of distinct filter keys."""
+
+    def _make_runner(self, store):
+        from resolvekit.core.engine.decision import ThresholdDecisionPolicy
+        from resolvekit.core.engine.runner import PipelineRunner
+        from resolvekit.core.explain import NullTraceSink
+
+        return PipelineRunner(
+            trace_sink=NullTraceSink(),
+            store=store,
+            decision_policy=ThresholdDecisionPolicy(
+                confidence_threshold=0.8, min_gap=0.1, gap_inclusive=True
+            ),
+        )
+
+    def test_cache_stays_bounded_after_many_distinct_keys(self):
+        from resolvekit.core.engine.runner import _SUGGEST_NAMES_CACHE_MAX
+        from resolvekit.core.model import EntityRecord
+        from resolvekit.core.store import EntityStore
+
+        calls: list[frozenset[str] | None] = []
+
+        class TrackingStore(EntityStore):
+            def get_entity(self, entity_id: str) -> EntityRecord | None:
+                return None
+
+            def lookup_code(self, system: str, value_norm: str) -> list[str]:
+                return []
+
+            def lookup_name_exact(self, value_norm: str, name_kinds=None) -> list[str]:
+                return []
+
+            def search_fulltext(self, query_norm: str, fields=None, limit: int = 10):
+                return []
+
+            def bulk_get_entities(self, entity_ids: list[str]):
+                return {}
+
+            def search_prefix(self, query_norm, field, limit=10):
+                return []
+
+            def search_token_infix(
+                self, query_norm, *, entity_type_prefixes=None, limit=10
+            ):
+                return []
+
+            def iter_suggest_names(
+                self, *, entity_type_prefixes=None, entity_type_exclude_prefixes=None
+            ):
+                calls.append(entity_type_prefixes)
+                # Return two dummy rows so the list isn't empty.
+                yield ("usa", "country/US", "name", True, "USA")
+                yield ("france", "country/FR", "name", True, "France")
+
+        store = TrackingStore()
+        runner = self._make_runner(store)
+
+        # Issue 12 distinct filter keys (> _SUGGEST_NAMES_CACHE_MAX = 8).
+        for i in range(12):
+            key = frozenset({f"type_{i}"})
+            runner.suggest_prefix(
+                query_norm="usa", top_k=5, fuzzy="always", entity_type_prefixes=key
+            )
+
+        assert len(runner._suggest_names_cache) <= _SUGGEST_NAMES_CACHE_MAX
+
+    def test_cache_hit_returns_correct_results(self):
+        """A key retrieved on second call returns the same list without re-fetching."""
+        from resolvekit.core.model import EntityRecord
+        from resolvekit.core.store import EntityStore
+
+        call_count = 0
+
+        class CountingStore(EntityStore):
+            def get_entity(self, entity_id: str) -> EntityRecord | None:
+                return None
+
+            def lookup_code(self, system: str, value_norm: str) -> list[str]:
+                return []
+
+            def lookup_name_exact(self, value_norm: str, name_kinds=None) -> list[str]:
+                return []
+
+            def search_fulltext(self, query_norm: str, fields=None, limit: int = 10):
+                return []
+
+            def bulk_get_entities(self, entity_ids: list[str]):
+                return {}
+
+            def search_prefix(self, query_norm, field, limit=10):
+                return []
+
+            def search_token_infix(
+                self, query_norm, *, entity_type_prefixes=None, limit=10
+            ):
+                return []
+
+            def iter_suggest_names(
+                self, *, entity_type_prefixes=None, entity_type_exclude_prefixes=None
+            ):
+                nonlocal call_count
+                call_count += 1
+                yield ("test", "entity/TEST", "name", True, "Test")
+
+        store = CountingStore()
+        runner = self._make_runner(store)
+        key = frozenset({"geo.country"})
+
+        runner.suggest_prefix(
+            query_norm="te", top_k=5, fuzzy="always", entity_type_prefixes=key
+        )
+        runner.suggest_prefix(
+            query_norm="te", top_k=5, fuzzy="always", entity_type_prefixes=key
+        )
+
+        assert call_count == 1, (
+            "iter_suggest_names called more than once for the same key"
+        )
+
+
 class TestApplyConfidenceThreshold:
     """Tests for PipelineRunner.apply_confidence_threshold."""
 

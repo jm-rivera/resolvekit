@@ -299,7 +299,7 @@ def add_evidence_to_candidates(
         if candidate is None:
             continue
 
-        candidate.sources = [*candidate.sources, ev]
+        candidate.sources.append(ev)
         merged_signals = {**candidate.retrieval.signals, **ev.signals}
 
         # Check if new evidence has better score
@@ -384,7 +384,7 @@ def should_stop_generation(
     Returns:
         True if pipeline should stop generating candidates.
     """
-    if not config:
+    if not config or not config.stop_conditions:
         return False
 
     candidate_count = len(evidence_by_entity)

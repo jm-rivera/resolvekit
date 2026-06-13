@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 import time
 import traceback
-from collections import defaultdict
+from collections import OrderedDict, defaultdict
 from collections.abc import Callable
 from datetime import date
 from typing import TYPE_CHECKING, Literal
@@ -45,6 +45,11 @@ from resolvekit.core.store import EntityStore
 from resolvekit.core.store.store_view import StoreView
 
 logger = logging.getLogger(__name__)
+
+# Maximum number of distinct entity_type_prefixes filter keys retained in the
+# per-runner suggest-names LRU cache.  Each slot can hold ~1-7 MB of name
+# tuples; 8 slots is well under typical process RSS budgets.
+_SUGGEST_NAMES_CACHE_MAX = 8
 
 
 class PipelineRunner:
@@ -114,11 +119,12 @@ class PipelineRunner:
             country_relation_prefixes=country_relation_prefixes,
         )
         self._view = StoreView([(pack_id, store)] if store is not None else [])
-        # Lazy cache for suggest_prefix: maps entity_type_prefixes key → name list.
-        # Built on first suggest call; never warmed in __init__ (cold-start is measured).
-        self._suggest_names_cache: dict[
+        # Bounded LRU cache for suggest names: maps entity_type_prefixes key →
+        # name list. Capped at _SUGGEST_NAMES_CACHE_MAX entries; oldest entry
+        # evicted when full. Each entry holds up to ~25k tuples (~1-7 MB).
+        self._suggest_names_cache: OrderedDict[
             frozenset[str] | None, list[tuple[str, str, str, bool, str]]
-        ] = {}
+        ] = OrderedDict()
 
     def warm(self) -> None:
         """Eagerly build all lazily-constructed source indexes.
@@ -486,7 +492,7 @@ class PipelineRunner:
                             # store's entity_type_exclude_prefixes parameter
                             # so the size check reflects only fuzzy-eligible
                             # name rows.
-                            self._suggest_names_cache[names_key] = list(
+                            _names = list(
                                 store.iter_suggest_names(
                                     entity_type_exclude_prefixes=FUZZY_DENYLIST_PREFIXES
                                 )
@@ -495,20 +501,30 @@ class PipelineRunner:
                             # Store doesn't support the exclude param — fall
                             # back to unfiltered.  This means auto-fuzzy will
                             # be suppressed on packs with > 20k total names.
-                            self._suggest_names_cache[names_key] = list(
+                            _names = list(
                                 store.iter_suggest_names(entity_type_prefixes=None)
                             )
+                        self._suggest_names_cache[names_key] = _names
+                        if len(self._suggest_names_cache) > _SUGGEST_NAMES_CACHE_MAX:
+                            self._suggest_names_cache.popitem(last=False)
+                    else:
+                        self._suggest_names_cache.move_to_end(names_key)
                 else:
                     names_key = entity_type_prefixes
                     if names_key not in self._suggest_names_cache:
                         try:
-                            self._suggest_names_cache[names_key] = list(
+                            _names = list(
                                 store.iter_suggest_names(
                                     entity_type_prefixes=entity_type_prefixes
                                 )
                             )
                         except NotImplementedError:
-                            self._suggest_names_cache[names_key] = []
+                            _names = []
+                        self._suggest_names_cache[names_key] = _names
+                        if len(self._suggest_names_cache) > _SUGGEST_NAMES_CACHE_MAX:
+                            self._suggest_names_cache.popitem(last=False)
+                    else:
+                        self._suggest_names_cache.move_to_end(names_key)
                 names_list = self._suggest_names_cache[names_key]
 
                 run_fuzzy = fuzzy == "always" or (

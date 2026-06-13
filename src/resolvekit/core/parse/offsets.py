@@ -69,6 +69,9 @@ from resolvekit.core.util.normalization import (
 _WHITESPACE: re.Pattern[str] = re.compile(r"\s+")
 _PUNCTUATION: re.Pattern[str] = re.compile(r"[^\w\s\-']")
 _DIGITS: re.Pattern[str] = re.compile(r"\d")
+_HTML_ENTITY_RE: re.Pattern[str] = re.compile(
+    r"&(?:[a-zA-Z][a-zA-Z0-9]*|#[0-9]+|#x[0-9a-fA-F]+);"
+)
 
 
 def _assert_supported_profile(profile: NormalizationProfile) -> None:
@@ -162,12 +165,11 @@ def _apply_html_unescape(text: str, starts: list[int], ends: list[int]) -> _Stat
     Each entity (``&amp;``, ``&#39;``, etc.) decodes to one or more chars that
     all carry the raw span of the whole entity token.
     """
-    _entity_re = re.compile(r"&(?:[a-zA-Z][a-zA-Z0-9]*|#[0-9]+|#x[0-9a-fA-F]+);")
 
     def _decode(m: re.Match[str]) -> str:
         return html.unescape(m.group(0))
 
-    return _apply_regex_sub(text, starts, ends, _entity_re, _decode)
+    return _apply_regex_sub(text, starts, ends, _HTML_ENTITY_RE, _decode)
 
 
 def _apply_markdown_strip(text: str, starts: list[int], ends: list[int]) -> _State:

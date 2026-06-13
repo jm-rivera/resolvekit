@@ -403,7 +403,9 @@ class SQLiteEntityStore(EntityStore):
                 return None
 
             name_rows = conn.execute(
-                "SELECT * FROM names WHERE entity_id = ?", (entity_id,)
+                "SELECT value, value_norm, name_kind, lang, is_preferred"
+                " FROM names WHERE entity_id = ?",
+                (entity_id,),
             ).fetchall()
 
             names = [
@@ -451,10 +453,9 @@ class SQLiteEntityStore(EntityStore):
                 for r in relation_rows
             ]
 
-            # Parse attrs_json if present
+            # Parse attrs_json if present (column absent in older stores).
             attrs: dict[str, Any] = {}
-            row_dict = dict(row)
-            if attrs_json := row_dict.get("attrs_json"):
+            if "attrs_json" in row.keys() and (attrs_json := row["attrs_json"]):  # noqa: SIM118 — sqlite3.Row iterates values, not keys
                 with contextlib.suppress(json.JSONDecodeError):
                     attrs = json.loads(attrs_json)
 
@@ -604,7 +605,8 @@ class SQLiteEntityStore(EntityStore):
                 ).fetchall()
 
                 name_rows = conn.execute(
-                    f"SELECT * FROM names WHERE entity_id IN ({placeholders})",
+                    f"SELECT entity_id, value, value_norm, name_kind, lang,"
+                    f" is_preferred FROM names WHERE entity_id IN ({placeholders})",
                     chunk,
                 ).fetchall()
 
@@ -661,10 +663,9 @@ class SQLiteEntityStore(EntityStore):
                         for r in relations_by_entity.get(eid, [])
                     ]
 
-                    # Parse attrs_json if present
+                    # Parse attrs_json if present (column absent in older stores).
                     attrs: dict[str, Any] = {}
-                    row_dict = dict(row)
-                    if attrs_json := row_dict.get("attrs_json"):
+                    if "attrs_json" in row.keys() and (attrs_json := row["attrs_json"]):  # noqa: SIM118 — sqlite3.Row iterates values, not keys
                         with contextlib.suppress(json.JSONDecodeError):
                             attrs = json.loads(attrs_json)
 
