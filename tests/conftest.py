@@ -1,5 +1,6 @@
 """Shared test fixtures for tests."""
 
+import importlib.util
 import json
 import sqlite3
 from datetime import date
@@ -8,6 +9,27 @@ from pathlib import Path
 import pytest
 
 from resolvekit.core.datapack import NORMALIZER_VERSION
+
+# Test paths that require the `calibration` extra (gecko-syndata). gecko-syndata
+# pins lxml<6, which has no Python 3.14 wheel, so these are skipped whenever
+# gecko is not importable: the CI 3.14 ceiling leg, and any local env without
+# the calibration extra. On the 3.12 / macOS / Windows legs (all extras
+# installed) gecko is present and nothing here is skipped.
+if importlib.util.find_spec("gecko") is None:
+    collect_ignore = [
+        "builder",
+        "building",
+        "benchmarks",
+        "calibration",
+        "calibrate",
+        "parse/test_baselines.py",
+        "parse/test_parse_eval_adapter.py",
+        "parse/test_parse_eval_dataset.py",
+        "parse/test_span_metrics.py",
+        "release/test_verify_bundled_data_freshness.py",
+        "test_benchmark_autocomplete.py",
+        "test_benchmark_resolver.py",
+    ]
 from resolvekit.core.explain import MemoryTraceSink, NullTraceSink
 from resolvekit.core.model import (
     EntityRecord,

@@ -57,12 +57,13 @@ jobs:
         if: matrix.python-version != '3.14'
         run: uv sync --all-groups --all-extras
 
-      # The `baselines` extra (spacy) has no 3.14 wheel yet, so install every
-      # other extra explicitly on the ceiling leg. baselines-dependent tests
-      # skip gracefully when spacy is absent.
-      - name: Install dependencies (3.14, without baselines extra)
+      # On the 3.14 ceiling leg, skip extras whose deps lack 3.14 wheels:
+      # `baselines` (spacy) and `calibration` (gecko-syndata pins lxml<6, which
+      # has no 3.14 wheel). The 3.14 leg is a runtime smoke — gecko-dependent
+      # suites (calibration, benchmarks, build tooling) run on the 3.12 leg.
+      - name: Install dependencies (3.14, runtime extras only)
         if: matrix.python-version == '3.14'
-        run: uv sync --all-groups --extra calibration --extra data --extra pandas --extra polars --extra parsing
+        run: uv sync --all-groups --extra data --extra pandas --extra polars --extra parsing
 
       - name: Run Ruff
         if: matrix.os == 'ubuntu-latest'
@@ -82,11 +83,18 @@ jobs:
       # only platform that exercises tests/building + tests/benchmarks. Those
       # cover the data build/release tooling, which only ever runs on Linux —
       # the runtime tests that read the built artifacts run on every OS below.
-      - name: Run pytest with coverage (Linux, full suite)
-        if: matrix.os == 'ubuntu-latest'
+      - name: Run pytest with coverage (Linux 3.12, full suite)
+        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
         run: >
           uv run pytest -n auto --benchmark-disable
           --cov=src/resolvekit --cov-report=xml --cov-report=term --cov-branch
+
+      # 3.14 ceiling leg: runtime suite. gecko-dependent suites (build tooling,
+      # calibration, benchmarks) are auto-skipped by tests/conftest.py — their
+      # gecko-syndata dep pins lxml<6, which has no 3.14 wheel (see install step).
+      - name: Run pytest (Linux 3.14, runtime suite)
+        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.14'
+        run: uv run pytest -n auto --benchmark-disable
 
       # macOS/Windows run the runtime suite only — build-tooling integration
       # tests (tests/building, tests/benchmarks) are Linux-only by design.
@@ -97,7 +105,7 @@ jobs:
           --ignore=tests/building --ignore=tests/benchmarks
 
       - name: Upload coverage reports
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
         uses: codecov/codecov-action@v5
         with:
           file: ./coverage.xml
@@ -107,25 +115,29 @@ jobs:
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
+      # Eval gates run on the 3.12 leg: the parse eval entry point pulls
+      # gecko-syndata (absent on 3.14, see install step above).
       - name: Run parse eval
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
         env:
           PYTHONUNBUFFERED: "1"
         run: uv run python -m benchmarks.parse
 
       - name: Check parse eval gate
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
         env:
           PYTHONUNBUFFERED: "1"
         run: uv run python -m scripts.benchmark.check_parse_eval_gate
 
       - name: Check suggest eval gate
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
         env:
           PYTHONUNBUFFERED: "1"
         run: uv run python -m scripts.benchmark.check_autocomplete_eval_gate
 
+      # Skipped on 3.14: the verifier imports a path that pulls gecko-syndata.
       - name: Verify bundled data
+        if: matrix.python-version != '3.14'
         run: uv run python -m scripts.release.verify_bundled_data
 
   wheel-smoke:

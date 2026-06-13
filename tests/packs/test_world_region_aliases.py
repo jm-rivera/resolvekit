@@ -14,9 +14,17 @@ precise target.  Those cases are pinned to their m49/ IDs below.
 
 from __future__ import annotations
 
+import importlib.util
 from pathlib import Path
 
 import pytest
+
+# resolvekit.builder pulls gecko-syndata (calibration extra), whose lxml<6 pin
+# has no Python 3.14 wheel; skip the builder-contribution tests when it's absent.
+_requires_gecko = pytest.mark.skipif(
+    importlib.util.find_spec("gecko") is None,
+    reason="requires the calibration extra (gecko-syndata)",
+)
 
 REGIONS_PACK_PATH = (
     Path(__file__).parent.parent.parent
@@ -88,6 +96,7 @@ def test_world_region_resolves_to_expected_entity(
 # ---------------------------------------------------------------------------
 
 
+@_requires_gecko
 def test_build_region_aliases_contribution_produces_expected_names(
     tmp_path: Path,
 ) -> None:
@@ -142,6 +151,7 @@ def test_build_region_aliases_contribution_produces_expected_names(
     assert "undata-geo/G00158000" not in alias_map
 
 
+@_requires_gecko
 def test_build_region_aliases_contribution_skips_absent_entities(
     tmp_path: Path,
 ) -> None:
@@ -175,6 +185,7 @@ def test_build_region_aliases_contribution_skips_absent_entities(
     assert "MENA" in values
 
 
+@_requires_gecko
 def test_build_region_aliases_contribution_idempotent(tmp_path: Path) -> None:
     """Calling the enricher twice yields the same rows (INSERT OR IGNORE safe)."""
     import sqlite3
