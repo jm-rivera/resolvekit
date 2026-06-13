@@ -216,6 +216,15 @@ class GeoSymSpellSource(SymSpellSource):
             )
         return records
 
+    @override
+    def warm(self) -> None:
+        # The LARGE tier (admin2-5 / cities) is built lazily on first use; eagerly
+        # warming it loads ~800 MB for workloads that never issue a LARGE-tier
+        # query. SMALL tier is cheap and warms normally.
+        if self._large_tier:
+            return
+        super().warm()
+
     def generate(self, ctx: GenerationContext) -> list[CandidateEvidence]:
         """Skip typo correction for obvious code-like inputs and degenerate
         short/noise inputs (single letters, ``#N/A``).

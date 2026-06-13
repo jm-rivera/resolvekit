@@ -1,5 +1,7 @@
 """Fuzzy retrieval source for geo entities."""
 
+from typing import override
+
 from resolvekit.core.model import CandidateEvidence, GenerationContext, MatchTier
 from resolvekit.packs.geo.sources._short_input import short_input_blocked
 from resolvekit.packs.geo.sources.symspell import _is_small_only_entity_types
@@ -38,6 +40,15 @@ class GeoFuzzyRetrievalSource(FuzzyRetrievalSource):
             name_kinds={"canonical", "alias", "endonym", "exonym"},
         )
         self._large_tier = large_tier
+
+    @override
+    def warm(self) -> None:
+        # The LARGE tier (admin2-5 / cities) is built lazily on first use; eagerly
+        # warming it loads ~800 MB for workloads that never issue a LARGE-tier
+        # query. SMALL tier is cheap and warms normally.
+        if self._large_tier:
+            return
+        super().warm()
 
     def generate(self, ctx: GenerationContext) -> list[CandidateEvidence]:
         """Skip retrieval for degenerate inputs that should never match a geo
