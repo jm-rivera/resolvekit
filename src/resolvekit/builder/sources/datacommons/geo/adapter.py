@@ -87,9 +87,10 @@ class DataCommonsGeoSourceAdapter(DataCommonsSourceAdapter):
         *,
         discovery_parent_batch_size: int = DISCOVERY_PARENT_BATCH_SIZE,
         wikidata_cache_dir: Path | None = None,
+        dc_cache_dir: Path | None = None,
         **kwargs: Any,
     ):
-        super().__init__(GEO_ADAPTER_CONFIG, **kwargs)
+        super().__init__(GEO_ADAPTER_CONFIG, cache_dir=dc_cache_dir, **kwargs)
         self._discovery_parent_batch_size = discovery_parent_batch_size
         self._wikidata_cache_dir = wikidata_cache_dir
 

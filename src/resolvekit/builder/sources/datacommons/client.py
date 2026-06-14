@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
+import logging
 import os
 import time
 from collections.abc import Callable, Iterable
@@ -9,6 +12,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import UTC, datetime
 from email.utils import parsedate_to_datetime
 from importlib import import_module
+from pathlib import Path
 from threading import BoundedSemaphore
 from typing import Any, TypeVar
 
@@ -25,14 +29,31 @@ from resolvekit.builder.utils import chunk_list
 
 T = TypeVar("T")
 
-# HTTP 429 (rate-limit) handling for requests through the concurrency limiter.
-# The public Data Commons instances are fronted by a WAF that throttles bursty
-# clients; on 429 we wait the server's Retry-After (when present) or an
-# exponential backoff, rather than failing the chunk after a few fast retries.
+logger = logging.getLogger(__name__)
+
+# Transient-failure handling for requests through the concurrency limiter. The
+# public Data Commons instances are fronted by a WAF that throttles bursty
+# clients (429) and a mixer backend that intermittently returns 5xx ("remote
+# mixer response not ok: 503"); on either we wait the server's Retry-After (when
+# present) or an exponential backoff and retry, rather than failing the chunk —
+# and a whole build stage — after a few fast attempts.
 _RATE_LIMIT_STATUS = 429
 _RATE_LIMIT_MAX_RETRIES = 6
-_RATE_LIMIT_BASE_DELAY_SEC = 2.0
-_RATE_LIMIT_MAX_DELAY_SEC = 120.0
+# Backoff tuned for intermittent, fast-recovering failures (the DC mixer's
+# momentary 5xx clears within a second or two): start low and cap modestly so a
+# transient blip costs ~1-2s, not a multi-minute sleep, while still riding out a
+# brief throttle across several attempts (1, 2, 4, 8, 16, 16s).
+_RATE_LIMIT_BASE_DELAY_SEC = 1.0
+_RATE_LIMIT_MAX_DELAY_SEC = 20.0
+
+# Substrings that mark a transient server-side failure when no status_code is
+# exposed on the exception (the DC client wraps the mixer status in its message).
+_TRANSIENT_SERVER_MARKERS = (
+    "Service Unavailable",
+    "remote mixer response not ok",
+    "Bad Gateway",
+    "Gateway Timeout",
+)
 
 
 def _is_rate_limited(exc: BaseException) -> bool:
@@ -44,6 +65,27 @@ def _is_rate_limited(exc: BaseException) -> bool:
         if status == _RATE_LIMIT_STATUS:
             return True
     return f"Status Code: {_RATE_LIMIT_STATUS}" in str(exc)
+
+
+def _is_transient_server_error(exc: BaseException) -> bool:
+    """Return True for a transient 5xx server error worth retrying.
+
+    Covers both the structured form (a ``status_code`` / ``response.status_code``
+    in the 5xx range) and the DC client's wrapped form, where the API status is
+    500 but the body reports ``remote mixer response not ok: 503``. A 4xx client
+    error (e.g. a malformed or oversized request) is NOT transient and propagates
+    immediately so the place-children splitter can halve the chunk.
+    """
+    for status in (
+        getattr(exc, "status_code", None),
+        getattr(getattr(exc, "response", None), "status_code", None),
+    ):
+        if isinstance(status, int) and 500 <= status <= 599:
+            return True
+    msg = str(exc)
+    if "Status Code: 5" in msg:
+        return True
+    return any(marker in msg for marker in _TRANSIENT_SERVER_MARKERS)
 
 
 def _retry_after_seconds(exc: BaseException) -> float | None:
@@ -91,12 +133,57 @@ class DataCommons:
         api_key: str | None = None,
         default_chunk_size: int = DEFAULT_CHUNK_SIZE,
         max_concurrent_requests: int = DEFAULT_MAX_CONCURRENT_REQUESTS,
+        cache_dir: Path | None = None,
     ) -> None:
         self._dc_instance = dc_instance
         self._api_key = api_key
         self._default_chunk_size = default_chunk_size
         self._request_limiter = BoundedSemaphore(value=max_concurrent_requests)
         self._client: Any | None = None
+        self._cache_dir = cache_dir
+
+    def _place_cache_name(self, kind: str, place_type: str, parents: list[str]) -> str:
+        """Build the cache filename for one place-graph request.
+
+        Keyed on the instance, request kind, child place type, and the sorted
+        parent set, so the same request maps to the same file regardless of
+        parent ordering and never collides across instances.
+        """
+        payload = "|".join(
+            [self._dc_instance.strip(), kind, place_type, *sorted(parents)]
+        )
+        digest = hashlib.sha256(payload.encode()).hexdigest()[:16]
+        return f"dc_{kind}_{digest}.json"
+
+    def _cache_read(self, name: str) -> Any | None:
+        """Return a cached payload, or None on a miss or unreadable file.
+
+        A genuine empty result (``[]`` / ``{}``) is a hit (not None); only a
+        missing or corrupt/partially-written file reads as a miss and re-fetches.
+        """
+        if self._cache_dir is None:
+            return None
+        path = self._cache_dir / name
+        if not path.exists():
+            return None
+        try:
+            return json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            return None
+
+    def _cache_write(self, name: str, value: Any) -> None:
+        """Persist a payload atomically (write-temp + rename) under the cache dir.
+
+        Distinct requests hash to distinct names, so concurrent discovery
+        workers never contend on the same file; the temp+rename keeps a reader
+        from ever seeing a half-written file.
+        """
+        if self._cache_dir is None:
+            return
+        self._cache_dir.mkdir(parents=True, exist_ok=True)
+        tmp = self._cache_dir / f"{name}.tmp"
+        tmp.write_text(json.dumps(value, ensure_ascii=True), encoding="utf-8")
+        tmp.replace(self._cache_dir / name)
 
     def with_retries(
         self,
@@ -136,13 +223,13 @@ class DataCommons:
         *args: Any,
         **kwargs: Any,
     ) -> T:
-        """Run one request under the concurrency limiter, retrying on HTTP 429.
+        """Run one request under the concurrency limiter, retrying transient failures.
 
-        Non-429 errors propagate immediately (callers such as the place-children
-        splitter depend on that). Rate-limit responses back off outside the
-        limiter — honoring the server's Retry-After header when present — and
-        retry, so a throttling instance is waited out instead of failing the
-        chunk after a handful of fast attempts.
+        Retries HTTP 429 (rate limit) and transient 5xx server errors (including
+        the wrapped "remote mixer response not ok: 503" form) with backoff —
+        honoring the server's Retry-After header when present. Other errors (4xx
+        client errors, an oversized-request failure) propagate immediately, which
+        callers such as the place-children splitter depend on to halve the chunk.
         """
         delay = _RATE_LIMIT_BASE_DELAY_SEC
         for attempt in range(_RATE_LIMIT_MAX_RETRIES + 1):
@@ -150,7 +237,8 @@ class DataCommons:
                 with self._request_limiter:
                     return fn(*args, **kwargs)
             except Exception as exc:
-                if not _is_rate_limited(exc) or attempt >= _RATE_LIMIT_MAX_RETRIES:
+                transient = _is_rate_limited(exc) or _is_transient_server_error(exc)
+                if not transient or attempt >= _RATE_LIMIT_MAX_RETRIES:
                     raise
                 retry_after = _retry_after_seconds(exc)
             wait = retry_after if retry_after is not None else delay
@@ -308,17 +396,24 @@ class DataCommons:
 
     def fetch_place_children(self, *, place_type: str, parent_place: str) -> list[str]:
         """Fetch direct place children for one parent place and child type."""
+        cache_name = self._place_cache_name("children", place_type, [parent_place])
+        cached = self._cache_read(cache_name)
+        if cached is not None:
+            return cached
+
         dc = self.client_or_raise()
         rows = self._call_limited(
             dc.node.fetch_place_children,
             place_dcids=[parent_place],
             children_type=place_type,
         ).get(parent_place, [])
-        return [
+        children = [
             str(row[NODE_DCID_ATTR])
             for row in rows
             if isinstance(row, dict) and NODE_DCID_ATTR in row
         ]
+        self._cache_write(cache_name, children)
+        return children
 
     def fetch_place_children_for_parents(
         self,
@@ -341,7 +436,7 @@ class DataCommons:
 
         if worker_count == 1:
             for batch_index, chunk in enumerate(parent_chunks):
-                result = self._fetch_place_children_with_split(
+                result = self._fetch_chunk_cached(
                     place_type=place_type,
                     parent_chunk=chunk,
                 )
@@ -353,7 +448,7 @@ class DataCommons:
         with ThreadPoolExecutor(max_workers=worker_count) as executor:
             futures = {
                 executor.submit(
-                    self._fetch_place_children_with_split,
+                    self._fetch_chunk_cached,
                     place_type=place_type,
                     parent_chunk=chunk,
                 ): (batch_index, chunk)
@@ -366,6 +461,32 @@ class DataCommons:
                 if on_chunk_complete is not None:
                     on_chunk_complete(batch_index, chunk, result)
         return out
+
+    def _fetch_chunk_cached(
+        self,
+        *,
+        place_type: str,
+        parent_chunk: list[str],
+    ) -> dict[str, list[str]]:
+        """Fetch (or load from cache) the children of one parent chunk.
+
+        The chunk is the resumption unit: a chunk that fully succeeds is cached,
+        so a re-run after a transient failure mid-walk replays the completed
+        chunks from disk and re-fetches only the ones that never finished. The
+        oversized-split recursion stays inside ``_fetch_place_children_with_split``
+        and is not separately cached — only the merged chunk result is.
+        """
+        cache_name = self._place_cache_name("children_chunk", place_type, parent_chunk)
+        cached = self._cache_read(cache_name)
+        if cached is not None:
+            return cached
+
+        result = self._fetch_place_children_with_split(
+            place_type=place_type,
+            parent_chunk=parent_chunk,
+        )
+        self._cache_write(cache_name, result)
+        return result
 
     def _fetch_place_children_with_split(
         self,
@@ -436,11 +557,18 @@ class DataCommons:
         dc = self.client_or_raise()
         out: dict[str, list[str]] = {}
         for chunk in self.chunks(entity_ids):
+            cache_name = self._place_cache_name("parents", "", chunk)
+            cached = self._cache_read(cache_name)
+            if cached is not None:
+                out.update(cached)
+                continue
+
             rows = self._call_limited(
                 dc.node.fetch_place_parents,
                 chunk,
                 as_dict=True,
             )
+            chunk_out: dict[str, list[str]] = {}
             for entity_id, parent_rows in rows.items():
                 parents = [
                     str(parent[NODE_DCID_ATTR])
@@ -448,5 +576,7 @@ class DataCommons:
                     if isinstance(parent, dict) and NODE_DCID_ATTR in parent
                 ]
                 if parents:
-                    out[str(entity_id)] = parents
+                    chunk_out[str(entity_id)] = parents
+            self._cache_write(cache_name, chunk_out)
+            out.update(chunk_out)
         return out

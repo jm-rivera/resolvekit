@@ -889,7 +889,7 @@ groups:
   - id: groups/Eurozone
     type: geo.organization
     canonical_name: Eurozone
-    aliases: [Eurozone, "Euro Area", "Euro Zone"]
+    aliases: [Eurozone, "Euro Area", "Euro Zone", "Euro Area (EA)"]
     valid_from: "1999-01-01"
     snapshot: false
     sources:
@@ -1578,3 +1578,57 @@ groups:
       - {iso3: VCT}
       - {iso3: VUT}
       - {iso3: WSM}
+
+  # ── DC-entity alias reuse ─────────────────────────────────────────────────
+  # These entries add alias rows onto entities that already exist in the DC-
+  # sourced geo stores. The entity INSERT is ignored (INSERT OR IGNORE); only
+  # the alias rows are new. canonical_name is set to the entity's real canonical
+  # name (cosmetic — the INSERT is ignored, so this does not overwrite the DB).
+
+  # Alias-only reuse of the DC-sourced DAC/DacMembers entity.
+  # DAC/DacMembers = full DAC membership including EU Institutions (EUI).
+  # DAC/DacCountries = bilateral DAC member countries only (no EUI).
+  # 'DAC countries' already resolves to DAC/DacCountries; the aggregate that
+  # includes EUI is the distinct DAC/DacMembers entity.
+  - id: DAC/DacMembers
+    type: geo.region
+    canonical_name: "Development Assistance Committee  Members"
+    aliases: ["Total DAC", "DAC Countries, Total"]
+
+  # Members derived from oecd_dac.yaml providers where type='Non-DAC member'
+  # (query_date: 2026-05-23). Update this list when oecd_dac.yaml is refreshed.
+  # NOTE: attributes.snapshot_year is not serialized by build_group_contribution
+  # (groups.py only writes the snapshot bool); included here for documentation
+  # parity with WB income groups.
+  - id: groups/OECD.NonDAC
+    type: geo.organization
+    canonical_name: OECD Non-DAC Countries
+    aliases: ["Non-DAC", "Non-DAC countries", "Non-DAC members", "Non-DAC providers"]
+    snapshot: true
+    sources:
+      - https://www.oecd.org/dac/financing-sustainable-development/development-finance-standards/daclist.htm
+    attributes:
+      snapshot_year: 2026
+    members:
+      - {iso3: ARE}
+      - {iso3: AZE}
+      - {iso3: BGR}
+      - {iso3: CYP}
+      - {iso3: DZA}
+      - {iso3: HRV}
+      - {iso3: IRQ}
+      - {iso3: ISR}
+      - {iso3: KAZ}
+      - {iso3: KWT}
+      - {iso3: LBY}
+      - {iso3: LIE}
+      - {iso3: MCO}
+      - {iso3: MEX}
+      - {iso3: MLT}
+      - {iso3: QAT}
+      - {iso3: RUS}
+      - {iso3: SAU}
+      - {iso3: THA}
+      - {iso3: TLS}
+      - {iso3: TUR}
+      - {iso3: TWN}

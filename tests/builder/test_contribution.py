@@ -221,6 +221,75 @@ def test_apply_contribution_removal_cascades(tmp_path: Path) -> None:
 
 
 @pytest.mark.unit
+def test_apply_contribution_names_to_delete_removes_only_named_alias(
+    tmp_path: Path,
+) -> None:
+    """names_to_delete drops the matching alias row, keeps the entity + other names."""
+    db = _make_db(tmp_path)
+    _seed_entity(db, "EuropeanUnion", "European Union")
+    conn = sqlite3.connect(db)
+    conn.execute(
+        "INSERT OR IGNORE INTO names VALUES "
+        "('EuropeanUnion','alias','EU Institutions','eu institutions','en','',0)"
+    )
+    conn.execute(
+        "INSERT OR IGNORE INTO names VALUES "
+        "('EuropeanUnion','canonical','European Union','european union','en','',1)"
+    )
+    conn.commit()
+    conn.close()
+
+    contrib = GraphContribution(
+        names_to_delete=[
+            {"entity_id": "EuropeanUnion", "value_norm": "eu institutions"}
+        ]
+    )
+    deltas = _run(db, contrib)
+
+    # The donor-label alias is gone …
+    assert (
+        _query_one(db, "SELECT 1 FROM names WHERE value_norm='eu institutions'") is None
+    )
+    # … the canonical name and the entity itself survive.
+    assert (
+        _query_one(db, "SELECT 1 FROM names WHERE value_norm='european union'")
+        is not None
+    )
+    assert (
+        _query_one(db, "SELECT 1 FROM entities WHERE entity_id='EuropeanUnion'")
+        is not None
+    )
+    assert deltas["names"] == -1
+
+
+@pytest.mark.unit
+def test_apply_contribution_names_to_delete_runs_after_inserts(tmp_path: Path) -> None:
+    """A delete wins over an insert of the same (entity_id, value_norm) in one apply."""
+    db = _make_db(tmp_path)
+    _seed_entity(db, "EuropeanUnion", "European Union")
+
+    contrib = GraphContribution(
+        names=[
+            {
+                "entity_id": "EuropeanUnion",
+                "name_kind": "alias",
+                "value": "EU Institutions",
+                "value_norm": "eu institutions",
+                "lang": "en",
+            }
+        ],
+        names_to_delete=[
+            {"entity_id": "EuropeanUnion", "value_norm": "eu institutions"}
+        ],
+    )
+    _run(db, contrib)
+
+    assert (
+        _query_one(db, "SELECT 1 FROM names WHERE value_norm='eu institutions'") is None
+    )
+
+
+@pytest.mark.unit
 def test_apply_contribution_entity_attrs_merges(tmp_path: Path) -> None:
     """entity_attrs rows merge into existing attrs_json without overwriting other keys."""
     db = _make_db(tmp_path)

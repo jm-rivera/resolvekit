@@ -45,6 +45,7 @@ def sparql_request(
     timeout: float = 30,
     max_retries: int = 3,
     initial_backoff: float = 2.0,
+    raise_on_failure: bool = False,
 ) -> list[dict]:
     """Execute one Wikidata SPARQL query; return result bindings (empty on failure).
 
@@ -55,6 +56,13 @@ def sparql_request(
     backoff. A retried-but-still-failed query logs once and returns ``[]``;
     callers that need to distinguish empty-result from transport-failure
     must layer that on top.
+
+    When ``raise_on_failure`` is True, a transport/HTTP error (a 4xx other than
+    429, or an exhausted retry budget on timeouts/5xx/429) re-raises instead of
+    returning ``[]`` — so a caller can tell a genuine empty result (HTTP 200,
+    zero rows → still ``[]``) apart from a failed request and avoid caching the
+    latter. Defaults to False to preserve the return-``[]``-on-failure contract
+    every other caller relies on.
     """
     body = urllib.parse.urlencode({"query": query, "format": "json"}).encode("utf-8")
     req = urllib.request.Request(
@@ -76,12 +84,17 @@ def sparql_request(
         except urllib.error.HTTPError as exc:
             last_exc = exc
             if exc.code < 500 and exc.code != 429:
+                if raise_on_failure:
+                    raise
                 logger.warning("Wikidata SPARQL query failed: %s", exc)
                 return []
         except Exception as exc:
             last_exc = exc
         if attempt < max_retries:
             time.sleep(initial_backoff * (2**attempt))
+    if raise_on_failure:
+        assert last_exc is not None
+        raise last_exc
     logger.warning(
         "Wikidata SPARQL query failed after %d retries: %s", max_retries, last_exc
     )
