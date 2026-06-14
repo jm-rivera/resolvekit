@@ -30,14 +30,14 @@
   "remote_artifacts": {
     "sqlite": {
       "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.06/geo-cities-entities.sqlite.gz",
-      "sha256": "06e3a01b92d5f7a90f3e926a0779f77ec4bca1517eb39a0f3353840ed466767a",
-      "gz_sha256": "c7aa08a48bf46b8b603e04a8f96f9afa7578dc6f7f149ff1171d3976c7f7790e",
+      "sha256": "909059ae8c86ecf7d1011a086061e3b81d61bf9c6c30b871db3a1390010c7ca2",
+      "gz_sha256": "d225669ea2ca59d97dfeffed89886ab95b6b9f031d1005c980fb89e36339c479",
       "size_mb": 152.21
     },
     "symspell": {
       "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.06/geo-cities-symspell.dict.gz",
       "sha256": "bdfbc85e011729e35268d5c799bbc7a5da5fca0b5fb591b069af6ace1975ca32",
-      "gz_sha256": "a5caf0b166d6b4f294608791ed81d16dbd38234b825034da695d77ba169b39a6",
+      "gz_sha256": "a155adfe7c62bef1de11f4a61908b4b9c42f35e9873c6479b1e9c0271be0c3a1",
       "size_mb": 2.67
     }
   },

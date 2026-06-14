@@ -30,13 +30,13 @@
     "sqlite": {
       "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.06/geo-admin5-entities.sqlite.gz",
       "sha256": "75b1448c6ed841095b2d86321a0b88afbf43e9787421816d3fc65dc149079b52",
-      "gz_sha256": "19f30e5f24d16bfda76b44be8393e9cbb2af31713c65fb82ea0d90ea53f59427",
+      "gz_sha256": "1165d027814b39cab87b40b4ce5a993c47f0a1ead1c8a0b3a53cea1f8fc1c404",
       "size_mb": 1.88
     },
     "symspell": {
       "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.06/geo-admin5-symspell.dict.gz",
       "sha256": "d0f6974c45a47132d72db73deb110eb9383f0a87a1c456fec206ba797817638e",
-      "gz_sha256": "a8a9342187300ecd825b73c522a01b172f9243e7205aa583a7b732244746b9f8",
+      "gz_sha256": "2ac6c08656de7cef88b1229c84405a15a02a2ead79cd590057a3d536c6da64fa",
       "size_mb": 0.04
     }
   },
