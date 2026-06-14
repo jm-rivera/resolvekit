@@ -8,9 +8,9 @@
       "entity_types": [
         "geo.country"
       ],
-      "size_mb": 2.61,
+      "size_mb": 2.63,
       "checksums": {
-        "sqlite": "b37f34de8e4f70ff907281424466a759a13505170fef910e25996b2eece479e8"
+        "sqlite": "09bafabd3f00182cf067884cb64d60c6761bd5400958967d204eae9385c10192"
       }
     },
     {
@@ -159,9 +159,9 @@
         "geo.region",
         "geo.subregion"
       ],
-      "size_mb": 1.09,
+      "size_mb": 1.08,
       "checksums": {
-        "sqlite": "a808bc226030d40046f783b4ee960e457ed7e722e676f0459bde1a40f18e14a0"
+        "sqlite": "16a109da6c7c772097e0b0d54ac8b06b98af642fe53e5143e049df77de3449b6"
       }
     },
     {
@@ -174,7 +174,7 @@
       ],
       "size_mb": 0.1,
       "checksums": {
-        "sqlite": "e637e063549065af7a6803f3ef1028126b4bcd2bde7432a4f1afebc2d2ed2a21"
+        "sqlite": "8bc1a7a67d2c118aeb0348e8aa3fb12f51c9ade8c62a45afe764b84f85624288"
       }
     },
     {
@@ -186,7 +186,7 @@
       ],
       "size_mb": 0.09,
       "checksums": {
-        "sqlite": "3e5efd12f749319d61cdd7554733bee76117176d46fd88ac2523fad938c5c3ec"
+        "sqlite": "862e19bb89e083d3a86505377015d769d4b61366c9616c55e4fa3df20d0845de"
       }
     },
     {

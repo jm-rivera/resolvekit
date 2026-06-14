@@ -217,16 +217,19 @@ class RecordSchema:
     ) -> RecordSchema:
         """Resolve a ``RecordSchema`` from user-supplied role arguments.
 
-        The column universe is derived from the first row of *rows* (or *columns*
-        if supplied).  Inference: any column whose name is in *known_systems* is
-        treated as a code when *codes* is omitted.  All other columns are dropped
-        unless ``attrs="rest"``.
+        The column universe is the UNION of keys across ALL rows of *rows* (or
+        *columns* if supplied).  A column absent from a particular row at runtime
+        produces no link/code for that row and routes it to ``on_miss``; it does
+        not invalidate the schema.  Inference: any column whose name is in
+        *known_systems* is treated as a code when *codes* is omitted.  All other
+        columns are dropped unless ``attrs="rest"``.
 
         The ``name`` column(s) are NEVER inferred as attrs, even with
         ``attrs="rest"``.
 
         Args:
-            rows: The already-read row list; used to detect available columns.
+            rows: The already-read row list; the union of all rows' keys defines
+                the available column set for schema inference.
             name: Required canonical name column or list of columns.
             id: Column whose values become entity_id seeds.  Auto-sequence when
                 ``None``.
@@ -252,10 +255,16 @@ class RecordSchema:
         if not name:
             raise ValueError("'name' is required and must name at least one column")
 
-        # Determine available columns
+        # Determine available columns — union across ALL rows so that ragged
+        # record sets (a column present only in later rows, or only in row 0)
+        # are recognised correctly.  Per-record extraction still uses
+        # row.get(col) and skips absent values via _is_empty, so a column
+        # absent from a particular row simply produces no link/code for that
+        # row (routed to on_miss by the build loop).
         avail: set[str] = set()
         if rows:
-            avail = set(rows[0].keys())
+            for row in rows:
+                avail |= row.keys()
         elif columns:
             avail = set(columns.values())
 

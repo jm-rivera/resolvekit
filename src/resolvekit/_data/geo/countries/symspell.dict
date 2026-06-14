@@ -14,7 +14,7 @@
 (country)	1
 (demokratische	1
 (drc)	1
-(dutch	5
+(dutch	7
 (estado	2
 (estados	1
 (eswatini)	1
@@ -63,6 +63,10 @@
 [drc]	1
 [fyrom]	1
 [republic]	1
+abchasien	1
+abjasia	1
+abkhazia	1
+abkhazie	1
 abode	2
 acuña	1
 administration	1
@@ -176,6 +180,8 @@ arménie	1
 armênia	1
 aru	1
 aruba	7
+aruba,	2
+aruba, kingdom of the netherlands	1
 arábia	1
 arábia saudita	1
 as-sudan	1
@@ -478,7 +484,7 @@ chequia	1
 chi	1
 chile	5
 chili	1
-china	34
+china	36
 china (people's republic of)	1
 china pr	1
 china,	7
@@ -577,9 +583,12 @@ congo [republic]	1
 congo belge	1
 congo democrático	1
 congo republic	1
-congo,	5
+congo,	11
 congo, dem. rep.	1
 congo, democratic republic of the	1
+congo, rep.	1
+congo, republic of	1
+congo, republic of the	1
 congo, the democratic republic of	1
 congo-brazzaville	3
 congo-kinshasa	2
@@ -628,6 +637,8 @@ curacao	1
 curacau	1
 curazao	1
 curaçao	3
+curaçao,	2
+curaçao, kingdom of the netherlands	1
 curaçoa	1
 curaσao	1
 curocao	1
@@ -638,6 +649,7 @@ cze	1
 czech	3
 czech republic	2
 czechia	1
+czechoslovakia	1
 côte	12
 côte d'ivoire	3
 côte d’ivoire	4
@@ -862,6 +874,7 @@ eustaquio	1
 eustatius	4
 faso	9
 fasso	1
+fed.	2
 federación	1
 federación de rusia	1
 federados	2
@@ -872,7 +885,7 @@ federal islamic republic of the comoros	1
 federal republic of germany	1
 federal republic of nigeria	1
 federal republic of somalia	1
-federated	6
+federated	7
 federated states of micronesia	2
 federated states of micronesia, fsm	1
 federation	10
@@ -1174,7 +1187,8 @@ iran (islamic republic of)	1
 iran (islamische republik)	1
 iran (république islamique d')	1
 iran (république islamique de)	1
-iran,	2
+iran,	4
+iran, islamic rep.	1
 iran, islamic republic of	1
 iraq	5
 iraque	1
@@ -1198,7 +1212,7 @@ isla de san martín	1
 isla juana	1
 isla niue	1
 isla trapobana	1
-islamic	13
+islamic	15
 islamic republic of afghanistan	1
 islamic republic of iran	1
 islamic republic of mauritania	1
@@ -1329,7 +1343,7 @@ kgz	1
 khmer	1
 khmer republic	1
 khmère	1
-kingdom	48
+kingdom	54
 kingdom of bahrain	1
 kingdom of belgium	1
 kingdom of bhutan	1
@@ -1378,12 +1392,13 @@ korea (demokratische volksrepublik, nordkorea)	1
 korea (republik korea, südkorea)	1
 korea (south)	1
 korea republic	1
-korea,	9
+korea,	11
 korea, dem. people's rep.	1
 korea, democratic people’s republic of	1
 korea, north	1
 korea, rep.	1
 korea, republic of	1
+korea, south	1
 kosova	1
 kosovo	7
 koweit	1
@@ -1500,7 +1515,7 @@ líbano	2
 líbia	1
 lúcia	1
 ma	1
-maarten	3
+maarten	5
 macao	14
 macao s.a.r	1
 macao sar	1
@@ -1623,7 +1638,8 @@ mianmar (birmânia)	1
 micronesia	6
 micronesia (estados federados de)	1
 micronesia (federated states of)	1
-micronesia,	2
+micronesia,	5
+micronesia, fed. sts.	1
 micronesia, federated states of	1
 micronésia	1
 micronésie	2
@@ -1736,7 +1752,7 @@ nercerri	1
 netherland	3
 netherland antilles	1
 netherland antillies	1
-netherlands	9
+netherlands	15
 netherlands (kingdom of the)	1
 netherlands antillean	1
 netherlands antilleans	1
@@ -1826,7 +1842,7 @@ occupied	1
 occupied palestinian territory	1
 oceania	3
 ocidental	1
-of	527
+of	541
 of)	6
 og	1
 olandesi	1
@@ -1892,6 +1908,7 @@ paraguai	1
 paraguay	6
 part	1
 part)	8
+part),	2
 patria	1
 pays-bas	2
 pays-bas (royaume des)	1
@@ -1996,7 +2013,7 @@ prinçipatu	1
 prinçipatu de mùnegu	1
 prk	1
 proper	1
-province	5
+province	7
 province of sahara	1
 provinces	1
 provincia	3
@@ -2043,12 +2060,13 @@ reino de españa	1
 reino de marruecos	1
 reino unido	2
 reino unido de gran bretaña e irlanda del norte	1
-rep.	8
+rep.	14
 repubblica	2
 repubblica centrafricana	1
 repubblica dominicana	1
-republic	405
+republic	410
 republic niger	1
+republic of abkhazia	1
 republic of albania	1
 republic of angola	1
 republic of argentina	1
@@ -2487,9 +2505,10 @@ singapore city	1
 singapour	1
 singapur	2
 singapura	1
-sint	7
+sint	9
 sint maarten	1
 sint maarten (dutch part)	1
+sint maarten (dutch part), kingdom of the netherlands	1
 sint martin	1
 siria	2
 sle	1
@@ -2532,7 +2551,7 @@ sonderverwaltungszone	1
 sonderverwaltungszone macau	1
 soudan	1
 soudan du sud	1
-south	12
+south	14
 south africa	2
 south korea	2
 south sudan	2
@@ -2633,7 +2652,7 @@ state of palestine	1
 state of qatar	1
 state of vatican city	1
 state)	1
-states	21
+states	22
 stati	1
 stati uniti	1
 stato	1
@@ -2645,6 +2664,7 @@ stralia	1
 straya	1
 stria	1
 strip	1
+sts.	2
 sud	5
 sud sudan	1
 sudafrica	1
@@ -2738,7 +2758,8 @@ tailandia	1
 tailândia	1
 taipei	2
 taipei chinois	1
-taiwan	5
+taiwan	6
+taiwan province of china	1
 taiwan r.o.c.	1
 taiwan roc	1
 taiwan,	4
@@ -2793,9 +2814,10 @@ thai	2
 thailand	3
 thailandia	1
 thaïlande	1
-the	368
+the	388
 the arab republic of egypt	1
 the argentine republic	1
+the aruba, kingdom of the netherlands	1
 the bahamas	1
 the bolivarian republic of venezuela	1
 the bolivia, plurinational state of	1
@@ -2818,9 +2840,13 @@ the congo (brazzaville)	1
 the congo (kinshasa)	1
 the congo, dem. rep.	1
 the congo, democratic republic of the	1
+the congo, rep.	1
+the congo, republic of	1
+the congo, republic of the	1
 the congo-brazzaville	1
 the congo-kinshasa	1
 the curaçao	1
+the curaçao, kingdom of the netherlands	1
 the czech republic	1
 the democratic cambodia	1
 the democratic kampuchea	1
@@ -2866,6 +2892,7 @@ the hong kong special administrative region of china	1
 the hungary	1
 the independent state of papua new guinea	1
 the independent state of samoa	1
+the iran, islamic rep.	1
 the iran, islamic republic of	1
 the islamic republic of afghanistan	1
 the islamic republic of iran	1
@@ -2895,6 +2922,7 @@ the kingdom of tonga	1
 the korea, dem. people's rep.	1
 the korea, north	1
 the korea, rep.	1
+the korea, south	1
 the kyrgyz republic	1
 the land of a thousand hills	1
 the lao pdr	1
@@ -2904,6 +2932,8 @@ the libya	1
 the macao special administrative region of china	1
 the macedonia	1
 the mexican republic	1
+the micronesia, fed. sts.	1
+the micronesia, federated states of	1
 the montenegro	1
 the most serene republic of san marino	1
 the mountain kingdom	1
@@ -3056,6 +3086,7 @@ the russian federation	1
 the rwandese republic	1
 the saint christopher and nevis	1
 the sint maarten (dutch part)	1
+the sint maarten (dutch part), kingdom of the netherlands	1
 the slovak republic	1
 the socialist republic of viet nam	1
 the somali republic	1
@@ -3077,6 +3108,7 @@ the states	1
 the sudan	1
 the sultanate of oman	1
 the swiss confederation	1
+the taiwan province of china	1
 the taiwan, province of china	1
 the taiwan, republic of china	1
 the togolese republic	1
@@ -3103,6 +3135,7 @@ the vatican	1
 the vatican city state	1
 the venezuela, rb	1
 the virgin islands of the united states	1
+the yemen, rep.	1
 the yemen, republic of	1
 the zaire	1
 the)	1
@@ -3362,7 +3395,8 @@ ya	1
 yarden	1
 ye	1
 yemen	4
-yemen,	2
+yemen,	4
+yemen, rep.	1
 yemen, republic of	1
 yibuti	1
 yisrael	1

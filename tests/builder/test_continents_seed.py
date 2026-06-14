@@ -20,22 +20,31 @@ from resolvekit.builder.sources.seed.continents import CONTINENTS, ENTITY_TYPE
 # ---------------------------------------------------------------------------
 
 
-def test_eight_continent_entries() -> None:
-    """Seed must contain exactly 8 entries (7 geographic + Americas/Q828)."""
-    assert len(CONTINENTS) == 8
+def test_nine_continent_entries() -> None:
+    """Seed must contain exactly 9 entries (7 geographic + Americas/Q828 + World/m49/001)."""
+    assert len(CONTINENTS) == 9
 
 
 def test_continent_entity_ids_format() -> None:
-    """All entity IDs must follow the wikidataId/<QID> pattern."""
+    """Most entity IDs follow wikidataId/<QID>; World uses m49/001 (exception)."""
+    m49_exceptions = {"m49/001"}
     for entry in CONTINENTS:
+        if entry.entity_id in m49_exceptions:
+            continue
         assert entry.entity_id.startswith("wikidataId/Q"), (
             f"{entry.entity_id!r} does not start with 'wikidataId/Q'"
         )
 
 
 def test_wikidata_qids_match_entity_ids() -> None:
-    """The bare wikidata_qid must be the Q-ID suffix of entity_id."""
+    """For wikidataId/ entries the bare wikidata_qid must be the Q-ID suffix.
+
+    The World entry (m49/001) is exempt: its entity_id uses the m49 scheme and
+    does not embed the wikidata QID in the path.
+    """
     for entry in CONTINENTS:
+        if not entry.entity_id.startswith("wikidataId/"):
+            continue
         expected_suffix = entry.wikidata_qid
         assert entry.entity_id.endswith(f"/{expected_suffix}"), (
             f"entity_id={entry.entity_id!r} does not end with /{expected_suffix}"
@@ -43,10 +52,19 @@ def test_wikidata_qids_match_entity_ids() -> None:
 
 
 def test_expected_qids_present() -> None:
-    """The seven geographic continents + Americas must all be present."""
-    expected = {"Q15", "Q46", "Q48", "Q49", "Q18", "Q55643", "Q51", "Q828"}
+    """The seven geographic continents + Americas + World must all be present."""
+    expected = {"Q15", "Q46", "Q48", "Q49", "Q18", "Q55643", "Q51", "Q828", "Q16502"}
     actual = {entry.wikidata_qid for entry in CONTINENTS}
     assert actual == expected
+
+
+def test_world_seed_entry() -> None:
+    """World seed entry must be present with entity_id m49/001 and canonical name 'World'."""
+    world = next((e for e in CONTINENTS if e.entity_id == "m49/001"), None)
+    assert world is not None, "World entry (m49/001) missing from CONTINENTS"
+    assert world.canonical_name == "World"
+    assert world.wikidata_qid == "Q16502"
+    assert ("World", "en", "canonical") in world.names
 
 
 def test_entity_type_constant() -> None:

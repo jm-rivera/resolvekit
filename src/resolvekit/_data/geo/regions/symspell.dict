@@ -410,7 +410,7 @@ centre	2
 ceuta	1
 ceuta and melilla (spanish north africa)	1
 children's	1
-china	5
+china	4
 china (incl. taiwan province)	1
 china)	2
 cis	1
@@ -442,7 +442,7 @@ council	2
 council for mutual economic assistance (cmea)	1
 countries	24
 countries unallocated by income	1
-countries,	1
+countries,	2
 croix	1
 cuby	1
 cultural	1
@@ -451,8 +451,9 @@ cunha)	1
 customs	1
 cyprus,	2
 da	2
-dac	2
+dac	4
 dac countries	1
+dac countries, total	1
 dac members	1
 de	8
 democratic	3
@@ -1115,7 +1116,7 @@ oecd: asia	1
 oecd: europe	1
 oecd: oceania	1
 oecd: western pacific	1
-of	50
+of	49
 office	2
 okinawa	1
 okinawa)	1
@@ -1171,7 +1172,6 @@ preferential	1
 preferential trade area for eastern and southern african states (pta)	1
 programme	3
 property	3
-province	1
 province)	1
 qaiwain	1
 ras	1
@@ -1346,8 +1346,7 @@ svalbard	1
 sweden)	1
 switzerland	2
 switzerland and liechtenstein	1
-taiwan	2
-taiwan province of china	1
+taiwan	1
 tanzania	2
 tariffs	1
 telecommunication	1
@@ -1358,6 +1357,8 @@ the caribbean	1
 the lome convention	1
 thomas	1
 tokelau	1
+total	2
+total dac	1
 trade	11
 training	1
 transition	2

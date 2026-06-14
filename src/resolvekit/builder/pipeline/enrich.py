@@ -61,7 +61,7 @@ REGION_ENTITY_TYPE = "geo.region"
 
 EnricherFn = Callable[[Path], GraphContribution]
 
-# Per-table deltas reported for a domain whose staging DB is absent this run.
+# Per-table deltas reported for a domain whose staging DB is absent.
 _ZERO_DELTAS: dict[str, int] = {
     "entities": 0,
     "names": 0,
@@ -230,12 +230,24 @@ _REGION_NOISE_NAME_PATTERNS: tuple[str, ...] = (
     "%not elsewhere specified%",
 )
 
+# Specific geo.region aggregate entities whose canonical name collides with a
+# country exact-name match. G00003070 ("Taiwan province of China") owns the
+# exact_name claim on the UN long-form label and pre-empts country/TWN.
+# This clause is intentionally independent of the entity_type filter so that
+# the explicit ids are deleted regardless of their current type in the store.
+_REGION_NOISE_EXPLICIT_IDS: tuple[str, ...] = ("undata-geo/G00003070",)
+
 
 def _build_region_filter_contribution(db_path: Path) -> GraphContribution:
     """Identify UN-aggregate placeholder ``geo.region`` entities for removal.
 
     Returns a ``GraphContribution`` with ``entity_ids_to_delete`` populated.
     ``apply_contribution`` cascades the deletes across names/codes/relations/entities.
+
+    Two independent SELECT clauses are UNIONed:
+    * Pattern-based: entity_type-filtered noise by id/name patterns.
+    * Explicit-id: unconditional deletion of specific entities by id,
+      independent of entity_type (robust against future type changes).
     """
     id_clauses = [
         f"entity_id LIKE '{pattern}'" for pattern in _REGION_NOISE_ID_PATTERNS
@@ -244,10 +256,16 @@ def _build_region_filter_contribution(db_path: Path) -> GraphContribution:
         f"canonical_name LIKE '{pattern}'" for pattern in _REGION_NOISE_NAME_PATTERNS
     ]
     where = " OR ".join(id_clauses + name_clauses)
-    select_sql = f"SELECT entity_id FROM entities WHERE entity_type = ? AND ({where})"
+    pattern_sql = f"SELECT entity_id FROM entities WHERE entity_type = ? AND ({where})"
+
+    placeholders = ", ".join("?" * len(_REGION_NOISE_EXPLICIT_IDS))
+    explicit_sql = f"SELECT entity_id FROM entities WHERE entity_id IN ({placeholders})"
+
+    union_sql = f"{pattern_sql} UNION {explicit_sql}"
 
     with connect_sqlite(db_path) as conn:
-        ids = [str(row[0]) for row in conn.execute(select_sql, (REGION_ENTITY_TYPE,))]
+        params: tuple = (REGION_ENTITY_TYPE, *_REGION_NOISE_EXPLICIT_IDS)
+        ids = [str(row[0]) for row in conn.execute(union_sql, params)]
 
     if not ids:
         return GraphContribution()
@@ -307,7 +325,7 @@ def stage_enrich(context: BuildContext) -> None:
     per enricher under ``staging_enrich`` for build-report observability.
 
     Domains are sourced from the build plan's recipes (not just the chunks
-    discovered this run) so enrichments still apply when discover was
+    discovered in the current pass) so enrichments still apply when discover was
     short-circuited because shared coverage was already complete.
     """
     report: dict[str, dict[str, Any]] = {}

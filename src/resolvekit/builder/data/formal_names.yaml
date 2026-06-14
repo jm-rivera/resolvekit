@@ -65,6 +65,10 @@ overrides:
   - Congo (Brazzaville)
   - Congo-Brazzaville
   - Congo
+  # World Bank / IMF-style comma aliases
+  - Congo, Rep.
+  - Congo, Republic of
+  - Congo, Republic of the
   CIV:
   - Republic of Côte d'Ivoire
   - Republic of Cote d'Ivoire
@@ -85,6 +89,7 @@ overrides:
   - Republic of Korea
   # World Bank / IMF-style comma alias
   - Korea, Rep.
+  - Korea, South
   TZA:
   - United Republic of Tanzania
   MKD:
@@ -94,6 +99,9 @@ overrides:
   - FYROM
   FSM:
   - Federated States of Micronesia
+  # World Bank / IMF-style comma aliases
+  - Micronesia, Fed. Sts.
+  - Micronesia, Federated States of
   MHL:
   - Republic of the Marshall Islands
   VAT:
@@ -144,6 +152,7 @@ overrides:
   - Islamic Republic of Iran
   # World Bank / IMF-style comma alias
   - Iran, Islamic Republic of
+  - Iran, Islamic Rep.
   PAK:
   - Islamic Republic of Pakistan
   MRT:
@@ -369,6 +378,7 @@ overrides:
   - Republic of Yemen
   # World Bank / IMF-style comma alias
   - Yemen, Republic of
+  - Yemen, Rep.
   ZMB:
   - Republic of Zambia
   TON:
@@ -441,6 +451,7 @@ overrides:
   - Republic of China
   # World Bank / IMF-style comma alias
   - China, Taiwan Province of
+  - Taiwan Province of China
   BFA:
   - Republic of Burkina Faso
   # Historical name (source: Wikidata CC0 skos:altLabel)
@@ -452,6 +463,15 @@ overrides:
   ANT:
   - Dutch Antilles
   - Netherland Antilles
+  # "Kingdom of the Netherlands" suffix forms for Netherlands constituent countries.
+  # Added for symmetry with datasets that use this construction; not individually
+  # source-verified (harmless — the plain forms already resolve).
+  ABW:
+  - Aruba, Kingdom of the Netherlands
+  CUW:
+  - "Curaçao, Kingdom of the Netherlands"
+  SXM:
+  - Sint Maarten (Dutch part), Kingdom of the Netherlands
 
 multilingual_overrides:
   ERI:

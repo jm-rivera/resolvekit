@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import urllib.error
 from pathlib import Path
 from typing import Any
 from unittest.mock import patch
@@ -283,94 +284,200 @@ def test_precision_filter_applied_per_entity() -> None:
 
 
 # ---------------------------------------------------------------------------
-# Warn-and-continue: empty batch → warning logged, no raise, entity gets no aliases
+# Empty vs transport failure: a genuine empty (HTTP 200, zero rows) is a cached
+# success; only a transport/HTTP failure raises so the chunk is retried.
 # ---------------------------------------------------------------------------
 
 
-def test_empty_batch_logs_warning_and_continues(
-    caplog: pytest.LogCaptureFixture,
-) -> None:
-    """Empty single-batch response is logged as warning; treated as "no aliases".
+def test_genuine_empty_batch_is_silent_success() -> None:
+    """An empty WDQS result (no en altLabels) is a success, not a failure.
 
-    A single empty batch after internal retries is plausibly "no aliases"; multi-batch
-    all-empty responses trigger RuntimeError (likely WDQS outage).
+    ``sparql_request`` returning ``[]`` (with ``raise_on_failure=True``) means a
+    genuine empty result — the entity simply has no English alt-labels. No raise,
+    no transport warning; the entity just gets no aliases.
     """
-    import logging
-
     codes_by_entity = dict([_codes_entry("Q30", "country/USA")])
 
-    with (
-        patch(
-            "resolvekit.builder.sources.wikidata.aliases.sparql_request",
-            return_value=[],
-        ),
-        caplog.at_level(
-            logging.WARNING, logger="resolvekit.builder.sources.wikidata.aliases"
-        ),
+    with patch(
+        "resolvekit.builder.sources.wikidata.aliases.sparql_request",
+        return_value=[],
     ):
         result = fetch_wikidata_en_aliases(
             codes_by_entity=codes_by_entity,
             cache_dir=None,
         )
 
-    # No aliases for the entity — not an error
     assert result == {}
-    assert any("no bindings" in r.message for r in caplog.records)
 
 
-def test_empty_batch_with_cache_dir_logs_warning(
-    tmp_path: Path, caplog: pytest.LogCaptureFixture
-) -> None:
-    """cache_dir given but no cache file + empty WDQS return → warning, no raise."""
-    import logging
-
+def test_genuine_empty_batch_is_cached_and_not_refetched(tmp_path: Path) -> None:
+    """A genuine empty result is cached as ``[]`` so a re-run does not re-fetch."""
     codes_by_entity = dict([_codes_entry("Q142", "country/FRA")])
 
-    with (
-        patch(
-            "resolvekit.builder.sources.wikidata.aliases.sparql_request",
-            return_value=[],
-        ),
-        caplog.at_level(
-            logging.WARNING, logger="resolvekit.builder.sources.wikidata.aliases"
-        ),
-    ):
+    with patch(
+        "resolvekit.builder.sources.wikidata.aliases.sparql_request",
+        return_value=[],
+    ) as mock_sparql:
         result = fetch_wikidata_en_aliases(
-            codes_by_entity=codes_by_entity,
-            cache_dir=tmp_path,
+            codes_by_entity=codes_by_entity, cache_dir=tmp_path
         )
-
     assert result == {}
-    assert any("no bindings" in r.message for r in caplog.records)
+    assert mock_sparql.call_count == 1
+
+    # Second run: the cached empty short-circuits — no network call.
+    with patch(
+        "resolvekit.builder.sources.wikidata.aliases.sparql_request",
+        side_effect=AssertionError("network called despite cached empty"),
+    ):
+        result2 = fetch_wikidata_en_aliases(
+            codes_by_entity=codes_by_entity, cache_dir=tmp_path
+        )
+    assert result2 == {}
 
 
-def test_all_batches_empty_raises() -> None:
-    """All batches returning empty for a multi-batch fetch → RuntimeError.
+def test_transport_failure_raises_after_caching_successful_batches(
+    tmp_path: Path,
+) -> None:
+    """A transport failure on one batch raises, but successful batches are cached.
 
-    A single empty batch is plausibly "no aliases"; every batch in a multi-batch
-    chunk returning empty is more consistent with a WDQS outage than with every
-    entity being alias-less, so we fail loud.
+    The first batch succeeds and is cached per-batch; the second fails transport
+    (``sparql_request`` raising under ``raise_on_failure=True``). The chunk raises
+    so it is retried, but the successful batch's cache survives — progress is not
+    lost.
     """
-    # 3 QIDs with batch_size=1 → 3 batches, all returning []
+    from resolvekit.builder.sources.wikidata.aliases import _batch_cache_path
+
     codes_by_entity = dict(
-        [
-            _codes_entry("Q1", "country/AA"),
-            _codes_entry("Q2", "country/BB"),
-            _codes_entry("Q3", "country/CC"),
-        ]
+        [_codes_entry("Q1", "country/AA"), _codes_entry("Q2", "country/BB")]
     )
 
     with (
         patch(
             "resolvekit.builder.sources.wikidata.aliases.sparql_request",
-            return_value=[],
+            side_effect=[[_make_binding("Q1", "Alpha")], ConnectionError("WDQS 429")],
         ),
-        pytest.raises(RuntimeError, match=r"all .* batches returned no bindings"),
+        patch("resolvekit.builder.sources.wikidata.aliases.time.sleep"),
+        pytest.raises(RuntimeError, match=r"failed transport"),
     ):
         fetch_wikidata_en_aliases(
-            codes_by_entity=codes_by_entity,
-            cache_dir=None,
-            batch_size=1,
+            codes_by_entity=codes_by_entity, cache_dir=tmp_path, batch_size=1
+        )
+
+    # Successful batch cached; failed batch left uncached for the retry.
+    assert _batch_cache_path(tmp_path, ["Q1"]).exists()
+    assert not _batch_cache_path(tmp_path, ["Q2"]).exists()
+
+
+def test_retry_resumes_from_per_batch_cache(tmp_path: Path) -> None:
+    """After a partial failure, a re-run loads cached batches and retries only the rest."""
+    codes_by_entity = dict(
+        [_codes_entry("Q1", "country/AA"), _codes_entry("Q2", "country/BB")]
+    )
+
+    # First run: Q1 ok (cached), Q2 fails transport → raises.
+    with (
+        patch(
+            "resolvekit.builder.sources.wikidata.aliases.sparql_request",
+            side_effect=[[_make_binding("Q1", "Alpha")], ConnectionError("WDQS 429")],
+        ),
+        patch("resolvekit.builder.sources.wikidata.aliases.time.sleep"),
+        pytest.raises(RuntimeError),
+    ):
+        fetch_wikidata_en_aliases(
+            codes_by_entity=codes_by_entity, cache_dir=tmp_path, batch_size=1
+        )
+
+    # Re-run: Q1 served from per-batch cache (no network), Q2 now succeeds → one call.
+    with (
+        patch(
+            "resolvekit.builder.sources.wikidata.aliases.sparql_request",
+            side_effect=[[_make_binding("Q2", "Beta")]],
+        ) as mock_sparql,
+        patch("resolvekit.builder.sources.wikidata.aliases.time.sleep"),
+    ):
+        result = fetch_wikidata_en_aliases(
+            codes_by_entity=codes_by_entity, cache_dir=tmp_path, batch_size=1
+        )
+
+    assert mock_sparql.call_count == 1  # only Q2 re-fetched
+    assert "country/AA" in result  # Q1 recovered from cache
+    assert "country/BB" in result  # Q2 fetched on the retry
+
+
+# ---------------------------------------------------------------------------
+# Malformed-QID filtering + permanent-vs-transient HTTP handling
+# ---------------------------------------------------------------------------
+
+
+def test_malformed_qids_dropped_before_query() -> None:
+    """Non-Q-form wikidataId values never enter the VALUES clause (would 400)."""
+    codes_by_entity = dict(
+        [
+            _codes_entry("Q142", "country/FRA"),  # valid
+            _codes_entry("130045", "country/XX"),  # bad: missing Q prefix
+            _codes_entry("sgcCode/1101052", "country/YY"),  # bad: path form
+        ]
+    )
+    captured: dict[str, str] = {}
+
+    def fake_sparql(*, query: str, **_kwargs: Any) -> list[dict[str, Any]]:
+        captured["query"] = query
+        return [_make_binding("Q142", "French Republic")]
+
+    with patch(
+        "resolvekit.builder.sources.wikidata.aliases.sparql_request",
+        side_effect=fake_sparql,
+    ):
+        result = fetch_wikidata_en_aliases(
+            codes_by_entity=codes_by_entity, cache_dir=None
+        )
+
+    assert "wd:Q142" in captured["query"]
+    assert "130045" not in captured["query"]
+    assert "sgcCode" not in captured["query"]
+    assert "country/FRA" in result
+
+
+def test_permanent_400_skips_batch_without_failing(tmp_path: Path) -> None:
+    """A permanent HTTP 400 on one batch skips it loudly — the chunk does NOT fail."""
+    codes_by_entity = dict(
+        [_codes_entry("Q1", "country/AA"), _codes_entry("Q2", "country/BB")]
+    )
+    http_400 = urllib.error.HTTPError("http://wdqs", 400, "Bad Request", {}, None)  # type: ignore[arg-type]
+
+    with (
+        patch(
+            "resolvekit.builder.sources.wikidata.aliases.sparql_request",
+            side_effect=[[_make_binding("Q1", "Alpha")], http_400],
+        ),
+        patch("resolvekit.builder.sources.wikidata.aliases.time.sleep"),
+    ):
+        result = fetch_wikidata_en_aliases(
+            codes_by_entity=codes_by_entity, cache_dir=tmp_path, batch_size=1
+        )
+
+    # No raise; the 400 batch is skipped, the good one survives.
+    assert "country/AA" in result
+    assert "country/BB" not in result
+
+
+def test_transient_5xx_raises_for_retry(tmp_path: Path) -> None:
+    """A 5xx (transient) raises so the chunk is retried — distinct from a 400 skip."""
+    codes_by_entity = dict(
+        [_codes_entry("Q1", "country/AA"), _codes_entry("Q2", "country/BB")]
+    )
+    http_503 = urllib.error.HTTPError("http://wdqs", 503, "Unavailable", {}, None)  # type: ignore[arg-type]
+
+    with (
+        patch(
+            "resolvekit.builder.sources.wikidata.aliases.sparql_request",
+            side_effect=[[_make_binding("Q1", "Alpha")], http_503],
+        ),
+        patch("resolvekit.builder.sources.wikidata.aliases.time.sleep"),
+        pytest.raises(RuntimeError, match=r"failed transport"),
+    ):
+        fetch_wikidata_en_aliases(
+            codes_by_entity=codes_by_entity, cache_dir=tmp_path, batch_size=1
         )
 
 

@@ -184,6 +184,60 @@ def _query_one(db: Path, sql: str, params: tuple = ()) -> tuple | None:
 
 
 @pytest.mark.unit
+def test_eu_institutions_donor_label_deleted_from_european_union(
+    tmp_path: Path,
+) -> None:
+    """The OECD 'EU Institutions' donor label is removed from EuropeanUnion.
+
+    A prior build injected it as an alias (it survives in the reused staging
+    store); the enricher must both suppress the re-insert and delete the stale
+    row so the name resolves to the dedicated DAC entity. The oecd:provider code
+    is still attached for crosswalk coverage.
+    """
+    geo_db = _build_geo_db(tmp_path)
+    conn = sqlite3.connect(geo_db)
+    conn.execute(
+        "INSERT OR IGNORE INTO entities VALUES "
+        "('EuropeanUnion','geo.continental_union','European Union','european union',NULL,NULL,'{}')"
+    )
+    conn.execute(
+        "INSERT OR IGNORE INTO names VALUES "
+        "('EuropeanUnion','alias','EU Institutions','eu institutions','en','',0)"
+    )
+    conn.commit()
+    conn.close()
+
+    yaml_path = _minimal_oecd_yaml(
+        tmp_path,
+        providers=[
+            {
+                "code": "918",
+                "name_en": "EU Institutions",
+                "name_fr": "Institutions de l'UE",
+                "iso3": None,
+                "type": "Multilateral",
+            }
+        ],
+    )
+    cw_path = _minimal_crosswalk_yaml(tmp_path, providers={"918": "EuropeanUnion"})
+    _run_enricher(geo_db, None, yaml_path, cw_path)
+
+    assert (
+        _query_one(
+            geo_db,
+            "SELECT 1 FROM names WHERE entity_id='EuropeanUnion' "
+            "AND value_norm='eu institutions'",
+        )
+        is None
+    )
+    assert _query_one(
+        geo_db,
+        "SELECT value FROM codes WHERE entity_id='EuropeanUnion' "
+        "AND system='oecd:provider'",
+    ) == ("918",)
+
+
+@pytest.mark.unit
 def test_recipient_country_attaches_code(tmp_path: Path) -> None:
     geo_db = _build_geo_db(tmp_path)
     org_db = _build_org_db(tmp_path)

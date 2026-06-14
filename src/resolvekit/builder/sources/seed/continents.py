@@ -46,8 +46,11 @@ class ContinentSeedEntry:
     names: tuple[tuple[str, str, str], ...] = field(default_factory=tuple)
 
 
-# Eight entities: the seven geographic continents + Americas (pan-American
-# supercontinent, Q828).
+# Nine entities: the seven geographic continents + Americas (pan-American
+# supercontinent, Q828) + World (m49/001).
+# The World entry uses an m49 entity_id rather than wikidataId/ because it serves as
+# the canonical aggregate target. An m49 code-system row is intentionally not added;
+# to="m49" pivot on World is a known scope gap.
 #
 # name tuples: (value, lang, name_kind)
 # name_kind values: "canonical" (primary per language), "alias" (alternate)
@@ -177,5 +180,11 @@ CONTINENTS: tuple[ContinentSeedEntry, ...] = (
             ("美洲", "zh", "canonical"),
             ("أمريكا", "ar", "canonical"),
         ),
+    ),
+    ContinentSeedEntry(
+        entity_id="m49/001",
+        canonical_name="World",
+        wikidata_qid="Q16502",
+        names=(("World", "en", "canonical"),),
     ),
 )

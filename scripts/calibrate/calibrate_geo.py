@@ -14,12 +14,14 @@ the file (or import ``run()`` and pass a CalibrationRunConfig from a notebook).
 
 from __future__ import annotations
 
+import json
 import logging
 import random
 import shutil
 from enum import StrEnum
 from pathlib import Path
 
+from resolvekit.builder.utils import sha256_file
 from resolvekit.calibration.dataset import LabeledExample
 from resolvekit.calibration.evaluation import CalibrationMetrics, evaluate_calibration
 from resolvekit.calibration.fitting import fit_isotonic, fit_platt
@@ -195,10 +197,37 @@ CONFIG = CalibrationRunConfig(
 )
 
 
+def _refresh_calibrator_checksum(calibrator_path: Path) -> None:
+    """Re-stamp the pack's metadata.json with the installed calibrator's checksum.
+
+    Packaging records the calibrator checksum at build time; recalibrating in
+    place replaces the file, so without this the loader rejects the pack on a
+    calibrator checksum mismatch. Only the one checksum field changes — key order
+    and the rest of the metadata are preserved.
+    """
+    metadata_path = calibrator_path.parent / "metadata.json"
+    if not metadata_path.exists():
+        logger.warning(
+            "No metadata.json beside %s; checksum not refreshed", calibrator_path
+        )
+        return
+    metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+    checksums = metadata.get("checksums")
+    if not isinstance(checksums, dict) or "calibrator" not in checksums:
+        return
+    checksums["calibrator"] = sha256_file(calibrator_path)
+    metadata_path.write_text(
+        json.dumps(metadata, indent=2, ensure_ascii=True) + "\n",
+        encoding="utf-8",
+    )
+    logger.info("Refreshed calibrator checksum in %s", metadata_path)
+
+
 def run(*, config: CalibrationRunConfig = CONFIG) -> None:
     """Run geo calibration with the given config."""
     best_path = run_calibration(config=config)
     shutil.copy2(best_path, _DATA_CALIBRATOR)
+    _refresh_calibrator_checksum(_DATA_CALIBRATOR)
     logger.info("Installed calibrator → %s", _DATA_CALIBRATOR)
 
 

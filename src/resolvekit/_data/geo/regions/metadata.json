@@ -10,7 +10,7 @@
     "fts": "fts5",
     "symspell": "symspell.dict"
   },
-  "build_timestamp": "2026-06-11T11:17:06.457869+00:00",
+  "build_timestamp": "2026-06-14T09:07:23.453133+00:00",
   "source_datasets": [
     "datacommons"
   ],
@@ -19,8 +19,8 @@
   },
   "description": null,
   "checksums": {
-    "sqlite": "a808bc226030d40046f783b4ee960e457ed7e722e676f0459bde1a40f18e14a0",
-    "symspell": "783a6960d2d8580600e72a148cb2bc92a3f759c43ed8411b202571853d00841e"
+    "sqlite": "16a109da6c7c772097e0b0d54ac8b06b98af642fe53e5143e049df77de3449b6",
+    "symspell": "0ceb0ae2f947178b5d6bbcf25995c4cdb2429d695ac13799f54bb8558b0b94c4"
   },
   "distribution": "bundled",
   "remote_artifacts": null,
@@ -33,12 +33,12 @@
   "base_module_ids": null,
   "allow_new_entities": false,
   "quality_metrics": {
-    "entity_count": 830,
-    "names_count": 934,
-    "codes_count": 1623,
+    "entity_count": 829,
+    "names_count": 935,
+    "codes_count": 1621,
     "relations_count": 804,
     "names_coverage": 1.0,
     "codes_coverage": 1.0,
-    "relations_density": 0.9686746987951808
+    "relations_density": 0.9698431845597105
   }
 }

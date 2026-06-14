@@ -25,7 +25,9 @@ class GraphContribution:
 
     All fields are flat row-dicts matching the SQLite table columns (the same shape
     ``insert_normalized_payload`` consumes). ``entity_ids_to_delete`` carries the
-    filter/DELETE path. Constructed kwargs-only at call sites.
+    entity-level filter/DELETE path; ``names_to_delete`` removes individual alias
+    rows without dropping the entity (e.g. an upstream-injected label an enricher
+    must un-claim). Constructed kwargs-only at call sites.
     """
 
     entities: list[dict[str, Any]] = field(default_factory=list)
@@ -33,6 +35,10 @@ class GraphContribution:
     codes: list[dict[str, Any]] = field(default_factory=list)
     relations: list[dict[str, Any]] = field(default_factory=list)
     entity_ids_to_delete: list[str] = field(default_factory=list)
+    # Each entry is ``{"entity_id": ..., "value_norm": ...}`` — the normalized
+    # name rows to remove. Keyed on value_norm so it deletes regardless of
+    # surface form/language; applied after inserts so a delete always wins.
+    names_to_delete: list[dict[str, Any]] = field(default_factory=list)
     entity_attrs: list[dict[str, Any]] = field(default_factory=list)
     entity_validity_updates: list[dict[str, Any]] = field(default_factory=list)
 
@@ -116,6 +122,18 @@ def apply_contribution(
         conn.execute(
             f"DELETE FROM entities WHERE entity_id IN ({placeholders})",
             ids,
+        )
+
+    if contribution.names_to_delete:
+        # Drop specific alias rows (entity stays). Runs after the name inserts so a
+        # delete always wins, and like entity_ids_to_delete it leaves FTS to the
+        # deferred downstream rebuild rather than touching it here.
+        conn.executemany(
+            "DELETE FROM names WHERE entity_id = ? AND value_norm = ?",
+            [
+                (str(row["entity_id"]), str(row["value_norm"]))
+                for row in contribution.names_to_delete
+            ],
         )
 
     # TODO: batch this for large packs

@@ -148,6 +148,7 @@ def _build_datacommons_geo_adapter(options: BuildOptions) -> SourceAdapter:
         api_key=options.datacommons_api_key,
         discovery_parent_batch_size=options.discovery_parent_batch_size,
         wikidata_cache_dir=options.shared_geo_root,
+        dc_cache_dir=options.shared_geo_root / "dc_cache",
     )
 
 

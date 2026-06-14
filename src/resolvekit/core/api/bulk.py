@@ -395,6 +395,8 @@ def _pivot_result(
     to: Any,
     *,
     spec: OutputSpec | None,
+    on_missing: str = "auto",
+    known_systems: frozenset[str] | None = None,
 ) -> Any:
     """Apply pivoting when *result* is RESOLVED; else return as-is.
 
@@ -405,9 +407,11 @@ def _pivot_result(
     exception propagates out, aborting the batch.
 
     On the **explicit-to path** (``spec is None``), calls ``dispatch_pivot``
-    with ``UnknownCodeSystemError`` re-raise — a typo'd code system still
-    surfaces loudly (every row would silently return None otherwise).
-    Per-entity misses return None.
+    with selective ``UnknownCodeSystemError`` handling — a typo'd code system
+    still surfaces loudly (every row would silently return None otherwise).
+    When ``to`` is a *known* code system but this entity simply lacks it,
+    ``on_missing`` governs the outcome: ``"auto"`` / ``"null"`` → ``None``;
+    ``"raise"`` re-raises.  Per-entity misses on non-code pivots return None.
     """
     if result.status != ResolutionStatus.RESOLVED or result.entity is None:
         return None
@@ -420,7 +424,16 @@ def _pivot_result(
     try:
         return dispatch_pivot(result.entity, to)
     except UnknownCodeSystemError:
-        raise
+        # Distinguish a resolved-entity-lacking-a-code (output miss, governed by
+        # on_missing) from a genuine typo/unknown system (always raises loudly).
+        if (
+            isinstance(to, str)
+            and known_systems is not None
+            and to in known_systems
+            and on_missing != "raise"
+        ):
+            return None  # known system, this entity just lacks it
+        raise  # genuine typo or unknown system: surface loudly
     except Exception:
         return None
 
@@ -609,6 +622,8 @@ def _assemble_output(
     not_found: str,
     on_ambiguous: str,
     resolver: Any,
+    on_missing: str = "auto",
+    known_systems: frozenset[str] | None = None,
 ) -> tuple[list[Any], list[ResolutionResult]]:
     """Apply not_found / on_ambiguous contracts, pivot, and broadcast to original order.
 
@@ -617,7 +632,9 @@ def _assemble_output(
 
     When ``spec`` is set, pivoting goes through ``apply_output`` (batch-safe:
     per-entity misses return None unless ``on_missing="raise"`` in the spec).
-    Otherwise uses ``dispatch_pivot`` with ``UnknownCodeSystemError`` re-raise.
+    Otherwise uses ``dispatch_pivot`` with selective ``UnknownCodeSystemError``
+    handling: typos still raise; a known system absent from this entity honours
+    ``on_missing``.
     """
     _null_sentinel = ResolutionResult(
         status=ResolutionStatus.NO_MATCH,
@@ -644,7 +661,15 @@ def _assemble_output(
                 if fetched is not None:
                     coerced = coerced.model_copy(update={"entity": fetched})
             unique_out.append(
-                _pivot_result(coerced, to, spec=spec) if pivoting else coerced
+                _pivot_result(
+                    coerced,
+                    to,
+                    spec=spec,
+                    on_missing=on_missing,
+                    known_systems=known_systems,
+                )
+                if pivoting
+                else coerced
             )
         else:
             unique_out.append(coerced)
@@ -698,9 +723,11 @@ def _bulk_dispatch(
         output_spec: Compiled ``OutputSpec`` for the default-output path.  Ignored
             when ``to`` is not ``UNSET``.
         on_missing: ``"auto"`` (default) — resolves to null for bulk.  ``"raise"``
-            raises ``OutputMissingError`` on the first resolved-but-missing entity,
-            aborting the batch.  ``"null"`` forces null silently.  Only applies on
-            the spec path.
+            raises ``OutputMissingError`` on the spec path or re-raises
+            ``UnknownCodeSystemError`` on the explicit-to path when the entity
+            lacks a known code system.  ``"null"`` forces null silently.  On the
+            explicit-to path, governs resolved-entities-lacking-a-code (output
+            misses); genuine typos / unknown systems always raise regardless.
         crosswalk: Optional :class:`~resolvekit.core.model.crosswalk.Crosswalk`
             mapping.  Matched values bypass code-detection and name resolution
             entirely; IGNORE entries map unconditionally to ``None``.
@@ -808,6 +835,8 @@ def _bulk_dispatch(
             not_found=not_found,
             on_ambiguous=on_ambiguous,
             resolver=resolver,
+            on_missing=on_missing,
+            known_systems=resolver.code_systems() if has_pivot else None,
         )
     else:
         # Uniform (scalar or None) context.
@@ -833,6 +862,8 @@ def _bulk_dispatch(
             not_found=not_found,
             on_ambiguous=on_ambiguous,
             resolver=resolver,
+            on_missing=on_missing,
+            known_systems=resolver.code_systems() if has_pivot else None,
         )
 
     # After assembling values, check whether every RESOLVED row came back None.
