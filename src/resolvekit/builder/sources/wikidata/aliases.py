@@ -13,6 +13,7 @@ import json
 import logging
 import re
 import time
+import urllib.error
 from pathlib import Path
 from typing import Any
 
@@ -51,12 +52,15 @@ def fetch_wikidata_en_aliases(
     entity id with ``source='wikidata'``.
 
     Returns ``{}`` immediately when no ``wikidataId`` codes are found in the
-    chunk (legitimate no-op — not a failure). Raises ``RuntimeError`` if the
-    fetch returns empty bindings for a non-empty QID list (network failure).
+    chunk (legitimate no-op — not a failure). A genuine empty WDQS result (HTTP
+    200, zero rows) is treated as "no aliases" and cached. Raises ``RuntimeError``
+    only when a batch hits a transport/HTTP failure after retries, so the chunk
+    is retried — successful batches are already cached and are not re-fetched.
 
-    Cache: when ``cache_dir`` is given, results are staged to a JSON file
-    keyed on the sorted QID set; subsequent calls with the same QIDs read
-    from cache without hitting the network.
+    Cache: when ``cache_dir`` is given, results are staged at two levels — a
+    chunk-level file keyed on the full sorted QID set (fast path) and a per-batch
+    file keyed on each batch's QID subset. Per-batch caching means a transient
+    failure on one batch never discards the batches that already succeeded.
     """
     qid_to_dcid = _qid_to_dcid(codes_by_entity)
     if not qid_to_dcid:
@@ -105,21 +109,33 @@ def _fetch_or_load(
     batch_size: int,
     request_delay: float,
 ) -> list[dict[str, Any]]:
-    """Return bindings from cache if available, else fetch and optionally cache."""
+    """Return bindings from cache if available, else fetch and optionally cache.
+
+    Caches at two levels. The chunk-level file (keyed on the full QID set) is the
+    fast path and stays compatible with previously-staged caches. Below it, each
+    batch is cached on its own QID subset so a transient WDQS failure on one batch
+    never discards the batches that already succeeded — a re-run resumes from the
+    per-batch caches and re-fetches only the failed batches.
+    """
     if cache_dir is not None:
         cache_file = _cache_path(cache_dir, qids)
         if cache_file.exists():
             logger.info("Wikidata alias fetch: reading cache from %s", cache_file)
             return json.loads(cache_file.read_text(encoding="utf-8"))
 
-    bindings = _fetch_batched(
+    bindings, all_ok = _fetch_batched(
         qids=qids,
+        cache_dir=cache_dir,
         user_agent=user_agent,
         batch_size=batch_size,
         request_delay=request_delay,
     )
 
-    if cache_dir is not None:
+    # Promote to the chunk-level cache only when every batch succeeded. A
+    # partially-failed chunk is left without a chunk file so the next run
+    # re-enters here, loads the cached successful batches, and retries just the
+    # failed ones — rather than freezing an incomplete result.
+    if cache_dir is not None and all_ok:
         cache_dir.mkdir(parents=True, exist_ok=True)
         cache_file = _cache_path(cache_dir, qids)
         cache_file.write_text(
@@ -132,75 +148,156 @@ def _fetch_or_load(
             cache_file,
         )
 
+    if not all_ok:
+        raise RuntimeError(
+            "Wikidata alias fetch: one or more batches failed transport after "
+            "retries — successful batches are cached; re-run to resume the rest."
+        )
+
+    logger.info(
+        "Wikidata alias fetch: %d bindings for %d QIDs", len(bindings), len(qids)
+    )
     return bindings
 
 
 def _fetch_batched(
     *,
     qids: list[str],
+    cache_dir: Path | None,
     user_agent: str,
     batch_size: int,
     request_delay: float,
-) -> list[dict[str, Any]]:
-    """Fetch alt-label bindings in batches."""
+) -> tuple[list[dict[str, Any]], bool]:
+    """Fetch alt-label bindings batch by batch.
+
+    Returns ``(bindings, all_ok)``. ``all_ok`` is False when any batch hit a
+    transport/HTTP failure (distinct from a genuine empty result); the caller
+    raises in that case so the chunk is retried, with successful batches already
+    cached per-batch.
+    """
     # QIDs stored lower-case; SPARQL VALUES needs canonical upper-case form.
     canonical = [q.upper() for q in qids]
 
     out: list[dict[str, Any]] = []
     n_batches = 0
-    n_empty_batches = 0
+    n_failed = 0
     for i in range(0, len(canonical), batch_size):
         batch = canonical[i : i + batch_size]
-        values = " ".join(f"wd:{q}" for q in batch)
-        query = _ALIASES_TEMPLATE.format(values=values)
-
-        bindings = sparql_request(query=query, user_agent=user_agent, timeout=60)
         n_batches += 1
-        if not bindings:
-            # Empty response after internal retries: either no English altLabels exist
-            # or WDQS returned empty. Treat as "no aliases" for this batch.
+
+        bindings, ok = _load_or_fetch_batch(
+            batch=batch, cache_dir=cache_dir, user_agent=user_agent
+        )
+        if not ok:
+            # Transport failure (not a genuine empty): leave it uncached so the
+            # next run retries this batch, and keep going to fetch what we can.
             logger.warning(
-                "Wikidata alias fetch: batch %d (%d QIDs) returned no bindings",
+                "Wikidata alias fetch: batch %d (%d QIDs) failed transport — "
+                "will retry on re-run",
                 i // batch_size + 1,
                 len(batch),
             )
-            n_empty_batches += 1
+            n_failed += 1
             continue
         out.extend(bindings)
 
         if request_delay > 0 and i + batch_size < len(canonical):
             time.sleep(request_delay)
 
-    # Multi-batch fetch with all-empty response: raise loud so the chunk is retried.
-    # A single empty batch plausibly means "no aliases"; every batch returning empty
-    # is more consistent with a WDQS outage than with every entity being alias-less.
-    if n_empty_batches == n_batches and n_batches > 1:
-        raise RuntimeError(
-            f"Wikidata alias fetch: all {n_batches} batches returned no bindings "
-            "— likely a WDQS outage rather than genuinely alias-less entities."
-        )
+    return out, n_failed == 0
 
-    logger.info("Wikidata alias fetch: %d bindings for %d QIDs", len(out), len(qids))
-    return out
+
+def _load_or_fetch_batch(
+    *,
+    batch: list[str],
+    cache_dir: Path | None,
+    user_agent: str,
+) -> tuple[list[dict[str, Any]], bool]:
+    """Load one batch from its per-batch cache, else fetch and cache it.
+
+    Returns ``(bindings, ok)``. A genuine empty result (HTTP 200, zero rows) is a
+    success and is cached as ``[]`` so it is not re-fetched. A transport/HTTP
+    failure returns ``ok=False`` and is NOT cached.
+    """
+    if cache_dir is not None:
+        batch_file = _batch_cache_path(cache_dir, batch)
+        if batch_file.exists():
+            return json.loads(batch_file.read_text(encoding="utf-8")), True
+
+    values = " ".join(f"wd:{q}" for q in batch)
+    query = _ALIASES_TEMPLATE.format(values=values)
+    try:
+        bindings = sparql_request(
+            query=query, user_agent=user_agent, timeout=60, raise_on_failure=True
+        )
+    except urllib.error.HTTPError as exc:
+        if 400 <= exc.code < 500 and exc.code != 429:
+            # Permanent client error (e.g. a VALUES token WDQS rejects): retrying
+            # cannot fix it, so skip this batch loudly rather than failing the whole
+            # chunk. Not cached, so a later data/code fix re-attempts it.
+            logger.warning(
+                "Wikidata alias fetch: skipping batch on permanent HTTP %d "
+                "(%d QIDs) — %s",
+                exc.code,
+                len(batch),
+                exc,
+            )
+            return [], True
+        logger.warning("Wikidata alias fetch: batch transport failure: %s", exc)
+        return [], False
+    except Exception as exc:
+        logger.warning("Wikidata alias fetch: batch transport failure: %s", exc)
+        return [], False
+
+    if cache_dir is not None:
+        cache_dir.mkdir(parents=True, exist_ok=True)
+        batch_file = _batch_cache_path(cache_dir, batch)
+        batch_file.write_text(json.dumps(bindings, ensure_ascii=True), encoding="utf-8")
+
+    return bindings, True
 
 
 def _cache_path(cache_dir: Path, qids: list[str]) -> Path:
-    """Return the cache file path keyed on the sorted QID set."""
+    """Return the chunk-level cache file path keyed on the sorted QID set."""
     digest = hashlib.sha256("|".join(sorted(qids)).encode()).hexdigest()[:16]
     return cache_dir / f"wikidata_en_altlabels_{digest}.json"
+
+
+def _batch_cache_path(cache_dir: Path, batch: list[str]) -> Path:
+    """Return the per-batch cache file path keyed on the sorted batch QID subset."""
+    digest = hashlib.sha256("|".join(sorted(batch)).encode()).hexdigest()[:16]
+    return cache_dir / f"wikidata_en_altlabels_batch_{digest}.json"
 
 
 def _qid_to_dcid(
     codes_by_entity: dict[str, list[dict[str, Any]]],
 ) -> dict[str, str]:
-    """Build a lower-cased QID → dcid map from the chunk's code rows."""
+    """Build a lower-cased QID → dcid map from the chunk's code rows.
+
+    Drops values that are not clean ``Q``-form QIDs (e.g. bare numerics missing
+    the ``Q`` prefix, or path-form codes mislabelled as ``wikidataId``). Such a
+    value would render as ``wd:<garbage>`` in the VALUES clause and make WDQS
+    reject the whole batch with HTTP 400 — and it could never match a Wikidata
+    item anyway, so dropping it loses no real alias.
+    """
     out: dict[str, str] = {}
+    skipped = 0
     for dcid, code_rows in codes_by_entity.items():
         for row in code_rows:
             if row.get("code_system") == "wikidataId":
                 qid_value = str(row.get("code_value", "")).lower()
-                if qid_value:
-                    out[qid_value] = dcid
+                if not qid_value:
+                    continue
+                if not _QID_RE.match(qid_value.upper()):
+                    skipped += 1
+                    continue
+                out[qid_value] = dcid
+    if skipped:
+        logger.warning(
+            "Wikidata alias fetch: skipped %d malformed wikidataId value(s) "
+            "(not Q-form) before query construction",
+            skipped,
+        )
     return out
 
 

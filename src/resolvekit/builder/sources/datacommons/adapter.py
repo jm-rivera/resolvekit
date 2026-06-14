@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any
 
 from resolvekit.builder.inspection import DomainInspection
@@ -47,6 +48,7 @@ class DataCommonsSourceAdapter:
         api_key: str | None = None,
         default_chunk_size: int = DEFAULT_CHUNK_SIZE,
         max_concurrent_requests: int = DEFAULT_MAX_CONCURRENT_REQUESTS,
+        cache_dir: Path | None = None,
     ):
         self._config = config
         self._languages = languages or list(DEFAULT_ADAPTER_LANGUAGES)
@@ -57,6 +59,7 @@ class DataCommonsSourceAdapter:
             api_key=api_key,
             default_chunk_size=default_chunk_size,
             max_concurrent_requests=max_concurrent_requests,
+            cache_dir=cache_dir,
         )
         self._dc_api = config.dc_api_factory(self._runtime)
         self._spec = config.domain_spec

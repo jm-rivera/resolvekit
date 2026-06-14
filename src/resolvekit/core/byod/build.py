@@ -213,6 +213,7 @@ def build_byod_pack(
             resolved_link_on=resolved_link_on,
             on_miss=on_miss,
             build_dir=build_dir,
+            cache_key=key,
         )
     except Exception:
         import shutil
@@ -268,6 +269,7 @@ def _run_build(
     resolved_link_on: list[str],
     on_miss: str,
     build_dir: Path,
+    cache_key: str,
 ) -> _Tally:
     """Execute the build inside *build_dir* and return tallies."""
     is_augment = pack_type == "overlay" and bool(base_paths)
@@ -371,8 +373,14 @@ def _run_build(
     builder.finalize()
 
     # Write metadata appropriate to the pack type.
-    datapack_id = f"{namespace}-byod"
+    # Overlay ids embed a content-hash suffix so that two overlays in the same
+    # namespace get distinct module_ids and can coexist in _load_and_separate_datapacks
+    # (which keys overlay_packs by module_id; without the suffix the second overlay
+    # silently overwrites the first).  Same content → same key → same id, so caching
+    # still works.  Base packs keep the plain "<namespace>-byod" id (the caller
+    # controls namespace and intentionally reuses that id across base rebuilds).
     if pack_type == "overlay":
+        datapack_id = f"{namespace}-byod-{cache_key[:12]}"
         builder.build_overlay_metadata(
             datapack_id=datapack_id,
             source_datasets=[namespace],
@@ -381,6 +389,7 @@ def _run_build(
             allow_new_entities=True,
         )
     else:
+        datapack_id = f"{namespace}-byod"
         builder.build_metadata(
             datapack_id=datapack_id,
             source_datasets=[namespace],

@@ -33,11 +33,16 @@ class AugmentPrep:
     Attributes:
         outcome: Build outcome (pack_dir, tally counters).
         base_dirs: Ordered base datapack directories for the composed resolver.
+        prior_overlay_dirs: Ordered prior-overlay datapack directories, oldest
+            first.  Empty for a first-generation augment.  Carried forward so
+            ``augment()`` can compose ``[*base_dirs, *prior_overlay_dirs, new_overlay]``
+            and preserve all earlier overlays.
         domain: The single base domain resolved from the resolver's loaded modules.
     """
 
     outcome: ByodBuildOutcome
     base_dirs: list[Path]
+    prior_overlay_dirs: list[Path]
     domain: str
 
 
@@ -76,7 +81,7 @@ def _infer_augment_schema(
             nor ``add_codes`` is provided — there is no way to identify a
             name-proxy column for the schema.
     """
-    # I2 footgun guard: link_on=["name"] with nothing to infer a name column from.
+    # Guard: link_on=["name"] with nothing to infer a name column from.
     if link_on == ["name"] and not add_aliases and not add_codes:
         raise ValueError(
             "link_on=['name'] requires add_aliases or add_codes to identify "
@@ -233,6 +238,7 @@ def prepare_augment_pack(
     namespace: str | None,
     cache: bool,
     loaded_modules: dict[str, list[Any]],
+    loaded_overlays: list[Any],
     available_systems: frozenset[str],
 ) -> AugmentPrep:
     """Build an overlay BYOD pack from user-supplied records.
@@ -255,10 +261,15 @@ def prepare_augment_pack(
         loaded_modules: Resolver's ``_loaded_modules`` dict
             (``{pack_id: [LoadedDataPack, ...]}``) — source of base dirs and
             identity tuples.
+        loaded_overlays: Resolver's ``_loaded_overlays`` list — prior overlay
+            packs from earlier ``augment()`` calls.  Their base_path values are
+            carried forward into the composed resolver so that chained augments
+            compose rather than replace.
         available_systems: Resolver's current code systems (``self.code_systems()``).
 
     Returns:
-        ``AugmentPrep`` carrying the build outcome, base dirs, and domain.
+        ``AugmentPrep`` carrying the build outcome, base dirs, prior overlay
+        dirs, and domain.
 
     Raises:
         ValueError: If *namespace* contains disallowed characters.
@@ -345,6 +356,15 @@ def prepare_augment_pack(
         columns=columns,
     )
 
+    # Collect prior overlay dirs (oldest first) from the resolver's tracked
+    # overlays.  These are passed back to augment() so it can compose
+    # [*base_dirs, *prior_overlay_dirs, new_overlay] rather than dropping them.
+    # The new overlay declares only TRUE base module ids so
+    # _validate_overlay_relationships doesn't treat prior overlays as missing
+    # base deps — prior overlays merge by being in datapack_paths, not via
+    # base_module_ids declaration.
+    prior_overlay_dirs: list[Path] = [m.base_path for m in loaded_overlays]
+
     outcome = build_byod_pack(
         records=records,
         schema=schema,
@@ -359,4 +379,9 @@ def prepare_augment_pack(
         cache_extra={"base_identity": base_identity},
     )
 
-    return AugmentPrep(outcome=outcome, base_dirs=base_dirs, domain=domain)
+    return AugmentPrep(
+        outcome=outcome,
+        base_dirs=base_dirs,
+        prior_overlay_dirs=prior_overlay_dirs,
+        domain=domain,
+    )

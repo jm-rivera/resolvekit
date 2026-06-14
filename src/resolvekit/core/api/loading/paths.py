@@ -197,6 +197,11 @@ def _build_resolver_from_paths(
         if pack_id in available_packs
     }
 
+    # Capture the loaded overlay packs so the Resolver can carry them forward
+    # into chained augment() calls — prior overlays would otherwise be dropped
+    # because domain_all_base_loaded contains only base packs.
+    loaded_overlays = list(overlay_packs.values())
+
     return cls(
         runner=runner,
         normalizer=normalizer,
@@ -204,6 +209,7 @@ def _build_resolver_from_paths(
         max_query_length=max_query_length,
         routing_mode=routing_mode,
         loaded_modules=loaded_modules,
+        loaded_overlays=loaded_overlays,
         cache_size=cache_size,
         sqlite_tuning=sqlite_tuning,
         default_timeout=default_timeout,

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import threading
 import time
+from pathlib import Path
 from types import SimpleNamespace
 from typing import Any, ClassVar
 
@@ -358,9 +359,10 @@ def test_call_limited_retries_on_429_then_succeeds(
     ]
 
 
-def test_call_limited_does_not_retry_non_429(
+def test_call_limited_does_not_retry_4xx_client_error(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    """A 4xx client error is permanent — propagate immediately (e.g. for the splitter)."""
     slept: list[float] = []
     monkeypatch.setattr(client_module.time, "sleep", slept.append)
     runtime = DataCommons(dc_instance="test")
@@ -368,12 +370,63 @@ def test_call_limited_does_not_retry_non_429(
 
     def boom() -> str:
         attempts["n"] += 1
-        raise _FakeHTTPError(status_code=500)
+        raise _FakeHTTPError(status_code=400)
 
     with pytest.raises(_FakeHTTPError):
         runtime._call_limited(boom)
     assert attempts["n"] == 1
     assert slept == []
+
+
+def test_call_limited_retries_on_5xx_then_succeeds(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A transient 5xx (e.g. 503) backs off and retries rather than failing the stage."""
+    slept: list[float] = []
+    monkeypatch.setattr(client_module.time, "sleep", slept.append)
+    runtime = DataCommons(dc_instance="test")
+    attempts = {"n": 0}
+
+    def flaky() -> str:
+        attempts["n"] += 1
+        if attempts["n"] <= 2:
+            raise _FakeHTTPError(status_code=503)
+        return "ok"
+
+    assert runtime._call_limited(flaky) == "ok"
+    assert attempts["n"] == 3
+    assert slept == [
+        client_module._RATE_LIMIT_BASE_DELAY_SEC,
+        client_module._RATE_LIMIT_BASE_DELAY_SEC * 2.0,
+    ]
+
+
+def test_call_limited_retries_on_wrapped_mixer_503(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """The DC client wraps the mixer status (HTTP 500, body says 503) — still retried."""
+    slept: list[float] = []
+    monkeypatch.setattr(client_module.time, "sleep", slept.append)
+    runtime = DataCommons(dc_instance="test")
+    attempts = {"n": 0}
+
+    class _MixerError(RuntimeError):
+        # No status_code attribute — only the wrapped message, as seen in prod.
+        pass
+
+    def flaky() -> str:
+        attempts["n"] += 1
+        if attempts["n"] == 1:
+            raise _MixerError(
+                "The Data Commons API returned a non-2xx status code.\n"
+                "Status Code: 500\n"
+                'Response: {"message":"remote mixer response not ok: '
+                '503 Service Unavailable"}'
+            )
+        return "ok"
+
+    assert runtime._call_limited(flaky) == "ok"
+    assert attempts["n"] == 2
 
 
 def test_call_limited_honors_retry_after_header(
@@ -392,6 +445,124 @@ def test_call_limited_honors_retry_after_header(
 
     assert runtime._call_limited(flaky) == "ok"
     assert slept == [7.0]
+
+
+def _runtime_with_cache(client: Any, *, cache_dir: Path) -> DataCommons:
+    runtime = DataCommons(dc_instance="test", cache_dir=cache_dir)
+    runtime._client = client
+    return runtime
+
+
+def test_place_children_cache_hit_avoids_second_request(tmp_path: Path) -> None:
+    node = _FakeNode()
+    runtime = _runtime_with_cache(_FakeClient(node), cache_dir=tmp_path)
+
+    first = runtime.fetch_place_children(place_type="Country", parent_place="Earth")
+    second = runtime.fetch_place_children(place_type="Country", parent_place="Earth")
+
+    assert first == second == ["Earth/child-1", "Earth/child-2"]
+    # The second call is served entirely from disk — the node is hit only once.
+    assert node.calls == [("Earth",)]
+
+
+def test_place_children_cache_persists_across_runtimes(tmp_path: Path) -> None:
+    node = _FakeNode()
+    _runtime_with_cache(_FakeClient(node), cache_dir=tmp_path).fetch_place_children(
+        place_type="Country", parent_place="Earth"
+    )
+
+    # A fresh runtime (new build process) over the same cache dir re-fetches nothing.
+    fresh_node = _FakeNode()
+    result = _runtime_with_cache(
+        _FakeClient(fresh_node), cache_dir=tmp_path
+    ).fetch_place_children(place_type="Country", parent_place="Earth")
+
+    assert result == ["Earth/child-1", "Earth/child-2"]
+    assert fresh_node.calls == []
+
+
+def test_no_cache_dir_writes_nothing_and_always_fetches(tmp_path: Path) -> None:
+    node = _FakeNode()
+    runtime = _runtime_with_client(_FakeClient(node))  # no cache_dir
+
+    runtime.fetch_place_children(place_type="Country", parent_place="Earth")
+    runtime.fetch_place_children(place_type="Country", parent_place="Earth")
+
+    assert node.calls == [("Earth",), ("Earth",)]
+    assert list(tmp_path.iterdir()) == []
+
+
+def test_genuine_empty_children_cached_and_not_refetched(tmp_path: Path) -> None:
+    class _EmptyNode:
+        def __init__(self) -> None:
+            self.calls: list[tuple[str, ...]] = []
+
+        def fetch_place_children(
+            self, *, place_dcids: list[str], children_type: str
+        ) -> dict[str, list[dict[str, str]]]:
+            _ = children_type
+            self.calls.append(tuple(place_dcids))
+            return {place_dcids[0]: []}
+
+    node = _EmptyNode()
+    runtime = _runtime_with_cache(_FakeClient(node), cache_dir=tmp_path)
+
+    assert runtime.fetch_place_children(place_type="City", parent_place="p") == []
+    # An empty result is a cached hit, not a perpetual miss.
+    assert runtime.fetch_place_children(place_type="City", parent_place="p") == []
+    assert node.calls == [("p",)]
+
+
+def test_corrupt_cache_file_is_treated_as_miss(tmp_path: Path) -> None:
+    node = _FakeNode()
+    runtime = _runtime_with_cache(_FakeClient(node), cache_dir=tmp_path)
+    cache_name = runtime._place_cache_name("children", "Country", ["Earth"])
+    (tmp_path / cache_name).write_text("{ not valid json", encoding="utf-8")
+
+    result = runtime.fetch_place_children(place_type="Country", parent_place="Earth")
+
+    assert result == ["Earth/child-1", "Earth/child-2"]
+    assert node.calls == [("Earth",)]
+
+
+def test_for_parents_resumes_completed_chunks_after_failure(tmp_path: Path) -> None:
+    """A transient failure mid-walk leaves completed chunks cached; the re-run
+    re-fetches only the chunks that never finished."""
+
+    class _FailOnNode:
+        def __init__(self, fail_parents: set[str]) -> None:
+            self.fail_parents = fail_parents
+            self.calls: list[tuple[str, ...]] = []
+
+        def fetch_place_children(
+            self, *, place_dcids: list[str], children_type: str
+        ) -> dict[str, list[dict[str, str]]]:
+            _ = children_type
+            self.calls.append(tuple(place_dcids))
+            if self.fail_parents.intersection(place_dcids):
+                raise RuntimeError("transient")
+            return {p: [{"dcid": f"{p}/c"}] for p in place_dcids}
+
+    parents = ["p1", "p2", "p3"]
+    node1 = _FailOnNode(fail_parents={"p2"})
+    runtime1 = _runtime_with_cache(_FakeClient(node1), cache_dir=tmp_path)
+    with pytest.raises(RuntimeError):
+        runtime1.fetch_place_children_for_parents(
+            place_type="Admin1", parent_places=parents, chunk_size=1
+        )
+    # p1 completed and is cached before p2 raised.
+    assert ("p1",) in node1.calls
+
+    node2 = _FailOnNode(fail_parents=set())
+    runtime2 = _runtime_with_cache(_FakeClient(node2), cache_dir=tmp_path)
+    rows = runtime2.fetch_place_children_for_parents(
+        place_type="Admin1", parent_places=parents, chunk_size=1
+    )
+
+    assert rows == {"p1": ["p1/c"], "p2": ["p2/c"], "p3": ["p3/c"]}
+    # The completed chunk (p1) is served from cache; only p2 and p3 re-fetch.
+    assert ("p1",) not in node2.calls
+    assert ("p2",) in node2.calls and ("p3",) in node2.calls
 
 
 def test_call_limited_gives_up_after_max_429_retries(

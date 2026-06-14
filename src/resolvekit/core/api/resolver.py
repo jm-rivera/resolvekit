@@ -205,6 +205,7 @@ class Resolver:
         max_query_length: int = DEFAULT_MAX_QUERY_LENGTH,
         routing_mode: RoutingMode | None = None,
         loaded_modules: dict[str, list[LoadedDataPack]] | None = None,
+        loaded_overlays: list[LoadedDataPack] | None = None,
         cache_size: int = 1024,
         sqlite_tuning: SQLiteTuning | None = None,
         default_timeout: float | None = None,
@@ -225,6 +226,11 @@ class Resolver:
                 ``EXPLICIT``, or ``HYBRID``.
             loaded_modules: Mapping of pack_id to its loaded base modules,
                 used by ``info`` to surface data versions for reproducibility.
+            loaded_overlays: List of loaded overlay packs from prior
+                ``augment()`` calls.  Carried forward so that chained
+                ``augment()`` calls compose all overlays rather than dropping
+                earlier ones.  ``None`` (default) treats the resolver as
+                having no prior overlays (first-generation or base resolver).
             cache_size: LRU result cache size. Default 1024 (LRU enabled).
                 Pass ``cache_size=0`` to disable.
 
@@ -295,6 +301,7 @@ class Resolver:
         self._max_query_length = max_query_length
         self._routing_mode = routing_mode
         self._loaded_modules = loaded_modules or {}
+        self._loaded_overlays: list[LoadedDataPack] = loaded_overlays or []
         self._default_timeout = default_timeout
         self._confidence_threshold = confidence_threshold
         self._sentinel_blocklist = sentinel_blocklist
@@ -2938,12 +2945,19 @@ class Resolver:
             namespace=namespace,
             cache=cache,
             loaded_modules=self._loaded_modules,
+            loaded_overlays=self._loaded_overlays,
             available_systems=self.code_systems(),
         )
 
-        # Compose a new resolver: base dirs + overlay dir.
+        # Compose a new resolver: base dirs + prior overlay dirs + new overlay dir.
+        # Prior overlays appear before the new overlay so composition order is
+        # oldest-first, newest-last (highest precedence).
         new_resolver = type(self).from_datapacks(
-            datapack_paths=[*prep.base_dirs, prep.outcome.pack_dir],
+            datapack_paths=[
+                *prep.base_dirs,
+                *prep.prior_overlay_dirs,
+                prep.outcome.pack_dir,
+            ],
             domains=[prep.domain],
         )
 

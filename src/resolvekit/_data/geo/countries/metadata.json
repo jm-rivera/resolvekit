@@ -13,7 +13,7 @@
     "fts": "fts5",
     "symspell": "symspell.dict"
   },
-  "build_timestamp": "2026-06-11T21:35:44.579025+00:00",
+  "build_timestamp": "2026-06-14T09:06:59.216025+00:00",
   "source_datasets": [
     "datacommons"
   ],
@@ -23,9 +23,9 @@
   },
   "description": null,
   "checksums": {
-    "sqlite": "b37f34de8e4f70ff907281424466a759a13505170fef910e25996b2eece479e8",
-    "symspell": "84a1c9985f13522d95729044cd927b87ac5ac9234514e7654cbe6eaae9195d09",
-    "calibrator": "81f42e1038c555e4ad6036a842fd4e6ddae1fa94f02fc0cb6dd404cca175e995"
+    "sqlite": "09bafabd3f00182cf067884cb64d60c6761bd5400958967d204eae9385c10192",
+    "symspell": "a8254c4a5a18e45adf3e30d4b8d239e6c02a9876baff50c05c0d8c8153e1e815",
+    "calibrator": "900c09348742718985f3236f270d0cdc2d4941cc38fade9b7310185d6cf845a7"
   },
   "distribution": "bundled",
   "remote_artifacts": null,
@@ -38,12 +38,12 @@
   "base_module_ids": null,
   "allow_new_entities": false,
   "quality_metrics": {
-    "entity_count": 239,
-    "names_count": 4327,
-    "codes_count": 9125,
-    "relations_count": 1889,
+    "entity_count": 241,
+    "names_count": 4355,
+    "codes_count": 9129,
+    "relations_count": 1911,
     "names_coverage": 1.0,
     "codes_coverage": 1.0,
-    "relations_density": 7.903765690376569
+    "relations_density": 7.929460580912863
   }
 }

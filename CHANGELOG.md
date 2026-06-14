@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.1.10 (2026-06-14)
+
+**Fixed.** Geo resolution corrections, from a bundled-data rebuild. "Congo, Rep."
+and the other World Bank short names now resolve to the correct country; "Taiwan
+Province of China" resolves to `country/TWN` (a competing UN region aggregate that
+pre-empted it is removed); and "EU Institutions" resolves to the dedicated
+`DAC/EUInstitutions` entity instead of hijacking the European Union. Adds DAC
+aggregates (Total DAC, DAC Countries), the Euro Area, an OECD Non-DAC group, and a
+World entity.
+
+**Added.** Bring-your-own-data composition: overlay packs layer onto the base
+resolver, `bulk(..., on_missing=...)` applies to entities that resolve but lack the
+requested code, and intake reports a code's availability across all input rows.
+
 ## 0.1.9 (2026-06-13)
 
 **Added.** Python 3.14 support. 3.14 is now a classified and tested target; CI

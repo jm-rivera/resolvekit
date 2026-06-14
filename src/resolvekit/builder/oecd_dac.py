@@ -112,7 +112,7 @@ def _validate_crosswalk(
                 # available DBs. Partial or filtered builds may not include the full
                 # entity corpus, so a missing entity might simply not be ingested yet
                 # rather than truly missing. We skip gracefully and don't attach the
-                # OECD code to that entity in this run.
+                # OECD code to that entity.
                 if not found:
                     logger.warning(
                         "oecd_dac crosswalk: %r[%r] = %r not found in any available DB"
@@ -347,14 +347,34 @@ def _upsert_multilateral_providers(
         if mapped_entity_id is not None:
             db_label = crosswalk_target_db.get(mapped_entity_id)
             if db_label == "geo" and geo_contrib is not None:
+                # For EuropeanUnion the OECD provider name ("EU Institutions") is an
+                # org/donor label, not a geographic alias of the EU.  Suppress the
+                # name injection so that "EU Institutions" resolves to the dedicated
+                # DAC/EUInstitutions entity instead of hijacking EuropeanUnion.  The
+                # oecd:provider code is still attached for crosswalk coverage.
+                suppress_name = mapped_entity_id == "EuropeanUnion"
                 _attach_names_and_code(
                     geo_contrib,
                     entity_id=mapped_entity_id,
-                    name_en=name_en,
-                    name_fr=name_fr,
+                    name_en="" if suppress_name else name_en,
+                    name_fr=None if suppress_name else name_fr,
                     code_system="oecd:provider",
                     code_value=code,
                 )
+                if suppress_name:
+                    # Suppressing the insert is not enough: an earlier build may
+                    # have already injected the donor label as an alias on the geo
+                    # entity (it persists in the reused staging store). Delete it so
+                    # the name resolves to the dedicated DAC entity on every build,
+                    # not just a from-scratch one.
+                    for label in (name_en, name_fr):
+                        if label:
+                            geo_contrib.names_to_delete.append(
+                                {
+                                    "entity_id": mapped_entity_id,
+                                    "value_norm": _normalizer.normalize(label),
+                                }
+                            )
             elif db_label == "org" and org_contrib is not None:
                 _attach_names_and_code(
                     org_contrib,
