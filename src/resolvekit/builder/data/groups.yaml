@@ -138,55 +138,7 @@ groups:
       - {iso3: TUR, valid_from: "1999-09-26"}
       - {iso3: USA, valid_from: "1999-09-26"}
       - {iso3: ZAF, valid_from: "1999-09-26"}
-      # AU joined as full member in 2023
-      - {iso3: AGO, valid_from: "2023-09-09"}
-      - {iso3: BEN, valid_from: "2023-09-09"}
-      - {iso3: BWA, valid_from: "2023-09-09"}
-      - {iso3: CMR, valid_from: "2023-09-09"}
-      - {iso3: COM, valid_from: "2023-09-09"}
-      - {iso3: CPV, valid_from: "2023-09-09"}
-      - {iso3: COD, valid_from: "2023-09-09"}
-      - {iso3: DJI, valid_from: "2023-09-09"}
-      - {iso3: DZA, valid_from: "2023-09-09"}
-      - {iso3: EGY, valid_from: "2023-09-09"}
-      - {iso3: ERI, valid_from: "2023-09-09"}
-      - {iso3: ETH, valid_from: "2023-09-09"}
-      - {iso3: GAB, valid_from: "2023-09-09"}
-      - {iso3: GHA, valid_from: "2023-09-09"}
-      - {iso3: GIN, valid_from: "2023-09-09"}
-      - {iso3: GMB, valid_from: "2023-09-09"}
-      - {iso3: GNB, valid_from: "2023-09-09"}
-      - {iso3: GNQ, valid_from: "2023-09-09"}
-      - {iso3: KEN, valid_from: "2023-09-09"}
-      - {iso3: LBR, valid_from: "2023-09-09"}
-      - {iso3: LBY, valid_from: "2023-09-09"}
-      - {iso3: LSO, valid_from: "2023-09-09"}
-      - {iso3: MAR, valid_from: "2023-09-09"}
-      - {iso3: MDG, valid_from: "2023-09-09"}
-      - {iso3: MLI, valid_from: "2023-09-09"}
-      - {iso3: MOZ, valid_from: "2023-09-09"}
-      - {iso3: MRT, valid_from: "2023-09-09"}
-      - {iso3: MUS, valid_from: "2023-09-09"}
-      - {iso3: MWI, valid_from: "2023-09-09"}
-      - {iso3: NAM, valid_from: "2023-09-09"}
-      - {iso3: NER, valid_from: "2023-09-09"}
-      - {iso3: NGA, valid_from: "2023-09-09"}
-      - {iso3: RWA, valid_from: "2023-09-09"}
-      - {iso3: SDN, valid_from: "2023-09-09"}
-      - {iso3: SEN, valid_from: "2023-09-09"}
-      - {iso3: SLE, valid_from: "2023-09-09"}
-      - {iso3: SOM, valid_from: "2023-09-09"}
-      - {iso3: SSD, valid_from: "2023-09-09"}
-      - {iso3: STP, valid_from: "2023-09-09"}
-      - {iso3: SWZ, valid_from: "2023-09-09"}
-      - {iso3: SYC, valid_from: "2023-09-09"}
-      - {iso3: TCD, valid_from: "2023-09-09"}
-      - {iso3: TGO, valid_from: "2023-09-09"}
-      - {iso3: TUN, valid_from: "2023-09-09"}
-      - {iso3: TZA, valid_from: "2023-09-09"}
-      - {iso3: UGA, valid_from: "2023-09-09"}
-      - {iso3: ZMB, valid_from: "2023-09-09"}
-      - {iso3: ZWE, valid_from: "2023-09-09"}
+      # EU and AU are G20 members as blocs; not expanded to constituent states.
 
   - id: groups/G77
     type: geo.organization
@@ -198,25 +150,29 @@ groups:
       - https://www.wikidata.org/wiki/Q190523
       - https://www.g77.org/doc/members.html
     members:
-      # Current membership (134 countries as of 2024); ISO-3 codes
       - {iso3: AFG}
       - {iso3: AGO}
-      - {iso3: ALB}
       - {iso3: ARE}
       - {iso3: ARG}
+      - {iso3: ATG}
       - {iso3: AZE}
       - {iso3: BDI}
       - {iso3: BEN}
       - {iso3: BFA}
       - {iso3: BGD}
       - {iso3: BHR}
+      - {iso3: BHS}
+      - {iso3: BLZ}
       - {iso3: BOL}
       - {iso3: BRA}
+      - {iso3: BRB}
+      - {iso3: BRN}
       - {iso3: BTN}
       - {iso3: BWA}
       - {iso3: CAF}
-      - {iso3: CHN}
       - {iso3: CHL}
+      - {iso3: CHN}
+      - {iso3: CIV}
       - {iso3: CMR}
       - {iso3: COD}
       - {iso3: COG}
@@ -234,6 +190,7 @@ groups:
       - {iso3: ERI}
       - {iso3: ETH}
       - {iso3: FJI}
+      - {iso3: FSM}
       - {iso3: GAB}
       - {iso3: GHA}
       - {iso3: GIN}
@@ -252,7 +209,6 @@ groups:
       - {iso3: JAM}
       - {iso3: JOR}
       - {iso3: KEN}
-      - {iso3: KGZ}
       - {iso3: KHM}
       - {iso3: KIR}
       - {iso3: KNA}
@@ -267,7 +223,6 @@ groups:
       - {iso3: MAR}
       - {iso3: MDG}
       - {iso3: MDV}
-      - {iso3: MEX}
       - {iso3: MHL}
       - {iso3: MLI}
       - {iso3: MMR}
@@ -288,7 +243,6 @@ groups:
       - {iso3: PAN}
       - {iso3: PER}
       - {iso3: PHL}
-      - {iso3: PLW}
       - {iso3: PNG}
       - {iso3: PRK}
       - {iso3: PRY}
@@ -299,8 +253,8 @@ groups:
       - {iso3: SDN}
       - {iso3: SEN}
       - {iso3: SGP}
-      - {iso3: SLE}
       - {iso3: SLB}
+      - {iso3: SLE}
       - {iso3: SLV}
       - {iso3: SOM}
       - {iso3: SSD}
@@ -318,11 +272,9 @@ groups:
       - {iso3: TON}
       - {iso3: TTO}
       - {iso3: TUN}
-      - {iso3: TUV}
       - {iso3: TZA}
       - {iso3: UGA}
       - {iso3: URY}
-      - {iso3: UZB}
       - {iso3: VCT}
       - {iso3: VEN}
       - {iso3: VNM}
@@ -348,6 +300,7 @@ groups:
       - {iso3: AUT, valid_from: "1961-09-29"}
       - {iso3: BEL, valid_from: "1961-09-13"}
       - {iso3: CAN, valid_from: "1961-04-10"}
+      - {iso3: CHE, valid_from: "1961-09-28"}
       - {iso3: CHL, valid_from: "2010-05-07"}
       - {iso3: COL, valid_from: "2020-04-28"}
       - {iso3: CRI, valid_from: "2021-05-25"}
@@ -401,6 +354,7 @@ groups:
       - {iso3: PHL, valid_from: "1967-08-08"}
       - {iso3: SGP, valid_from: "1967-08-08"}
       - {iso3: THA, valid_from: "1967-08-08"}
+      - {iso3: TLS, valid_from: "2025-10-26"}
       - {iso3: VNM, valid_from: "1995-07-28"}
 
   - id: groups/BRICS
@@ -424,6 +378,8 @@ groups:
       - {iso3: EGY, valid_from: "2024-01-01"}
       - {iso3: ETH, valid_from: "2024-01-01"}
       - {iso3: IRN, valid_from: "2024-01-01"}
+      # 2025 enlargement
+      - {iso3: IDN, valid_from: "2025-01-01"}
 
   - id: groups/MERCOSUR
     type: geo.organization
@@ -452,9 +408,10 @@ groups:
       - https://www.wikidata.org/wiki/Q7795
       - https://www.opec.org/opec_web/en/about_us/25.htm
     members:
-      - {iso3: AGO, valid_from: "2007-01-01"}
-      - {iso3: ARE, valid_from: "1967-11-01"}
+      - {iso3: AGO, valid_from: "2007-01-01", valid_until: "2024-01-01"}
+      - {iso3: ARE, valid_from: "1967-11-01", valid_until: "2026-05-01"}
       - {iso3: COG, valid_from: "2018-06-22"}
+      - {iso3: DZA, valid_from: "1969-07-01"}
       - {iso3: GAB, valid_from: "2016-07-01"}
       - {iso3: GNQ, valid_from: "2017-05-25"}
       - {iso3: IRN, valid_from: "1960-09-14"}
@@ -491,6 +448,7 @@ groups:
       - {iso3: DZA}
       - {iso3: EGY}
       - {iso3: ERI}
+      - {iso3: ESH}
       - {iso3: ETH}
       - {iso3: GAB}
       - {iso3: GHA}
@@ -516,7 +474,6 @@ groups:
       - {iso3: SDN}
       - {iso3: SEN}
       - {iso3: SLE}
-      - {iso3: SLB}
       - {iso3: SOM}
       - {iso3: SSD}
       - {iso3: STP}
@@ -541,18 +498,20 @@ groups:
       - https://www.wikidata.org/wiki/Q161885
       - https://thecommonwealth.org/our-member-countries
     members:
-      - {iso3: AGO}
       - {iso3: ATG}
       - {iso3: AUS}
-      - {iso3: BDI}
       - {iso3: BGD}
       - {iso3: BHS}
       - {iso3: BLZ}
+      - {iso3: BRB}
+      - {iso3: BRN}
       - {iso3: BWA}
+      - {iso3: CAN}
       - {iso3: CMR}
       - {iso3: CYP}
       - {iso3: DMA}
       - {iso3: FJI}
+      - {iso3: GAB}
       - {iso3: GBR}
       - {iso3: GHA}
       - {iso3: GMB}
@@ -569,7 +528,6 @@ groups:
       - {iso3: MDV}
       - {iso3: MLT}
       - {iso3: MOZ}
-      - {iso3: MRT}
       - {iso3: MUS}
       - {iso3: MWI}
       - {iso3: MYS}
@@ -580,12 +538,12 @@ groups:
       - {iso3: PAK}
       - {iso3: PNG}
       - {iso3: RWA}
-      - {iso3: SEN}
       - {iso3: SGP}
       - {iso3: SLB}
       - {iso3: SLE}
       - {iso3: SWZ}
       - {iso3: SYC}
+      - {iso3: TGO}
       - {iso3: TON}
       - {iso3: TTO}
       - {iso3: TUV}
@@ -608,7 +566,7 @@ groups:
       - https://www.un.org/en/about-us/member-states
     members:
       # 193 member states (as of 2024); all founding and subsequent members
-      - {iso3: AFG, valid_from: "1945-11-19"}
+      - {iso3: AFG, valid_from: "1946-11-19"}
       - {iso3: AGO, valid_from: "1976-12-01"}
       - {iso3: ALB, valid_from: "1955-12-14"}
       - {iso3: AND, valid_from: "1993-07-28"}
@@ -752,7 +710,6 @@ groups:
       - {iso3: PRK, valid_from: "1991-09-17"}
       - {iso3: PRT, valid_from: "1955-12-14"}
       - {iso3: PRY, valid_from: "1945-10-24"}
-      - {iso3: PSE, valid_from: "2012-11-29"}
       - {iso3: QAT, valid_from: "1971-09-21"}
       - {iso3: ROU, valid_from: "1955-12-14"}
       - {iso3: RUS, valid_from: "1945-10-24"}
@@ -858,7 +815,7 @@ groups:
     members:
       - {iso3: AUT, valid_from: "1997-12-01"}
       - {iso3: BEL, valid_from: "1995-03-26"}
-      - {iso3: BGR, valid_from: "2024-01-01"}
+      - {iso3: BGR, valid_from: "2025-01-01"}
       - {iso3: CHE, valid_from: "2008-12-12"}
       - {iso3: CZE, valid_from: "2007-12-21"}
       - {iso3: DEU, valid_from: "1995-03-26"}
@@ -881,7 +838,7 @@ groups:
       - {iso3: NOR, valid_from: "2001-03-25"}
       - {iso3: POL, valid_from: "2007-12-21"}
       - {iso3: PRT, valid_from: "1995-03-26"}
-      - {iso3: ROU, valid_from: "2024-01-01"}
+      - {iso3: ROU, valid_from: "2025-01-01"}
       - {iso3: SVK, valid_from: "2007-12-21"}
       - {iso3: SVN, valid_from: "2007-12-21"}
       - {iso3: SWE, valid_from: "2001-03-25"}
@@ -898,6 +855,7 @@ groups:
     members:
       - {iso3: AUT, valid_from: "1999-01-01"}
       - {iso3: BEL, valid_from: "1999-01-01"}
+      - {iso3: BGR, valid_from: "2026-01-01"}
       - {iso3: CYP, valid_from: "2008-01-01"}
       - {iso3: DEU, valid_from: "1999-01-01"}
       - {iso3: ESP, valid_from: "1999-01-01"}
@@ -913,7 +871,6 @@ groups:
       - {iso3: LVA, valid_from: "2014-01-01"}
       - {iso3: MLT, valid_from: "2008-01-01"}
       - {iso3: NLD, valid_from: "1999-01-01"}
-      - {iso3: POL, valid_from: "2025-01-01"}
       - {iso3: PRT, valid_from: "1999-01-01"}
       - {iso3: SVK, valid_from: "2009-01-01"}
       - {iso3: SVN, valid_from: "2007-01-01"}
@@ -1147,7 +1104,7 @@ groups:
               "World Bank High-Income Countries"]
     snapshot: true
     attributes:
-      snapshot_year: 2025
+      snapshot_year: 2026
     sources:
       - https://www.wikidata.org/wiki/Q10656060
       - https://datahelpdesk.worldbank.org/knowledgebase/articles/906519-world-bank-country-and-lending-groups
@@ -1158,6 +1115,7 @@ groups:
       - {iso3: AUS}
       - {iso3: AUT}
       - {iso3: BEL}
+      - {iso3: BGR}
       - {iso3: BHR}
       - {iso3: BHS}
       - {iso3: BRB}
@@ -1165,6 +1123,7 @@ groups:
       - {iso3: CAN}
       - {iso3: CHE}
       - {iso3: CHL}
+      - {iso3: CRI}
       - {iso3: CYP}
       - {iso3: CZE}
       - {iso3: DEU}
@@ -1175,11 +1134,9 @@ groups:
       - {iso3: FRA}
       - {iso3: GBR}
       - {iso3: GRC}
-      - {iso3: GUM}
-      - {iso3: HKG}
+      - {iso3: GUY}
       - {iso3: HRV}
       - {iso3: HUN}
-      - {iso3: IMN}
       - {iso3: IRL}
       - {iso3: ISL}
       - {iso3: ISR}
@@ -1192,20 +1149,20 @@ groups:
       - {iso3: LTU}
       - {iso3: LUX}
       - {iso3: LVA}
-      - {iso3: MAC}
       - {iso3: MCO}
       - {iso3: MLT}
-      - {iso3: MNE}
       - {iso3: NLD}
       - {iso3: NOR}
+      - {iso3: NRU}
       - {iso3: NZL}
       - {iso3: OMN}
       - {iso3: PAN}
+      - {iso3: PLW}
       - {iso3: POL}
-      - {iso3: PRI}
       - {iso3: PRT}
       - {iso3: QAT}
       - {iso3: ROU}
+      - {iso3: RUS}
       - {iso3: SAU}
       - {iso3: SGP}
       - {iso3: SMR}
@@ -1214,10 +1171,8 @@ groups:
       - {iso3: SWE}
       - {iso3: SYC}
       - {iso3: TTO}
-      - {iso3: TWN}
       - {iso3: URY}
       - {iso3: USA}
-      - {iso3: VIR}
 
   - id: groups/WB.IncomeGroup.UpperMiddle
     type: geo.organization
@@ -1226,22 +1181,23 @@ groups:
               "World Bank Upper-Middle-Income Countries"]
     snapshot: true
     attributes:
-      snapshot_year: 2025
+      snapshot_year: 2026
     sources:
       - https://www.wikidata.org/wiki/Q10656060
       - https://datahelpdesk.worldbank.org/knowledgebase/articles/906519-world-bank-country-and-lending-groups
     members:
       - {iso3: ALB}
+      - {iso3: ARG}
       - {iso3: ARM}
       - {iso3: AZE}
       - {iso3: BIH}
       - {iso3: BLR}
-      - {iso3: BOL}
+      - {iso3: BLZ}
       - {iso3: BRA}
       - {iso3: BWA}
       - {iso3: CHN}
       - {iso3: COL}
-      - {iso3: CRI}
+      - {iso3: CPV}
       - {iso3: CUB}
       - {iso3: DMA}
       - {iso3: DOM}
@@ -1253,11 +1209,10 @@ groups:
       - {iso3: GNQ}
       - {iso3: GRD}
       - {iso3: GTM}
-      - {iso3: GUY}
+      - {iso3: IDN}
       - {iso3: IRN}
       - {iso3: IRQ}
       - {iso3: JAM}
-      - {iso3: JOR}
       - {iso3: KAZ}
       - {iso3: LBY}
       - {iso3: LCA}
@@ -1267,12 +1222,12 @@ groups:
       - {iso3: MHL}
       - {iso3: MKD}
       - {iso3: MNE}
+      - {iso3: MNG}
       - {iso3: MUS}
       - {iso3: MYS}
-      - {iso3: NAM}
       - {iso3: PER}
       - {iso3: PRY}
-      - {iso3: RUS}
+      - {iso3: SLV}
       - {iso3: SRB}
       - {iso3: SUR}
       - {iso3: THA}
@@ -1280,8 +1235,8 @@ groups:
       - {iso3: TON}
       - {iso3: TUR}
       - {iso3: TUV}
+      - {iso3: UKR}
       - {iso3: VCT}
-      - {iso3: VEN}
       - {iso3: WSM}
       - {iso3: ZAF}
 
@@ -1292,7 +1247,7 @@ groups:
               "World Bank Lower-Middle-Income Countries"]
     snapshot: true
     attributes:
-      snapshot_year: 2025
+      snapshot_year: 2026
     sources:
       - https://www.wikidata.org/wiki/Q10656060
       - https://datahelpdesk.worldbank.org/knowledgebase/articles/906519-world-bank-country-and-lending-groups
@@ -1300,53 +1255,47 @@ groups:
       - {iso3: AGO}
       - {iso3: BEN}
       - {iso3: BGD}
-      - {iso3: BFA}
+      - {iso3: BOL}
       - {iso3: BTN}
       - {iso3: CIV}
       - {iso3: CMR}
-      - {iso3: COD}
       - {iso3: COG}
       - {iso3: COM}
-      - {iso3: CPV}
       - {iso3: DJI}
       - {iso3: EGY}
       - {iso3: FSM}
       - {iso3: GHA}
       - {iso3: GIN}
-      - {iso3: GMB}
       - {iso3: HND}
       - {iso3: HTI}
       - {iso3: IND}
-      - {iso3: IRN}
+      - {iso3: JOR}
       - {iso3: KEN}
       - {iso3: KGZ}
       - {iso3: KHM}
       - {iso3: KIR}
+      - {iso3: LAO}
+      - {iso3: LBN}
       - {iso3: LKA}
       - {iso3: LSO}
       - {iso3: MAR}
       - {iso3: MMR}
-      - {iso3: MNG}
-      - {iso3: MOZ}
       - {iso3: MRT}
+      - {iso3: NAM}
       - {iso3: NGA}
       - {iso3: NIC}
       - {iso3: NPL}
       - {iso3: PAK}
       - {iso3: PHL}
       - {iso3: PNG}
-      - {iso3: PSE}
       - {iso3: SEN}
       - {iso3: SLB}
-      - {iso3: SLE}
-      - {iso3: SLV}
       - {iso3: STP}
       - {iso3: SWZ}
       - {iso3: TJK}
       - {iso3: TLS}
       - {iso3: TUN}
       - {iso3: TZA}
-      - {iso3: UKR}
       - {iso3: UZB}
       - {iso3: VNM}
       - {iso3: VUT}
@@ -1360,19 +1309,19 @@ groups:
               "World Bank Low-Income Countries"]
     snapshot: true
     attributes:
-      snapshot_year: 2025
+      snapshot_year: 2026
     sources:
       - https://www.wikidata.org/wiki/Q10656060
       - https://datahelpdesk.worldbank.org/knowledgebase/articles/906519-world-bank-country-and-lending-groups
     members:
       - {iso3: AFG}
       - {iso3: BDI}
+      - {iso3: BFA}
       - {iso3: CAF}
       - {iso3: COD}
       - {iso3: ERI}
-      - {iso3: ETH}
+      - {iso3: GMB}
       - {iso3: GNB}
-      - {iso3: GIN}
       - {iso3: LBR}
       - {iso3: MDG}
       - {iso3: MLI}
@@ -1382,6 +1331,7 @@ groups:
       - {iso3: PRK}
       - {iso3: RWA}
       - {iso3: SDN}
+      - {iso3: SLE}
       - {iso3: SOM}
       - {iso3: SSD}
       - {iso3: SYR}
@@ -1389,7 +1339,6 @@ groups:
       - {iso3: TGO}
       - {iso3: UGA}
       - {iso3: YEM}
-      - {iso3: ZWE}
 
   - id: groups/OECD.DAC
     type: geo.organization
@@ -1448,23 +1397,22 @@ groups:
       - {iso3: BEN}
       - {iso3: BFA}
       - {iso3: BGD}
-      - {iso3: BTN}
       - {iso3: CAF}
-      - {iso3: COM}
       - {iso3: COD}
+      - {iso3: COM}
       - {iso3: DJI}
       - {iso3: ERI}
       - {iso3: ETH}
-      - {iso3: GMB}
       - {iso3: GIN}
+      - {iso3: GMB}
       - {iso3: GNB}
       - {iso3: HTI}
+      - {iso3: KHM}
       - {iso3: KIR}
       - {iso3: LAO}
       - {iso3: LBR}
       - {iso3: LSO}
       - {iso3: MDG}
-      - {iso3: MDV}
       - {iso3: MLI}
       - {iso3: MMR}
       - {iso3: MOZ}
@@ -1473,21 +1421,18 @@ groups:
       - {iso3: NER}
       - {iso3: NPL}
       - {iso3: RWA}
+      - {iso3: SDN}
       - {iso3: SEN}
-      - {iso3: SLE}
       - {iso3: SLB}
+      - {iso3: SLE}
       - {iso3: SOM}
       - {iso3: SSD}
-      - {iso3: STP}
-      - {iso3: SDN}
       - {iso3: TCD}
       - {iso3: TGO}
       - {iso3: TLS}
       - {iso3: TUV}
       - {iso3: TZA}
       - {iso3: UGA}
-      - {iso3: VUT}
-      - {iso3: WSM}
       - {iso3: YEM}
       - {iso3: ZMB}
 
@@ -1507,6 +1452,7 @@ groups:
       - {iso3: BFA}
       - {iso3: BOL}
       - {iso3: BTN}
+      - {iso3: BWA}
       - {iso3: CAF}
       - {iso3: ETH}
       - {iso3: KAZ}
@@ -1514,7 +1460,7 @@ groups:
       - {iso3: LAO}
       - {iso3: LSO}
       - {iso3: MDA}
-      - {iso3: MDG}
+      - {iso3: MKD}
       - {iso3: MLI}
       - {iso3: MNG}
       - {iso3: MWI}
@@ -1522,9 +1468,9 @@ groups:
       - {iso3: NPL}
       - {iso3: PRY}
       - {iso3: RWA}
-      - {iso3: SDN}
       - {iso3: SSD}
       - {iso3: SWZ}
+      - {iso3: TCD}
       - {iso3: TJK}
       - {iso3: TKM}
       - {iso3: UGA}
@@ -1552,6 +1498,7 @@ groups:
       - {iso3: DOM}
       - {iso3: FJI}
       - {iso3: FSM}
+      - {iso3: GNB}
       - {iso3: GRD}
       - {iso3: GUY}
       - {iso3: HTI}
@@ -1565,7 +1512,6 @@ groups:
       - {iso3: NRU}
       - {iso3: PLW}
       - {iso3: PNG}
-      - {iso3: PRI}
       - {iso3: SGP}
       - {iso3: SLB}
       - {iso3: STP}
@@ -1578,18 +1524,6 @@ groups:
       - {iso3: VCT}
       - {iso3: VUT}
       - {iso3: WSM}
-
-  # ── DC-entity alias reuse ─────────────────────────────────────────────────
-  # These entries add alias rows onto entities that already exist in the DC-
-  # sourced geo stores. The entity INSERT is ignored (INSERT OR IGNORE); only
-  # the alias rows are new. canonical_name is set to the entity's real canonical
-  # name (cosmetic — the INSERT is ignored, so this does not overwrite the DB).
-
-  # Alias-only reuse of the DC-sourced DAC/DacMembers entity.
-  # DAC/DacMembers = full DAC membership including EU Institutions (EUI).
-  # DAC/DacCountries = bilateral DAC member countries only (no EUI).
-  # 'DAC countries' already resolves to DAC/DacCountries; the aggregate that
-  # includes EUI is the distinct DAC/DacMembers entity.
   - id: DAC/DacMembers
     type: geo.region
     canonical_name: "Development Assistance Committee  Members"
