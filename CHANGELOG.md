@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.1.11 (2026-06-14)
+
+**Fixed.** Group-membership corrections across the bundled reference data, from a
+rebuild of the geo.countries pack. The euro area no longer lists Poland and now
+includes Bulgaria (joined 2026-01-01). The G20 drops the 48 African countries that
+had been expanded from the African Union's 2023 admission — the AU, like the EU, is
+a member as an organization, not through its constituent states. The Commonwealth
+adds Canada, Barbados, Brunei, Gabon, and Togo and drops four non-members; the
+African Union lists Western Sahara in place of an erroneous Solomon Islands; OPEC
+adds Algeria and marks Angola and the UAE as departed; ASEAN adds Timor-Leste; BRICS
+adds Indonesia; OECD adds Switzerland; the G77 roster is reconciled to the official
+134 members; and the UN list drops Palestine (a non-member observer state) and
+corrects Afghanistan's accession year. The four World Bank income groups and the UN
+LDC, LLDC, and SIDS lists are regenerated from the current 2026 classifications.
+
 ## 0.1.10 (2026-06-14)
 
 **Fixed.** Geo resolution corrections, from a bundled-data rebuild. "Congo, Rep."
