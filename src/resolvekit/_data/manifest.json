@@ -8,9 +8,9 @@
       "entity_types": [
         "geo.country"
       ],
-      "size_mb": 2.61,
+      "size_mb": 2.63,
       "checksums": {
-        "sqlite": "c46ad9f54dc83a09e338ec546edc72ed753756b8fd50613c04fe247e65c032f1"
+        "sqlite": "02f775a7cf994cc4742a7ab42bbebd53c01ba23f8a19db3aa8257baf367d6a6c"
       }
     },
     {
@@ -159,9 +159,9 @@
         "geo.region",
         "geo.subregion"
       ],
-      "size_mb": 1.08,
+      "size_mb": 1.09,
       "checksums": {
-        "sqlite": "16a109da6c7c772097e0b0d54ac8b06b98af642fe53e5143e049df77de3449b6"
+        "sqlite": "f75d22afa159aa281115bd296e4df73c5ac6fc664cc14bffb262a6c8d3401ec6"
       }
     },
     {
@@ -174,7 +174,7 @@
       ],
       "size_mb": 0.1,
       "checksums": {
-        "sqlite": "8bc1a7a67d2c118aeb0348e8aa3fb12f51c9ade8c62a45afe764b84f85624288"
+        "sqlite": "e346f2503428e44cc0b7cf688356eae9522d640e0b3c6ae78f1ba4636399af39"
       }
     },
     {
@@ -196,9 +196,9 @@
       "entity_types": [
         "org.development_finance_provider"
       ],
-      "size_mb": 0.31,
+      "size_mb": 0.32,
       "checksums": {
-        "sqlite": "8ffa163bb1874b98b9f2121f8c23aee24be4a17366b6af282cf5b71836bfb35f"
+        "sqlite": "5ca8f8a55d4791be539601c9e1154e6f0685f75a9d39df4670f7ee1f3822fc72"
       }
     },
     {
