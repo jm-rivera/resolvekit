@@ -266,12 +266,24 @@ recipients:
   iso3: MUS
   type: Country
   dotstatcode: MUS
+- code: '258'
+  name_en: Mayotte
+  name_fr: Mayotte
+  iso3: MYT
+  type: Country
+  dotstatcode: MYT
 - code: '259'
   name_en: Mozambique
   name_fr: Mozambique
   iso3: MOZ
   type: Country
   dotstatcode: MOZ
+- code: '26'
+  name_en: Monaco
+  name_fr: Monaco
+  iso3: MCO
+  type: Country
+  dotstatcode: MCO
 - code: '260'
   name_en: Niger
   name_fr: Niger
@@ -410,6 +422,12 @@ recipients:
   iso3: null
   type: Country
   dotstatcode: F_X
+- code: '30'
+  name_en: Cyprus
+  name_fr: Chypre
+  iso3: CYP
+  type: Country
+  dotstatcode: CYP
 - code: '328'
   name_en: Bahamas
   name_fr: Bahamas
@@ -422,6 +440,12 @@ recipients:
   iso3: BRB
   type: Country
   dotstatcode: BRB
+- code: '331'
+  name_en: Bermuda
+  name_fr: Bermudes
+  iso3: BMU
+  type: Country
+  dotstatcode: BMU
 - code: '336'
   name_en: Costa Rica
   name_fr: Costa Rica
@@ -458,6 +482,12 @@ recipients:
   iso3: HTI
   type: Country
   dotstatcode: HTI
+- code: '35'
+  name_en: Gibraltar
+  name_fr: Gibraltar
+  iso3: GIB
+  type: Country
+  dotstatcode: GIB
 - code: '351'
   name_en: Honduras
   name_fr: Honduras
@@ -482,6 +512,12 @@ recipients:
   iso3: MEX
   type: Country
   dotstatcode: MEX
+- code: '361'
+  name_en: Sint Maarten
+  name_fr: Sint Maarten
+  iso3: SXM
+  type: Country
+  dotstatcode: SXM
 - code: '364'
   name_en: Nicaragua
   name_fr: Nicaragua
@@ -494,12 +530,24 @@ recipients:
   iso3: PAN
   type: Country
   dotstatcode: PAN
+- code: '373'
+  name_en: Aruba
+  name_fr: Aruba
+  iso3: ABW
+  type: Country
+  dotstatcode: ABW
 - code: '375'
   name_en: Trinidad and Tobago
   name_fr: Trinité-et-Tobago
   iso3: TTO
   type: Country
   dotstatcode: TTO
+- code: '376'
+  name_en: Anguilla
+  name_fr: Anguilla
+  iso3: AIA
+  type: Country
+  dotstatcode: AIA
 - code: '377'
   name_en: Antigua and Barbuda
   name_fr: Antigua-et-Barbuda
@@ -542,6 +590,24 @@ recipients:
   iso3: MSR
   type: Country
   dotstatcode: MSR
+- code: '386'
+  name_en: Cayman Islands
+  name_fr: Îles Caïmans
+  iso3: CYM
+  type: Country
+  dotstatcode: CYM
+- code: '387'
+  name_en: Turks and Caicos Islands
+  name_fr: Îles Turques-et-Caïques
+  iso3: TCA
+  type: Country
+  dotstatcode: TCA
+- code: '388'
+  name_en: British Virgin Islands
+  name_fr: Îles Vierges britanniques
+  iso3: VGB
+  type: Country
+  dotstatcode: VGB
 - code: '389'
   name_en: Caribbean & Central America, regional
   name_fr: Caraïbes et Amérique centrale, régional
@@ -590,6 +656,12 @@ recipients:
   iso3: GUY
   type: Country
   dotstatcode: GUY
+- code: '45'
+  name_en: Malta
+  name_fr: Malte
+  iso3: MLT
+  type: Country
+  dotstatcode: MLT
 - code: '451'
   name_en: Paraguay
   name_fr: Paraguay
@@ -632,6 +704,12 @@ recipients:
   iso3: null
   type: Country
   dotstatcode: A_X
+- code: '530'
+  name_en: Bahrain
+  name_fr: Bahreïn
+  iso3: BHR
+  type: Country
+  dotstatcode: BHR
 - code: '540'
   name_en: Iran
   name_fr: Iran
@@ -644,6 +722,12 @@ recipients:
   iso3: IRQ
   type: Country
   dotstatcode: IRQ
+- code: '546'
+  name_en: Israel
+  name_fr: Israël
+  iso3: ISR
+  type: Country
+  dotstatcode: ISR
 - code: '549'
   name_en: Jordan
   name_fr: Jordanie
@@ -662,12 +746,36 @@ recipients:
   iso3: PSE
   type: Country
   dotstatcode: PSE
+- code: '552'
+  name_en: Kuwait
+  name_fr: Koweït
+  iso3: KWT
+  type: Country
+  dotstatcode: KWT
 - code: '555'
   name_en: Lebanon
   name_fr: Liban
   iso3: LBN
   type: Country
   dotstatcode: LBN
+- code: '558'
+  name_en: Oman
+  name_fr: Oman
+  iso3: OMN
+  type: Country
+  dotstatcode: OMN
+- code: '561'
+  name_en: Qatar
+  name_fr: Qatar
+  iso3: QAT
+  type: Country
+  dotstatcode: QAT
+- code: '566'
+  name_en: Saudi Arabia
+  name_fr: Arabie saoudite
+  iso3: SAU
+  type: Country
+  dotstatcode: SAU
 - code: '57'
   name_en: Kosovo
   name_fr: Kosovo
@@ -680,6 +788,12 @@ recipients:
   iso3: SYR
   type: Country
   dotstatcode: SYR
+- code: '576'
+  name_en: United Arab Emirates
+  name_fr: Émirats arabes unis
+  iso3: ARE
+  type: Country
+  dotstatcode: ARE
 - code: '580'
   name_en: Yemen
   name_fr: Yémen
@@ -836,6 +950,12 @@ recipients:
   iso3: null
   type: Country
   dotstatcode: S4_S7_X
+- code: '70'
+  name_en: Liechtenstein
+  name_fr: Liechtenstein
+  iso3: LIE
+  type: Country
+  dotstatcode: LIE
 - code: '71'
   name_en: Albania
   name_fr: Albanie
@@ -860,6 +980,18 @@ recipients:
   iso3: CHN
   type: Country
   dotstatcode: CHN
+- code: '732'
+  name_en: Taiwan
+  name_fr: Taïwan
+  iso3: TWN
+  type: Country
+  dotstatcode: TWN
+- code: '735'
+  name_en: Hong Kong, China
+  name_fr: Hong Kong, Chine
+  iso3: HKG
+  type: Country
+  dotstatcode: HKG
 - code: '738'
   name_en: Indonesia
   name_fr: Indonésie
@@ -872,12 +1004,24 @@ recipients:
   iso3: PRK
   type: Country
   dotstatcode: PRK
+- code: '742'
+  name_en: Korea
+  name_fr: Corée
+  iso3: KOR
+  type: Country
+  dotstatcode: KOR
 - code: '745'
   name_en: Lao People's Democratic Republic
   name_fr: République démocratique populaire lao
   iso3: LAO
   type: Country
   dotstatcode: LAO
+- code: '748'
+  name_en: Macao
+  name_fr: Macao
+  iso3: MAC
+  type: Country
+  dotstatcode: MAC
 - code: '751'
   name_en: Malaysia
   name_fr: Malaisie
@@ -896,6 +1040,12 @@ recipients:
   iso3: PHL
   type: Country
   dotstatcode: PHL
+- code: '761'
+  name_en: Singapore
+  name_fr: Singapour
+  iso3: SGP
+  type: Country
+  dotstatcode: SGP
 - code: '764'
   name_en: Thailand
   name_fr: Thaïlande
@@ -944,6 +1094,12 @@ recipients:
   iso3: KIR
   type: Country
   dotstatcode: KIR
+- code: '840'
+  name_en: French Polynesia
+  name_fr: Polynésie française
+  iso3: PYF
+  type: Country
+  dotstatcode: PYF
 - code: '845'
   name_en: Nauru
   name_fr: Nauru
@@ -956,6 +1112,12 @@ recipients:
   iso3: UKR
   type: Country
   dotstatcode: UKR
+- code: '850'
+  name_en: New Caledonia
+  name_fr: Nouvelle-Calédonie
+  iso3: NCL
+  type: Country
+  dotstatcode: NCL
 - code: '854'
   name_en: Vanuatu
   name_fr: Vanuatu
@@ -968,6 +1130,12 @@ recipients:
   iso3: NIU
   type: Country
   dotstatcode: NIU
+- code: '858'
+  name_en: Northern Mariana Islands
+  name_fr: Îles Mariannes du Nord
+  iso3: MNP
+  type: Country
+  dotstatcode: MNP
 - code: '859'
   name_en: Marshall Islands
   name_fr: Iles Marshall

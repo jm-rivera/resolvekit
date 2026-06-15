@@ -173,10 +173,28 @@ rk.resolve("USA", from_system="oecd:dotstat", to="oecd:provider")   # "302"
 rk.resolve("5", from_system="oecd:provider", to="name")             # "Germany"
 ```
 
+Graduated recipients are covered too. The OECD's live codelist publishes only
+currently-active codes, but old ODA data references countries and territories
+that have since left the recipient list. resolvekit retains those historical
+recipient codes so the old data still translates:
+
+```python
+rk.resolve("376", from_system="oecd:recipient", to="oecd:dotstat")  # "AIA" (Anguilla)
+rk.resolve("735", from_system="oecd:recipient", to="name")          # "Hong Kong"
+```
+
 `oecd:dotstat` is present on provider and recipient entities — countries, the
 region and multilateral aggregates, and the multilateral providers (World Bank,
 UN agencies, regional development banks). It is not on channel-of-delivery or
 agency entities, which the OECD feed does not assign a Data Explorer code.
+
+!!! note "Dissolved states"
+    Recipients that dissolved (Netherlands Antilles, Serbia and Montenegro, the
+    USSR) are not yet covered: the OECD reused their old numeric codes for
+    currently-active countries (`236` is now Benin, `382` is now Saint Kitts and
+    Nevis), so resolving them unambiguously needs date-scoped codes — a later
+    addition. Graduated territories whose codes were not reused (Anguilla, Aruba,
+    Hong Kong, …) are present today.
 
 !!! note
     `oecd:dotstat` is a separate system from `iso3` even though the two are equal

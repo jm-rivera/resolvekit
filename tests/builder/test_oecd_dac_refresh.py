@@ -339,3 +339,90 @@ def test_main_no_changes_when_yaml_matches(
     captured_second = capsys.readouterr()
     assert captured_second.out == "", "Expected no diff output"
     assert "No changes detected." in captured_second.err
+
+
+# ---------------------------------------------------------------------------
+# Additive merge: the live OECD app publishes only active codes, so the refresh
+# must preserve committed historical codes (graduated territories) rather than
+# wholesale-replacing the snapshot with the live feed.
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.unit
+def test_merge_codelist_preserves_historical_adds_new_reports_changes() -> None:
+    from scripts.data_maintenance.refresh_oecd_dac import _merge_codelist
+
+    def row(code: str, name: str, iso3: str, dotstat: str) -> dict[str, Any]:
+        return {
+            "code": code,
+            "name_en": name,
+            "name_fr": name,
+            "iso3": iso3,
+            "type": "Country",
+            "dotstatcode": dotstat,
+        }
+
+    committed = [
+        row("376", "Anguilla", "AIA", "AIA"),  # historical — absent from live
+        row("302", "United States", "USA", "USA"),  # shared, unchanged
+        row("57", "Kosovo", "XKX", "XKV"),  # shared, dotstat changes upstream
+    ]
+    live = [
+        row("302", "United States", "USA", "USA"),
+        row("57", "Kosovo", "XKX", "XKX"),  # OECD changed XKV -> XKX
+        row("1", "Austria", "AUT", "AUT"),  # new active code
+    ]
+
+    merged, report = _merge_codelist(committed, live, codelist_id="13")
+    by = {r["code"]: r for r in merged}
+
+    # historical preserved, new added, union complete
+    assert set(by) == {"376", "302", "57", "1"}
+    assert by["376"]["name_en"] == "Anguilla"
+    assert report["historical"] == ["376"]
+    assert report["new"] == ["1"]
+
+    # value change adopts the live value and is reported (not silently dropped)
+    assert by["57"]["dotstatcode"] == "XKX"
+    assert [c for c, _old, _new in report["changed"]] == ["57"]
+
+    # output sorted by the codelist's sort key (string code)
+    assert [r["code"] for r in merged] == sorted(by, key=str)
+
+
+@pytest.mark.unit
+def test_main_preserves_committed_historical_recipient(
+    tmp_path: Path, capsys: pytest.CaptureFixture
+) -> None:
+    """A committed historical recipient absent from the live feed is preserved."""
+    import scripts.data_maintenance.refresh_oecd_dac as mod
+
+    stub_yaml = tmp_path / "oecd_dac.yaml"
+    stub_yaml.write_text(
+        "version: 1\ngenerated_from:\n  oecd_query_date: null\n"
+        "  source_url: x\n  aspx_codelist_ids:\n    recipients: '13'\n"
+        "    providers: '5'\n    channels: '3'\n    agencies: '16'\n"
+        "recipients:\n"
+        "- code: '376'\n  name_en: Anguilla\n  name_fr: Anguilla\n"
+        "  iso3: AIA\n  type: Country\n  dotstatcode: AIA\n"
+        "providers: []\nchannels: []\nagencies: []\n"
+    )
+
+    orig_yaml = mod._OECD_DAC_YAML
+    mod._OECD_DAC_YAML = stub_yaml
+    try:
+        with (
+            patch.object(mod, "fetch_codelist_json", side_effect=_mock_fetch),
+            patch.object(sys, "argv", ["refresh_oecd_dac.py"]),
+        ):
+            mod.main()
+    finally:
+        mod._OECD_DAC_YAML = orig_yaml
+
+    captured = capsys.readouterr()
+    # The merge reports the historical recipient as preserved...
+    assert "preserved historical" in captured.err
+    # ...and the diff never deletes Anguilla (it survives into the proposed text).
+    assert "-  name_en: Anguilla" not in captured.out
+    # the live recipient (Türkiye, code 5) is added
+    assert "+  name_en: Türkiye" in captured.out or "Türkiye" in captured.out
