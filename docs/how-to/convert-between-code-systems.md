@@ -188,12 +188,15 @@ region and multilateral aggregates, and the multilateral providers (World Bank,
 UN agencies, regional development banks). It is not on channel-of-delivery or
 agency entities, which the OECD feed does not assign a Data Explorer code.
 
-!!! note "Dissolved states"
-    Recipients that dissolved (Netherlands Antilles, Serbia and Montenegro, the
-    USSR) are not yet covered: the OECD reused their old numeric codes for
-    currently-active countries (`236` is now Benin, `382` is now Saint Kitts and
-    Nevis), so resolving them unambiguously needs date-scoped codes — a later
-    addition. Graduated territories whose codes were not reused (Anguilla, Aruba,
+!!! note "Reused recipient code (361)"
+    One numeric recipient code has been reused across entities: `361` was
+    Netherlands Antilles until its 2010 dissolution and is Sint Maarten today.
+    `from_system="oecd:recipient"` resolves `361` to Sint Maarten; the
+    Netherlands Antilles reading of pre-2011 data is not separately resolvable,
+    since disambiguating by year would need date-scoped codes (not yet
+    implemented). States that dissolved before the OECD's 1996 codelist
+    (USSR, Yugoslavia, Czechoslovakia, …) never had a numeric recipient code.
+    Graduated territories whose codes were not reused (Anguilla, Aruba,
     Hong Kong, …) are present today.
 
 !!! note

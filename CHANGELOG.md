@@ -22,9 +22,11 @@ Kong, Macao, the Gulf states, and others) that the OECD's live codelist no longe
 publishes but that older ODA data still references, so that data continues to
 translate. The codelist refresh script now merges additively — it preserves
 committed codes, adds new ones, and reports value changes for review — rather than
-wholesale-replacing the snapshot with the active-only live feed. Dissolved states
-whose numeric codes the OECD has since reassigned (Netherlands Antilles, Serbia
-and Montenegro) are not yet included; resolving them needs date-scoped codes.
+wholesale-replacing the snapshot with the active-only live feed. One recipient
+code has been reused across entities — `361`, Netherlands Antilles until its
+2010 dissolution and Sint Maarten since — and currently resolves only to Sint
+Maarten; disambiguating it by year would need date-scoped codes, which are not
+yet implemented.
 
 ## 0.1.11 (2026-06-14)
 
