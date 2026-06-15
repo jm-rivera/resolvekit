@@ -140,6 +140,7 @@ def _project_country_like(
         "name_fr": name_fr,
         "iso3": row.get("iso-alpha-3-code") or None,
         "type": row.get("type", ""),
+        "dotstatcode": row.get("dotstatcode") or None,
     }
 
 

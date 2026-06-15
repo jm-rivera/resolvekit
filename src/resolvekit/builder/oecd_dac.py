@@ -254,6 +254,18 @@ def _attach_names_and_code(
     _insert_code(contrib, entity_id=entity_id, system=code_system, value=code_value)
 
 
+def _attach_dotstat_code(
+    contrib: GraphContribution,
+    *,
+    entity_id: str,
+    dotstatcode: str | None,
+) -> None:
+    if dotstatcode:
+        _insert_code(
+            contrib, entity_id=entity_id, system="oecd:dotstat", value=dotstatcode
+        )
+
+
 # ──────────────────────────────────────────────────────────────────────────────
 # Per-section upsert helpers
 # ──────────────────────────────────────────────────────────────────────────────
@@ -297,6 +309,9 @@ def _upsert_recipients(
             code_system="oecd:recipient",
             code_value=code,
         )
+        _attach_dotstat_code(
+            geo_contrib, entity_id=entity_id, dotstatcode=row.get("dotstatcode")
+        )
 
 
 def _upsert_country_providers(
@@ -325,6 +340,9 @@ def _upsert_country_providers(
             name_fr=name_fr,
             code_system="oecd:provider",
             code_value=code,
+        )
+        _attach_dotstat_code(
+            geo_contrib, entity_id=entity_id, dotstatcode=row.get("dotstatcode")
         )
 
 
@@ -375,6 +393,13 @@ def _upsert_multilateral_providers(
                                     "value_norm": _normalizer.normalize(label),
                                 }
                             )
+                # dotstat code is crosswalk coverage — attach even when the donor
+                # name is suppressed (EU Institutions case).
+                _attach_dotstat_code(
+                    geo_contrib,
+                    entity_id=mapped_entity_id,
+                    dotstatcode=row.get("dotstatcode"),
+                )
             elif db_label == "org" and org_contrib is not None:
                 _attach_names_and_code(
                     org_contrib,
@@ -383,6 +408,11 @@ def _upsert_multilateral_providers(
                     name_fr=name_fr,
                     code_system="oecd:provider",
                     code_value=code,
+                )
+                _attach_dotstat_code(
+                    org_contrib,
+                    entity_id=mapped_entity_id,
+                    dotstatcode=row.get("dotstatcode"),
                 )
             # if target DB is unavailable, skip gracefully
         elif org_contrib is not None:
@@ -410,6 +440,9 @@ def _upsert_multilateral_providers(
                 name_fr=name_fr,
                 code_system="oecd:provider",
                 code_value=code,
+            )
+            _attach_dotstat_code(
+                org_contrib, entity_id=entity_id, dotstatcode=row.get("dotstatcode")
             )
 
 

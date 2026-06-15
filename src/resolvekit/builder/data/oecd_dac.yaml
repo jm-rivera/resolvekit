@@ -1,6 +1,6 @@
 version: 1
 generated_from:
-  oecd_query_date: '2026-05-23'
+  oecd_query_date: '2026-06-15'
   source_url: https://development-finance-codelists.oecd.org/CodesList.aspx
   aspx_codelist_ids:
     recipients: '13'
@@ -13,1952 +13,2342 @@ recipients:
   name_fr: Afrique de l'est, régional
   iso3: null
   type: Country
+  dotstatcode: F3_X
 - code: '1028'
   name_en: Middle Africa, regional
   name_fr: Afrique centrale, régional
   iso3: null
   type: Country
+  dotstatcode: F5_X
 - code: '1029'
   name_en: Southern Africa, regional
   name_fr: Afrique australe, régional
   iso3: null
   type: Country
+  dotstatcode: F7_X
 - code: '1030'
   name_en: Western Africa, regional
   name_fr: Afrique occidentale, régional
   iso3: null
   type: Country
+  dotstatcode: F8_X
 - code: '1031'
   name_en: Caribbean, regional
   name_fr: Caraïbes, régional
   iso3: null
   type: Country
+  dotstatcode: A4_X
 - code: '1032'
   name_en: Central America, regional
   name_fr: Amérique centrale, régional
   iso3: null
   type: Country
+  dotstatcode: A3_X
 - code: '1033'
   name_en: Melanesia, regional
   name_fr: Mélanésie, régional
   iso3: null
   type: Country
+  dotstatcode: O7_X
 - code: '1034'
   name_en: Micronesia, regional
   name_fr: Micronésie, régional
   iso3: null
   type: Country
+  dotstatcode: O8_X
 - code: '1035'
   name_en: Polynesia, regional
   name_fr: Polynésie, régional
   iso3: null
   type: Country
+  dotstatcode: O9_X
 - code: '130'
   name_en: Algeria
   name_fr: Algérie
   iso3: DZA
   type: Country
+  dotstatcode: DZA
 - code: '133'
   name_en: Libya
   name_fr: Libye
   iso3: LBY
   type: Country
+  dotstatcode: LBY
 - code: '136'
   name_en: Morocco
   name_fr: Maroc
   iso3: MAR
   type: Country
+  dotstatcode: MAR
 - code: '139'
   name_en: Tunisia
   name_fr: Tunisie
   iso3: TUN
   type: Country
+  dotstatcode: TUN
 - code: '142'
   name_en: Egypt
   name_fr: Egypte
   iso3: EGY
   type: Country
+  dotstatcode: EGY
 - code: '189'
   name_en: North of Sahara, regional
   name_fr: Nord du Sahara, régional
   iso3: null
   type: Country
+  dotstatcode: F4_X
 - code: '218'
   name_en: South Africa
   name_fr: Afrique du Sud
   iso3: ZAF
   type: Country
+  dotstatcode: ZAF
 - code: '225'
   name_en: Angola
   name_fr: Angola
   iso3: AGO
   type: Country
+  dotstatcode: AGO
 - code: '227'
   name_en: Botswana
   name_fr: Botswana
   iso3: BWA
   type: Country
+  dotstatcode: BWA
 - code: '228'
   name_en: Burundi
   name_fr: Burundi
   iso3: BDI
   type: Country
+  dotstatcode: BDI
 - code: '229'
   name_en: Cameroon
   name_fr: Cameroun
   iso3: CMR
   type: Country
+  dotstatcode: CMR
 - code: '230'
   name_en: Cabo Verde
   name_fr: Cabo Verde
   iso3: CPV
   type: Country
+  dotstatcode: CPV
 - code: '231'
   name_en: Central African Republic
   name_fr: République centrafricaine
   iso3: CAF
   type: Country
+  dotstatcode: CAF
 - code: '232'
   name_en: Chad
   name_fr: Tchad
   iso3: TCD
   type: Country
+  dotstatcode: TCD
 - code: '233'
   name_en: Comoros
   name_fr: Comores
   iso3: COM
   type: Country
+  dotstatcode: COM
 - code: '234'
   name_en: Congo
   name_fr: Congo
   iso3: COG
   type: Country
+  dotstatcode: COG
 - code: '235'
   name_en: Democratic Republic of the Congo
   name_fr: République démocratique du Congo
   iso3: COD
   type: Country
+  dotstatcode: COD
 - code: '236'
   name_en: Benin
   name_fr: Bénin
   iso3: BEN
   type: Country
+  dotstatcode: BEN
 - code: '238'
   name_en: Ethiopia
   name_fr: Ethiopie
   iso3: ETH
   type: Country
+  dotstatcode: ETH
 - code: '239'
   name_en: Gabon
   name_fr: Gabon
   iso3: GAB
   type: Country
+  dotstatcode: GAB
 - code: '240'
   name_en: Gambia
   name_fr: Gambie
   iso3: GMB
   type: Country
+  dotstatcode: GMB
 - code: '241'
   name_en: Ghana
   name_fr: Ghana
   iso3: GHA
   type: Country
+  dotstatcode: GHA
 - code: '243'
   name_en: Guinea
   name_fr: Guinée
   iso3: GIN
   type: Country
+  dotstatcode: GIN
 - code: '244'
   name_en: Guinea-Bissau
   name_fr: Guinée-Bissau
   iso3: GNB
   type: Country
+  dotstatcode: GNB
 - code: '245'
   name_en: Equatorial Guinea
   name_fr: Guinée équatoriale
   iso3: GNQ
   type: Country
+  dotstatcode: GNQ
 - code: '247'
   name_en: Côte d'Ivoire
   name_fr: Côte d'Ivoire
   iso3: CIV
   type: Country
+  dotstatcode: CIV
 - code: '248'
   name_en: Kenya
   name_fr: Kenya
   iso3: KEN
   type: Country
+  dotstatcode: KEN
 - code: '249'
   name_en: Lesotho
   name_fr: Lesotho
   iso3: LSO
   type: Country
+  dotstatcode: LSO
 - code: '251'
   name_en: Liberia
   name_fr: Libéria
   iso3: LBR
   type: Country
+  dotstatcode: LBR
 - code: '252'
   name_en: Madagascar
   name_fr: Madagascar
   iso3: MDG
   type: Country
+  dotstatcode: MDG
 - code: '253'
   name_en: Malawi
   name_fr: Malawi
   iso3: MWI
   type: Country
+  dotstatcode: MWI
 - code: '255'
   name_en: Mali
   name_fr: Mali
   iso3: MLI
   type: Country
+  dotstatcode: MLI
 - code: '256'
   name_en: Mauritania
   name_fr: Mauritanie
   iso3: MRT
   type: Country
+  dotstatcode: MRT
 - code: '257'
   name_en: Mauritius
   name_fr: Maurice
   iso3: MUS
   type: Country
+  dotstatcode: MUS
 - code: '259'
   name_en: Mozambique
   name_fr: Mozambique
   iso3: MOZ
   type: Country
+  dotstatcode: MOZ
 - code: '260'
   name_en: Niger
   name_fr: Niger
   iso3: NER
   type: Country
+  dotstatcode: NER
 - code: '261'
   name_en: Nigeria
   name_fr: Nigéria
   iso3: NGA
   type: Country
+  dotstatcode: NGA
 - code: '265'
   name_en: Zimbabwe
   name_fr: Zimbabwe
   iso3: ZWE
   type: Country
+  dotstatcode: ZWE
 - code: '266'
   name_en: Rwanda
   name_fr: Rwanda
   iso3: RWA
   type: Country
+  dotstatcode: RWA
 - code: '268'
   name_en: Sao Tome and Principe
   name_fr: Sao Tomé-et-Principe
   iso3: STP
   type: Country
+  dotstatcode: STP
 - code: '269'
   name_en: Senegal
   name_fr: Sénégal
   iso3: SEN
   type: Country
+  dotstatcode: SEN
 - code: '270'
   name_en: Seychelles
   name_fr: Seychelles
   iso3: SYC
   type: Country
+  dotstatcode: SYC
 - code: '271'
   name_en: Eritrea
   name_fr: Erythrée
   iso3: ERI
   type: Country
+  dotstatcode: ERI
 - code: '272'
   name_en: Sierra Leone
   name_fr: Sierra Leone
   iso3: SLE
   type: Country
+  dotstatcode: SLE
 - code: '273'
   name_en: Somalia
   name_fr: Somalie
   iso3: SOM
   type: Country
+  dotstatcode: SOM
 - code: '274'
   name_en: Djibouti
   name_fr: Djibouti
   iso3: DJI
   type: Country
+  dotstatcode: DJI
 - code: '275'
   name_en: Namibia
   name_fr: Namibie
   iso3: NAM
   type: Country
+  dotstatcode: NAM
 - code: '276'
   name_en: Saint Helena
   name_fr: Sainte-Hélène
   iso3: SHN
   type: Country
+  dotstatcode: SHN
 - code: '278'
   name_en: Sudan
   name_fr: Soudan
   iso3: SDN
   type: Country
+  dotstatcode: SDN
 - code: '279'
   name_en: South Sudan
   name_fr: Soudan du Sud
   iso3: SSD
   type: Country
+  dotstatcode: SSD
 - code: '280'
   name_en: Eswatini
   name_fr: Eswatini
   iso3: SWZ
   type: Country
+  dotstatcode: SWZ
 - code: '282'
   name_en: Tanzania
   name_fr: Tanzanie
   iso3: TZA
   type: Country
+  dotstatcode: TZA
 - code: '283'
   name_en: Togo
   name_fr: Togo
   iso3: TGO
   type: Country
+  dotstatcode: TGO
 - code: '285'
   name_en: Uganda
   name_fr: Ouganda
   iso3: UGA
   type: Country
+  dotstatcode: UGA
 - code: '287'
   name_en: Burkina Faso
   name_fr: Burkina Faso
   iso3: BFA
   type: Country
+  dotstatcode: BFA
 - code: '288'
   name_en: Zambia
   name_fr: Zambie
   iso3: ZMB
   type: Country
+  dotstatcode: ZMB
 - code: '289'
   name_en: South of Sahara, regional
   name_fr: Sud du Sahara, régional
   iso3: null
   type: Country
+  dotstatcode: F6_X
 - code: '298'
   name_en: Africa, regional
   name_fr: Afrique, régional
   iso3: null
   type: Country
+  dotstatcode: F_X
 - code: '328'
   name_en: Bahamas
   name_fr: Bahamas
   iso3: BHS
   type: Country
+  dotstatcode: BHS
 - code: '329'
   name_en: Barbados
   name_fr: Barbades
   iso3: BRB
   type: Country
+  dotstatcode: BRB
 - code: '336'
   name_en: Costa Rica
   name_fr: Costa Rica
   iso3: CRI
   type: Country
+  dotstatcode: CRI
 - code: '338'
   name_en: Cuba
   name_fr: Cuba
   iso3: CUB
   type: Country
+  dotstatcode: CUB
 - code: '340'
   name_en: Dominican Republic
   name_fr: République dominicaine
   iso3: DOM
   type: Country
+  dotstatcode: DOM
 - code: '342'
   name_en: El Salvador
   name_fr: El Salvador
   iso3: SLV
   type: Country
+  dotstatcode: SLV
 - code: '347'
   name_en: Guatemala
   name_fr: Guatemala
   iso3: GTM
   type: Country
+  dotstatcode: GTM
 - code: '349'
   name_en: Haiti
   name_fr: Haïti
   iso3: HTI
   type: Country
+  dotstatcode: HTI
 - code: '351'
   name_en: Honduras
   name_fr: Honduras
   iso3: HND
   type: Country
+  dotstatcode: HND
 - code: '352'
   name_en: Belize
   name_fr: Belize
   iso3: BLZ
   type: Country
+  dotstatcode: BLZ
 - code: '354'
   name_en: Jamaica
   name_fr: Jamaïque
   iso3: JAM
   type: Country
+  dotstatcode: JAM
 - code: '358'
   name_en: Mexico
   name_fr: Mexique
   iso3: MEX
   type: Country
+  dotstatcode: MEX
 - code: '364'
   name_en: Nicaragua
   name_fr: Nicaragua
   iso3: NIC
   type: Country
+  dotstatcode: NIC
 - code: '366'
   name_en: Panama
   name_fr: Panama
   iso3: PAN
   type: Country
+  dotstatcode: PAN
 - code: '375'
   name_en: Trinidad and Tobago
   name_fr: Trinité-et-Tobago
   iso3: TTO
   type: Country
+  dotstatcode: TTO
 - code: '377'
   name_en: Antigua and Barbuda
   name_fr: Antigua-et-Barbuda
   iso3: ATG
   type: Country
+  dotstatcode: ATG
 - code: '378'
   name_en: Dominica
   name_fr: Dominique
   iso3: DMA
   type: Country
+  dotstatcode: DMA
 - code: '381'
   name_en: Grenada
   name_fr: Grenade
   iso3: GRD
   type: Country
+  dotstatcode: GRD
 - code: '382'
   name_en: Saint Kitts and Nevis
   name_fr: Saint-Kitts-et-Nevis
   iso3: KNA
   type: Country
+  dotstatcode: KNA
 - code: '383'
   name_en: Saint Lucia
   name_fr: Sainte-Lucie
   iso3: LCA
   type: Country
+  dotstatcode: LCA
 - code: '384'
   name_en: Saint Vincent and the Grenadines
   name_fr: Saint-Vincent-et-les-Grenadines
   iso3: VCT
   type: Country
+  dotstatcode: VCT
 - code: '385'
   name_en: Montserrat
   name_fr: Montserrat
   iso3: MSR
   type: Country
+  dotstatcode: MSR
 - code: '389'
   name_en: Caribbean & Central America, regional
   name_fr: Caraïbes et Amérique centrale, régional
   iso3: null
   type: Country
+  dotstatcode: A5_X
 - code: '425'
   name_en: Argentina
   name_fr: Argentine
   iso3: ARG
   type: Country
+  dotstatcode: ARG
 - code: '428'
   name_en: Bolivia
   name_fr: Bolivie
   iso3: BOL
   type: Country
+  dotstatcode: BOL
 - code: '431'
   name_en: Brazil
   name_fr: Brésil
   iso3: BRA
   type: Country
+  dotstatcode: BRA
 - code: '434'
   name_en: Chile
   name_fr: Chili
   iso3: CHL
   type: Country
+  dotstatcode: CHL
 - code: '437'
   name_en: Colombia
   name_fr: Colombie
   iso3: COL
   type: Country
+  dotstatcode: COL
 - code: '440'
   name_en: Ecuador
   name_fr: Equateur
   iso3: ECU
   type: Country
+  dotstatcode: ECU
 - code: '446'
   name_en: Guyana
   name_fr: Guyana
   iso3: GUY
   type: Country
+  dotstatcode: GUY
 - code: '451'
   name_en: Paraguay
   name_fr: Paraguay
   iso3: PRY
   type: Country
+  dotstatcode: PRY
 - code: '454'
   name_en: Peru
   name_fr: Pérou
   iso3: PER
   type: Country
+  dotstatcode: PER
 - code: '457'
   name_en: Suriname
   name_fr: Suriname
   iso3: SUR
   type: Country
+  dotstatcode: SUR
 - code: '460'
   name_en: Uruguay
   name_fr: Uruguay
   iso3: URY
   type: Country
+  dotstatcode: URY
 - code: '463'
   name_en: Venezuela
   name_fr: Venezuela
   iso3: VEN
   type: Country
+  dotstatcode: VEN
 - code: '489'
   name_en: South America, regional
   name_fr: Amérique du Sud, régional
   iso3: null
   type: Country
+  dotstatcode: A7_X
 - code: '498'
   name_en: America, regional
   name_fr: Amérique, régional
   iso3: null
   type: Country
+  dotstatcode: A_X
 - code: '540'
   name_en: Iran
   name_fr: Iran
   iso3: IRN
   type: Country
+  dotstatcode: IRN
 - code: '543'
   name_en: Iraq
   name_fr: Iraq
   iso3: IRQ
   type: Country
+  dotstatcode: IRQ
 - code: '549'
   name_en: Jordan
   name_fr: Jordanie
   iso3: JOR
   type: Country
+  dotstatcode: JOR
 - code: '55'
   name_en: Türkiye
   name_fr: Türkiye
   iso3: TUR
   type: Country
+  dotstatcode: TUR
 - code: '550'
   name_en: West Bank and Gaza Strip
   name_fr: Cisjordanie et bande de Gaza
   iso3: PSE
   type: Country
+  dotstatcode: PSE
 - code: '555'
   name_en: Lebanon
   name_fr: Liban
   iso3: LBN
   type: Country
+  dotstatcode: LBN
 - code: '57'
   name_en: Kosovo
   name_fr: Kosovo
   iso3: XKX
   type: Country
+  dotstatcode: XKV
 - code: '573'
   name_en: Syrian Arab Republic
   name_fr: République arabe syrienne
   iso3: SYR
   type: Country
+  dotstatcode: SYR
 - code: '580'
   name_en: Yemen
   name_fr: Yémen
   iso3: YEM
   type: Country
+  dotstatcode: YEM
 - code: '589'
   name_en: Middle East, regional
   name_fr: Moyen-Orient, régional
   iso3: null
   type: Country
+  dotstatcode: F97_X
 - code: '610'
   name_en: Armenia
   name_fr: Arménie
   iso3: ARM
   type: Country
+  dotstatcode: ARM
 - code: '611'
   name_en: Azerbaijan
   name_fr: Azerbaïdjan
   iso3: AZE
   type: Country
+  dotstatcode: AZE
 - code: '612'
   name_en: Georgia
   name_fr: Géorgie
   iso3: GEO
   type: Country
+  dotstatcode: GEO
 - code: '613'
   name_en: Kazakhstan
   name_fr: Kazakhstan
   iso3: KAZ
   type: Country
+  dotstatcode: KAZ
 - code: '614'
   name_en: Kyrgyzstan
   name_fr: Kirghizistan
   iso3: KGZ
   type: Country
+  dotstatcode: KGZ
 - code: '615'
   name_en: Tajikistan
   name_fr: Tadjikistan
   iso3: TJK
   type: Country
+  dotstatcode: TJK
 - code: '616'
   name_en: Turkmenistan
   name_fr: Turkménistan
   iso3: TKM
   type: Country
+  dotstatcode: TKM
 - code: '617'
   name_en: Uzbekistan
   name_fr: Ouzbékistan
   iso3: UZB
   type: Country
+  dotstatcode: UZB
 - code: '619'
   name_en: Central Asia, regional
   name_fr: Asie centrale, régional
   iso3: null
   type: Country
+  dotstatcode: S4_X
 - code: '625'
   name_en: Afghanistan
   name_fr: Afghanistan
   iso3: AFG
   type: Country
+  dotstatcode: AFG
 - code: '63'
   name_en: Serbia
   name_fr: Serbie
   iso3: SRB
   type: Country
+  dotstatcode: SRB
 - code: '630'
   name_en: Bhutan
   name_fr: Bhoutan
   iso3: BTN
   type: Country
+  dotstatcode: BTN
 - code: '635'
   name_en: Myanmar
   name_fr: Myanmar
   iso3: MMR
   type: Country
+  dotstatcode: MMR
 - code: '64'
   name_en: Bosnia and Herzegovina
   name_fr: Bosnie-Herzégovine
   iso3: BIH
   type: Country
+  dotstatcode: BIH
 - code: '640'
   name_en: Sri Lanka
   name_fr: Sri Lanka
   iso3: LKA
   type: Country
+  dotstatcode: LKA
 - code: '645'
   name_en: India
   name_fr: Inde
   iso3: IND
   type: Country
+  dotstatcode: IND
 - code: '65'
   name_en: Montenegro
   name_fr: Monténégro
   iso3: MNE
   type: Country
+  dotstatcode: MNE
 - code: '655'
   name_en: Maldives
   name_fr: Maldives
   iso3: MDV
   type: Country
+  dotstatcode: MDV
 - code: '66'
   name_en: North Macedonia
   name_fr: Macédoine du Nord
   iso3: MKD
   type: Country
+  dotstatcode: MKD
 - code: '660'
   name_en: Nepal
   name_fr: Népal
   iso3: NPL
   type: Country
+  dotstatcode: NPL
 - code: '665'
   name_en: Pakistan
   name_fr: Pakistan
   iso3: PAK
   type: Country
+  dotstatcode: PAK
 - code: '666'
   name_en: Bangladesh
   name_fr: Bangladesh
   iso3: BGD
   type: Country
+  dotstatcode: BGD
 - code: '679'
   name_en: South Asia, regional
   name_fr: Asie du Sud, régional
   iso3: null
   type: Country
+  dotstatcode: S7_X
 - code: '689'
   name_en: South & Central Asia, regional
   name_fr: Asie du Sud & C., régional
   iso3: null
   type: Country
+  dotstatcode: S4_S7_X
 - code: '71'
   name_en: Albania
   name_fr: Albanie
   iso3: ALB
   type: Country
+  dotstatcode: ALB
 - code: '725'
   name_en: Brunei Darussalam
   name_fr: Brunei Darussalam
   iso3: BRN
   type: Country
+  dotstatcode: BRN
 - code: '728'
   name_en: Cambodia
   name_fr: Cambodge
   iso3: KHM
   type: Country
+  dotstatcode: KHM
 - code: '730'
   name_en: China (People's Republic of)
   name_fr: Chine (République populaire de)
   iso3: CHN
   type: Country
+  dotstatcode: CHN
 - code: '738'
   name_en: Indonesia
   name_fr: Indonésie
   iso3: IDN
   type: Country
+  dotstatcode: IDN
 - code: '740'
   name_en: Democratic People's Republic of Korea
   name_fr: République populaire démocratique de Corée
   iso3: PRK
   type: Country
+  dotstatcode: PRK
 - code: '745'
   name_en: Lao People's Democratic Republic
   name_fr: République démocratique populaire lao
   iso3: LAO
   type: Country
+  dotstatcode: LAO
 - code: '751'
   name_en: Malaysia
   name_fr: Malaisie
   iso3: MYS
   type: Country
+  dotstatcode: MYS
 - code: '753'
   name_en: Mongolia
   name_fr: Mongolie
   iso3: MNG
   type: Country
+  dotstatcode: MNG
 - code: '755'
   name_en: Philippines
   name_fr: Philippines
   iso3: PHL
   type: Country
+  dotstatcode: PHL
 - code: '764'
   name_en: Thailand
   name_fr: Thaïlande
   iso3: THA
   type: Country
+  dotstatcode: THA
 - code: '765'
   name_en: Timor-Leste
   name_fr: Timor-Leste
   iso3: TLS
   type: Country
+  dotstatcode: TLS
 - code: '769'
   name_en: Viet Nam
   name_fr: Viet Nam
   iso3: VNM
   type: Country
+  dotstatcode: VNM
 - code: '789'
   name_en: Far East Asia, regional
   name_fr: Extrême-Orient, régional
   iso3: null
   type: Country
+  dotstatcode: S97_X
 - code: '798'
   name_en: Asia, regional
   name_fr: Asie, régional
   iso3: null
   type: Country
+  dotstatcode: S_X
 - code: '831'
   name_en: Cook Islands
   name_fr: Iles Cook
   iso3: COK
   type: Country
+  dotstatcode: COK
 - code: '832'
   name_en: Fiji
   name_fr: Fidji
   iso3: FJI
   type: Country
+  dotstatcode: FJI
 - code: '836'
   name_en: Kiribati
   name_fr: Kiribati
   iso3: KIR
   type: Country
+  dotstatcode: KIR
 - code: '845'
   name_en: Nauru
   name_fr: Nauru
   iso3: NRU
   type: Country
+  dotstatcode: NRU
 - code: '85'
   name_en: Ukraine
   name_fr: Ukraine
   iso3: UKR
   type: Country
+  dotstatcode: UKR
 - code: '854'
   name_en: Vanuatu
   name_fr: Vanuatu
   iso3: VUT
   type: Country
+  dotstatcode: VUT
 - code: '856'
   name_en: Niue
   name_fr: Niue
   iso3: NIU
   type: Country
+  dotstatcode: NIU
 - code: '859'
   name_en: Marshall Islands
   name_fr: Iles Marshall
   iso3: MHL
   type: Country
+  dotstatcode: MHL
 - code: '86'
   name_en: Belarus
   name_fr: Bélarus
   iso3: BLR
   type: Country
+  dotstatcode: BLR
 - code: '860'
   name_en: Micronesia
   name_fr: Micronésie
   iso3: FSM
   type: Country
+  dotstatcode: FSM
 - code: '861'
   name_en: Palau
   name_fr: Palaos
   iso3: PLW
   type: Country
+  dotstatcode: PLW
 - code: '862'
   name_en: Papua New Guinea
   name_fr: Papouasie-Nouvelle-Guinée
   iso3: PNG
   type: Country
+  dotstatcode: PNG
 - code: '866'
   name_en: Solomon Islands
   name_fr: Îles Salomon
   iso3: SLB
   type: Country
+  dotstatcode: SLB
 - code: '868'
   name_en: Tokelau
   name_fr: Tokélaou
   iso3: TKL
   type: Country
+  dotstatcode: TKL
 - code: '870'
   name_en: Tonga
   name_fr: Tonga
   iso3: TON
   type: Country
+  dotstatcode: TON
 - code: '872'
   name_en: Tuvalu
   name_fr: Tuvalu
   iso3: TUV
   type: Country
+  dotstatcode: TUV
 - code: '876'
   name_en: Wallis and Futuna
   name_fr: Wallis-et-Futuna
   iso3: WLF
   type: Country
+  dotstatcode: WLF
 - code: '88'
   name_en: States Ex-Yugoslavia unspecified
   name_fr: Etats ex-Yougoslavie non spécifié
   iso3: null
   type: Country
+  dotstatcode: SFRY_X
 - code: '880'
   name_en: Samoa
   name_fr: Samoa
   iso3: WSM
   type: Country
+  dotstatcode: WSM
 - code: '889'
   name_en: Oceania, regional
   name_fr: Océanie, régional
   iso3: null
   type: Country
+  dotstatcode: O_X
 - code: '89'
   name_en: Europe, regional
   name_fr: Europe, régional
   iso3: null
   type: Country
+  dotstatcode: E_X
 - code: '93'
   name_en: Moldova
   name_fr: Moldova
   iso3: MDA
   type: Country
+  dotstatcode: MDA
 - code: '998'
   name_en: Developing countries, unspecified
   name_fr: Pays en développement, non spécifié
   iso3: null
   type: n.a.
+  dotstatcode: DPGC_X
 - code: '999'
   name_en: Global
   name_fr: Global
   iso3: null
   type: n.a.
+  dotstatcode: null
 providers:
 - code: '1'
   name_en: Austria
   name_fr: Autriche
   iso3: AUT
   type: DAC member
+  dotstatcode: AUT
 - code: '10'
   name_en: Sweden
   name_fr: Suède
   iso3: SWE
   type: DAC member
+  dotstatcode: SWE
 - code: '1011'
   name_en: Climate Investment Funds
   name_fr: Fonds d'investissement climatique
   iso3: null
   type: Multilateral donor
+  dotstatcode: 9OTH006
 - code: '1012'
   name_en: Adaptation Fund
   name_fr: Fonds d'adaptation
   iso3: null
   type: Multilateral donor
+  dotstatcode: 9OTH001
 - code: '1013'
   name_en: Council of Europe Development Bank
   name_fr: Banque de développement du Conseil de l'Europe
   iso3: null
   type: Multilateral donor
+  dotstatcode: 5RDB005
 - code: '1014'
   name_en: Private Infrastructure Development Group
   name_fr: Groupe du développement des infrastructures privées
   iso3: null
   type: Multilateral donor
+  dotstatcode: 9OTH022
 - code: '1015'
   name_en: Development Bank of Latin America
   name_fr: Banque de développement de l'Amérique latine
   iso3: null
   type: Multilateral donor
+  dotstatcode: 5RDB006
 - code: '1016'
   name_en: Green Climate Fund
   name_fr: Fonds vert pour le climat
   iso3: null
   type: Multilateral donor
+  dotstatcode: 9OTH015
 - code: '1017'
   name_en: Credit Guarantee and Investment Facility
   name_fr: Credit Guarantee and Investment Facility
   iso3: null
   type: Multilateral donor
+  dotstatcode: 9OTH007
 - code: '1018'
   name_en: Global Energy Efficiency and Renewable Energy Fund
   name_fr: Fonds mondial de l'efficacité énergétique et des énergies renouvelables
   iso3: null
   type: Multilateral donor
+  dotstatcode: 9OTH010
 - code: '1019'
   name_en: IDB Invest
   name_fr: BID Invest
   iso3: null
   type: Multilateral donor
+  dotstatcode: 5IDB003
 - code: '1020'
   name_en: Central Emergency Response Fund
   name_fr: Fonds central d'intervention pour les urgences humanitaires
   iso3: null
   type: Multilateral donor
+  dotstatcode: 1UN001
 - code: '1022'
   name_en: UN inter-agency pooled funds
   name_fr: Fonds communs inter-institutions des Nations Unies
   iso3: null
   type: Multilateral donor
+  dotstatcode: null
 - code: '1023'
   name_en: World Tourism Organisation
   name_fr: Organisation mondiale du tourisme
   iso3: null
   type: Multilateral donor
+  dotstatcode: 1UN027
 - code: '1024'
   name_en: Asian Infrastructure Investment Bank
   name_fr: Banque asiatique d'investissement dans les infrastructures
   iso3: null
   type: Multilateral donor
+  dotstatcode: 5RDB001
 - code: '1025'
   name_en: Center of Excellence in Finance
   name_fr: Centre d'excellence en finance
   iso3: null
   type: Multilateral donor
+  dotstatcode: 9OTH005
 - code: '1026'
   name_en: SESRIC
   name_fr: SESRIC
   iso3: null
   type: Multilateral donor
+  dotstatcode: null
 - code: '1036'
   name_en: UN Secretariat
   name_fr: Secretariat des Nations Unies
   iso3: null
   type: Multilateral donor
+  dotstatcode: null
 - code: '1037'
   name_en: International Investment Bank
   name_fr: Banque internationale d'investissement
   iso3: null
   type: Multilateral donor
+  dotstatcode: 5RDB008
 - code: '1038'
   name_en: UN Institute for Disarmament Research
   name_fr: Institut des Nations unies pour la recherche sur le désarmement
   iso3: null
   type: Multilateral donor
+  dotstatcode: 1UN010
 - code: '1039'
   name_en: UN Capital Development Fund
   name_fr: UN Capital Development Fund
   iso3: null
   type: Multilateral donor
+  dotstatcode: 1UN008
 - code: '104'
   name_en: Nordic Development Fund
   name_fr: Fonds du dév. nordique
   iso3: null
   type: Multilateral donor
+  dotstatcode: 9OTH019
 - code: '1040'
   name_en: UN Office on Drugs and Crime
   name_fr: Office des Nations Unies contre la drogue et le crime
   iso3: null
   type: Multilateral donor
+  dotstatcode: 1UN032
 - code: '1041'
   name_en: Eurasian Fund for Stabilization and Development
   name_fr: Eurasian Fund for Stabilization and Development
   iso3: null
   type: Multilateral donor
+  dotstatcode: 9OTH008
 - code: '1042'
   name_en: UN Office of Counter-Terrorism
   name_fr: Bureau de l'ONU de lutte contre le terrorisme
   iso3: null
   type: Multilateral donor
+  dotstatcode: null
 - code: '1043'
   name_en: Interpol
   name_fr: Interpol
   iso3: null
   type: Multilateral donor
+  dotstatcode: null
 - code: '1044'
   name_en: New Development Bank
   name_fr: New Development Bank
   iso3: null
   type: Multilateral donor
+  dotstatcode: 5RDB010
 - code: '1045'
   name_en: North American Development Bank
   name_fr: North American Development Bank
   iso3: null
   type: Multilateral donor
+  dotstatcode: 5RDB011
 - code: '1046'
   name_en: UN Women
   name_fr: ONU Femmes
   iso3: null
   type: Multilateral donor
+  dotstatcode: 1UN012
 - code: '1047'
   name_en: COVID-19 Response and Recovery Multi-Partner Trust Fund
   name_fr: COVID-19 Response and Recovery Multi-Partner Trust Fund
   iso3: null
   type: Multilateral donor
+  dotstatcode: 1UN002
 - code: '1048'
   name_en: Joint Sustainable Development Goals Fund
   name_fr: Fonds conjoint des objectifs de développement durable
   iso3: null
   type: Multilateral donor
+  dotstatcode: 1UN007
 - code: '1049'
   name_en: International Commission on Missing Persons
   name_fr: Commission internationale pour les personnes disparues
   iso3: null
   type: Multilateral donor
+  dotstatcode: 9OTH017
 - code: '1050'
   name_en: WHO-Strategic Preparedness and Response Plan
   name_fr: OMS-Plan stratégique de préparation et de réponse
   iso3: null
   type: Multilateral donor
+  dotstatcode: 1UN025
 - code: '1051'
   name_en: United Nations Office for Disarmament Affairs
   name_fr: Bureau des Affaires de Désarmement des Nations Unies
   iso3: null
   type: Multilateral donor
+  dotstatcode: null
 - code: '1052'
   name_en: International Centre for Genetic Engineering and Biotechnology
   name_fr: Centre international de génie génétique et de biotechnologie
   iso3: null
   type: Multilateral donor
+  dotstatcode: 9OTH016
 - code: '1053'
   name_en: Asian Forest Cooperation Organisation
   name_fr: Organisation asiatique de coopération forestière
   iso3: null
   type: ''
+  dotstatcode: 9OTH004
 - code: '1054'
   name_en: World Organisation for Animal Health
   name_fr: Organisation mondiale de la santé animale
   iso3: null
   type: Multilateral donor
+  dotstatcode: 9OTH023
 - code: '1055'
   name_en: CGIAR
   name_fr: CGIAR
   iso3: null
   type: Multilateral donor
+  dotstatcode: 9OTH024
 - code: '1056'
   name_en: Organisation of American States
   name_fr: Organisation des États américains
   iso3: null
   type: Multilateral donor
+  dotstatcode: null
 - code: '1057'
   name_en: UN Development Coordination Office
   name_fr: ONU-Bureau de la coordination des activités de développement
   iso3: null
   type: Multilateral donor
+  dotstatcode: 1UN030
 - code: '1058'
   name_en: IMF Resilience and Sustainability Trust
   name_fr: Fonds de résilience et de durabilité du FMI
   iso3: null
   type: Multilateral donor
+  dotstatcode: 5IMF03
 - code: '1059'
   name_en: Arab Monetary Fund
   name_fr: Fonds monétaire arabe
   iso3: null
   type: Multilateral donor
+  dotstatcode: null
 - code: '11'
   name_en: Switzerland
   name_fr: Suisse
   iso3: CHE
   type: DAC member
+  dotstatcode: CHE
 - code: '12'
   name_en: United Kingdom
   name_fr: Royaume-Uni
   iso3: GBR
   type: DAC member
+  dotstatcode: GBR
 - code: '130'
   name_en: Algeria
   name_fr: Algérie
   iso3: DZA
   type: Non-DAC member
+  dotstatcode: DZA
 - code: '1311'
   name_en: Global Alliance for Vaccines and Immunization
   name_fr: Alliance mondiale pour les vaccins et la vaccination
   iso3: null
   type: Multilateral donor
+  dotstatcode: 9OTH009
 - code: '1312'
   name_en: Global Fund
   name_fr: Fonds mondial
   iso3: null
   type: Multilateral donor
+  dotstatcode: 9OTH012
 - code: '1313'
   name_en: Global Green Growth Institute
   name_fr: Institut mondial de la croissance verte
   iso3: null
   type: Multilateral donor
+  dotstatcode: 9OTH013
 - code: '133'
   name_en: Libya
   name_fr: Libye
   iso3: LBY
   type: Non-DAC member
+  dotstatcode: LBY
 - code: '139'
   name_en: Tunisia
   name_fr: Tunisie
   iso3: TUN
   type: Country
+  dotstatcode: null
 - code: '1401'
   name_en: WTO - International Trade Centre
   name_fr: Centre du commerce international de l'OMC
   iso3: null
   type: Multilateral donor
+  dotstatcode: 1UN029
 - code: '1403'
   name_en: UN Economic and Social Commission for Western Asia
   name_fr: ONU Commission économique et sociale pour l'Asie occidentale
   iso3: null
   type: Multilateral donor
+  dotstatcode: 1UN031
 - code: '1404'
   name_en: World Trade Organisation
   name_fr: Organisation mondiale du commerce
   iso3: null
   type: Multilateral donor
+  dotstatcode: 1UN028
 - code: '1406'
   name_en: United Nations Industrial Development Organization
   name_fr: ONUDI
   iso3: null
   type: Multilateral donor
+  dotstatcode: 1UN021
 - code: '1601'
   name_en: Gates Foundation
   name_fr: Fondation Gates
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1601
 - code: '1602'
   name_en: Dutch Postcode Lottery
   name_fr: Dutch Postcode Lottery
   iso3: null
   type: Private donor
+  dotstatcode: 9PLG0_NL
 - code: '1603'
   name_en: Swedish Postcode Lottery
   name_fr: Swedish Postcode Lottery
   iso3: null
   type: Private donor
+  dotstatcode: 9PLG0_SE
 - code: '1604'
   name_en: People's Postcode Lottery
   name_fr: People's Postcode Lottery
   iso3: null
   type: Private donor
+  dotstatcode: 9PLG0_GB
 - code: '1605'
   name_en: MetLife Foundation
   name_fr: Fondation MetLife
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1605
 - code: '1606'
   name_en: Mastercard Foundation
   name_fr: Fondation Mastercard
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1606
 - code: '1608'
   name_en: IKEA Foundation
   name_fr: Fondation IKEA
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1608
 - code: '1609'
   name_en: Van Leer Foundation
   name_fr: Fondation Van Leer
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1609
 - code: '1610'
   name_en: MAVA Foundation
   name_fr: MAVA, Fondation pour la nature
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1610
 - code: '1611'
   name_en: Oak Foundation
   name_fr: Fondation Oak
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1611
 - code: '1612'
   name_en: H&M Foundation
   name_fr: Fondation H&M
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1612
 - code: '1613'
   name_en: Laudes Foundation
   name_fr: Fondation Laudes
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1613
 - code: '1614'
   name_en: Charity Projects Ltd (Comic Relief)
   name_fr: Charity Projects Ltd (Comic Relief)
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1614
 - code: '1615'
   name_en: Children's Investment Fund Foundation
   name_fr: Children's Investment Fund Foundation
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1615
 - code: '1616'
   name_en: Gatsby Charitable Foundation
   name_fr: Gatsby Charitable Foundation
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1616
 - code: '1617'
   name_en: Conrad N. Hilton Foundation
   name_fr: Fondation Conrad N. Hilton
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1617
 - code: '1618'
   name_en: David and Lucile Packard Foundation
   name_fr: Fondation David et Lucile Packard
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1618
 - code: '1619'
   name_en: John D. and Catherine T. MacArthur Foundation
   name_fr: Fondation John D. et Catherine T. MacArthur
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1619
 - code: '1620'
   name_en: Carnegie Corporation of New York
   name_fr: Carnegie Corporation of New York
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1620
 - code: '1621'
   name_en: Michael & Susan Dell Foundation
   name_fr: Fondation Michael et Susan Dell
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1621
 - code: '1622'
   name_en: Omidyar Network Fund, Inc.
   name_fr: Omidyar Network Fund, Inc.
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1622
 - code: '1623'
   name_en: Rockefeller Foundation
   name_fr: Fondation Rockefeller
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1623
 - code: '1624'
   name_en: William and Flora Hewlett Foundation
   name_fr: Fondation William et Flora Hewlett
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1624
 - code: '1625'
   name_en: Arcus Foundation
   name_fr: Fondation Arcus
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1625
 - code: '1626'
   name_en: Gordon and Betty Moore Foundation
   name_fr: Fondation Gordon et Betty Moore
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1626
 - code: '1627'
   name_en: Ford Foundation
   name_fr: Fondation Ford
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1627
 - code: '1628'
   name_en: Wellcome Trust
   name_fr: Wellcome Trust
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1628
 - code: '1629'
   name_en: UBS Optimus Foundation
   name_fr: Fondation UBS Optimus
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1629
 - code: '1630'
   name_en: World Diabetes Foundation
   name_fr: World Diabetes Foundation
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1630
 - code: '1631'
   name_en: McKnight Foundation
   name_fr: Fondation McKnight
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1631
 - code: '1632'
   name_en: Citi Foundation
   name_fr: Fondation Citi
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1632
 - code: '1633'
   name_en: LEGO Foundation
   name_fr: Fondation LEGO
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1633
 - code: '1634'
   name_en: Norwegian Postcode Lottery
   name_fr: Norwegian Postcode Lottery
   iso3: null
   type: Private donor
+  dotstatcode: 9PLG0_NO
 - code: '1636'
   name_en: Jacobs Foundation
   name_fr: Fondation Jacobs
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1636
 - code: '1637'
   name_en: Arcadia
   name_fr: Arcadia
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1637
 - code: '1638'
   name_en: Margaret A. Cargill Foundation
   name_fr: Fondation Margaret A. Cargill
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1638
 - code: '1639'
   name_en: La Caixa Banking Foundation
   name_fr: Fondation la Caixa
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1639
 - code: '1640'
   name_en: Bloomberg Family Foundation
   name_fr: Bloomberg Family Foundation
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1640
 - code: '1641'
   name_en: Susan T. Buffett Foundation
   name_fr: Fondation Susan T. Buffett
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1641
 - code: '1642'
   name_en: Howard G. Buffett Foundation
   name_fr: Fondation Howard G. Buffett
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1642
 - code: '1643'
   name_en: Open Society Foundations
   name_fr: Open Society Foundations
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1643
 - code: '1644'
   name_en: Fondation Botnar
   name_fr: Fondation Botnar
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1644
 - code: '1645'
   name_en: CHANEL Foundation
   name_fr: Fondation CHANEL
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1645
 - code: '1646'
   name_en: Bezos Earth Fund
   name_fr: Bezos Earth Fund
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1646
 - code: '1647'
   name_en: German Postcode Lottery
   name_fr: German Postcode Lottery
   iso3: null
   type: Private donor
+  dotstatcode: 9PLG0_DE
 - code: '1648'
   name_en: Leona M. and Harry B. Helmsley Charitable Trust
   name_fr: Leona M. and Harry B. Helmsley Charitable Trust
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1648
 - code: '1649'
   name_en: Novo Nordisk Foundation
   name_fr: Novo Nordisk Foundation
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1649
 - code: '1650'
   name_en: Good Ventures Foundation
   name_fr: Good Ventures Foundation
   iso3: null
   type: Private donor
+  dotstatcode: 9PRIV1650
 - code: '18'
   name_en: Finland
   name_fr: Finlande
   iso3: FIN
   type: DAC member
+  dotstatcode: FIN
 - code: '2'
   name_en: Belgium
   name_fr: Belgique
   iso3: BEL
   type: DAC member
+  dotstatcode: BEL
 - code: '20'
   name_en: Iceland
   name_fr: Islande
   iso3: ISL
   type: DAC member
+  dotstatcode: ISL
 - code: '21'
   name_en: Ireland
   name_fr: Irlande
   iso3: IRL
   type: DAC member
+  dotstatcode: IRL
 - code: '22'
   name_en: Luxembourg
   name_fr: Luxembourg
   iso3: LUX
   type: DAC member
+  dotstatcode: LUX
 - code: '26'
   name_en: Monaco
   name_fr: Monaco
   iso3: MCO
   type: Non-DAC member
+  dotstatcode: MCO
 - code: '261'
   name_en: Nigeria
   name_fr: Nigéria
   iso3: NGA
   type: Country
+  dotstatcode: null
 - code: '3'
   name_en: Denmark
   name_fr: Danemark
   iso3: DNK
   type: DAC member
+  dotstatcode: DNK
 - code: '30'
   name_en: Cyprus
   name_fr: Chypre
   iso3: CYP
   type: Non-DAC member
+  dotstatcode: CYP
 - code: '301'
   name_en: Canada
   name_fr: Canada
   iso3: CAN
   type: DAC member
+  dotstatcode: CAN
 - code: '302'
   name_en: United States
   name_fr: Etats-Unis
   iso3: USA
   type: DAC member
+  dotstatcode: USA
 - code: '336'
   name_en: Costa Rica
   name_fr: Costa Rica
   iso3: CRI
   type: Country
+  dotstatcode: null
 - code: '340'
   name_en: Dominican Republic
   name_fr: République dominicaine
   iso3: DOM
   type: Country
+  dotstatcode: null
 - code: '347'
   name_en: Guatemala
   name_fr: Guatemala
   iso3: GTM
   type: Country
+  dotstatcode: null
 - code: '358'
   name_en: Mexico
   name_fr: Mexique
   iso3: MEX
   type: Non-DAC member
+  dotstatcode: MEX
 - code: '4'
   name_en: France
   name_fr: France
   iso3: FRA
   type: DAC member
+  dotstatcode: FRA
 - code: '40'
   name_en: Greece
   name_fr: Grèce
   iso3: GRC
   type: DAC member
+  dotstatcode: GRC
 - code: '425'
   name_en: Argentina
   name_fr: Argentine
   iso3: ARG
   type: Country
+  dotstatcode: null
 - code: '431'
   name_en: Brazil
   name_fr: Brésil
   iso3: BRA
   type: Country
+  dotstatcode: null
 - code: '434'
   name_en: Chile
   name_fr: Chili
   iso3: CHL
   type: Country
+  dotstatcode: null
 - code: '437'
   name_en: Colombia
   name_fr: Colombie
   iso3: COL
   type: Country
+  dotstatcode: null
 - code: '440'
   name_en: Ecuador
   name_fr: Equateur
   iso3: ECU
   type: Country
+  dotstatcode: null
 - code: '45'
   name_en: Malta
   name_fr: Malte
   iso3: MLT
   type: Non-DAC member
+  dotstatcode: MLT
 - code: '454'
   name_en: Peru
   name_fr: Pérou
   iso3: PER
   type: Country
+  dotstatcode: null
 - code: '460'
   name_en: Uruguay
   name_fr: Uruguay
   iso3: URY
   type: Country
+  dotstatcode: null
 - code: '5'
   name_en: Germany
   name_fr: Allemagne
   iso3: DEU
   type: DAC member
+  dotstatcode: DEU
 - code: '50'
   name_en: Spain
   name_fr: Espagne
   iso3: ESP
   type: DAC member
+  dotstatcode: ESP
 - code: '543'
   name_en: Iraq
   name_fr: Irak
   iso3: IRQ
   type: Non-DAC member
+  dotstatcode: IRQ
 - code: '546'
   name_en: Israel
   name_fr: Israël
   iso3: ISR
   type: Non-DAC member
+  dotstatcode: ISR
 - code: '55'
   name_en: Türkiye
   name_fr: Türkiye
   iso3: TUR
   type: Non-DAC member
+  dotstatcode: TUR
 - code: '551'
   name_en: Palestinian Authority
   name_fr: Palestinian Authority
   iso3: null
   type: Country
+  dotstatcode: null
 - code: '552'
   name_en: Kuwait
   name_fr: Koweit
   iso3: KWT
   type: Non-DAC member
+  dotstatcode: KWT
 - code: '561'
   name_en: Qatar
   name_fr: Qatar
   iso3: QAT
   type: Non-DAC member
+  dotstatcode: QAT
 - code: '566'
   name_en: Saudi Arabia
   name_fr: Arabie saoudite
   iso3: SAU
   type: Non-DAC member
+  dotstatcode: SAU
 - code: '576'
   name_en: United Arab Emirates
   name_fr: Emirats arabes unis
   iso3: ARE
   type: Non-DAC member
+  dotstatcode: ARE
 - code: '6'
   name_en: Italy
   name_fr: Italie
   iso3: ITA
   type: DAC member
+  dotstatcode: ITA
 - code: '61'
   name_en: Slovenia
   name_fr: Slovénie
   iso3: SVN
   type: DAC member
+  dotstatcode: SVN
 - code: '611'
   name_en: Azerbaijan
   name_fr: Azerbaïdjan
   iso3: AZE
   type: Non-DAC member
+  dotstatcode: AZE
 - code: '613'
   name_en: Kazakhstan
   name_fr: Kazakhstan
   iso3: KAZ
   type: Non-DAC member
+  dotstatcode: KAZ
 - code: '62'
   name_en: Croatia
   name_fr: Croatie
   iso3: HRV
   type: Non-DAC member
+  dotstatcode: HRV
 - code: '68'
   name_en: Czechia
   name_fr: Tchéquie
   iso3: CZE
   type: DAC member
+  dotstatcode: CZE
 - code: '69'
   name_en: Slovak Republic
   name_fr: République slovaque
   iso3: SVK
   type: DAC member
+  dotstatcode: SVK
 - code: '7'
   name_en: Netherlands
   name_fr: Pays-Bas
   iso3: NLD
   type: DAC member
+  dotstatcode: NLD
 - code: '70'
   name_en: Liechtenstein
   name_fr: Liechtenstein
   iso3: LIE
   type: Non-DAC member
+  dotstatcode: LIE
 - code: '701'
   name_en: Japan
   name_fr: Japon
   iso3: JPN
   type: DAC member
+  dotstatcode: JPN
 - code: '72'
   name_en: Bulgaria
   name_fr: Bulgarie
   iso3: BGR
   type: Non-DAC member
+  dotstatcode: BGR
 - code: '732'
   name_en: Chinese Taipei
   name_fr: Taipei chinois
   iso3: TWN
   type: Non-DAC member
+  dotstatcode: TWN
 - code: '738'
   name_en: Indonesia
   name_fr: Indonésie
   iso3: IDN
   type: Country
+  dotstatcode: null
 - code: '742'
   name_en: Korea
   name_fr: Corée
   iso3: KOR
   type: DAC member
+  dotstatcode: KOR
 - code: '75'
   name_en: Hungary
   name_fr: Hongrie
   iso3: HUN
   type: DAC member
+  dotstatcode: HUN
 - code: '76'
   name_en: Poland
   name_fr: Pologne
   iso3: POL
   type: DAC member
+  dotstatcode: POL
 - code: '764'
   name_en: Thailand
   name_fr: Thaïlande
   iso3: THA
   type: Non-DAC member
+  dotstatcode: THA
 - code: '765'
   name_en: Timor-Leste
   name_fr: Timor oriental
   iso3: TLS
   type: Non-DAC member
+  dotstatcode: TLS
 - code: '77'
   name_en: Romania
   name_fr: Roumanie
   iso3: ROU
   type: DAC member
+  dotstatcode: ROU
 - code: '8'
   name_en: Norway
   name_fr: Norvège
   iso3: NOR
   type: DAC member
+  dotstatcode: NOR
 - code: '801'
   name_en: Australia
   name_fr: Australie
   iso3: AUS
   type: DAC member
+  dotstatcode: AUS
 - code: '807'
   name_en: UNEP
   name_fr: PNUE
   iso3: null
   type: Multilateral donor
+  dotstatcode: 1UN016
 - code: '811'
   name_en: Global Environment Facility
   name_fr: Fonds pour l'environnement mondial
   iso3: null
   type: Multilateral donor
+  dotstatcode: 9OTH011
 - code: '812'
   name_en: Montreal Protocol
   name_fr: Protocole de Montréal
   iso3: null
   type: Multilateral donor
+  dotstatcode: 9OTH018
 - code: '82'
   name_en: Estonia
   name_fr: Estonie
   iso3: EST
   type: DAC member
+  dotstatcode: EST
 - code: '820'
   name_en: New Zealand
   name_fr: Nouvelle-Zélande
   iso3: NZL
   type: DAC member
+  dotstatcode: NZL
 - code: '83'
   name_en: Latvia
   name_fr: Lettonie
   iso3: LVA
   type: DAC member
+  dotstatcode: LVA
 - code: '84'
   name_en: Lithuania
   name_fr: Lituanie
   iso3: LTU
   type: DAC member
+  dotstatcode: LTU
 - code: '87'
   name_en: Russia
   name_fr: Russie
   iso3: RUS
   type: Non-DAC member
+  dotstatcode: RUS
 - code: '9'
   name_en: Portugal
   name_fr: Portugal
   iso3: PRT
   type: DAC member
+  dotstatcode: PRT
 - code: '901'
   name_en: International Bank for Reconstruction and Development
   name_fr: Banque internationale pour la reconstruction et le développement
   iso3: null
   type: Multilateral donor
+  dotstatcode: 5WB001
 - code: '902'
   name_en: Multilateral Investment Guarantee Agency
   name_fr: Agence multilatérale de garantie des investissements
   iso3: null
   type: Multilateral donor
+  dotstatcode: 5WB004
 - code: '903'
   name_en: International Finance Corporation
   name_fr: Société financière international
   iso3: null
   type: Multilateral donor
+  dotstatcode: 5WBG002
 - code: '905'
   name_en: International Development Association
   name_fr: Association internationale de développement
   iso3: null
   type: Multilateral donor
+  dotstatcode: 5WB002
 - code: '906'
   name_en: Caribbean Development Bank
   name_fr: Banque de développement des Caraïbes
   iso3: null
   type: Multilateral donor
+  dotstatcode: 5RDB004
 - code: '907'
   name_en: International Monetary Fund
   name_fr: Fond monétaire international
   iso3: null
   type: Multilateral donor
+  dotstatcode: 5IMF01
 - code: '909'
   name_en: Inter-American Development Bank
   name_fr: Banque Interaméricaine de développement
   iso3: null
   type: Multilateral donor
+  dotstatcode: 5IDB001
 - code: '910'
   name_en: Central American Bank for Economic Integration
   name_fr: Banque centraméricaine d'intégration économique
   iso3: null
   type: Multilateral donor
+  dotstatcode: 5RDB003
 - code: '913'
   name_en: African Development Bank
   name_fr: Banque Africaine de développement
   iso3: null
   type: Multilateral donor
+  dotstatcode: 5AFDB001
 - code: '914'
   name_en: African Development Fund
   name_fr: Fonds Africaine de développement
   iso3: null
   type: Multilateral donor
+  dotstatcode: 5AFDB002
 - code: '915'
   name_en: Asian Development Bank
   name_fr: Banque Asiatique de développement
   iso3: null
   type: Multilateral donor
+  dotstatcode: 5ASDB01
 - code: '918'
   name_en: EU Institutions
   name_fr: Institutions de l'UE
   iso3: null
   type: DAC member
+  dotstatcode: 4EU001
 - code: '921'
   name_en: Arab Fund (AFESD)
   name_fr: Fonds arabe (FADES)
   iso3: null
   type: Multilateral donor
+  dotstatcode: 9OTH003
 - code: '923'
   name_en: UN Peacebuilding Fund
   name_fr: Fonds de consolidation de la paix-ONU
   iso3: null
   type: Multilateral donor
+  dotstatcode: 1UN011
 - code: '926'
   name_en: Council of Europe
   name_fr: Conseil de l'Europe
   iso3: null
   type: Multilateral donor
+  dotstatcode: null
 - code: '928'
   name_en: World Health Organisation
   name_fr: Organisation mondiale de la santé
   iso3: null
   type: Multilateral donor
+  dotstatcode: 1UN026
 - code: '932'
   name_en: Food and Agriculture Organisation
   name_fr: Organisation pour l'alimentation et l'agriculture
   iso3: null
   type: Multilateral donor
+  dotstatcode: 1UN003
 - code: '940'
   name_en: International Labour Organisation
   name_fr: Organisation internationale du Travail
   iso3: null
   type: Multilateral donor
+  dotstatcode: 1UN006
 - code: '944'
   name_en: International Atomic Energy Agency
   name_fr: Agence internationale de l'énergie atomique
   iso3: null
   type: Multilateral donor
+  dotstatcode: 1UN005
 - code: '948'
   name_en: UNECE
   name_fr: CEE-ONU
   iso3: null
   type: Multilateral donor
+  dotstatcode: 1UN015
 - code: '951'
   name_en: OPEC Fund for International Development
   name_fr: Fonds OPEP pour le développement international
   iso3: null
   type: Multilateral donor
+  dotstatcode: 9OTH020
 - code: '952'
   name_en: OAPEC
   name_fr: OAPEC
   iso3: null
   type: Multilateral donor
+  dotstatcode: null
 - code: '953'
   name_en: Arab Bank for Economic Development in Africa
   name_fr: Banque arabe pour le développement économique en Afrique
   iso3: null
   type: Multilateral donor
+  dotstatcode: 9OTH002
 - code: '954'
   name_en: Special Arab Aid Fund for Africa
   name_fr: Fonds spécial arabe d'aide à l'Afrique
   iso3: null
   type: Multilateral donor
+  dotstatcode: null
 - code: '956'
   name_en: IMF Trust Fund
   name_fr: IMF Trust Fund
   iso3: null
   type: Multilateral donor
+  dotstatcode: null
 - code: '958'
   name_en: IMF (Concessional Trust Funds)
   name_fr: FMI (Fonds fiduciaires concessionnels)
   iso3: null
   type: Multilateral donor
+  dotstatcode: 5IMF02
 - code: '959'
   name_en: UNDP
   name_fr: PNUD
   iso3: null
   type: Multilateral donor
+  dotstatcode: 1UN014
 - code: '960'
   name_en: UNTA
   name_fr: ATNU
   iso3: null
   type: Multilateral donor
+  dotstatcode: 1UN023
 - code: '962'
   name_en: United Nations Conference on Trade and Development
   name_fr: Conférence des Nations Unies sur le commerce et le développement
   iso3: null
   type: Multilateral donor
+  dotstatcode: 1UN020
 - code: '963'
   name_en: UNICEF
   name_fr: UNICEF
   iso3: null
   type: Multilateral donor
+  dotstatcode: 1UN019
 - code: '964'
   name_en: UNRWA
   name_fr: UNRWA
   iso3: null
   type: Multilateral donor
+  dotstatcode: 1UN022
 - code: '966'
   name_en: WFP
   name_fr: PAM
   iso3: null
   type: Multilateral donor
+  dotstatcode: 1UN024
 - code: '967'
   name_en: UNHCR
   name_fr: HCR
   iso3: null
   type: Multilateral donor
+  dotstatcode: 1UN018
 - code: '971'
   name_en: UNAIDS
   name_fr: UNAIDS
   iso3: null
   type: Multilateral donor
+  dotstatcode: 1UN013
 - code: '974'
   name_en: UNFPA
   name_fr: FNUAP
   iso3: null
   type: Multilateral donor
+  dotstatcode: 1UN017
 - code: '976'
   name_en: Islamic Development Bank
   name_fr: Banque de développement islamique
   iso3: null
   type: Multilateral donor
+  dotstatcode: 5RDB009
 - code: '978'
   name_en: OSCE
   name_fr: OSCE
   iso3: null
   type: Multilateral donor
+  dotstatcode: 9OTH021
 - code: '979'
   name_en: Islamic Monetary Fund
   name_fr: Fond monétaire islamique
   iso3: null
   type: Multilateral donor
+  dotstatcode: null
 - code: '980'
   name_en: Arab Fund for Technical Assistance to African and Arab Countries
   name_fr: Fonds arabe pour l'assistance technique aux pays africains et arabes
   iso3: null
   type: Multilateral donor
+  dotstatcode: null
 - code: '981'
   name_en: Black Sea Trade & Development Bank
   name_fr: Banque de développement de la mer Noire
   iso3: null
   type: Multilateral donor
+  dotstatcode: 5RDB002
 - code: '982'
   name_en: GODE
   name_fr: GODE
   iso3: null
   type: Multilateral donor
+  dotstatcode: null
 - code: '983'
   name_en: Other Arab Agencies
   name_fr: Autres Agences Arabes
   iso3: null
   type: Multilateral donor
+  dotstatcode: null
 - code: '988'
   name_en: IFAD
   name_fr: FIDA
   iso3: null
   type: Multilateral donor
+  dotstatcode: 1UN004
 - code: '990'
   name_en: European Bank for Reconstruction and Development
   name_fr: Banque européenne pour la reconstruction et le développement
   iso3: null
   type: Multilateral donor
+  dotstatcode: 5RDB007
 - code: '992'
   name_en: UN AGENCIES
   name_fr: AGENCES DE L'ONU
   iso3: null
   type: Multilateral donor
+  dotstatcode: null
 - code: '997'
   name_en: Global Partnership for Education
   name_fr: Partenariat mondial pour l'Éducation
   iso3: null
   type: Multilateral donor
+  dotstatcode: 9OTH014
 channels:
 - code: '10000'
   name_en: Public Sector Institutions

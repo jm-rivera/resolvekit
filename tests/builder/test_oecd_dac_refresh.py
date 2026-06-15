@@ -41,6 +41,7 @@ def test_parse_recipients_shape() -> None:
         assert "name_fr" in row
         assert "iso3" in row
         assert "type" in row
+        assert "dotstatcode" in row
 
     codes = [r["code"] for r in rows]
     assert codes == sorted(codes), "Rows should be sorted by code"
@@ -60,9 +61,13 @@ def test_parse_providers_shape() -> None:
         assert "name_fr" in row
         assert "iso3" in row
         assert "type" in row
+        assert "dotstatcode" in row
 
     iso3_populated = [r for r in rows if r["iso3"] is not None]
     assert len(iso3_populated) >= 50, "Expected >=50 providers to have iso3"
+
+    dotstat_populated = [r for r in rows if r["dotstatcode"] is not None]
+    assert len(dotstat_populated) >= 50, "Expected >=50 providers to have dotstatcode"
 
     codes = [r["code"] for r in rows]
     assert codes == sorted(codes)
@@ -214,6 +219,82 @@ def test_main_prints_diff_when_yaml_differs(
     captured = capsys.readouterr()
     assert "--- oecd_dac.yaml (current)" in captured.out
     assert "+++ oecd_dac.yaml (proposed)" in captured.out
+
+
+@pytest.mark.unit
+def test_parse_provider_preserves_dotstatcode() -> None:
+    """Inline-envelope: provider with dotstatcode round-trips the value; absent → None."""
+    from scripts.data_maintenance.refresh_oecd_dac import parse_codelist
+
+    # Case 1: dotstatcode present — value preserved
+    with_code = _envelope(
+        "Providers",
+        {
+            "status": "Active",
+            "code": "302",
+            "name": {
+                "narrative": [
+                    "United States",
+                    {"xml:lang": "fr", "#text": "Etats-Unis"},
+                ]
+            },
+            "type": "DAC member",
+            "iso-alpha-3-code": "USA",
+            "dotstatcode": "USA",
+        },
+    )
+    rows = parse_codelist(with_code, codelist_id="5")
+    assert len(rows) == 1
+    assert rows[0]["dotstatcode"] == "USA"
+
+    # Case 2: dotstatcode absent — projected as None
+    without_code = _envelope(
+        "Providers",
+        {
+            "status": "Active",
+            "code": "139",
+            "name": {"narrative": ["Tunisia", {"xml:lang": "fr", "#text": "Tunisie"}]},
+            "type": "Country",
+            "iso-alpha-3-code": "TUN",
+        },
+    )
+    rows = parse_codelist(without_code, codelist_id="5")
+    assert len(rows) == 1
+    assert rows[0]["dotstatcode"] is None
+
+
+@pytest.mark.unit
+def test_parse_recipient_dotstatcode_present_and_null() -> None:
+    """Inline-envelope: recipient with dotstatcode present, and one with it omitted."""
+    from scripts.data_maintenance.refresh_oecd_dac import parse_codelist
+
+    present = _envelope(
+        "Recipients",
+        {
+            "status": "active",
+            "code": "5",
+            "name": {"narrative": ["Türkiye", {"xml:lang": "fr", "#text": "Türkiye"}]},
+            "type": "Country",
+            "iso-alpha-3-code": "TUR",
+            "dotstatcode": "TUR",
+        },
+    )
+    rows = parse_codelist(present, codelist_id="13")
+    assert len(rows) == 1
+    assert rows[0]["dotstatcode"] == "TUR"
+
+    absent = _envelope(
+        "Recipients",
+        {
+            "status": "active",
+            "code": "998",
+            "name": {"narrative": ["Global", {"xml:lang": "fr", "#text": "Global"}]},
+            "type": "",
+        },
+    )
+    rows = parse_codelist(absent, codelist_id="13")
+    assert len(rows) == 1
+    assert rows[0]["dotstatcode"] is None
 
 
 @pytest.mark.unit
