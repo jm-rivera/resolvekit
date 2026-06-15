@@ -140,6 +140,7 @@ def _project_country_like(
         "name_fr": name_fr,
         "iso3": row.get("iso-alpha-3-code") or None,
         "type": row.get("type", ""),
+        "dotstatcode": row.get("dotstatcode") or None,
     }
 
 
@@ -218,6 +219,54 @@ def _regenerate_text(
     )
 
 
+# Codelists merged additively (keyed by unique ``code``). Recipients and
+# providers are the only codelists where the OECD app drops retired codes
+# (graduated territories, dissolved states) that old ODA data still references,
+# and the only ones whose ``code`` is unique. Channels and agencies carry
+# duplicate rows in the OECD feed (no unique key) and have no historical-
+# preservation need, so they pass through from the live fetch unchanged.
+_ADDITIVE_CODELISTS = frozenset(
+    {_CODELIST_IDS["recipients"], _CODELIST_IDS["providers"]}
+)
+
+
+def _merge_codelist(
+    committed: list[dict[str, Any]],
+    live: list[dict[str, Any]],
+    *,
+    codelist_id: str,
+) -> tuple[list[dict[str, Any]], dict[str, list[Any]]]:
+    """Additively merge committed rows with a freshly fetched live codelist.
+
+    The OECD app publishes only currently-active codes, but old ODA data
+    references retired codes (graduated territories, dissolved states). A
+    wholesale regenerate would drop every committed code absent from the live
+    feed. This merge instead preserves committed-only rows (historical), adds
+    live-only rows (new active codes), and adopts live values for shared codes
+    while reporting any value change so it is reviewed, not applied silently.
+
+    Keyed by ``code`` — valid only for recipients and providers (see
+    ``_ADDITIVE_CODELISTS``).
+    """
+    _, sort_key = _PROJECTORS[codelist_id]
+    committed_by = {r["code"]: r for r in committed}
+    live_by = {r["code"]: r for r in live}
+
+    merged = dict(committed_by)
+    new_keys: list[Any] = []
+    changed: list[Any] = []
+    for key, row in live_by.items():
+        if key not in committed_by:
+            new_keys.append(key)
+        elif committed_by[key] != row:
+            changed.append((key, committed_by[key], row))
+        merged[key] = row
+    historical = [key for key in committed_by if key not in live_by]
+
+    report = {"new": new_keys, "changed": changed, "historical": historical}
+    return sorted(merged.values(), key=sort_key), report
+
+
 def run(*, settings: OecdRefreshSettings) -> None:
     """Fetch OECD DAC codelists and print a unified diff against the checked-in snapshot."""
     if _yaml is None:
@@ -256,13 +305,39 @@ def run(*, settings: OecdRefreshSettings) -> None:
     if capture_dir is not None:
         return
 
-    # Fill in empty lists for any codelists that failed or were not fetched
-    for name in _CODELIST_IDS:
-        if name not in fetched:
-            fetched[name] = []
+    committed_doc: dict[str, Any] = {}
+    if _OECD_DAC_YAML.exists():
+        committed_doc = (
+            _yaml.safe_load(_OECD_DAC_YAML.read_text(encoding="utf-8")) or {}
+        )
+
+    # Merge each codelist against the committed snapshot. Recipients and
+    # providers merge additively (preserve historical, add new, report changes);
+    # channels and agencies pass through from the live fetch. A codelist not
+    # fetched this run (single-codelist refresh, or a fetch error) keeps its
+    # committed rows untouched rather than being dropped.
+    merged: dict[str, list[dict[str, Any]]] = {}
+    for name, cid in _CODELIST_IDS.items():
+        committed_rows = committed_doc.get(name) or []
+        if cid in _ADDITIVE_CODELISTS:
+            live_rows = fetched.get(name, committed_rows)
+            rows, report = _merge_codelist(committed_rows, live_rows, codelist_id=cid)
+            merged[name] = rows
+            print(
+                f"{name}: {len(rows)} rows (+{len(report['new'])} new, "
+                f"{len(report['historical'])} preserved historical, "
+                f"{len(report['changed'])} value change(s))",
+                file=sys.stderr,
+            )
+            for key, old, new in report["changed"]:
+                print(f"  CHANGED {name} {key!r}: {old} -> {new}", file=sys.stderr)
+        else:
+            rows = fetched.get(name, committed_rows)
+            merged[name] = rows
+            print(f"{name}: {len(rows)} rows (passthrough)", file=sys.stderr)
 
     query_date = datetime.date.today().isoformat()
-    new_text = _regenerate_text(fetched, query_date=query_date)
+    new_text = _regenerate_text(merged, query_date=query_date)
 
     original_text = (
         _OECD_DAC_YAML.read_text(encoding="utf-8") if _OECD_DAC_YAML.exists() else ""

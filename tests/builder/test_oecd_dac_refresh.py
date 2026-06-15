@@ -41,6 +41,7 @@ def test_parse_recipients_shape() -> None:
         assert "name_fr" in row
         assert "iso3" in row
         assert "type" in row
+        assert "dotstatcode" in row
 
     codes = [r["code"] for r in rows]
     assert codes == sorted(codes), "Rows should be sorted by code"
@@ -60,9 +61,13 @@ def test_parse_providers_shape() -> None:
         assert "name_fr" in row
         assert "iso3" in row
         assert "type" in row
+        assert "dotstatcode" in row
 
     iso3_populated = [r for r in rows if r["iso3"] is not None]
     assert len(iso3_populated) >= 50, "Expected >=50 providers to have iso3"
+
+    dotstat_populated = [r for r in rows if r["dotstatcode"] is not None]
+    assert len(dotstat_populated) >= 50, "Expected >=50 providers to have dotstatcode"
 
     codes = [r["code"] for r in rows]
     assert codes == sorted(codes)
@@ -217,6 +222,82 @@ def test_main_prints_diff_when_yaml_differs(
 
 
 @pytest.mark.unit
+def test_parse_provider_preserves_dotstatcode() -> None:
+    """Inline-envelope: provider with dotstatcode round-trips the value; absent → None."""
+    from scripts.data_maintenance.refresh_oecd_dac import parse_codelist
+
+    # Case 1: dotstatcode present — value preserved
+    with_code = _envelope(
+        "Providers",
+        {
+            "status": "Active",
+            "code": "302",
+            "name": {
+                "narrative": [
+                    "United States",
+                    {"xml:lang": "fr", "#text": "Etats-Unis"},
+                ]
+            },
+            "type": "DAC member",
+            "iso-alpha-3-code": "USA",
+            "dotstatcode": "USA",
+        },
+    )
+    rows = parse_codelist(with_code, codelist_id="5")
+    assert len(rows) == 1
+    assert rows[0]["dotstatcode"] == "USA"
+
+    # Case 2: dotstatcode absent — projected as None
+    without_code = _envelope(
+        "Providers",
+        {
+            "status": "Active",
+            "code": "139",
+            "name": {"narrative": ["Tunisia", {"xml:lang": "fr", "#text": "Tunisie"}]},
+            "type": "Country",
+            "iso-alpha-3-code": "TUN",
+        },
+    )
+    rows = parse_codelist(without_code, codelist_id="5")
+    assert len(rows) == 1
+    assert rows[0]["dotstatcode"] is None
+
+
+@pytest.mark.unit
+def test_parse_recipient_dotstatcode_present_and_null() -> None:
+    """Inline-envelope: recipient with dotstatcode present, and one with it omitted."""
+    from scripts.data_maintenance.refresh_oecd_dac import parse_codelist
+
+    present = _envelope(
+        "Recipients",
+        {
+            "status": "active",
+            "code": "5",
+            "name": {"narrative": ["Türkiye", {"xml:lang": "fr", "#text": "Türkiye"}]},
+            "type": "Country",
+            "iso-alpha-3-code": "TUR",
+            "dotstatcode": "TUR",
+        },
+    )
+    rows = parse_codelist(present, codelist_id="13")
+    assert len(rows) == 1
+    assert rows[0]["dotstatcode"] == "TUR"
+
+    absent = _envelope(
+        "Recipients",
+        {
+            "status": "active",
+            "code": "998",
+            "name": {"narrative": ["Global", {"xml:lang": "fr", "#text": "Global"}]},
+            "type": "",
+        },
+    )
+    rows = parse_codelist(absent, codelist_id="13")
+    assert len(rows) == 1
+    assert rows[0]["dotstatcode"] is None
+
+
+@pytest.mark.unit
 def test_main_no_changes_when_yaml_matches(
     tmp_path: Path, capsys: pytest.CaptureFixture
 ) -> None:
@@ -258,3 +339,90 @@ def test_main_no_changes_when_yaml_matches(
     captured_second = capsys.readouterr()
     assert captured_second.out == "", "Expected no diff output"
     assert "No changes detected." in captured_second.err
+
+
+# ---------------------------------------------------------------------------
+# Additive merge: the live OECD app publishes only active codes, so the refresh
+# must preserve committed historical codes (graduated territories) rather than
+# wholesale-replacing the snapshot with the live feed.
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.unit
+def test_merge_codelist_preserves_historical_adds_new_reports_changes() -> None:
+    from scripts.data_maintenance.refresh_oecd_dac import _merge_codelist
+
+    def row(code: str, name: str, iso3: str, dotstat: str) -> dict[str, Any]:
+        return {
+            "code": code,
+            "name_en": name,
+            "name_fr": name,
+            "iso3": iso3,
+            "type": "Country",
+            "dotstatcode": dotstat,
+        }
+
+    committed = [
+        row("376", "Anguilla", "AIA", "AIA"),  # historical — absent from live
+        row("302", "United States", "USA", "USA"),  # shared, unchanged
+        row("57", "Kosovo", "XKX", "XKV"),  # shared, dotstat changes upstream
+    ]
+    live = [
+        row("302", "United States", "USA", "USA"),
+        row("57", "Kosovo", "XKX", "XKX"),  # OECD changed XKV -> XKX
+        row("1", "Austria", "AUT", "AUT"),  # new active code
+    ]
+
+    merged, report = _merge_codelist(committed, live, codelist_id="13")
+    by = {r["code"]: r for r in merged}
+
+    # historical preserved, new added, union complete
+    assert set(by) == {"376", "302", "57", "1"}
+    assert by["376"]["name_en"] == "Anguilla"
+    assert report["historical"] == ["376"]
+    assert report["new"] == ["1"]
+
+    # value change adopts the live value and is reported (not silently dropped)
+    assert by["57"]["dotstatcode"] == "XKX"
+    assert [c for c, _old, _new in report["changed"]] == ["57"]
+
+    # output sorted by the codelist's sort key (string code)
+    assert [r["code"] for r in merged] == sorted(by, key=str)
+
+
+@pytest.mark.unit
+def test_main_preserves_committed_historical_recipient(
+    tmp_path: Path, capsys: pytest.CaptureFixture
+) -> None:
+    """A committed historical recipient absent from the live feed is preserved."""
+    import scripts.data_maintenance.refresh_oecd_dac as mod
+
+    stub_yaml = tmp_path / "oecd_dac.yaml"
+    stub_yaml.write_text(
+        "version: 1\ngenerated_from:\n  oecd_query_date: null\n"
+        "  source_url: x\n  aspx_codelist_ids:\n    recipients: '13'\n"
+        "    providers: '5'\n    channels: '3'\n    agencies: '16'\n"
+        "recipients:\n"
+        "- code: '376'\n  name_en: Anguilla\n  name_fr: Anguilla\n"
+        "  iso3: AIA\n  type: Country\n  dotstatcode: AIA\n"
+        "providers: []\nchannels: []\nagencies: []\n"
+    )
+
+    orig_yaml = mod._OECD_DAC_YAML
+    mod._OECD_DAC_YAML = stub_yaml
+    try:
+        with (
+            patch.object(mod, "fetch_codelist_json", side_effect=_mock_fetch),
+            patch.object(sys, "argv", ["refresh_oecd_dac.py"]),
+        ):
+            mod.main()
+    finally:
+        mod._OECD_DAC_YAML = orig_yaml
+
+    captured = capsys.readouterr()
+    # The merge reports the historical recipient as preserved...
+    assert "preserved historical" in captured.err
+    # ...and the diff never deletes Anguilla (it survives into the proposed text).
+    assert "-  name_en: Anguilla" not in captured.out
+    # the live recipient (Türkiye, code 5) is added
+    assert "+  name_en: Türkiye" in captured.out or "Türkiye" in captured.out

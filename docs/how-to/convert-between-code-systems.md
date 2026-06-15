@@ -17,6 +17,8 @@ Convert country names to ISO codes, flags, Data Commons IDs, and back — using
 | *(default_to="iso3")* | *(auto)* | *(omitted)* | `"ESP"` |
 | `"France"` | *(auto)* | `"name:fr"` | `"France"` |
 | `"Spain"` | *(auto)* | `"name:es"` | `"España"` |
+| `"302"` | `"oecd:provider"` | `"oecd:dotstat"` | `"USA"` |
+| `"USA"` | `"oecd:dotstat"` | `"oecd:provider"` | `"302"` |
 | `default_to=["iso3","name"]` | *(chain)* | *(omitted)* | first non-missing value |
 
 ## Single values
@@ -69,7 +71,7 @@ list — pass an unknown one and it raises `UnknownCodeSystemError`. The ones
 you'll reach for are `"iso2"`, `"iso3"`, `"iso_numeric"`, `"dcid"`, and
 `"wikidata"`. The data also carries authority IDs like `"fips104"`,
 `"ioccountrycode"`, `"gndid"`, `"viafid"`, and `"osmrelationid"`. For the full
-set on your install (52 systems with the default geo + org packs), call
+set on your install (50+ systems with the default geo + org packs), call
 `rk.default().code_systems()`.
 
 ## Converting a whole column
@@ -139,6 +141,69 @@ create a join key column:
 ```python
 df["dcid"] = rk.bulk(values=df["country_name"], to="dcid")
 ```
+
+## Convert OECD DAC codes (old ↔ new)
+
+In 2024 the OECD retired OECD.Stat for the Data Explorer platform and changed how
+DAC providers (donors) and recipients are identified: the old numeric DAC codes
+(the United States was `302`, Germany `5`) gave way to Data Explorer codes — ISO3
+for countries, and structured codes such as `1UN001` or `5WB001` for multilateral
+providers and aggregates. Data and code built against one scheme need to convert
+to the other.
+
+resolvekit carries both, as three separate code systems:
+
+| System | Scheme | Example (United States) |
+|--------|--------|-------------------------|
+| `oecd:provider` | legacy OECD.Stat donor code | `"302"` |
+| `oecd:recipient` | legacy OECD.Stat recipient code | — |
+| `oecd:dotstat` | OECD Data Explorer code | `"USA"` |
+
+Convert in either direction by naming the systems explicitly:
+
+```python
+# Legacy numeric DAC code -> new Data Explorer code
+rk.resolve("302", from_system="oecd:provider", to="oecd:dotstat")   # "USA"
+rk.resolve("730", from_system="oecd:recipient", to="oecd:dotstat")  # "CHN"
+
+# New Data Explorer code -> legacy numeric
+rk.resolve("USA", from_system="oecd:dotstat", to="oecd:provider")   # "302"
+
+# Either OECD code -> a name, ISO3, or any other system
+rk.resolve("5", from_system="oecd:provider", to="name")             # "Germany"
+```
+
+Graduated recipients are covered too. The OECD's live codelist publishes only
+currently-active codes, but old ODA data references countries and territories
+that have since left the recipient list. resolvekit retains those historical
+recipient codes so the old data still translates:
+
+```python
+rk.resolve("376", from_system="oecd:recipient", to="oecd:dotstat")  # "AIA" (Anguilla)
+rk.resolve("735", from_system="oecd:recipient", to="name")          # "Hong Kong"
+```
+
+`oecd:dotstat` is present on provider and recipient entities — countries, the
+region and multilateral aggregates, and the multilateral providers (World Bank,
+UN agencies, regional development banks). It is not on channel-of-delivery or
+agency entities, which the OECD feed does not assign a Data Explorer code.
+
+!!! note "Dissolved states"
+    Recipients that dissolved (Netherlands Antilles, Serbia and Montenegro, the
+    USSR) are not yet covered: the OECD reused their old numeric codes for
+    currently-active countries (`236` is now Benin, `382` is now Saint Kitts and
+    Nevis), so resolving them unambiguously needs date-scoped codes — a later
+    addition. Graduated territories whose codes were not reused (Anguilla, Aruba,
+    Hong Kong, …) are present today.
+
+!!! note
+    `oecd:dotstat` is a separate system from `iso3` even though the two are equal
+    for most countries. They diverge where it matters: Kosovo is `XKX` in ISO3 but
+    `XKV` in the Data Explorer, and the region and multilateral aggregates
+    (`1UN001`, `5WB001`, `LDC`, …) have a Data Explorer code but no ISO3 at all.
+    Because it coincides with `iso3` for sovereign countries, `oecd:dotstat` is
+    excluded from input auto-detection — reach it only through an explicit
+    `from_system="oecd:dotstat"` or `to="oecd:dotstat"`.
 
 ## Getting a numeric code
 

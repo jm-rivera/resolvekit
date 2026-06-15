@@ -1004,6 +1004,305 @@ def _seed_geo_entity(
 
 
 @pytest.mark.unit
+def test_recipient_country_attaches_dotstat(tmp_path: Path) -> None:
+    """Recipient row with dotstatcode emits oecd:dotstat on the mapped geo entity."""
+    geo_db = _build_geo_db(tmp_path)
+    org_db = _build_org_db(tmp_path)
+    yaml_path = _minimal_oecd_yaml(
+        tmp_path,
+        recipients=[
+            {
+                "code": "302",
+                "name_en": "United States",
+                "name_fr": None,
+                "iso3": "USA",
+                "type": "Country",
+                "dotstatcode": "USA",
+            }
+        ],
+    )
+    cw_path = _minimal_crosswalk_yaml(tmp_path)
+    _run_enricher(geo_db, org_db, yaml_path, cw_path)
+
+    row = _query_one(
+        geo_db,
+        "SELECT value FROM codes WHERE entity_id='country/USA' AND system='oecd:dotstat'",
+    )
+    assert row is not None
+    assert row[0] == "USA"
+
+
+@pytest.mark.unit
+def test_provider_country_attaches_dotstat(tmp_path: Path) -> None:
+    """Country-provider row with dotstatcode emits oecd:dotstat on the geo entity."""
+    geo_db = _build_geo_db(tmp_path)
+    org_db = _build_org_db(tmp_path)
+    yaml_path = _minimal_oecd_yaml(
+        tmp_path,
+        providers=[
+            {
+                "code": "1",
+                "name_en": "Austria",
+                "name_fr": "Autriche",
+                "iso3": "AUT",
+                "type": "DAC member",
+                "dotstatcode": "AUT",
+            }
+        ],
+    )
+    cw_path = _minimal_crosswalk_yaml(tmp_path)
+    _run_enricher(geo_db, org_db, yaml_path, cw_path)
+
+    row = _query_one(
+        geo_db,
+        "SELECT value FROM codes WHERE entity_id='country/AUT' AND system='oecd:dotstat'",
+    )
+    assert row is not None
+    assert row[0] == "AUT"
+
+
+@pytest.mark.unit
+def test_provider_country_null_dotstat_emits_no_code(tmp_path: Path) -> None:
+    """Country-provider with null dotstatcode gets oecd:provider but no oecd:dotstat."""
+    geo_db = _build_geo_db(tmp_path)
+    org_db = _build_org_db(tmp_path)
+    yaml_path = _minimal_oecd_yaml(
+        tmp_path,
+        providers=[
+            {
+                "code": "4",
+                "name_en": "Germany",
+                "name_fr": None,
+                "iso3": "DEU",
+                "type": "DAC member",
+                "dotstatcode": None,
+            }
+        ],
+    )
+    cw_path = _minimal_crosswalk_yaml(tmp_path)
+    _run_enricher(geo_db, org_db, yaml_path, cw_path)
+
+    provider_code = _query_one(
+        geo_db,
+        "SELECT value FROM codes WHERE entity_id='country/DEU' AND system='oecd:provider'",
+    )
+    dotstat_code = _query_one(
+        geo_db,
+        "SELECT value FROM codes WHERE entity_id='country/DEU' AND system='oecd:dotstat'",
+    )
+    assert provider_code is not None
+    assert provider_code[0] == "4"
+    assert dotstat_code is None
+
+
+@pytest.mark.unit
+def test_recipient_kosovo_dotstat_mismatch(tmp_path: Path) -> None:
+    """Kosovo: iso3=XKX (not in geo DB → creates region), dotstatcode=XKV.
+
+    The oecd:dotstat value must be exactly XKV — the iso3/dotstat mismatch is
+    the point of this test.
+    """
+    geo_db = _build_geo_db(tmp_path)
+    org_db = _build_org_db(tmp_path)
+    yaml_path = _minimal_oecd_yaml(
+        tmp_path,
+        recipients=[
+            {
+                "code": "57",
+                "name_en": "Kosovo",
+                "name_fr": "Kosovo",
+                "iso3": "XKX",
+                "type": "Country",
+                "dotstatcode": "XKV",
+            }
+        ],
+    )
+    cw_path = _minimal_crosswalk_yaml(tmp_path)
+    _run_enricher(geo_db, org_db, yaml_path, cw_path)
+
+    recipient_code = _query_one(
+        geo_db,
+        "SELECT value FROM codes WHERE entity_id='geo.region/oecd:57' AND system='oecd:recipient'",
+    )
+    dotstat_code = _query_one(
+        geo_db,
+        "SELECT value FROM codes WHERE entity_id='geo.region/oecd:57' AND system='oecd:dotstat'",
+    )
+    assert recipient_code is not None
+    assert recipient_code[0] == "57"
+    assert dotstat_code is not None
+    assert dotstat_code[0] == "XKV"
+
+
+@pytest.mark.unit
+def test_multilateral_provider_attaches_dotstat_org_fallback(tmp_path: Path) -> None:
+    """No-iso3 multilateral with dotstatcode: org-fallback entity gets oecd:dotstat."""
+    geo_db = _build_geo_db(tmp_path)
+    org_db = _build_org_db(tmp_path)
+    yaml_path = _minimal_oecd_yaml(
+        tmp_path,
+        providers=[
+            {
+                "code": "901",
+                "name_en": "World Bank Group",
+                "name_fr": None,
+                "iso3": None,
+                "type": "Multilateral",
+                "dotstatcode": "5WB001",
+            }
+        ],
+    )
+    cw_path = _minimal_crosswalk_yaml(tmp_path)
+    _run_enricher(geo_db, org_db, yaml_path, cw_path)
+
+    dotstat_code = _query_one(
+        org_db,
+        "SELECT value FROM codes WHERE entity_id='org/oecd:provider:901' AND system='oecd:dotstat'",
+    )
+    assert dotstat_code is not None
+    assert dotstat_code[0] == "5WB001"
+
+
+@pytest.mark.unit
+def test_multilateral_provider_dotstat_via_crosswalk_org(tmp_path: Path) -> None:
+    """Crosswalk-mapped org entity inherits the oecd:dotstat code.
+
+    Exercises the `elif db_label == 'org' and org_contrib is not None:` branch
+    of _upsert_multilateral_providers with a non-null dotstatcode.
+    """
+    geo_db = _build_geo_db(tmp_path)
+    org_db = _build_org_db(tmp_path)
+
+    # Pre-seed the org DB with an existing entity
+    conn = sqlite3.connect(org_db)
+    conn.execute(
+        "INSERT OR IGNORE INTO entities VALUES ('org/dc/WorldBank', 'org.igo', 'World Bank', 'world bank', NULL, NULL, '{}')"
+    )
+    conn.commit()
+    conn.close()
+
+    yaml_path = _minimal_oecd_yaml(
+        tmp_path,
+        providers=[
+            {
+                "code": "901",
+                "name_en": "World Bank Group",
+                "name_fr": None,
+                "iso3": None,
+                "type": "Multilateral",
+                "dotstatcode": "5WB001",
+            }
+        ],
+    )
+    cw_path = _minimal_crosswalk_yaml(tmp_path, providers={"901": "org/dc/WorldBank"})
+    _run_enricher(geo_db, org_db, yaml_path, cw_path)
+
+    provider_code = _query_one(
+        org_db,
+        "SELECT value FROM codes WHERE entity_id='org/dc/WorldBank' AND system='oecd:provider'",
+    )
+    dotstat_code = _query_one(
+        org_db,
+        "SELECT value FROM codes WHERE entity_id='org/dc/WorldBank' AND system='oecd:dotstat'",
+    )
+
+    assert provider_code is not None
+    assert provider_code[0] == "901"
+    assert dotstat_code is not None
+    assert dotstat_code[0] == "5WB001"
+
+
+@pytest.mark.unit
+def test_multilateral_provider_dotstat_via_crosswalk_geo(tmp_path: Path) -> None:
+    """Crosswalk-mapped geo entity inherits the oecd:dotstat code."""
+    geo_db = _build_geo_db(tmp_path)
+    org_db = _build_org_db(tmp_path)
+    _seed_geo_entity(geo_db, "undata-geo/G00601300", "UNICEF")
+
+    yaml_path = _minimal_oecd_yaml(
+        tmp_path,
+        providers=[
+            {
+                "code": "963",
+                "name_en": "UNICEF",
+                "name_fr": "UNICEF fr",
+                "iso3": None,
+                "type": "Multilateral",
+                "dotstatcode": "1UN0",
+            }
+        ],
+    )
+    cw_path = _minimal_crosswalk_yaml(
+        tmp_path, providers={"963": "undata-geo/G00601300"}
+    )
+    _run_enricher(geo_db, org_db, yaml_path, cw_path)
+
+    dotstat_code = _query_one(
+        geo_db,
+        "SELECT value FROM codes WHERE entity_id='undata-geo/G00601300' AND system='oecd:dotstat'",
+    )
+    assert dotstat_code is not None
+    assert dotstat_code[0] == "1UN0"
+
+
+@pytest.mark.unit
+def test_eu_institutions_dotstat_attached_despite_name_suppression(
+    tmp_path: Path,
+) -> None:
+    """EU Institutions: name suppressed on EuropeanUnion but oecd:dotstat still attached.
+
+    The dotstat code is crosswalk coverage; suppression only concerns the alias.
+    """
+    geo_db = _build_geo_db(tmp_path)
+    conn = sqlite3.connect(geo_db)
+    conn.execute(
+        "INSERT OR IGNORE INTO entities VALUES "
+        "('EuropeanUnion','geo.continental_union','European Union','european union',NULL,NULL,'{}')"
+    )
+    conn.commit()
+    conn.close()
+
+    yaml_path = _minimal_oecd_yaml(
+        tmp_path,
+        providers=[
+            {
+                "code": "918",
+                "name_en": "EU Institutions",
+                "name_fr": "Institutions de l'UE",
+                "iso3": None,
+                "type": "Multilateral",
+                "dotstatcode": "918",
+            }
+        ],
+    )
+    cw_path = _minimal_crosswalk_yaml(tmp_path, providers={"918": "EuropeanUnion"})
+    _run_enricher(geo_db, None, yaml_path, cw_path)
+
+    # Name is suppressed
+    name_row = _query_one(
+        geo_db,
+        "SELECT 1 FROM names WHERE entity_id='EuropeanUnion' "
+        "AND value_norm='eu institutions'",
+    )
+    assert name_row is None
+
+    # oecd:provider code still attached
+    provider_code = _query_one(
+        geo_db,
+        "SELECT value FROM codes WHERE entity_id='EuropeanUnion' AND system='oecd:provider'",
+    )
+    assert provider_code == ("918",)
+
+    # oecd:dotstat code also attached despite name suppression
+    dotstat_code = _query_one(
+        geo_db,
+        "SELECT value FROM codes WHERE entity_id='EuropeanUnion' AND system='oecd:dotstat'",
+    )
+    assert dotstat_code is not None
+    assert dotstat_code[0] == "918"
+
+
+@pytest.mark.unit
 def test_provider_multilateral_crosswalk_to_geo_entity(tmp_path: Path) -> None:
     geo_db = _build_geo_db(tmp_path)
     org_db = _build_org_db(tmp_path)

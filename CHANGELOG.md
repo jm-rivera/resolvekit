@@ -1,5 +1,31 @@
 # Changelog
 
+## 0.1.12 (2026-06-15)
+
+**Added.** OECD Data Explorer codes as a new `oecd:dotstat` code system on DAC
+provider and recipient entities, alongside the existing legacy numeric
+`oecd:provider` and `oecd:recipient` codes. When the OECD retired OECD.Stat for
+the Data Explorer platform in 2024, provider and recipient identifiers changed
+from numeric DAC codes (the United States was `302`) to Data Explorer codes —
+ISO3 for countries (`USA`), and structured codes such as `1UN001` or `5WB001`
+for multilateral providers and aggregates. resolvekit now carries both schemes,
+so a value in either resolves to the same entity and converts to the other
+(`rk.resolve("302", from_system="oecd:provider", to="oecd:dotstat")` and back),
+through the same `to=` / `from_system=` machinery as every other code system.
+`oecd:dotstat` is kept distinct from `iso3` even where they coincide — they
+diverge for Kosovo (`XKX` vs `XKV`) and for the region and multilateral
+aggregates that have no ISO3 — and is excluded from input auto-detection, so it
+is reached only via an explicit `to=` or `from_system=`.
+
+The recipient set also gains the graduated territories (Anguilla, Aruba, Hong
+Kong, Macao, the Gulf states, and others) that the OECD's live codelist no longer
+publishes but that older ODA data still references, so that data continues to
+translate. The codelist refresh script now merges additively — it preserves
+committed codes, adds new ones, and reports value changes for review — rather than
+wholesale-replacing the snapshot with the active-only live feed. Dissolved states
+whose numeric codes the OECD has since reassigned (Netherlands Antilles, Serbia
+and Montenegro) are not yet included; resolving them needs date-scoped codes.
+
 ## 0.1.11 (2026-06-14)
 
 **Fixed.** Group-membership corrections across the bundled reference data, from a

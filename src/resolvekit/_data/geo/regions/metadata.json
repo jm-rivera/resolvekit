@@ -10,7 +10,7 @@
     "fts": "fts5",
     "symspell": "symspell.dict"
   },
-  "build_timestamp": "2026-06-14T09:07:23.453133+00:00",
+  "build_timestamp": "2026-06-15T10:41:54.481467+00:00",
   "source_datasets": [
     "datacommons"
   ],
@@ -19,7 +19,7 @@
   },
   "description": null,
   "checksums": {
-    "sqlite": "16a109da6c7c772097e0b0d54ac8b06b98af642fe53e5143e049df77de3449b6",
+    "sqlite": "f75d22afa159aa281115bd296e4df73c5ac6fc664cc14bffb262a6c8d3401ec6",
     "symspell": "0ceb0ae2f947178b5d6bbcf25995c4cdb2429d695ac13799f54bb8558b0b94c4"
   },
   "distribution": "bundled",
@@ -35,7 +35,7 @@
   "quality_metrics": {
     "entity_count": 829,
     "names_count": 935,
-    "codes_count": 1621,
+    "codes_count": 1668,
     "relations_count": 804,
     "names_coverage": 1.0,
     "codes_coverage": 1.0,
