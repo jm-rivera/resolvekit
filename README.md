@@ -1,6 +1,7 @@
 # resolvekit
 
 [![PyPI version](https://img.shields.io/pypi/v/resolvekit.svg)](https://pypi.org/project/resolvekit/)
+[![conda-forge version](https://img.shields.io/conda/vn/conda-forge/resolvekit.svg)](https://anaconda.org/conda-forge/resolvekit)
 [![Python versions](https://img.shields.io/pypi/pyversions/resolvekit.svg)](https://pypi.org/project/resolvekit/)
 [![License: MIT](https://img.shields.io/pypi/l/resolvekit.svg)](https://github.com/jm-rivera/resolvekit/blob/main/LICENSE)
 [![Tests](https://github.com/jm-rivera/resolvekit/actions/workflows/test.yml/badge.svg)](https://github.com/jm-rivera/resolvekit/actions/workflows/test.yml)
