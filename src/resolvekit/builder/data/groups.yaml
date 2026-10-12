@@ -1895,7 +1895,7 @@ groups:
   - id: groups/OECD.DAC.Region.CaribbeanAndCentralAmerica
     type: geo.organization
     canonical_name: Caribbean and Central America (DAC)
-    aliases: ["Caribbean and Central America (DAC)", "Caribbean & Central America, Total", "Caribbean and Central America", "Central America and the Caribbean"]
+    aliases: ["Caribbean and Central America (DAC)", "Caribbean & Central America (DAC)", "Caribbean & Central America, Total", "Caribbean and Central America, Total", "Caribbean and Central America", "Central America and the Caribbean"]
     snapshot: true
     sources:
       - https://sdmx.oecd.org/public/rest/dataflow/OECD.DCD.FSD/DSD_DAC2@DF_DAC2A/latest
@@ -2083,7 +2083,7 @@ groups:
   - id: groups/OECD.DAC.Region.SouthAndCentralAsia
     type: geo.organization
     canonical_name: South and Central Asia (DAC)
-    aliases: ["South and Central Asia (DAC)", "South & Central Asia, Total", "South and Central Asia", "South & Central Asia", "Southern and Central Asia"]
+    aliases: ["South and Central Asia (DAC)", "South & Central Asia (DAC)", "South & Central Asia, Total", "South and Central Asia, Total", "South and Central Asia", "South & Central Asia", "Southern and Central Asia"]
     snapshot: true
     sources:
       - https://sdmx.oecd.org/public/rest/dataflow/OECD.DCD.FSD/DSD_DAC2@DF_DAC2A/latest

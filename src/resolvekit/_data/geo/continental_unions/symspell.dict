@@ -3,7 +3,7 @@
 (25	1
 (27	2
 (28	1
-(dac)	22
+(dac)	24
 (ea)	1
 (eea)	1
 (eu)	1
@@ -21,16 +21,16 @@ africa,	5
 africa, total	1
 african	1
 african union	1
-america	7
+america	8
 america (dac)	1
-america,	5
+america,	6
 america, total	1
-and	8
+and	10
 area	5
 asean	1
-asia	7
+asia	8
 asia (dac)	1
-asia,	3
+asia,	4
 asia, total	1
 asian	1
 assistance	1
@@ -41,14 +41,16 @@ au	1
 bank	6
 bric	1
 brics	1
-caribbean	5
+caribbean	7
+caribbean & central america (dac)	1
 caribbean & central america, total	1
 caribbean (dac)	1
 caribbean and central america	1
 caribbean and central america (dac)	1
+caribbean and central america, total	1
 caribbean,	1
 caribbean, total	1
-central	11
+central	15
 central america (dac)	1
 central america and the caribbean	1
 central america, total	1
@@ -205,13 +207,15 @@ seven	1
 sids	1
 small	1
 small island developing states	1
-south	9
+south	11
 south & central asia	1
+south & central asia (dac)	1
 south & central asia, total	1
 south america (dac)	1
 south america, total	1
 south and central asia	1
 south and central asia (dac)	1
+south and central asia, total	1
 south of sahara	1
 south of sahara (dac)	1
 south of sahara, total	1
@@ -224,7 +228,7 @@ southern common market	1
 states	1
 the	4
 the commonwealth	1
-total	22
+total	24
 treaty	1
 twenty	1
 u.n.	1
