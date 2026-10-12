@@ -682,7 +682,7 @@ Resolver.lite().domains   # ['geo']
 `ResolverInfo` — Structured metadata about this resolver instance.
 
 ```python
-r.info.data_version         # "2026.06"
+r.info.data_version         # "2026.10"
 r.info.resolvekit_version   # "0.1.3"
 r.info.domains              # ("geo", "org")
 r.info.routing_mode         # "auto"

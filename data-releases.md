@@ -1,15 +1,15 @@
 # How to cut a data release
 
-Build the data packs, gzip the assets for remote tiers, stamp every
-`metadata.json` with the new CalVer, publish the release on GitHub, and
-push the matching code. End state: `pip install resolvekit` loads the new
+Build the data packs, prepare remote-tier assets and stamped
+`metadata.json` files, upload a GitHub data release, then merge and tag the
+matching package release. End state: `pip install resolvekit` loads the new
 bundled data, and remote tiers download from the new release on first use.
 
 ## Before you start
 
 - `gh` authenticated against `jm-rivera/resolvekit` (`gh auth status`).
 - Working tree clean except for whatever you mean to ship.
-- A CalVer in your head: `YYYY.MM` (e.g. `2026.06`). Bump it if you need to
+- A CalVer in your head: `YYYY.MM` (e.g. `2026.10`). Bump it if you need to
   redo a published version — GitHub release tags are immutable.
 
 !!! info "Why the order matters"
@@ -70,11 +70,12 @@ bundled data, and remote tiers download from the new release on first use.
 2. **Cut the release.**
 
     ```bash
-    RESOLVEKIT_RELEASE_CALVER=2026.06 RESOLVEKIT_RELEASE_EXECUTE=1 \
+    RESOLVEKIT_RELEASE_CALVER=2026.10 RESOLVEKIT_RELEASE_EXECUTE=1 \
         uv run python -m scripts.release.release_data
     ```
 
-    For each remote module (`geo.admin1..5`, `geo.cities`) this gzips
+    `release_data` prepares files locally; it does not upload a GitHub
+    release. For each remote module (`geo.admin1..5`, `geo.cities`) it gzips
     `entities.sqlite` and every entry in `metadata.artifacts`
     (e.g. `symspell.dict`), then writes the per-artifact spec into
     `metadata.remote_artifacts`. For bundled modules it just stamps
@@ -82,8 +83,8 @@ bundled data, and remote tiers download from the new release on first use.
 
     Side effects:
 
-    - `src/resolvekit/_data/{...}/{entities.sqlite,symspell.dict}.gz` —
-      the assets you'll upload in step 5. Gitignored.
+    - `src/resolvekit/_data/{...}/geo-{module}-{artifact}.gz` — the prefixed
+      assets that you'll upload in step 6, next to their source files. Gitignored.
     - `release-manifest.json` at repo root — local asset map.
       Gitignored.
     - One row per module appended to `data/build/registry/releases.json`
@@ -120,7 +121,7 @@ bundled data, and remote tiers download from the new release on first use.
     Expected output:
 
     ```
-    OK: verified 15 module(s) from .../manifest.json
+    OK: verified 16 module(s) from .../manifest.json
     ```
 
     Bundled modules are checked for sqlite presence + SHA-256 match.
@@ -128,20 +129,43 @@ bundled data, and remote tiers download from the new release on first use.
     populated `remote_artifacts['sqlite']` — their real bytes live on the
     release, not locally.
 
-5. **Stage and upload the GitHub release.**
+5. **Commit and push the data-release PR.**
 
-    Flatten the per-tier `.gz` files from step 2 into a staging directory
-    with the asset names `gh release create` will see:
+    Stage the metadata + manifest changes, then commit and push the release
+    branch for review. Do not push directly to `main`.
 
     ```bash
-    STAGE=/tmp/rk-release-data-v2026.06
+    git add src/resolvekit/_data/
+    git commit -m "data: refresh to data-v2026.10"
+    git push origin HEAD
+    ```
+
+6. **Stage and upload the GitHub release.**
+
+    Stage exactly the assets recorded in `release-manifest.json`. The script
+    generated their prefixed names and locations in step 2.
+
+    ```bash
+    STAGE=/tmp/rk-release-data-v2026.10
+    export STAGE
     mkdir -p "$STAGE"
-    for tier in admin1 admin2 admin3 admin4 admin5 cities; do
-        for kind in entities.sqlite symspell.dict; do
-            cp "src/resolvekit/_data/geo/$tier/$kind.gz" \
-               "$STAGE/geo-$tier-$kind.gz"
-        done
-    done
+    uv run python - <<'PY'
+    import json
+    import os
+    import shutil
+    from pathlib import Path
+
+    manifest = json.loads(Path("release-manifest.json").read_text())
+    assets = manifest["assets"]
+    assert len(assets) == 12, f"expected 12 remote assets, got {len(assets)}"
+    stage = Path(os.environ["STAGE"])
+    for asset in assets:
+        source = Path(asset["local_path"])
+        destination = stage / asset["asset_name"]
+        if source.name != destination.name:
+            raise RuntimeError(f"unexpected asset name: {source.name}")
+        shutil.copy2(source, destination)
+    PY
     ```
 
     Twelve assets total (6 remote tiers × 2 artifacts). The asset names
@@ -149,21 +173,26 @@ bundled data, and remote tiers download from the new release on first use.
     the runtime fetches by exact filename. The `release_data` stdout
     summary at the end of step 2 lists them.
 
-    Then:
+    Create the release against the exact reviewed PR head, before merging the
+    PR. This keeps the release assets and their committed metadata on the same
+    commit.
 
     ```bash
-    gh release create data-v2026.06 /tmp/rk-release-data-v2026.06/*.gz \
-        --title "Data v2026.06" \
-        --notes "Geo (admin1-5, cities) + org datapack assets."
+    RELEASE_HEAD=$(git rev-parse HEAD)
+    gh release create data-v2026.10 "$STAGE"/*.gz \
+        --repo jm-rivera/resolvekit \
+        --target "$RELEASE_HEAD" \
+        --title "Data v2026.10" \
+        --notes "Geo remote-tier datapack assets (admin1-5, cities)."
     ```
 
-    !!! warning "Heads up: upload before pushing code"
+    !!! warning "Heads up: upload before merging the PR"
         The committed `metadata.json` files point at the release URLs.
-        If you push code before the assets are uploaded, anyone who does
+        If the package release ships before the assets are uploaded, anyone who does
         `pip install` and uses a remote module gets a 404 until you catch
-        up. Always: upload, then push.
+        up. Always: upload, then merge and tag.
 
-6. **Clean the source tree.**
+7. **Clean the source tree.**
 
     Remove the now-published bytes for remote tiers (gitignored but disk
     is finite — admin4 alone is ~365 MB uncompressed):
@@ -171,22 +200,28 @@ bundled data, and remote tiers download from the new release on first use.
     ```bash
     for tier in admin1 admin2 admin3 admin4 admin5 cities; do
         d="src/resolvekit/_data/geo/$tier"
-        rm -f "$d/entities.sqlite" "$d/symspell.dict" \
-              "$d/entities.sqlite.gz" "$d/symspell.dict.gz"
+        rm -f "$d/entities.sqlite" "$d/symspell.dict" "$d"/geo-*.gz
     done
     ```
 
     Leave bundled-tier sqlites and symspell files in place — those ship
     in the wheel.
 
-7. **Commit and push.**
+8. **Verify, merge, and tag the package release.**
 
-    Stage the metadata + manifest changes (not the gitignored locals):
+    Confirm a remote download works before merging the reviewed data-release
+    PR. Merge the PR after that verification. Then update the local checkout
+    to the merged `main` commit, verify that it contains the reviewed head and
+    package version, and create the Python package tag.
 
     ```bash
-    git add src/resolvekit/_data/
-    git commit -m "data: refresh to data-v2026.06"
-    git push origin main
+    git fetch origin main
+    git checkout main
+    git merge --ff-only origin/main
+    git merge-base --is-ancestor "$RELEASE_HEAD" HEAD
+    uv run python -c "import pathlib, tomllib; assert tomllib.loads(pathlib.Path('pyproject.toml').read_text())['project']['version'] == '0.1.13'"
+    git tag v0.1.13
+    git push origin v0.1.13
     ```
 
 ## Verify it worked
@@ -200,7 +235,7 @@ print(r.resolve('Italy').entity_id)
 "
 ```
 
-Expected: `data_version: 2026.06`, `country/ITA`. Then trigger a remote
+Expected: `data_version: 2026.10`, `country/ITA`. Then trigger a remote
 module download to confirm the GitHub release assets resolve and the
 per-artifact checksums match the stamped `metadata.json`:
 
@@ -208,7 +243,7 @@ per-artifact checksums match the stamped `metadata.json`:
 uv run python -c "
 import resolvekit
 resolvekit.configure(auto_download=True)
-resolvekit.download('geo.admin5')
+resolvekit.download('geo.admin5', force=True)
 "
 ```
 
@@ -217,6 +252,9 @@ Expected: progress bars for `geo-admin5-entities.sqlite.gz` and
 cheapest tier to test against (~1.9 MB sqlite, ~38 KB dict). Cache
 state can be inspected via `resolvekit.modules()`; cache files land at
 `$XDG_CACHE_HOME/resolvekit/`, defaulting to `~/.cache/resolvekit/`.
+Run this download check before merging the data-release PR. `force=True`
+fetches the newly uploaded assets even when a local cache already contains
+the previous release's bytes.
 
 ## Replacing a published release
 
@@ -233,14 +271,14 @@ The default answer is **bump the CalVer**, not delete.
 
 1. Fix the source data, builder code, or whatever caused the bad
    release.
-2. Re-run steps 1–7 with a fresh CalVer (e.g. `2026.06` →
-   `2026.06.1`, or just the next month).
+2. Re-run steps 1–8 with a fresh CalVer (e.g. `2026.10` →
+   `2026.10.1`, or just the next month).
 3. Edit the bad release's notes on GitHub to flag the supersession so
    anyone landing on it via search knows:
 
     ```bash
-    gh release edit data-v2026.06 \
-        --notes "Superseded by data-v2026.06.1 — do not use."
+    gh release edit data-v2026.10 \
+        --notes "Superseded by data-v2026.10.1 — do not use."
     ```
 
 The bad release stays tagged but visibly deprecated. Existing consumers
@@ -256,7 +294,7 @@ that, assume consumption.
 1. **Delete the release and tag.**
 
     ```bash
-    gh release delete data-v2026.06 --cleanup-tag --yes
+    gh release delete data-v2026.10 --cleanup-tag --yes
     ```
 
     The `.gz` assets are gone from GitHub and cannot be restored from
@@ -268,7 +306,7 @@ that, assume consumption.
    the JSON:
 
     ```bash
-    # Drop every "version": "2026.06" object from the releases array
+    # Drop every "version": "2026.10" object from the releases array
     $EDITOR data/build/registry/releases.json
     ```
 

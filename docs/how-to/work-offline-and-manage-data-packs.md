@@ -17,7 +17,7 @@ resolvekit ships with two classes of modules:
 | `org.political_parties` | Political parties |
 | `org.providers` | Data providers |
 
-**Remote** — not bundled. Fetched on demand from GitHub Release `data-v2026.06` and verified by checksum. All six are in the `geo` domain:
+**Remote** — not bundled. Fetched on demand from GitHub Release `data-v2026.10` and verified by checksum. All six are in the `geo` domain:
 
 | Module | Download size |
 |---|---|
@@ -162,7 +162,7 @@ After clearing, call `rk.reset()` if you've already initialized a resolver, so i
 
 ## The offline-reproducible pattern
 
-Pre-download once while you have network access, then run with no network. The download is pinned to release tag `data-v2026.06` and the checksum is verified on every fetch — re-downloading the same tag with `force=True` produces byte-identical files.
+Pre-download once while you have network access, then run with no network. The download is pinned to release tag `data-v2026.10` and the checksum is verified on every fetch — re-downloading the same tag with `force=True` produces byte-identical files.
 
 ```python
 # --- setup.py (run once, with network) ---

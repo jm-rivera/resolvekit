@@ -1,5 +1,5 @@
 {
-  "datapack_id": "org.companies-v2026.06",
+  "datapack_id": "org.companies-v2026.10",
   "module_id": "org.companies",
   "domain_pack_id": "org",
   "module_dependencies": [],
@@ -24,7 +24,7 @@
   },
   "distribution": "bundled",
   "remote_artifacts": null,
-  "data_version": "2026.06",
+  "data_version": "2026.10",
   "min_resolvekit_version": "0.1.0a1",
   "pack_type": "base",
   "store_type": "sqlite",

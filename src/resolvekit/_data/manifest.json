@@ -23,15 +23,15 @@
       "size_mb": 11.809999999999999,
       "remote_artifacts": {
         "sqlite": {
-          "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.06/geo-admin1-entities.sqlite.gz",
+          "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.10/geo-admin1-entities.sqlite.gz",
           "sha256": "071b8a258e5f5eff94a11be2385c04bbbfc491f7f84783ca92de97fff7d511cc",
-          "gz_sha256": "f04a76435a73eb2724bf173e98828a6ccc82594a79877e3c9dc16aa87d287810",
+          "gz_sha256": "50862fb1cc13443a8d1742b479b062e0c48d1d9140cf8e7dd35f895398ee4e44",
           "size_mb": 11.54
         },
         "symspell": {
-          "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.06/geo-admin1-symspell.dict.gz",
+          "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.10/geo-admin1-symspell.dict.gz",
           "sha256": "eb40c9f872c158e257c9f8acc4b4a1447f7af88790efd9f7600ee0494c2f7f80",
-          "gz_sha256": "5c9e9665bd11f86ecf4c492216b6e4306a68330f5f6df87ad184bfab86bd9882",
+          "gz_sha256": "d0dbbca468777fc3689c930cfe5ea176de58677c9ea98f30089fa28ad214ad7b",
           "size_mb": 0.27
         }
       }
@@ -46,15 +46,15 @@
       "size_mb": 99.54,
       "remote_artifacts": {
         "sqlite": {
-          "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.06/geo-admin2-entities.sqlite.gz",
+          "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.10/geo-admin2-entities.sqlite.gz",
           "sha256": "d59a081d1d8b40bec03701bc3d26f6d4098e955e5684bfad1e3f500ca48410a1",
-          "gz_sha256": "090327d1d16ccfb8f1533acbc1c2a611bbc0992bde0597f74d47be3ffd2301c1",
+          "gz_sha256": "de27077bd9ae60e2aa99bce6b60c884562d674adaf7cf6c7a0630968920a8b6c",
           "size_mb": 97.53
         },
         "symspell": {
-          "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.06/geo-admin2-symspell.dict.gz",
+          "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.10/geo-admin2-symspell.dict.gz",
           "sha256": "efa0292ca63d41a57604757102490c7efa23c0f1fa8f2e7d44b0eb6b61f41253",
-          "gz_sha256": "bb17b33fbd6bdd2f9656588c3134c69699a33d1771eebdbd80725a77f1bbd663",
+          "gz_sha256": "292219f8e0558443216762e81167f913b25c482d182270bc78ab9d41bec9f863",
           "size_mb": 2.01
         }
       }
@@ -69,15 +69,15 @@
       "size_mb": 159.49,
       "remote_artifacts": {
         "sqlite": {
-          "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.06/geo-admin3-entities.sqlite.gz",
+          "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.10/geo-admin3-entities.sqlite.gz",
           "sha256": "534689b2be34ea71bf716ee05a2450e57e615703fb47bf3847b37717989bfe27",
-          "gz_sha256": "56ecab90d309a8b5f32ed88af878e4a6fce91ab7a7ad5ba2b515b2215db8f683",
+          "gz_sha256": "e95d8406f10cbf2a09a8bf3eb4776253708495dab8788933dba714fae4cd508a",
           "size_mb": 156.94
         },
         "symspell": {
-          "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.06/geo-admin3-symspell.dict.gz",
+          "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.10/geo-admin3-symspell.dict.gz",
           "sha256": "de37ec12016f845f0e7619ca1ae3add2fdb265a8bd604a1c58533b70c1ace000",
-          "gz_sha256": "f038823ee5fed44f05b8b45fa717e8af20cdb95f4cdcf8751addbee9bef39a40",
+          "gz_sha256": "b5cc26b9c2ccbab722e6817c1dcabb584ad13186624cb45ce0da6d77d33f21ea",
           "size_mb": 2.55
         }
       }
@@ -92,15 +92,15 @@
       "size_mb": 378.98999999999995,
       "remote_artifacts": {
         "sqlite": {
-          "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.06/geo-admin4-entities.sqlite.gz",
+          "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.10/geo-admin4-entities.sqlite.gz",
           "sha256": "2c4f59eee7e7ba5c411bc929e134529170378be07dee2f0ea8a5a36ced802bfb",
-          "gz_sha256": "da49b958bfc86bec16bd43187742629f4b8d5a50af875bf6db0f53a854e873ca",
+          "gz_sha256": "409a4ce0432018a5c2b6695dcaa7744dc44652b44f60c7e84c173383bf365c7e",
           "size_mb": 374.34
         },
         "symspell": {
-          "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.06/geo-admin4-symspell.dict.gz",
+          "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.10/geo-admin4-symspell.dict.gz",
           "sha256": "ed6ea61439dddf62dcbfb00745c2ac5bb55cf897f1f801dc079b767bd36b3e5f",
-          "gz_sha256": "c15a3dee16725d1e32f51d5f8130af8a903a36c05346e2988be92f73f5c9372a",
+          "gz_sha256": "86ca97ddb3bf63fb282e60e3dbc0016260c293c4d84b7c13bbd7e4a11f3a4990",
           "size_mb": 4.65
         }
       }
@@ -115,15 +115,15 @@
       "size_mb": 1.92,
       "remote_artifacts": {
         "sqlite": {
-          "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.06/geo-admin5-entities.sqlite.gz",
+          "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.10/geo-admin5-entities.sqlite.gz",
           "sha256": "75b1448c6ed841095b2d86321a0b88afbf43e9787421816d3fc65dc149079b52",
-          "gz_sha256": "1165d027814b39cab87b40b4ce5a993c47f0a1ead1c8a0b3a53cea1f8fc1c404",
+          "gz_sha256": "bd1fee4c242f6526117c9737de07744b1ca468c4e23707eb582bf52b3b73475d",
           "size_mb": 1.88
         },
         "symspell": {
-          "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.06/geo-admin5-symspell.dict.gz",
+          "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.10/geo-admin5-symspell.dict.gz",
           "sha256": "d0f6974c45a47132d72db73deb110eb9383f0a87a1c456fec206ba797817638e",
-          "gz_sha256": "2ac6c08656de7cef88b1229c84405a15a02a2ead79cd590057a3d536c6da64fa",
+          "gz_sha256": "7eed2f12837b51bef4442dfd7094d740233062d5cdf42f4c635e7bff7bb0a90b",
           "size_mb": 0.04
         }
       }
@@ -138,15 +138,15 @@
       "size_mb": 154.88,
       "remote_artifacts": {
         "sqlite": {
-          "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.06/geo-cities-entities.sqlite.gz",
+          "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.10/geo-cities-entities.sqlite.gz",
           "sha256": "909059ae8c86ecf7d1011a086061e3b81d61bf9c6c30b871db3a1390010c7ca2",
-          "gz_sha256": "d225669ea2ca59d97dfeffed89886ab95b6b9f031d1005c980fb89e36339c479",
+          "gz_sha256": "6bbd19f589115cbcaa9981aa19fb2589e85ce033edda8eb50be4d46bae92cb00",
           "size_mb": 152.21
         },
         "symspell": {
-          "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.06/geo-cities-symspell.dict.gz",
+          "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.10/geo-cities-symspell.dict.gz",
           "sha256": "bdfbc85e011729e35268d5c799bbc7a5da5fca0b5fb591b069af6ace1975ca32",
-          "gz_sha256": "a155adfe7c62bef1de11f4a61908b4b9c42f35e9873c6479b1e9c0271be0c3a1",
+          "gz_sha256": "fd1dfadd84a7e60b8119393c45d0f5153a7e80ced5827b0b8030b9c273976c89",
           "size_mb": 2.67
         }
       }
