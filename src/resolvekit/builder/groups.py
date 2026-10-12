@@ -9,18 +9,24 @@ Registered as an enricher under COUNTRY_ENTITY_TYPE in pipeline/enrich.py
 
 from __future__ import annotations
 
+import importlib
 import logging
 from pathlib import Path
+from types import ModuleType
 from typing import Any
 
-from resolvekit.builder.pipeline.contribution import GraphContribution
+from resolvekit.builder.pipeline.contribution import (
+    GraphContribution,
+    RelationReplacementScope,
+)
 from resolvekit.builder.sqlite.context import connect_sqlite
 from resolvekit.core.util.normalization import TextNormalizer
 
+_yaml: ModuleType | None
 try:
-    import yaml as _yaml
+    _yaml = importlib.import_module("yaml")
 except ImportError:  # pragma: no cover - optional dep
-    _yaml = None  # type: ignore[assignment]
+    _yaml = None
 
 logger = logging.getLogger(__name__)
 
@@ -68,6 +74,9 @@ def build_group_contribution(db_path: Path) -> GraphContribution:
         contribution.entities.extend(group_contribution.entities)
         contribution.names.extend(group_contribution.names)
         contribution.relations.extend(group_contribution.relations)
+        contribution.relation_scopes_to_replace.extend(
+            group_contribution.relation_scopes_to_replace
+        )
     return contribution
 
 
@@ -121,26 +130,33 @@ def _collect_group(
             }
         )
 
-    for member in group.get("members", []):
-        iso3 = str(member["iso3"]).upper()
-        member_entity_id = iso3_map.get(iso3)
-        if member_entity_id is None:
-            logger.warning(
-                "groups enricher: unknown iso3 %r for group %r — skipping",
-                iso3,
-                entity_id,
+    if "members" in group:
+        contribution.relation_scopes_to_replace.append(
+            RelationReplacementScope(
+                target_id=entity_id,
+                relation_type="member_of",
             )
-            continue
-        vf = member.get("valid_from")
-        vu = member.get("valid_until")
-        contribution.relations.append(
-            {
-                "entity_id": member_entity_id,
-                "relation_type": "member_of",
-                "target_id": entity_id,
-                "valid_from": vf,
-                "valid_until": vu,
-            }
         )
+        for member in group["members"]:
+            iso3 = str(member["iso3"]).upper()
+            member_entity_id = iso3_map.get(iso3)
+            if member_entity_id is None:
+                logger.warning(
+                    "groups enricher: unknown iso3 %r for group %r — skipping",
+                    iso3,
+                    entity_id,
+                )
+                continue
+            vf = member.get("valid_from")
+            vu = member.get("valid_until")
+            contribution.relations.append(
+                {
+                    "entity_id": member_entity_id,
+                    "relation_type": "member_of",
+                    "target_id": entity_id,
+                    "valid_from": vf,
+                    "valid_until": vu,
+                }
+            )
 
     return contribution

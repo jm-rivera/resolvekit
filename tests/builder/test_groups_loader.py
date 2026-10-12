@@ -262,6 +262,87 @@ def test_enrich_groups_idempotent(tmp_path: Path) -> None:
 
 
 @pytest.mark.unit
+def test_enrich_groups_empty_members_replaces_membership_scope(tmp_path: Path) -> None:
+    """An explicit empty members list clears the group's existing memberships."""
+    db_path = _build_staging_db(tmp_path)
+    conn = sqlite3.connect(db_path)
+    conn.executemany(
+        "INSERT INTO relations VALUES (?, ?, ?, ?, ?)",
+        [
+            ("country/DEU", "member_of", "groups/TEST_ORG", None, None),
+            ("country/FRA", "member_of", "groups/OTHER", None, None),
+        ],
+    )
+    conn.commit()
+    conn.close()
+    yaml_path = _minimal_groups_yaml(
+        tmp_path,
+        [
+            {
+                "id": "groups/TEST_ORG",
+                "type": "geo.organization",
+                "canonical_name": "Test Organisation",
+                "aliases": ["TEST"],
+                "snapshot": False,
+                "members": [],
+            }
+        ],
+    )
+
+    _run_enrich_groups(db_path, yaml_path)
+
+    conn = sqlite3.connect(db_path)
+    assert (
+        conn.execute(
+            "SELECT 1 FROM relations WHERE target_id = 'groups/TEST_ORG' "
+            "AND relation_type = 'member_of'"
+        ).fetchone()
+        is None
+    )
+    assert conn.execute(
+        "SELECT 1 FROM relations WHERE target_id = 'groups/OTHER' "
+        "AND relation_type = 'member_of'"
+    ).fetchone() == (1,)
+    conn.close()
+
+
+@pytest.mark.unit
+def test_enrich_groups_without_members_leaves_existing_memberships_untouched(
+    tmp_path: Path,
+) -> None:
+    """Groups that only declare aliases do not claim an existing membership scope."""
+    db_path = _build_staging_db(tmp_path)
+    conn = sqlite3.connect(db_path)
+    conn.execute(
+        "INSERT INTO relations VALUES (?, ?, ?, ?, ?)",
+        ("country/DEU", "member_of", "groups/TEST_ORG", None, None),
+    )
+    conn.commit()
+    conn.close()
+    yaml_path = _minimal_groups_yaml(
+        tmp_path,
+        [
+            {
+                "id": "groups/TEST_ORG",
+                "type": "geo.organization",
+                "canonical_name": "Test Organisation",
+                "aliases": ["TEST"],
+                "snapshot": False,
+            }
+        ],
+    )
+
+    _run_enrich_groups(db_path, yaml_path)
+
+    conn = sqlite3.connect(db_path)
+    assert conn.execute(
+        "SELECT 1 FROM relations WHERE entity_id = 'country/DEU' "
+        "AND target_id = 'groups/TEST_ORG' AND relation_type = 'member_of'"
+    ).fetchone() == (1,)
+    conn.close()
+
+
+@pytest.mark.unit
 def test_enrich_groups_unknown_iso3_warns(
     tmp_path: Path, caplog: pytest.LogCaptureFixture
 ) -> None:
@@ -366,3 +447,77 @@ def test_enrich_groups_snapshot_entity_attrs_json(tmp_path: Path) -> None:
     assert row is not None
     attrs = json.loads(row[0])
     assert attrs.get("snapshot") is True
+
+
+@pytest.mark.unit
+def test_enrich_groups_replaces_obsolete_fy27_income_memberships(
+    tmp_path: Path,
+) -> None:
+    """FY27 rebuild removes the six income-band memberships carried over from FY26."""
+    source_db = (
+        Path(__file__).resolve().parents[2]
+        / "src/resolvekit/_data/geo/countries/entities.sqlite"
+    )
+    db_path = tmp_path / "countries.sqlite"
+    with (
+        sqlite3.connect(source_db) as source_conn,
+        sqlite3.connect(db_path) as target_conn,
+    ):
+        source_conn.backup(target_conn)
+
+    income_groups = (
+        "groups/WB.IncomeGroup.High",
+        "groups/WB.IncomeGroup.UpperMiddle",
+        "groups/WB.IncomeGroup.LowerMiddle",
+        "groups/WB.IncomeGroup.Low",
+    )
+    previous_memberships = [
+        ("country/FSM", "groups/WB.IncomeGroup.LowerMiddle"),
+        ("country/JOR", "groups/WB.IncomeGroup.LowerMiddle"),
+        ("country/LKA", "groups/WB.IncomeGroup.LowerMiddle"),
+        ("country/PHL", "groups/WB.IncomeGroup.LowerMiddle"),
+        ("country/VNM", "groups/WB.IncomeGroup.LowerMiddle"),
+        ("country/TGO", "groups/WB.IncomeGroup.Low"),
+    ]
+    conn = sqlite3.connect(db_path)
+    conn.executemany(
+        "INSERT INTO relations VALUES (?, 'member_of', ?, NULL, NULL)",
+        previous_memberships,
+    )
+    placeholders = ", ".join("?" for _ in income_groups)
+    seeded_count = conn.execute(
+        "SELECT COUNT(*) FROM relations WHERE relation_type = 'member_of' "
+        f"AND target_id IN ({placeholders})",
+        income_groups,
+    ).fetchone()
+    conn.commit()
+    conn.close()
+    assert seeded_count == (219,)
+
+    from resolvekit.builder import groups as groups_module
+
+    _run_enrich_groups(db_path, groups_module._GROUPS_YAML_PATH)
+
+    conn = sqlite3.connect(db_path)
+    final_count = conn.execute(
+        "SELECT COUNT(*) FROM relations WHERE relation_type = 'member_of' "
+        f"AND target_id IN ({placeholders})",
+        income_groups,
+    ).fetchone()
+    expected_memberships = {
+        "country/FSM": "groups/WB.IncomeGroup.UpperMiddle",
+        "country/JOR": "groups/WB.IncomeGroup.UpperMiddle",
+        "country/LKA": "groups/WB.IncomeGroup.UpperMiddle",
+        "country/PHL": "groups/WB.IncomeGroup.UpperMiddle",
+        "country/VNM": "groups/WB.IncomeGroup.UpperMiddle",
+        "country/TGO": "groups/WB.IncomeGroup.LowerMiddle",
+    }
+    assert final_count == (213,)
+    for country_id, expected_group in expected_memberships.items():
+        assert conn.execute(
+            "SELECT target_id FROM relations WHERE entity_id = ? "
+            "AND relation_type = 'member_of' "
+            f"AND target_id IN ({placeholders})",
+            (country_id, *income_groups),
+        ).fetchall() == [(expected_group,)]
+    conn.close()
