@@ -1,5 +1,32 @@
 # Changelog
 
+## 0.1.13 (2026-10-12)
+
+**Added.** 22 OECD DAC aid-statistics region groups, with 423 country memberships
+and qualified names such as `Africa (DAC)` and `Asia, Total`. Memberships include
+historical recipients that have graduated from the DAC List. These snapshot groups
+follow DAC statistical assignments, which differ from geographic regions. Published
+DAC totals also include regional recipients outside the country memberships.
+
+**Updated.** World Bank income groups to the FY27 classification from July 2026.
+Low, lower-middle, upper-middle, and high income contain 25, 47, 59, and 82 economies.
+High income gains 17 territories and Taiwan, China. Greenland, the Faroe Islands,
+American Samoa, and Guam remain excluded because this build places them in
+`geo.admin1`. The Channel Islands has no country entity.
+
+**Fixed.** Cached data builds replace memberships for groups that declare a
+`members` key in `groups.yaml`, removing obsolete members and updating validity
+dates. Entries without a `members` key retain their existing memberships.
+The `Caribbean and Central America` and
+`South and Central Asia` groups accept both `and` and `&` in their `(DAC)` and
+`, Total` labels.
+
+**Updated.** `Middle East` resolves to the DAC Middle East group.
+`Far East Asia`, `North of Sahara`, `South of Sahara`, and `South & Central Asia`
+resolve to their DAC regions rather than their regional allocation buckets.
+`Far East` resolves to Far East Asia. Use qualified `(DAC)` names when selecting
+the DAC definitions explicitly.
+
 ## 0.1.12 (2026-06-15)
 
 **Added.** OECD Data Explorer codes as a new `oecd:dotstat` code system on DAC
