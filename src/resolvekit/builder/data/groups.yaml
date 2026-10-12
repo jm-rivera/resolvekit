@@ -1595,3 +1595,634 @@ groups:
       - {iso3: TLS}
       - {iso3: TUR}
       - {iso3: TWN}
+
+  # ── DAC regions ─────────────────────────────────────────────────────────
+
+  # The regions of the OECD DAC's aid statistics, as published in DAC2A.
+  # Members are every recipient the DAC has assigned to a region, including
+  # ones that have since left the DAC List. Checked against DAC2A (official
+  # donors, gross and net ODA, 1960-2024): each region's total equals its
+  # members plus its unspecified recipients ("Asia, regional", Indus Basin,
+  # Mekong Delta, East African Community) in every year. Bermuda sits in both
+  # Northern America and Caribbean and Central America, as in the DAC totals.
+
+  - id: groups/OECD.DAC.Region.Africa
+    type: geo.organization
+    canonical_name: Africa (DAC)
+    aliases: ["Africa (DAC)", "Africa, Total"]
+    snapshot: true
+    sources:
+      - https://sdmx.oecd.org/public/rest/dataflow/OECD.DCD.FSD/DSD_DAC2@DF_DAC2A/latest
+    members:
+      - {iso3: AGO}
+      - {iso3: BDI}
+      - {iso3: BEN}
+      - {iso3: BFA}
+      - {iso3: BWA}
+      - {iso3: CAF}
+      - {iso3: CIV}
+      - {iso3: CMR}
+      - {iso3: COD}
+      - {iso3: COG}
+      - {iso3: COM}
+      - {iso3: CPV}
+      - {iso3: DJI}
+      - {iso3: DZA}
+      - {iso3: EGY}
+      - {iso3: ERI}
+      - {iso3: ETH}
+      - {iso3: GAB}
+      - {iso3: GHA}
+      - {iso3: GIN}
+      - {iso3: GMB}
+      - {iso3: GNB}
+      - {iso3: GNQ}
+      - {iso3: KEN}
+      - {iso3: LBR}
+      - {iso3: LBY}
+      - {iso3: LSO}
+      - {iso3: MAR}
+      - {iso3: MDG}
+      - {iso3: MLI}
+      - {iso3: MOZ}
+      - {iso3: MRT}
+      - {iso3: MUS}
+      - {iso3: MWI}
+      - {iso3: MYT}
+      - {iso3: NAM}
+      - {iso3: NER}
+      - {iso3: NGA}
+      - {iso3: RWA}
+      - {iso3: SDN}
+      - {iso3: SEN}
+      - {iso3: SHN}
+      - {iso3: SLE}
+      - {iso3: SOM}
+      - {iso3: SSD}
+      - {iso3: STP}
+      - {iso3: SWZ}
+      - {iso3: SYC}
+      - {iso3: TCD}
+      - {iso3: TGO}
+      - {iso3: TUN}
+      - {iso3: TZA}
+      - {iso3: UGA}
+      - {iso3: ZAF}
+      - {iso3: ZMB}
+      - {iso3: ZWE}
+
+  - id: groups/OECD.DAC.Region.NorthOfSahara
+    type: geo.organization
+    canonical_name: North of Sahara (DAC)
+    aliases: ["North of Sahara (DAC)", "North of Sahara, Total", "North of Sahara"]
+    snapshot: true
+    sources:
+      - https://sdmx.oecd.org/public/rest/dataflow/OECD.DCD.FSD/DSD_DAC2@DF_DAC2A/latest
+    members:
+      - {iso3: DZA}
+      - {iso3: EGY}
+      - {iso3: LBY}
+      - {iso3: MAR}
+      - {iso3: TUN}
+
+  - id: groups/OECD.DAC.Region.SouthOfSahara
+    type: geo.organization
+    canonical_name: South of Sahara (DAC)
+    aliases: ["South of Sahara (DAC)", "South of Sahara, Total", "South of Sahara"]
+    snapshot: true
+    sources:
+      - https://sdmx.oecd.org/public/rest/dataflow/OECD.DCD.FSD/DSD_DAC2@DF_DAC2A/latest
+    members:
+      - {iso3: AGO}
+      - {iso3: BDI}
+      - {iso3: BEN}
+      - {iso3: BFA}
+      - {iso3: BWA}
+      - {iso3: CAF}
+      - {iso3: CIV}
+      - {iso3: CMR}
+      - {iso3: COD}
+      - {iso3: COG}
+      - {iso3: COM}
+      - {iso3: CPV}
+      - {iso3: DJI}
+      - {iso3: ERI}
+      - {iso3: ETH}
+      - {iso3: GAB}
+      - {iso3: GHA}
+      - {iso3: GIN}
+      - {iso3: GMB}
+      - {iso3: GNB}
+      - {iso3: GNQ}
+      - {iso3: KEN}
+      - {iso3: LBR}
+      - {iso3: LSO}
+      - {iso3: MDG}
+      - {iso3: MLI}
+      - {iso3: MOZ}
+      - {iso3: MRT}
+      - {iso3: MUS}
+      - {iso3: MWI}
+      - {iso3: MYT}
+      - {iso3: NAM}
+      - {iso3: NER}
+      - {iso3: NGA}
+      - {iso3: RWA}
+      - {iso3: SDN}
+      - {iso3: SEN}
+      - {iso3: SHN}
+      - {iso3: SLE}
+      - {iso3: SOM}
+      - {iso3: SSD}
+      - {iso3: STP}
+      - {iso3: SWZ}
+      - {iso3: SYC}
+      - {iso3: TCD}
+      - {iso3: TGO}
+      - {iso3: TZA}
+      - {iso3: UGA}
+      - {iso3: ZAF}
+      - {iso3: ZMB}
+      - {iso3: ZWE}
+
+  - id: groups/OECD.DAC.Region.EasternAfrica
+    type: geo.organization
+    canonical_name: Eastern Africa (DAC)
+    aliases: ["Eastern Africa (DAC)", "Eastern Africa, Total"]
+    snapshot: true
+    sources:
+      - https://sdmx.oecd.org/public/rest/dataflow/OECD.DCD.FSD/DSD_DAC2@DF_DAC2A/latest
+    members:
+      - {iso3: BDI}
+      - {iso3: COM}
+      - {iso3: DJI}
+      - {iso3: ERI}
+      - {iso3: ETH}
+      - {iso3: KEN}
+      - {iso3: MDG}
+      - {iso3: MOZ}
+      - {iso3: MUS}
+      - {iso3: MWI}
+      - {iso3: MYT}
+      - {iso3: RWA}
+      - {iso3: SDN}
+      - {iso3: SOM}
+      - {iso3: SSD}
+      - {iso3: SYC}
+      - {iso3: TZA}
+      - {iso3: UGA}
+      - {iso3: ZMB}
+      - {iso3: ZWE}
+
+  - id: groups/OECD.DAC.Region.MiddleAfrica
+    type: geo.organization
+    canonical_name: Middle Africa (DAC)
+    aliases: ["Middle Africa (DAC)", "Middle Africa, Total"]
+    snapshot: true
+    sources:
+      - https://sdmx.oecd.org/public/rest/dataflow/OECD.DCD.FSD/DSD_DAC2@DF_DAC2A/latest
+    members:
+      - {iso3: AGO}
+      - {iso3: CAF}
+      - {iso3: CMR}
+      - {iso3: COD}
+      - {iso3: COG}
+      - {iso3: GAB}
+      - {iso3: GNQ}
+      - {iso3: STP}
+      - {iso3: TCD}
+
+  - id: groups/OECD.DAC.Region.SouthernAfrica
+    type: geo.organization
+    canonical_name: Southern Africa (DAC)
+    aliases: ["Southern Africa (DAC)", "Southern Africa, Total"]
+    snapshot: true
+    sources:
+      - https://sdmx.oecd.org/public/rest/dataflow/OECD.DCD.FSD/DSD_DAC2@DF_DAC2A/latest
+    members:
+      - {iso3: BWA}
+      - {iso3: LSO}
+      - {iso3: NAM}
+      - {iso3: SWZ}
+      - {iso3: ZAF}
+
+  - id: groups/OECD.DAC.Region.WesternAfrica
+    type: geo.organization
+    canonical_name: Western Africa (DAC)
+    aliases: ["Western Africa (DAC)", "Western Africa, Total"]
+    snapshot: true
+    sources:
+      - https://sdmx.oecd.org/public/rest/dataflow/OECD.DCD.FSD/DSD_DAC2@DF_DAC2A/latest
+    members:
+      - {iso3: BEN}
+      - {iso3: BFA}
+      - {iso3: CIV}
+      - {iso3: CPV}
+      - {iso3: GHA}
+      - {iso3: GIN}
+      - {iso3: GMB}
+      - {iso3: GNB}
+      - {iso3: LBR}
+      - {iso3: MLI}
+      - {iso3: MRT}
+      - {iso3: NER}
+      - {iso3: NGA}
+      - {iso3: SEN}
+      - {iso3: SHN}
+      - {iso3: SLE}
+      - {iso3: TGO}
+
+  - id: groups/OECD.DAC.Region.America
+    type: geo.organization
+    canonical_name: America (DAC)
+    aliases: ["America (DAC)", "America, Total"]
+    snapshot: true
+    sources:
+      - https://sdmx.oecd.org/public/rest/dataflow/OECD.DCD.FSD/DSD_DAC2@DF_DAC2A/latest
+    members:
+      - {iso3: ABW}
+      - {iso3: AIA}
+      - {iso3: ARG}
+      - {iso3: ATG}
+      - {iso3: BHS}
+      - {iso3: BLZ}
+      - {iso3: BMU}
+      - {iso3: BOL}
+      - {iso3: BRA}
+      - {iso3: BRB}
+      - {iso3: CHL}
+      - {iso3: COL}
+      - {iso3: CRI}
+      - {iso3: CUB}
+      - {iso3: CYM}
+      - {iso3: DMA}
+      - {iso3: DOM}
+      - {iso3: ECU}
+      - {iso3: GRD}
+      - {iso3: GTM}
+      - {iso3: GUY}
+      - {iso3: HND}
+      - {iso3: HTI}
+      - {iso3: JAM}
+      - {iso3: KNA}
+      - {iso3: LCA}
+      - {iso3: MEX}
+      - {iso3: MSR}
+      - {iso3: NIC}
+      - {iso3: PAN}
+      - {iso3: PER}
+      - {iso3: PRY}
+      - {iso3: SLV}
+      - {iso3: SUR}
+      - {iso3: SXM}
+      - {iso3: TCA}
+      - {iso3: TTO}
+      - {iso3: URY}
+      - {iso3: VCT}
+      - {iso3: VEN}
+      - {iso3: VGB}
+
+  - id: groups/OECD.DAC.Region.NorthernAmerica
+    type: geo.organization
+    canonical_name: Northern America (DAC)
+    aliases: ["Northern America (DAC)", "Northern America, Total"]
+    snapshot: true
+    sources:
+      - https://sdmx.oecd.org/public/rest/dataflow/OECD.DCD.FSD/DSD_DAC2@DF_DAC2A/latest
+    members:
+      - {iso3: BMU}
+
+  - id: groups/OECD.DAC.Region.CaribbeanAndCentralAmerica
+    type: geo.organization
+    canonical_name: Caribbean and Central America (DAC)
+    aliases: ["Caribbean and Central America (DAC)", "Caribbean & Central America, Total", "Caribbean and Central America", "Central America and the Caribbean"]
+    snapshot: true
+    sources:
+      - https://sdmx.oecd.org/public/rest/dataflow/OECD.DCD.FSD/DSD_DAC2@DF_DAC2A/latest
+    members:
+      - {iso3: ABW}
+      - {iso3: AIA}
+      - {iso3: ATG}
+      - {iso3: BHS}
+      - {iso3: BLZ}
+      - {iso3: BMU}
+      - {iso3: BRB}
+      - {iso3: CRI}
+      - {iso3: CUB}
+      - {iso3: CYM}
+      - {iso3: DMA}
+      - {iso3: DOM}
+      - {iso3: GRD}
+      - {iso3: GTM}
+      - {iso3: HND}
+      - {iso3: HTI}
+      - {iso3: JAM}
+      - {iso3: KNA}
+      - {iso3: LCA}
+      - {iso3: MEX}
+      - {iso3: MSR}
+      - {iso3: NIC}
+      - {iso3: PAN}
+      - {iso3: SLV}
+      - {iso3: SXM}
+      - {iso3: TCA}
+      - {iso3: TTO}
+      - {iso3: VCT}
+      - {iso3: VGB}
+
+  - id: groups/OECD.DAC.Region.CentralAmerica
+    type: geo.organization
+    canonical_name: Central America (DAC)
+    aliases: ["Central America (DAC)", "Central America, Total"]
+    snapshot: true
+    sources:
+      - https://sdmx.oecd.org/public/rest/dataflow/OECD.DCD.FSD/DSD_DAC2@DF_DAC2A/latest
+    members:
+      - {iso3: BLZ}
+      - {iso3: CRI}
+      - {iso3: GTM}
+      - {iso3: HND}
+      - {iso3: MEX}
+      - {iso3: NIC}
+      - {iso3: PAN}
+      - {iso3: SLV}
+
+  - id: groups/OECD.DAC.Region.Caribbean
+    type: geo.organization
+    canonical_name: Caribbean (DAC)
+    aliases: ["Caribbean (DAC)", "Caribbean, Total"]
+    snapshot: true
+    sources:
+      - https://sdmx.oecd.org/public/rest/dataflow/OECD.DCD.FSD/DSD_DAC2@DF_DAC2A/latest
+    members:
+      - {iso3: ABW}
+      - {iso3: AIA}
+      - {iso3: ATG}
+      - {iso3: BHS}
+      - {iso3: BRB}
+      - {iso3: CUB}
+      - {iso3: CYM}
+      - {iso3: DMA}
+      - {iso3: DOM}
+      - {iso3: GRD}
+      - {iso3: HTI}
+      - {iso3: JAM}
+      - {iso3: KNA}
+      - {iso3: LCA}
+      - {iso3: MSR}
+      - {iso3: SXM}
+      - {iso3: TCA}
+      - {iso3: TTO}
+      - {iso3: VCT}
+      - {iso3: VGB}
+
+  - id: groups/OECD.DAC.Region.SouthAmerica
+    type: geo.organization
+    canonical_name: South America (DAC)
+    aliases: ["South America (DAC)", "South America, Total"]
+    snapshot: true
+    sources:
+      - https://sdmx.oecd.org/public/rest/dataflow/OECD.DCD.FSD/DSD_DAC2@DF_DAC2A/latest
+    members:
+      - {iso3: ARG}
+      - {iso3: BOL}
+      - {iso3: BRA}
+      - {iso3: CHL}
+      - {iso3: COL}
+      - {iso3: ECU}
+      - {iso3: GUY}
+      - {iso3: PER}
+      - {iso3: PRY}
+      - {iso3: SUR}
+      - {iso3: URY}
+      - {iso3: VEN}
+
+  - id: groups/OECD.DAC.Region.Asia
+    type: geo.organization
+    canonical_name: Asia (DAC)
+    aliases: ["Asia (DAC)", "Asia, Total"]
+    snapshot: true
+    sources:
+      - https://sdmx.oecd.org/public/rest/dataflow/OECD.DCD.FSD/DSD_DAC2@DF_DAC2A/latest
+    members:
+      - {iso3: AFG}
+      - {iso3: ARE}
+      - {iso3: ARM}
+      - {iso3: AZE}
+      - {iso3: BGD}
+      - {iso3: BHR}
+      - {iso3: BRN}
+      - {iso3: BTN}
+      - {iso3: CHN}
+      - {iso3: GEO}
+      - {iso3: HKG}
+      - {iso3: IDN}
+      - {iso3: IND}
+      - {iso3: IRN}
+      - {iso3: IRQ}
+      - {iso3: ISR}
+      - {iso3: JOR}
+      - {iso3: KAZ}
+      - {iso3: KGZ}
+      - {iso3: KHM}
+      - {iso3: KOR}
+      - {iso3: KWT}
+      - {iso3: LAO}
+      - {iso3: LBN}
+      - {iso3: LKA}
+      - {iso3: MAC}
+      - {iso3: MDV}
+      - {iso3: MMR}
+      - {iso3: MNG}
+      - {iso3: MYS}
+      - {iso3: NPL}
+      - {iso3: OMN}
+      - {iso3: PAK}
+      - {iso3: PHL}
+      - {iso3: PRK}
+      - {iso3: PSE}
+      - {iso3: QAT}
+      - {iso3: SAU}
+      - {iso3: SGP}
+      - {iso3: SYR}
+      - {iso3: THA}
+      - {iso3: TJK}
+      - {iso3: TKM}
+      - {iso3: TLS}
+      - {iso3: TWN}
+      - {iso3: UZB}
+      - {iso3: VNM}
+      - {iso3: YEM}
+
+  - id: groups/OECD.DAC.Region.FarEastAsia
+    type: geo.organization
+    canonical_name: Far East Asia (DAC)
+    aliases: ["Far East Asia (DAC)", "Far East Asia, Total", "Far East Asia"]
+    snapshot: true
+    sources:
+      - https://sdmx.oecd.org/public/rest/dataflow/OECD.DCD.FSD/DSD_DAC2@DF_DAC2A/latest
+    members:
+      - {iso3: BRN}
+      - {iso3: CHN}
+      - {iso3: HKG}
+      - {iso3: IDN}
+      - {iso3: KHM}
+      - {iso3: KOR}
+      - {iso3: LAO}
+      - {iso3: MAC}
+      - {iso3: MNG}
+      - {iso3: MYS}
+      - {iso3: PHL}
+      - {iso3: PRK}
+      - {iso3: SGP}
+      - {iso3: THA}
+      - {iso3: TLS}
+      - {iso3: TWN}
+      - {iso3: VNM}
+
+  - id: groups/OECD.DAC.Region.SouthAndCentralAsia
+    type: geo.organization
+    canonical_name: South and Central Asia (DAC)
+    aliases: ["South and Central Asia (DAC)", "South & Central Asia, Total", "South and Central Asia", "South & Central Asia", "Southern and Central Asia"]
+    snapshot: true
+    sources:
+      - https://sdmx.oecd.org/public/rest/dataflow/OECD.DCD.FSD/DSD_DAC2@DF_DAC2A/latest
+    members:
+      - {iso3: AFG}
+      - {iso3: ARM}
+      - {iso3: AZE}
+      - {iso3: BGD}
+      - {iso3: BTN}
+      - {iso3: GEO}
+      - {iso3: IND}
+      - {iso3: KAZ}
+      - {iso3: KGZ}
+      - {iso3: LKA}
+      - {iso3: MDV}
+      - {iso3: MMR}
+      - {iso3: NPL}
+      - {iso3: PAK}
+      - {iso3: TJK}
+      - {iso3: TKM}
+      - {iso3: UZB}
+
+  - id: groups/OECD.DAC.Region.MiddleEast
+    type: geo.organization
+    canonical_name: Middle East (DAC)
+    aliases: ["Middle East (DAC)", "Middle East, Total"]
+    snapshot: true
+    sources:
+      - https://sdmx.oecd.org/public/rest/dataflow/OECD.DCD.FSD/DSD_DAC2@DF_DAC2A/latest
+    members:
+      - {iso3: ARE}
+      - {iso3: BHR}
+      - {iso3: IRN}
+      - {iso3: IRQ}
+      - {iso3: ISR}
+      - {iso3: JOR}
+      - {iso3: KWT}
+      - {iso3: LBN}
+      - {iso3: OMN}
+      - {iso3: PSE}
+      - {iso3: QAT}
+      - {iso3: SAU}
+      - {iso3: SYR}
+      - {iso3: YEM}
+
+  - id: groups/OECD.DAC.Region.Europe
+    type: geo.organization
+    canonical_name: Europe (DAC)
+    aliases: ["Europe (DAC)", "Europe, Total"]
+    snapshot: true
+    sources:
+      - https://sdmx.oecd.org/public/rest/dataflow/OECD.DCD.FSD/DSD_DAC2@DF_DAC2A/latest
+    members:
+      - {iso3: ALB}
+      - {iso3: BIH}
+      - {iso3: BLR}
+      - {iso3: CYP}
+      - {iso3: GIB}
+      - {iso3: HRV}
+      - {iso3: MDA}
+      - {iso3: MKD}
+      - {iso3: MLT}
+      - {iso3: MNE}
+      - {iso3: SRB}
+      - {iso3: SVN}
+      - {iso3: TUR}
+      - {iso3: UKR}
+      - {iso3: XKX}
+
+  - id: groups/OECD.DAC.Region.Oceania
+    type: geo.organization
+    canonical_name: Oceania (DAC)
+    aliases: ["Oceania (DAC)", "Oceania, Total"]
+    snapshot: true
+    sources:
+      - https://sdmx.oecd.org/public/rest/dataflow/OECD.DCD.FSD/DSD_DAC2@DF_DAC2A/latest
+    members:
+      - {iso3: COK}
+      - {iso3: FJI}
+      - {iso3: FSM}
+      - {iso3: KIR}
+      - {iso3: MHL}
+      - {iso3: MNP}
+      - {iso3: NCL}
+      - {iso3: NIU}
+      - {iso3: NRU}
+      - {iso3: PLW}
+      - {iso3: PNG}
+      - {iso3: PYF}
+      - {iso3: SLB}
+      - {iso3: TKL}
+      - {iso3: TON}
+      - {iso3: TUV}
+      - {iso3: VUT}
+      - {iso3: WLF}
+      - {iso3: WSM}
+
+  - id: groups/OECD.DAC.Region.Melanesia
+    type: geo.organization
+    canonical_name: Melanesia (DAC)
+    aliases: ["Melanesia (DAC)", "Melanesia, Total"]
+    snapshot: true
+    sources:
+      - https://sdmx.oecd.org/public/rest/dataflow/OECD.DCD.FSD/DSD_DAC2@DF_DAC2A/latest
+    members:
+      - {iso3: FJI}
+      - {iso3: NCL}
+      - {iso3: PNG}
+      - {iso3: SLB}
+      - {iso3: VUT}
+
+  - id: groups/OECD.DAC.Region.Micronesia
+    type: geo.organization
+    canonical_name: Micronesia (DAC)
+    aliases: ["Micronesia (DAC)", "Micronesia, Total"]
+    snapshot: true
+    sources:
+      - https://sdmx.oecd.org/public/rest/dataflow/OECD.DCD.FSD/DSD_DAC2@DF_DAC2A/latest
+    members:
+      - {iso3: FSM}
+      - {iso3: KIR}
+      - {iso3: MHL}
+      - {iso3: MNP}
+      - {iso3: NRU}
+      - {iso3: PLW}
+
+  - id: groups/OECD.DAC.Region.Polynesia
+    type: geo.organization
+    canonical_name: Polynesia (DAC)
+    aliases: ["Polynesia (DAC)", "Polynesia, Total"]
+    snapshot: true
+    sources:
+      - https://sdmx.oecd.org/public/rest/dataflow/OECD.DCD.FSD/DSD_DAC2@DF_DAC2A/latest
+    members:
+      - {iso3: COK}
+      - {iso3: NIU}
+      - {iso3: PYF}
+      - {iso3: TKL}
+      - {iso3: TON}
+      - {iso3: TUV}
+      - {iso3: WLF}
+      - {iso3: WSM}
