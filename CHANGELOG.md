@@ -2,6 +2,10 @@
 
 ## 0.1.13 (2026-10-12)
 
+**Updated.** Data snapshot `2026.10` carries the World Bank FY27 income-group
+and OECD DAC region updates. Remote `geo.admin1` through `geo.admin5` and
+`geo.cities` payloads are unchanged from the June snapshot.
+
 **Added.** 22 OECD DAC aid-statistics region groups, with 423 country memberships
 and qualified names such as `Africa (DAC)` and `Asia, Total`. Memberships include
 historical recipients that have graduated from the DAC List. These snapshot groups

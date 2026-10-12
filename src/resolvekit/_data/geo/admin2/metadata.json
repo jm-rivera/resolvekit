@@ -1,5 +1,5 @@
 {
-  "datapack_id": "geo.admin2-v2026.06",
+  "datapack_id": "geo.admin2-v2026.10",
   "module_id": "geo.admin2",
   "domain_pack_id": "geo",
   "module_dependencies": [
@@ -28,19 +28,19 @@
   "distribution": "remote",
   "remote_artifacts": {
     "sqlite": {
-      "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.06/geo-admin2-entities.sqlite.gz",
+      "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.10/geo-admin2-entities.sqlite.gz",
       "sha256": "d59a081d1d8b40bec03701bc3d26f6d4098e955e5684bfad1e3f500ca48410a1",
-      "gz_sha256": "090327d1d16ccfb8f1533acbc1c2a611bbc0992bde0597f74d47be3ffd2301c1",
+      "gz_sha256": "de27077bd9ae60e2aa99bce6b60c884562d674adaf7cf6c7a0630968920a8b6c",
       "size_mb": 97.53
     },
     "symspell": {
-      "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.06/geo-admin2-symspell.dict.gz",
+      "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.10/geo-admin2-symspell.dict.gz",
       "sha256": "efa0292ca63d41a57604757102490c7efa23c0f1fa8f2e7d44b0eb6b61f41253",
-      "gz_sha256": "bb17b33fbd6bdd2f9656588c3134c69699a33d1771eebdbd80725a77f1bbd663",
+      "gz_sha256": "292219f8e0558443216762e81167f913b25c482d182270bc78ab9d41bec9f863",
       "size_mb": 2.01
     }
   },
-  "data_version": "2026.06",
+  "data_version": "2026.10",
   "min_resolvekit_version": "0.1.0a1",
   "pack_type": "base",
   "store_type": "sqlite",

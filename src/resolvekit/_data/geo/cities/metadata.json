@@ -1,5 +1,5 @@
 {
-  "datapack_id": "geo.cities-v2026.06",
+  "datapack_id": "geo.cities-v2026.10",
   "module_id": "geo.cities",
   "domain_pack_id": "geo",
   "module_dependencies": [
@@ -29,19 +29,19 @@
   "distribution": "remote",
   "remote_artifacts": {
     "sqlite": {
-      "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.06/geo-cities-entities.sqlite.gz",
+      "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.10/geo-cities-entities.sqlite.gz",
       "sha256": "909059ae8c86ecf7d1011a086061e3b81d61bf9c6c30b871db3a1390010c7ca2",
-      "gz_sha256": "d225669ea2ca59d97dfeffed89886ab95b6b9f031d1005c980fb89e36339c479",
+      "gz_sha256": "6bbd19f589115cbcaa9981aa19fb2589e85ce033edda8eb50be4d46bae92cb00",
       "size_mb": 152.21
     },
     "symspell": {
-      "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.06/geo-cities-symspell.dict.gz",
+      "url": "https://github.com/jm-rivera/resolvekit/releases/download/data-v2026.10/geo-cities-symspell.dict.gz",
       "sha256": "bdfbc85e011729e35268d5c799bbc7a5da5fca0b5fb591b069af6ace1975ca32",
-      "gz_sha256": "a155adfe7c62bef1de11f4a61908b4b9c42f35e9873c6479b1e9c0271be0c3a1",
+      "gz_sha256": "fd1dfadd84a7e60b8119393c45d0f5153a7e80ced5827b0b8030b9c273976c89",
       "size_mb": 2.67
     }
   },
-  "data_version": "2026.06",
+  "data_version": "2026.10",
   "min_resolvekit_version": "0.1.0a1",
   "pack_type": "base",
   "store_type": "sqlite",

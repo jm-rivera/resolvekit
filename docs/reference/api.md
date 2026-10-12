@@ -342,7 +342,7 @@ Each entry carries identity metadata and cache state. Bundled modules are always
 | `size_mb` | `float | None` | Uncompressed on-disk size. `None` for uncached remote modules. |
 | `download_size_mb` | `float | None` | Compressed download size. `None` for bundled modules. |
 | `remote_url` | `str | None` | Download URL. |
-| `data_version` | `str | None` | CalVer string for the module's data, e.g. `"2026.06"`. |
+| `data_version` | `str | None` | CalVer string for the module's data, e.g. `"2026.10"`. |
 | `cache_path` | `Path | None` | On-disk path when cached; `None` otherwise. |
 
 ---

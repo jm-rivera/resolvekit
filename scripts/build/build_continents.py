@@ -60,7 +60,7 @@ _OUTPUT_DIR = _DATAPACKS_ROOT / "geo" / "continents"
 MODULE_ID = "geo.continents"
 DOMAIN_PACK_ID = "geo"
 FEATURE_SCHEMA_VERSION = "geo.features.v1"
-DEFAULT_DATA_VERSION = "2026.06"
+DEFAULT_DATA_VERSION = "2026.10"
 
 
 def _read_existing_data_version(output_dir: Path) -> str:

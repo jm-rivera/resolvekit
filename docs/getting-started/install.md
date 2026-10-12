@@ -51,7 +51,7 @@ resolvekit ships two kinds of data modules.
 - `geo.countries`, `geo.regions`, `geo.continents`, `geo.continental_unions`
 - `org.companies`, `org.governments`, `org.lenders`, `org.political_parties`, `org.providers`, `org.data_sources`
 
-**Remote** modules are downloaded on first use from the GitHub Release tag `data-v2026.06`, verified by checksum:
+**Remote** modules are downloaded on first use from the GitHub Release tag `data-v2026.10`, verified by checksum:
 
 - `geo.admin1`, `geo.admin2`, `geo.admin3`, `geo.admin4`, `geo.admin5`, `geo.cities`
 

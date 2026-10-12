@@ -97,7 +97,7 @@ With `auto_download=True`, any call that touches a remote module triggers a down
 
 ## Versioned releases and pinning
 
-All data is tied to a release tag. The current tag is `data-v2026.06`.
+All data is tied to a release tag. The current tag is `data-v2026.10`.
 
 You can check which data version a running resolver is using:
 
@@ -105,7 +105,7 @@ You can check which data version a running resolver is using:
 import resolvekit as rk
 
 r = rk.default()
-print(r.info.data_version)  # '2026.06'
+print(r.info.data_version)  # '2026.10'
 ```
 
 When a new data release ships, `rk.download()` downloads it. Your existing
