@@ -8,9 +8,9 @@
       "entity_types": [
         "geo.country"
       ],
-      "size_mb": 2.62,
+      "size_mb": 2.47,
       "checksums": {
-        "sqlite": "e2a930d8eb4f2a31d35492da727da24871b79d10ed6704161f91f538ea9db25d"
+        "sqlite": "829d14bd0983458e334b85b357d8fb8295499edf4761d3e7176b3cad53e1a841"
       }
     },
     {
