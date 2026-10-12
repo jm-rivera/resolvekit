@@ -8,9 +8,9 @@
       "entity_types": [
         "geo.country"
       ],
-      "size_mb": 2.47,
+      "size_mb": 2.56,
       "checksums": {
-        "sqlite": "829d14bd0983458e334b85b357d8fb8295499edf4761d3e7176b3cad53e1a841"
+        "sqlite": "ab8ef9afc37d0d4a32f29100c73b6015b6aa7f4415ec86fb2751a1e54d5eec05"
       }
     },
     {
@@ -172,9 +172,9 @@
         "geo.continental_union",
         "geo.organization"
       ],
-      "size_mb": 0.1,
+      "size_mb": 0.12,
       "checksums": {
-        "sqlite": "e346f2503428e44cc0b7cf688356eae9522d640e0b3c6ae78f1ba4636399af39"
+        "sqlite": "71f97dd6fbb900defd7021251f20ec1cc341c66d18905d9ec7ce95bbbf6ab61d"
       }
     },
     {
