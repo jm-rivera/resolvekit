@@ -1097,6 +1097,13 @@ groups:
 
   # ── Development-economic classifications ────────────────────────────────
 
+  # World Bank income groups: FY27 classification (July 2026), from the World
+  # Bank API country list, plus Taiwan, China, which the classification file
+  # lists as high income but the API omits. High income leaves out Greenland,
+  # the Faroe Islands, American Samoa and Guam, which this build files under
+  # geo.admin1 rather than geo.countries, and the Channel Islands, which has
+  # no country entity.
+
   - id: groups/WB.IncomeGroup.High
     type: geo.organization
     canonical_name: World Bank High-Income Countries
@@ -1109,6 +1116,7 @@ groups:
       - https://www.wikidata.org/wiki/Q10656060
       - https://datahelpdesk.worldbank.org/knowledgebase/articles/906519-world-bank-country-and-lending-groups
     members:
+      - {iso3: ABW}
       - {iso3: AND}
       - {iso3: ARE}
       - {iso3: ATG}
@@ -1118,12 +1126,15 @@ groups:
       - {iso3: BGR}
       - {iso3: BHR}
       - {iso3: BHS}
+      - {iso3: BMU}
       - {iso3: BRB}
       - {iso3: BRN}
       - {iso3: CAN}
       - {iso3: CHE}
       - {iso3: CHL}
       - {iso3: CRI}
+      - {iso3: CUW}
+      - {iso3: CYM}
       - {iso3: CYP}
       - {iso3: CZE}
       - {iso3: DEU}
@@ -1133,10 +1144,13 @@ groups:
       - {iso3: FIN}
       - {iso3: FRA}
       - {iso3: GBR}
+      - {iso3: GIB}
       - {iso3: GRC}
       - {iso3: GUY}
+      - {iso3: HKG}
       - {iso3: HRV}
       - {iso3: HUN}
+      - {iso3: IMN}
       - {iso3: IRL}
       - {iso3: ISL}
       - {iso3: ISR}
@@ -1149,8 +1163,12 @@ groups:
       - {iso3: LTU}
       - {iso3: LUX}
       - {iso3: LVA}
+      - {iso3: MAC}
+      - {iso3: MAF}
       - {iso3: MCO}
       - {iso3: MLT}
+      - {iso3: MNP}
+      - {iso3: NCL}
       - {iso3: NLD}
       - {iso3: NOR}
       - {iso3: NRU}
@@ -1159,7 +1177,9 @@ groups:
       - {iso3: PAN}
       - {iso3: PLW}
       - {iso3: POL}
+      - {iso3: PRI}
       - {iso3: PRT}
+      - {iso3: PYF}
       - {iso3: QAT}
       - {iso3: ROU}
       - {iso3: RUS}
@@ -1169,10 +1189,15 @@ groups:
       - {iso3: SVK}
       - {iso3: SVN}
       - {iso3: SWE}
+      - {iso3: SXM}
       - {iso3: SYC}
+      - {iso3: TCA}
       - {iso3: TTO}
+      - {iso3: TWN}
       - {iso3: URY}
       - {iso3: USA}
+      - {iso3: VGB}
+      - {iso3: VIR}
 
   - id: groups/WB.IncomeGroup.UpperMiddle
     type: geo.organization
@@ -1204,6 +1229,7 @@ groups:
       - {iso3: DZA}
       - {iso3: ECU}
       - {iso3: FJI}
+      - {iso3: FSM}
       - {iso3: GAB}
       - {iso3: GEO}
       - {iso3: GNQ}
@@ -1213,9 +1239,11 @@ groups:
       - {iso3: IRN}
       - {iso3: IRQ}
       - {iso3: JAM}
+      - {iso3: JOR}
       - {iso3: KAZ}
       - {iso3: LBY}
       - {iso3: LCA}
+      - {iso3: LKA}
       - {iso3: MDA}
       - {iso3: MDV}
       - {iso3: MEX}
@@ -1226,6 +1254,7 @@ groups:
       - {iso3: MUS}
       - {iso3: MYS}
       - {iso3: PER}
+      - {iso3: PHL}
       - {iso3: PRY}
       - {iso3: SLV}
       - {iso3: SRB}
@@ -1237,7 +1266,9 @@ groups:
       - {iso3: TUV}
       - {iso3: UKR}
       - {iso3: VCT}
+      - {iso3: VNM}
       - {iso3: WSM}
+      - {iso3: XKX}
       - {iso3: ZAF}
 
   - id: groups/WB.IncomeGroup.LowerMiddle
@@ -1263,20 +1294,17 @@ groups:
       - {iso3: COM}
       - {iso3: DJI}
       - {iso3: EGY}
-      - {iso3: FSM}
       - {iso3: GHA}
       - {iso3: GIN}
       - {iso3: HND}
       - {iso3: HTI}
       - {iso3: IND}
-      - {iso3: JOR}
       - {iso3: KEN}
       - {iso3: KGZ}
       - {iso3: KHM}
       - {iso3: KIR}
       - {iso3: LAO}
       - {iso3: LBN}
-      - {iso3: LKA}
       - {iso3: LSO}
       - {iso3: MAR}
       - {iso3: MMR}
@@ -1286,18 +1314,19 @@ groups:
       - {iso3: NIC}
       - {iso3: NPL}
       - {iso3: PAK}
-      - {iso3: PHL}
       - {iso3: PNG}
+      - {iso3: PSE}
       - {iso3: SEN}
       - {iso3: SLB}
       - {iso3: STP}
       - {iso3: SWZ}
+      - {iso3: TGO}
       - {iso3: TJK}
       - {iso3: TLS}
       - {iso3: TUN}
       - {iso3: TZA}
       - {iso3: UZB}
-      - {iso3: VNM}
+      - {iso3: VEN}
       - {iso3: VUT}
       - {iso3: ZMB}
       - {iso3: ZWE}
@@ -1320,6 +1349,7 @@ groups:
       - {iso3: CAF}
       - {iso3: COD}
       - {iso3: ERI}
+      - {iso3: ETH}
       - {iso3: GMB}
       - {iso3: GNB}
       - {iso3: LBR}
@@ -1336,7 +1366,6 @@ groups:
       - {iso3: SSD}
       - {iso3: SYR}
       - {iso3: TCD}
-      - {iso3: TGO}
       - {iso3: UGA}
       - {iso3: YEM}
 
