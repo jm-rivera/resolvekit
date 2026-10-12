@@ -13,7 +13,7 @@
     "fts": "fts5",
     "symspell": "symspell.dict"
   },
-  "build_timestamp": "2026-10-12T10:34:57.679707+00:00",
+  "build_timestamp": "2026-10-12T13:01:43.281157+00:00",
   "source_datasets": [
     "datacommons"
   ],
@@ -23,7 +23,7 @@
   },
   "description": null,
   "checksums": {
-    "sqlite": "829d14bd0983458e334b85b357d8fb8295499edf4761d3e7176b3cad53e1a841",
+    "sqlite": "ab8ef9afc37d0d4a32f29100c73b6015b6aa7f4415ec86fb2751a1e54d5eec05",
     "symspell": "a74c9af96955d8d6353acff8349deff435628bd26d03356a5b8ac9d6cecbed59",
     "calibrator": "900c09348742718985f3236f270d0cdc2d4941cc38fade9b7310185d6cf845a7"
   },
@@ -41,9 +41,9 @@
     "entity_count": 241,
     "names_count": 4361,
     "codes_count": 9371,
-    "relations_count": 1880,
+    "relations_count": 2303,
     "names_coverage": 1.0,
     "codes_coverage": 1.0,
-    "relations_density": 7.800829875518672
+    "relations_density": 9.556016597510373
   }
 }

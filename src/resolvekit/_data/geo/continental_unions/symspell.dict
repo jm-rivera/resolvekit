@@ -3,6 +3,7 @@
 (25	1
 (27	2
 (28	1
+(dac)	22
 (ea)	1
 (eea)	1
 (eu)	1
@@ -14,11 +15,23 @@
 2013–2020)	1
 77	1
 a.s.e.a.n.	1
+africa	5
+africa (dac)	1
+africa,	5
+africa, total	1
 african	1
 african union	1
-and	2
+america	7
+america (dac)	1
+america,	5
+america, total	1
+and	8
 area	5
 asean	1
+asia	7
+asia (dac)	1
+asia,	3
+asia, total	1
 asian	1
 assistance	1
 association	1
@@ -28,6 +41,17 @@ au	1
 bank	6
 bric	1
 brics	1
+caribbean	5
+caribbean & central america, total	1
+caribbean (dac)	1
+caribbean and central america	1
+caribbean and central america (dac)	1
+caribbean,	1
+caribbean, total	1
+central	11
+central america (dac)	1
+central america and the caribbean	1
+central america, total	1
 co-operation	2
 committee	1
 common	1
@@ -39,6 +63,11 @@ developed	1
 developing	2
 development	3
 e.u.	1
+east	4
+east,	1
+eastern	2
+eastern africa (dac)	1
+eastern africa, total	1
 economic	4
 eea	1
 eight	1
@@ -54,6 +83,10 @@ euro	3
 euro area	1
 euro area (ea)	1
 euro zone	1
+europe	1
+europe (dac)	1
+europe,	1
+europe, total	1
 european	11
 european economic area	1
 european economic area (eea)	1
@@ -67,6 +100,10 @@ european union (28 members, 2013–2020)	1
 european union (eu)	1
 eurozone	1
 exporting	2
+far	3
+far east asia	1
+far east asia (dac)	1
+far east asia, total	1
 for	2
 g-20	1
 g-7	1
@@ -104,11 +141,23 @@ lower	1
 lower middle income countries	1
 lower-middle-income	1
 market	1
+melanesia	1
+melanesia (dac)	1
+melanesia,	1
+melanesia, total	1
 members	1
 members,	6
 mercosul	1
 mercosur	1
-middle	2
+micronesia	1
+micronesia (dac)	1
+micronesia,	1
+micronesia, total	1
+middle	6
+middle africa (dac)	1
+middle africa, total	1
+middle east (dac)	1
+middle east, total	1
 n.a.t.o.	1
 nations	3
 nato	1
@@ -116,14 +165,24 @@ non-dac	3
 non-dac countries	1
 non-dac members	1
 non-dac providers	1
-north	1
+north	4
 north atlantic treaty organization	1
+north of sahara	1
+north of sahara (dac)	1
+north of sahara, total	1
+northern	2
+northern america (dac)	1
+northern america, total	1
 o.e.c.d.	1
 o.p.e.c.	1
+oceania	1
+oceania (dac)	1
+oceania,	1
+oceania, total	1
 oecd	2
 oecd dac	1
 oecd development assistance committee	1
-of	10
+of	16
 opec	1
 organisation	2
 organisation for economic co-operation and development	1
@@ -132,20 +191,40 @@ organization	3
 organization for economic co-operation and development	1
 organization of the petroleum exporting countries	1
 petroleum	2
+polynesia	1
+polynesia (dac)	1
+polynesia,	1
+polynesia, total	1
 post-brexit)	1
 providers	1
+sahara	4
+sahara,	2
 schengen	1
 schengen area	1
 seven	1
 sids	1
 small	1
 small island developing states	1
+south	9
+south & central asia	1
+south & central asia, total	1
+south america (dac)	1
+south america, total	1
+south and central asia	1
+south and central asia (dac)	1
+south of sahara	1
+south of sahara (dac)	1
+south of sahara, total	1
 southeast	1
-southern	1
+southern	4
+southern africa (dac)	1
+southern africa, total	1
+southern and central asia	1
 southern common market	1
 states	1
-the	3
+the	4
 the commonwealth	1
+total	22
 treaty	1
 twenty	1
 u.n.	1
@@ -157,6 +236,9 @@ united nations	1
 upper	1
 upper middle income countries	1
 upper-middle-income	1
+western	2
+western africa (dac)	1
+western africa, total	1
 world	6
 world bank high income	1
 world bank high-income countries	1
