@@ -1,11 +1,10 @@
 """Typed enricher→pipeline contract and the single SQLite writer for it.
 
 Enrichers are pure ``(db_path) -> GraphContribution`` functions: they read inputs
-and compute the rows to add (and entity ids to remove), but never touch the DB.
-``apply_contribution`` is the only sink — it performs every INSERT/DELETE inside one
-transaction with INSERT OR IGNORE semantics (idempotent re-runs), so the
-deferred-FTS-rebuild invariant is structural: no enricher can rebuild FTS because no
-enricher writes.
+and compute rows to add, scopes to replace, and entity ids to remove, but never touch
+the DB. ``apply_contribution`` is the only sink — it performs every INSERT/DELETE
+inside one transaction, so the deferred-FTS-rebuild invariant is structural: no
+enricher can rebuild FTS because no enricher writes.
 """
 
 from __future__ import annotations
@@ -19,21 +18,34 @@ from resolvekit.builder.sqlite.specs import insert_prefix
 from resolvekit.builder.sqlite.write import apply_name_rows
 
 
+@dataclass(frozen=True)
+class RelationReplacementScope:
+    """A relation target and type for which a contribution owns every row."""
+
+    target_id: str
+    relation_type: str
+
+
 @dataclass
 class GraphContribution:
     """Rows an enricher contributes to the staging entity graph.
 
-    All fields are flat row-dicts matching the SQLite table columns (the same shape
-    ``insert_normalized_payload`` consumes). ``entity_ids_to_delete`` carries the
-    entity-level filter/DELETE path; ``names_to_delete`` removes individual alias
-    rows without dropping the entity (e.g. an upstream-injected label an enricher
-    must un-claim). Constructed kwargs-only at call sites.
+    Table rows are flat dicts matching the SQLite columns (the same shape
+    ``insert_normalized_payload`` consumes). ``relation_scopes_to_replace`` contains
+    typed target/type pairs whose complete membership is authoritative for this
+    contribution. ``entity_ids_to_delete`` carries the entity-level filter/DELETE
+    path; ``names_to_delete`` removes individual alias rows without dropping the
+    entity (e.g. an upstream-injected label an enricher must un-claim). Constructed
+    kwargs-only at call sites.
     """
 
     entities: list[dict[str, Any]] = field(default_factory=list)
     names: list[dict[str, Any]] = field(default_factory=list)
     codes: list[dict[str, Any]] = field(default_factory=list)
     relations: list[dict[str, Any]] = field(default_factory=list)
+    relation_scopes_to_replace: list[RelationReplacementScope] = field(
+        default_factory=list
+    )
     entity_ids_to_delete: list[str] = field(default_factory=list)
     # Each entry is ``{"entity_id": ..., "value_norm": ...}`` — the normalized
     # name rows to remove. Keyed on value_norm so it deletes regardless of
@@ -48,10 +60,11 @@ def apply_contribution(
 ) -> dict[str, int]:
     """Write a contribution to ``conn`` and return per-table net row deltas.
 
-    Kwargs-only. Uses INSERT OR IGNORE for every table (entities/names/codes/relations)
-    — NOT OR REPLACE — so enricher writes never overwrite existing rows and re-runs
-    are idempotent. Removals cascade across names/codes/relations (by entity_id and
-    by target_id) then entities, mirroring ``_build_region_filter_contribution``.
+    Kwargs-only. INSERT OR IGNORE is the default insertion behavior for every table;
+    authoritative relation scopes explicitly replace their rows immediately before
+    replacement relations are inserted. Entity removals cascade across
+    names/codes/relations (by entity_id and by target_id) then entities, mirroring
+    ``_build_region_filter_contribution``.
 
     The caller owns the transaction: open ``connect_sqlite(db, busy_timeout_ms=30000)``
     and wrap in ``transaction(conn)`` before calling.
@@ -92,6 +105,15 @@ def apply_contribution(
             for row in contribution.codes
         ],
     )
+
+    if contribution.relation_scopes_to_replace:
+        conn.executemany(
+            "DELETE FROM relations WHERE relation_type = ? AND target_id = ?",
+            [
+                (scope.relation_type, scope.target_id)
+                for scope in contribution.relation_scopes_to_replace
+            ],
+        )
 
     conn.executemany(
         insert_prefix("relations", conflict="IGNORE") + " VALUES (?, ?, ?, ?, ?)",

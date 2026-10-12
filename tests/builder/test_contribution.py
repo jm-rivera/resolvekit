@@ -16,6 +16,7 @@ import pytest
 
 from resolvekit.builder.pipeline.contribution import (
     GraphContribution,
+    RelationReplacementScope,
     apply_contribution,
 )
 from resolvekit.builder.sqlite.context import connect_sqlite, transaction
@@ -287,6 +288,95 @@ def test_apply_contribution_names_to_delete_runs_after_inserts(tmp_path: Path) -
     assert (
         _query_one(db, "SELECT 1 FROM names WHERE value_norm='eu institutions'") is None
     )
+
+
+@pytest.mark.unit
+def test_apply_contribution_replaces_authoritative_relation_scope(
+    tmp_path: Path,
+) -> None:
+    """A replacement scope removes stale rows without touching other relations."""
+    db = _make_db(tmp_path)
+    conn = sqlite3.connect(db)
+    conn.executemany(
+        "INSERT INTO relations VALUES (?, ?, ?, ?, ?)",
+        [
+            # Removed from the authoritative member_of scope.
+            ("country/DEU", "member_of", "groups/WB", None, None),
+            # A historic member retained with its original bounded validity.
+            ("country/FRA", "member_of", "groups/WB", "1960-01-01", "1970-01-01"),
+            # A retained member whose validity bounds changed.
+            ("country/GBR", "member_of", "groups/WB", "2000-01-01", None),
+            # Different relation type, same target: outside the replacement scope.
+            ("country/DEU", "part_of", "groups/WB", None, None),
+            # Same relation type, different target: outside the replacement scope.
+            ("country/DEU", "member_of", "groups/OTHER", None, None),
+        ],
+    )
+    conn.commit()
+    conn.close()
+
+    contribution = GraphContribution(
+        relations=[
+            {
+                "entity_id": "country/FRA",
+                "relation_type": "member_of",
+                "target_id": "groups/WB",
+                "valid_from": "1960-01-01",
+                "valid_until": "1970-01-01",
+            },
+            {
+                "entity_id": "country/GBR",
+                "relation_type": "member_of",
+                "target_id": "groups/WB",
+                "valid_from": "2001-01-01",
+                "valid_until": None,
+            },
+        ],
+        relation_scopes_to_replace=[
+            RelationReplacementScope(
+                target_id="groups/WB",
+                relation_type="member_of",
+            )
+        ],
+    )
+
+    first = _run(db, contribution)
+    assert first == {"entities": 0, "names": 0, "codes": 0, "relations": -1}
+    assert (
+        _query_one(
+            db,
+            "SELECT 1 FROM relations WHERE entity_id = 'country/DEU' "
+            "AND relation_type = 'member_of' AND target_id = 'groups/WB'",
+        )
+        is None
+    )
+    assert _query_one(
+        db,
+        "SELECT valid_from, valid_until FROM relations WHERE entity_id = 'country/FRA' "
+        "AND relation_type = 'member_of' AND target_id = 'groups/WB'",
+    ) == ("1960-01-01", "1970-01-01")
+    assert _query_one(
+        db,
+        "SELECT valid_from, valid_until FROM relations WHERE entity_id = 'country/GBR' "
+        "AND relation_type = 'member_of' AND target_id = 'groups/WB'",
+    ) == ("2001-01-01", None)
+    assert _query_one(
+        db,
+        "SELECT 1 FROM relations WHERE entity_id = 'country/DEU' "
+        "AND relation_type = 'part_of' AND target_id = 'groups/WB'",
+    ) == (1,)
+    assert _query_one(
+        db,
+        "SELECT 1 FROM relations WHERE entity_id = 'country/DEU' "
+        "AND relation_type = 'member_of' AND target_id = 'groups/OTHER'",
+    ) == (1,)
+
+    assert _run(db, contribution) == {
+        "entities": 0,
+        "names": 0,
+        "codes": 0,
+        "relations": 0,
+    }
 
 
 @pytest.mark.unit
